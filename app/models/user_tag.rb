@@ -1,4 +1,4 @@
-class UserTag < ApplicationRecord
+class UserTag < CcdmsRecord
   belongs_to :data_type
   belongs_to :data_level
   belongs_to :user

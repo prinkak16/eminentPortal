@@ -1,2 +1,2 @@
-class SsoClientKey < ApplicationRecord
+class SsoClientKey < CcdmsRecord
 end

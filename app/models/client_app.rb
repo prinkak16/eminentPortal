@@ -1,2 +1,2 @@
-class ClientApp < ApplicationRecord
+class ClientApp < CcdmsRecord
 end
