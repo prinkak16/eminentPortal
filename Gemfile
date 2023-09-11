@@ -75,6 +75,7 @@ group :test do
   gem "webdrivers"
 end
 
+gem 'jwt'
 gem 'listen'
 gem 'sidekiq'
 gem 'sidekiq-cron'

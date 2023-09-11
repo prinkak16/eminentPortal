@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
 
   get 'auth/callback', to: 'auth#callback'
-
   #noinspection RailsParamDefResolve
   match '*path', to: 'home#index', via: :all, constraints: lambda { |req|
     req.path.exclude? 'rails/active_storage'
