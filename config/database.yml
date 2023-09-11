@@ -14,3 +14,7 @@ test:
 
 production:
   url: <%= ENV["DATABASE_URL"] || "" %>
+
+ccdms:
+  <<: *default
+  url: <%= ENV["CCDMS_DATABASE_URL"] || "" %>

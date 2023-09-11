@@ -54,6 +54,7 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem 'rubocop', require: false
 end
 
 group :development do
@@ -74,8 +75,8 @@ group :test do
   gem "webdrivers"
 end
 
-gem 'saral-locatable', git: "https://github.com/jarvisconsulting/saral-locatable.git", branch: 'new_f_r7_branch'
-gem 'sso_client', git: 'https://github.com/jarvisconsulting/sso_client.git', branch: "master-add-views-vt"
+gem 'jwt'
 gem 'listen'
 gem 'sidekiq'
 gem 'sidekiq-cron'
+gem 'dotenv-rails', :groups => [:development, :test, :production]
