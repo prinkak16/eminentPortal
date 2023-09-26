@@ -1,0 +1,146 @@
+$borderColor: #D8D8D8;
+$lightorange:#FEE;
+$baselight:#FFE8DB;
+$border: rgba(0, 0, 0, 0.40);
+$lightborder: rgba(0, 0, 0, 0.10);
+$blueColor: #366FB3;
+$blackcolor: #000;
+$blacklight:rgba(0,0,0,0.8);
+$reqcolor: #BB0E0F;
+$lightwhite: #F5F4F4;
+$whiteColor:#fff;
+$oultineborder: #d9d9d9;
+$checkcolor:#837F7F;
+$basicColor:#FF9559;
+@mixin btndesign{
+  padding: 12px 24px;
+  background: ($baselight);
+  border: 0.786px solid ($basicColor);
+  border-radius: 4.714px;
+  color: ($basicColor);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.75px;
+  position: relative;
+  margin-top: -30px;
+}
+@mixin numberdesign {
+  border: 2px solid ($blueColor);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: ($blueColor);
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.5;
+}
+@mixin texttypography{
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.notes{
+  background:($lightorange) ;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+.detailFrom{
+
+
+  textarea{
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid ($border);
+    padding: 10px;
+    width: 100%;
+    margin-top: 6px;
+    font-weight: 400;
+    background: transparent;
+
+  }
+
+  .checkbox{
+    font-size: 12px;
+    color: ($checkcolor);
+  }
+  button.addanotherfieldsbtn{
+    border-radius: 8px;
+    border: 1px solid ($basicColor);
+    padding: 10px 20px 10px 16px;
+    color: ($basicColor);
+    font-size: 16px;
+    background: transparent;
+    font-weight: 600;
+    margin-top: 1rem;
+    &:hover{
+      border: 1px solid ($basicColor);
+      color: ($basicColor);
+      background: transparent;
+    }
+  }
+}
+.detailnumbers{
+  @include numberdesign;
+}
+.addnumber{
+  background-color: ($lightwhite);
+  border: 2px solid ($lightwhite);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  color: ($blackcolor);
+  text-align: center;
+  font-size: 16px;
+  line-height: 1;
+}
+.addressfields{
+  border-bottom:1px solid  ($lightborder);
+}
+.testright{
+  text-align: right;
+  label{
+    font-size: 16px;
+  }
+
+}
+.educationforms{
+  padding: 22px;
+  border-radius: 12px;
+  border: 1px solid ($border);
+  background: ($whiteColor);
+  .MuiGrid-item{
+    padding: 0.8rem ;
+  }
+  button.save{
+    padding: 12px 20px;
+    border-radius: 7px;
+    &:hover{
+      padding: 12px 20px;
+      border-radius: 7px;
+    }
+  }
+}
+button.cancelbtn{
+  border-radius: 7px;
+  border: 1px solid ($oultineborder);
+  color: ($oultineborder);
+  padding: 10px 18px;
+  background: transparent;
+  margin-right: 0.8rem;
+  &:hover{
+    border: 1px solid ($oultineborder);
+    color: ($oultineborder);
+    background: transparent;
+  }
+
+}
+.css-1i1ubn5-MuiInputBase-root-MuiOutlinedInput-root, .css-1i1ubn5-MuiInputBase-root-MuiOutlinedInput-root:hover, .MuiOutlinedInput-notchedOutline{
+  border-color: transparent !important;
+}
+.MuiInputBase-multiline{
+  padding: 0 !important;
+}

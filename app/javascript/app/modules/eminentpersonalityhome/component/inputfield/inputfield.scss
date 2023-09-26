@@ -1,0 +1,12 @@
+$border: rgba(0, 0, 0, 0.40);
+input{
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid ($border);
+  padding: 14px 10px;
+  width: 100%;
+  margin-top: 6px;
+  font-weight: 400;
+  background: transparent;
+
+}

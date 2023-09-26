@@ -1,0 +1,21 @@
+$borderColor: #D8D8D8;
+.detailHeading{
+  text-align: center;
+  position: relative;
+  margin:2rem 0;
+  &:after, &:before{
+    content:'';
+    position: absolute;
+    border: 2px dashed ($borderColor);
+    top: 40%;
+    transform: translateY(-50%);
+    width: 136px;
+  }
+  &:after{
+    left: 30%;
+  }
+  &:before{
+    right: 30%;
+  }
+
+}
