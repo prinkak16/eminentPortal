@@ -6,6 +6,7 @@ class AuthController < ApplicationController
   def callback
     user = handle_params(params: params)
     user_sign_in(user)
+    sync_auth_users(user)
     if current_user.present? && current_user.has_app_access?
       redirect_to root_url, allow_other_host: true
     else
