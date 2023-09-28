@@ -66,13 +66,14 @@ class CustomMemberForm < ApplicationRecord
     self.save
   end
 
-  def validate_otp(input_otp)
+  def check_otp_validation(input_otp)
     is_backdoor = (ENV['EMINENT_BACKDOOR_OTP'] && ENV['EMINENT_BACKDOOR_OTP'] == input_otp)
+    puts is_backdoor, input_otp, ENV['EMINENT_BACKDOOR_OTP']
     if is_backdoor
       true
     else
       otp_expiration_mins = ENV['OTP_EXPIRATION_MINS'] ? ENV['OTP_EXPIRATION_MINS'].to_i : 5
-      self.otp.to_s == input_otp && (DateTime.now < otp_created_at + otp_expiration_mins.minutes)
+      self.otp.to_s == input_otp && (DateTime.now < self.otp_created_at + otp_expiration_mins.minutes)
     end
   end
 

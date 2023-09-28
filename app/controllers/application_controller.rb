@@ -34,4 +34,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def upload_file_on_gcloud(file, filename)
+    require 'google/cloud/storage'
+    storage = Google::Cloud::Storage.new(project_id: ENV['G_CLOUD_PROJECT_ID'], credentials: ENV['G_CLOUD_KEYFILE'])
+    bucket = storage.bucket ENV['G_CLOUD_BUCKET_PUBLIC_DOCUMENTS']
+    @file_urls = []
+    upload_file = bucket.create_file file.tempfile,
+                                     "eminent/#{filename}",
+                                     content_type: file.content_type,
+                                     acl: 'public'
+    upload_file.public_url
+  end
+
 end

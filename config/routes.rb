@@ -15,7 +15,10 @@ Rails.application.routes.draw do
       get 'metadata/professions', to: 'metadata#professions'
       get 'metadata/states', to: 'metadata#states'
       get 'metadata/state_party_list', to: 'metadata#state_party_list'
+      post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
+      post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
+      post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
     end
     namespace :sync do
       get 'states', to: 'state#sync'
