@@ -3,15 +3,16 @@ import {useField } from "formik";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-const EndDate = ({endyear="" }) => {
+const Enddatepicker = ({endyear="" }) => {
     const [field, meta, helpers] = useField(endyear);
 
     const { value } = meta;
     const { setValue } = helpers;
 
     return (
-        <DatePicker
+        <DatePicker 
             className="datepicker"
+            style={{width: "100%"}}
             {...field}
             selected={value}
             onChange={(date) => setValue(date)}
@@ -20,9 +21,4 @@ const EndDate = ({endyear="" }) => {
     )
 };
 
-const Enddatepicker=()=>{
-    return (
-        <EndDate  endyear="date" />
-    );
-}
 export default Enddatepicker

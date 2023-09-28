@@ -4,7 +4,6 @@ import "./inputfield.scss"
 const Inputfield=({name,type,placeholder, handlechange, value})=>{
     return(
         <>
-
             <Field
                 type={type}
                 name={name}

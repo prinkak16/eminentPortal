@@ -2,9 +2,9 @@ import {Button} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import React from "react";
 
-const Savebtn=()=>{
+const Savebtn=({handleSave})=>{
     return(<>
-            <Button variant="text" endIcon={<InfoIcon/>}>Save Progress</Button>
+            <Button onClick={handleSave} variant="text" endIcon={<InfoIcon/>}>Save Progress</Button>
         </>
     )
 

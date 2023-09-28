@@ -1,15 +1,17 @@
-import { Typography, Stack, Button, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
+import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/button/button";
+import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import Selectfield from "../component/selectfield/selectfield";
-
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import Primarybutton from '../component/primarybutton/primarybutton';
 const Resumeform=()=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -20,21 +22,16 @@ const Resumeform=()=>{
     }));
     const [fields, setFields] = useState([""]);
 
-    const handleAddField = () => {
-        setFields([...fields, ""]);
-    };
-    const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
     const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
-    let addFormFields = () => {
-        setFormValues([...formValues, { house: "", street: "", pincode:"", city:"", state:"", date: new Date() }])
+    const handleAddField = () => {
+        setFields([...fields, ""]);
         setShowFields(true)
-    }
-
-    let removeFormFields = (i) => {
-        let newFormValues = [...formValues];
-        newFormValues.splice(i-1, 1);
-        setFormValues(newFormValues)
+    };
+    const handledelete=()=>{
+        const allfields = [...fields];
+        allfields.splice(-1, 1);
+        setFields(allfields)
     }
 
     return(
@@ -45,7 +42,7 @@ const Resumeform=()=>{
                     <Item sx={{textAlign:'right'}}><Savebtn/></Item>
                 </Stack>
                 <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid item xs={8}>
                         <Formik
                             initialValues={{name: "", relationship: "", profile:""}}
                             validate={(values) => {
@@ -79,14 +76,14 @@ const Resumeform=()=>{
                         >
                             {({save})=>(
                                 <Form>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={4}>
+                                    <Grid container spacing={2} className="grid-wrap">
+                                        <Grid item xs={6}>
                                             <FormLabel>Name</FormLabel>
                                             <Inputfield type="text"
                                                         name="name"
                                                         placeholder="Enter full name"/>
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={6}>
                                             <FormLabel>Relationship </FormLabel>
                                             <Selectfield name="relationship"/>
                                         </Grid>
@@ -103,13 +100,13 @@ const Resumeform=()=>{
                                             />
                                         </Grid>
                                     </Grid>
-                                    <Grid container sx={{my:3}}>
+                                    <Grid container sx={{my:3}} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Family Relations
                                             </Typography>
                                         </Grid>
-                                        <Grid container spacing={2}>
+                                        <Grid container spacing={2} className="grid-wrap">
                                             <Grid item xs={12}>
                                                 <FormLabel>Father's Name</FormLabel>
                                                 <Inputfield type="text"
@@ -134,12 +131,23 @@ const Resumeform=()=>{
                                                             name="childrenname"
                                                             placeholder="Enter name"/>
                                             </Grid>
+                                            {showFields && fields.map((field, index) => (
+                                                <Grid item xs={12}>
+                                                    <FormLabel>Children Name</FormLabel>
+                                                    <Inputfield type="text"
+                                                                name="Add another detail"
+                                                                placeholder="Enter detail"/>
+                                                </Grid>
+                                            ))}
                                             <Grid item xs={12}>
-                                                <Button className="addanotherfieldsbtn" variant="outlined" type="button" onClick={()=> addFormFields()} startIcon={<AddIcon/>}>Add Political Profile</Button>
+                                            <Primarybutton addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>} buttonlabel="Add another Field" handleclick={handleAddField}/>
+                                                {fields.length>=1 ?(
+                                                    <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>} handleclick={handledelete}/>
+                                                ):null}
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container sx={{spacing:0}}>
+                                    <Grid container sx={{spacing:0}} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>3</Box> Links <InfoOutlinedIcon/>
@@ -148,8 +156,9 @@ const Resumeform=()=>{
                                         <Grid item xs={4} sx={{mb:2}}>
                                             <FormLabel>Website</FormLabel>
                                             <Inputfield type="text"
-                                                        name="organization"
-                                                        placeholder="Enter Organization "/>
+                                                        name="website"
+                                                        placeholder="Enter Your website Url"
+                                                        endIcon={<HelpOutlineOutlinedIcon/>}/>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <FormLabel>Description <InfoOutlinedIcon/></FormLabel>

@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/button/button";
+import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 const Refferedform=()=>{
     const Item = styled(Paper)(({ theme }) => ({
@@ -39,10 +39,7 @@ const Refferedform=()=>{
                         >
                             {({save})=>(
                                 <Form>
-                                    <Grid container spacing={2} sx={{mb:3}}>
-                                        <Grid item xs={12}>
-                                            <Formheading number="3" heading="Referred by" />
-                                        </Grid>
+                                    <Grid container spacing={2} sx={{mb:3}} className="grid-wrap"> 
                                         <Grid item xs={6}>
                                             <FormLabel>Name</FormLabel>
                                             <Inputfield type="text"
@@ -71,7 +68,6 @@ const Refferedform=()=>{
                                                         placeholder="Write something "/>
                                         </Grid>
                                     </Grid>
-                                    <Button type="submit" className="savebtn" variant="contained" disabled={save} onClick={() => {save.submitForm()}}> Save Progress</Button>
                                 </Form>
 
                             )}

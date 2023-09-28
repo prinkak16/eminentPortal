@@ -40,7 +40,12 @@ $basicColor:#FF9559;
   font-style: normal;
   font-weight: 600;
 }
-
+h5.MuiTypography-root{
+  font-weight: 600;
+}
+.grid-wrap>div{
+  margin-bottom: 1rem;
+}
 .notes{
   background:($lightorange) ;
   border-radius: 8px;
@@ -62,7 +67,9 @@ $basicColor:#FF9559;
     background: transparent;
 
   }
-
+input{
+  width: 100%;
+}
   .checkbox{
     font-size: 12px;
     color: ($checkcolor);
@@ -76,6 +83,7 @@ $basicColor:#FF9559;
     background: transparent;
     font-weight: 600;
     margin-top: 1rem;
+    box-shadow: none;
     &:hover{
       border: 1px solid ($basicColor);
       color: ($basicColor);
@@ -90,12 +98,16 @@ $basicColor:#FF9559;
   background-color: ($lightwhite);
   border: 2px solid ($lightwhite);
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 31px;
+  height: 31px;
   color: ($blackcolor);
   text-align: center;
   font-size: 16px;
-  line-height: 1;
+  line-height: 1.8;
+}
+label.light-circle{
+  font-size: 18px;
+  font-weight: 600;
 }
 .addressfields{
   border-bottom:1px solid  ($lightborder);
@@ -131,10 +143,12 @@ button.cancelbtn{
   padding: 10px 18px;
   background: transparent;
   margin-right: 0.8rem;
+  box-shadow: none;
   &:hover{
     border: 1px solid ($oultineborder);
     color: ($oultineborder);
     background: transparent;
+    box-shadow: none;
   }
 
 }
@@ -143,4 +157,10 @@ button.cancelbtn{
 }
 .MuiInputBase-multiline{
   padding: 0 !important;
+}
+.datepicker{
+  width: 100%;
+}
+.education-field{
+  border-bottom: 1px solid ($border);
 }

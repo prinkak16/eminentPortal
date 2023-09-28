@@ -1,16 +1,22 @@
-import { Typography, Stack, Button, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
+import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
 import Enddatepicker from "../component/enddatepicker/enddatepicker";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
 import Selectfield from "../component/selectfield/selectfield";
-import Savebtn from "../component/button/button";
+import Savebtn from "../component/saveprogressbutton/button";
 import './allfroms.scss'
 import Inputfield from "../component/inputfield/inputfield";
+import Stepfouraddmore from '../component/stepfouraddmore/selectlokshabha';
+import Rajyasabhaform from '../component/stepfouraddmore/selectrajyasabha';
+import Vidhansabhaform from '../component/stepfouraddmore/lagislativeassemblyform';
+import Urbanlocalfrom from '../component/stepfouraddmore/urbanlocal';
+import Primarybutton from '../component/primarybutton/primarybutton';
 const PolticalandGovrnform =()=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -19,25 +25,33 @@ const PolticalandGovrnform =()=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [fields, setFields] = useState([""]);
-
-    const handleAddField = () => {
-        setFields([...fields, ""]);
-    };
+    
     const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
     const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
-    let addFormFields = () => {
-        setFormValues([...formValues, { house: "", street: "", pincode:"", city:"", state:"", date: new Date() }])
-        setShowFields(true)
+    const [count, setcount]=useState(2)
+    const handlesocialfield = () => {
+        setFormValues([...formValues, { organization: "", description: "" }])
+        setShowFields(true);
+        setcount(count+1);
     }
-
-    let removeFormFields = (i) => {
-        let newFormValues = [...formValues];
-        newFormValues.splice(i-1, 1);
-        setFormValues(newFormValues)
+   const handledelete = () => {
+        const newFormValues = [...formValues];
+        newFormValues.splice(-1, 1);
+        setFormValues(newFormValues);
+        setcount(count-1);
     }
-
+const [electfiled, setElectfield]=useState(false)
+const handleaddField = () => {
+    setElectfield(true)
+}
+function handlremoveField(){
+    setElectfield(false)
+}
+const [selectedOption, setSelectedOption] = useState('');
+const selectChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -80,7 +94,7 @@ const PolticalandGovrnform =()=>{
                         >
                             {({save})=>(
                                 <Form>
-                                    <Grid container className="educationforms">
+                                    <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={4}>
                                             <FormLabel>Party level <sup>*</sup></FormLabel>
                                             <Selectfield name="partylevel"/>
@@ -95,16 +109,16 @@ const PolticalandGovrnform =()=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                            <Startdatepicker/>
+                                            <Startdatepicker startyear="startdate3"/>
                                         </Grid>
                                         <Grid item xs={4}>
-                                            <FormLabel>End / Passing Year</FormLabel>
-                                            <Enddatepicker/>
+                                            <FormLabel>End / Passing Year</FormLabel><br/>
+                                            <Enddatepicker endyear="enddate3" />
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Button className="cancelbtn cancel" variant="outlined">Cancel</Button>
-                                            <Button className="nextbtn save" variant="contained">Save</Button>
+                                            <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
+                                            <Primarybutton addclass="nextbtn" buttonlabel="Save"/>
                                         </Grid>
                                     </Grid>
                                     <Grid container sx={{my:3}} spacing={2}>
@@ -121,7 +135,7 @@ const PolticalandGovrnform =()=>{
                                                         placeholder="00"/>
                                         </Grid>
                                     </Grid>
-                                    <Grid container sx={{my:3}}>
+                                    <Grid container sx={{my:3}} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
@@ -143,19 +157,19 @@ const PolticalandGovrnform =()=>{
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                                <Startdatepicker/>
+                                                <Startdatepicker startyear='startdate4'/>
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <FormLabel>End Year</FormLabel>
-                                                <Enddatepicker/>
+                                                <Enddatepicker endyear="endyear4"/><br/>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Button className="cancelbtn cancel" variant="outlined">Cancel</Button>
-                                                <Button className="nextbtn save" variant="contained">Save</Button>
+                                                <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
+                                                <Primarybutton addclass="nextbtn" buttonlabel="Save"/>
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container>
+                                    <Grid container className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>3</Box> Social Affiliation <InfoOutlinedIcon/>
@@ -179,28 +193,94 @@ const PolticalandGovrnform =()=>{
                                                 placeholder="Please enter your Organization description."
                                             />
                                         </Grid>
-                                    </Grid>
-                                    <Grid container >
+                                        <Grid item  xs={12}>
+                                        {showFields && formValues.map((field, index) => (
+                                         
+                                                <Grid container>
+                                                    <Grid item sx={{mb:2}} xs={12}>
+                                                        <Typography variant="h5" content="h5">
+                                                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>3{count}</Box> Social Affiliation <InfoOutlinedIcon/>
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={4} sx={{mb:2}}>
+                                                        <FormLabel>Organization </FormLabel>
+                                                        <Inputfield type="text"
+                                                                    name="organization"
+                                                                    placeholder="Enter Organization "/>
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                                                        <TextField
+                                                            className='p-0'
+                                                            fullWidth
+                                                            name="desc"
+                                                            multiline
+                                                            minRows={3}
+                                                            maxRows={4}
+                                                            placeholder="Please enter your Organization description."
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                        <Grid item  xs={12}>
+                                        <Primarybutton addclass="addanotherfieldsbtn me-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={()=>handlesocialfield()}/>
+                                            
+                                            {formValues.length>=1 ?(
+                                                 <Primarybutton addclass="deletebtn mt-3" starticon={<DeleteIcon/>} handleclick={()=>handledelete(formValues.length-1)}/>
+                                            ):null}
+                                        </Grid>
+                                        
+                                         
+                                         </Grid>
+                                    <Grid container className="grid-wrap">
                                         <Grid item sx={{mt:3}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>4</Box> Electoral / Government <sup>*</sup>
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={4} sx={{mt:2, ml:3}}>
-                                            <FormLabel>Have you contested any election?</FormLabel>
+                                            <FormLabel fullwidth>Have you contested any election?</FormLabel>
                                             <div className='d-flex'>
                                                 <label className='d-flex justify-content-start me-3 ' >
-                                                    <Field className="w-auto me-2" type="radio" name="picked" value="One" /> Yes
+                                                    <Field onChange={handleaddField} className="w-auto me-2" type="radio" name="picked" value="One" /> Yes
                                                 </label>
                                                 <label className='d-flex justify-content-start'>
-                                                    <Field type="radio" className="w-auto me-2" name="picked" value="Two" /> No
+                                                    <Field onChange={handlremoveField} type="radio" className="w-auto me-2" name="picked" value="Two" /> No
                                                 </label>
                                             </div>
                                         </Grid>
                                         <Grid item xs={12} sx={{mb:2}}>
-                                            <Button  className="addanotherfieldsbtn me-2" onClick={handleAddField} sx={{ mb: 2 }} startIcon={<AddIcon/>}>
-                                                Add More
-                                            </Button>
+                                            <Grid container spacing={2} className='px-5 py-3'>
+                                                <Grid item xs={4}>
+                                                    {electfiled &&(
+                                                        <Selectfield selectedvalues={selectedOption} handleSelectChange={selectChange} name="election"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
+                                                    )}
+                                                </Grid>
+                                                <Grid item xs={9}>
+                                                {selectedOption === 'Lok sabha' && (
+                                                        <Stepfouraddmore/>
+                                                )}
+                                                 {selectedOption === 'Rajya sabha' && (
+                                                        <Rajyasabhaform/>
+                                                )}
+                                                 {selectedOption === 'Legislative Assembly (vidhan sabha)' && (
+                                                        <Vidhansabhaform/>
+                                                )}
+                                                {selectedOption === 'Legislative Council (vidhan sabha)' && (
+                                                        <Vidhanprishadform/>
+                                                )}
+                                                {selectedOption === 'Urban Local body' && (
+                                                        <Urbanlocalfrom/>
+                                                )}
+                                                {selectedOption === 'Rural Local body' && (
+                                                         <Urbanlocalfrom/>
+                                                )}
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid item xs={12} sx={{mb:2}}>
+                                            <Primarybutton addclass="nextbtn mb-2" starticon={<AddIcon/>} buttonlabel="Add More"/>
                                             <Typography>( If fought any other election. )</Typography>
                                         </Grid>
                                     </Grid>

@@ -1,4 +1,4 @@
-import { Typography, Stack, Button, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
+import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -7,10 +7,11 @@ import Enddatepicker from "../component/enddatepicker/enddatepicker";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/button/button";
+import Savebtn from "../component/saveprogressbutton/button";
 import Selectfield from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
-
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import Primarybutton from '../component/primarybutton/primarybutton';
 const Educationform =()=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -80,14 +81,16 @@ const Educationform =()=>{
                         >
                             {({save})=>(
                                 <Form>
-                                    <Grid container sx={{mb:4}}>
-                                        <Grid item xs={4}>
-                                            <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                            <Selectfield name="religion"/>
-                                            <ErrorMessage name="education" component="div" />
+                                    <Grid container sx={{mb:5}} >
+                                        <Grid item xs={6} className='education-field pb-3'>
+                                            <Grid item xs={7}>
+                                                <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
+                                                <Selectfield name="religion"/>
+                                                <ErrorMessage name="education" component="div" />
+                                            </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container className="educationforms">
+                                    <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 Enter your educational detail ( All )
@@ -120,19 +123,19 @@ const Educationform =()=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                            <Startdatepicker/>
+                                            <Startdatepicker startyear="startdate" endIcon={<CalendarMonthIcon/>}/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>End / Passing Year</FormLabel><br/>
-                                            <Enddatepicker/>
+                                            <Enddatepicker endyear="enddate1" />
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <Button className="cancelbtn cancel" variant="outlined">Cancel</Button>
-                                            <Button className="nextbtn save" variant="contained">Save</Button>
+                                            <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
+                                            <Primarybutton addclass="nextbtn" buttonlabel="Save"/>
                                         </Grid>
                                     </Grid>
-                                    <Grid container sx={{my:3}}>
+                                    <Grid container sx={{my:5}} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Professional Profile
@@ -166,16 +169,16 @@ const Educationform =()=>{
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                                <Startdatepicker/>
+                                                <Startdatepicker startyear="startdate2"/>
                                             </Grid>
                                             <Grid item xs={4} textend>
                                                 <FormLabel>End / Passing Year</FormLabel><br/>
-                                                <Enddatepicker/>
+                                                <Enddatepicker endyear="enddate2"/>
                                                 <FormLabel className="checkbox align-items-center d-flex"><Field type="checkbox"  className="w-auto me-1" name="checked" value="One" /> Currently Working </FormLabel>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Button className="cancelbtn cancel" variant="outlined">Cancel</Button>
-                                                <Button className="nextbtn save" variant="contained">Save</Button>
+                                                <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
+                                                <Primarybutton addclass="nextbtn" buttonlabel="Save"/>
                                             </Grid>
                                         </Grid>
                                     </Grid>
