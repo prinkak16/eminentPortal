@@ -27,6 +27,7 @@ const UploadImage=()=>{
                 maxNumber={maxNumber}
                 dataURLKey="data_url"
                 acceptType={["png", "jpg"]}
+                name="photo"
             >
                 {({
                       imageList,
@@ -48,7 +49,7 @@ const UploadImage=()=>{
                         </div>
                         &nbsp;
                         <ThemeProvider theme={theme}>
-                            <Button className="uploadbtn" variant="outlined" startIcon={<PhotoCameraIcon />}
+                            <Button className="uploadbtn" name="photo" variant="outlined" startIcon={<PhotoCameraIcon />}
                                     style={isDragging ? { color: "#FF9559", background:"#FFE8DB", borderRadius: "4.714px" } : null}
                                     onClick={onImageUpload}
                                     {...dragProps}

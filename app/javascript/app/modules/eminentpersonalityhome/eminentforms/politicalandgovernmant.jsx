@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
-import Enddatepicker from "../component/enddatepicker/enddatepicker";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
 import Selectfield from "../component/selectfield/selectfield";
 import Savebtn from "../component/saveprogressbutton/button";
-import './allfroms.scss'
 import Inputfield from "../component/inputfield/inputfield";
 import Stepfouraddmore from '../component/stepfouraddmore/selectlokshabha';
 import Rajyasabhaform from '../component/stepfouraddmore/selectrajyasabha';
@@ -25,8 +23,6 @@ const PolticalandGovrnform =()=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    
-    const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
     const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
     const [count, setcount]=useState(2)
@@ -48,10 +44,6 @@ const handleaddField = () => {
 function handlremoveField(){
     setElectfield(false)
 }
-const [selectedOption, setSelectedOption] = useState('');
-const selectChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -62,26 +54,11 @@ const selectChange = (e) => {
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={12}>
                         <Formik
-                            initialValues={{partylevel: "", unit: "", designation:"", startyear: "", endyear:""}}
+                            initialValues={{party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""}}
                             validate={(values) => {
                                 const errors = {};
-                                if (!values.education) {
-                                    errors.education = "Required";
-                                }
-                                if (!values.qualification) {
-                                    errors.qualification = "Required";
-                                }
-                                if(!values.college){
-                                    errors.college="Required"
-                                }
-                                if (!values.board) {
-                                    errors.board = "Required";
-                                }
-                                if (!values.school) {
-                                    errors.school = "Required";
-                                }
-                                if (!values.profession) {
-                                    errors.profession = "Required";
+                                if (!values.party_level) {
+                                    errors.party_level = "Required";
                                 }
                                 return errors;
                             }}
@@ -97,23 +74,24 @@ const selectChange = (e) => {
                                     <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={4}>
                                             <FormLabel>Party level <sup>*</sup></FormLabel>
-                                            <Selectfield name="partylevel"/>
+                                            <Selectfield name="party_level" optionList={['Select Party Level']}/>
+                                            <ErrorMessage name="party_level" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Unit</FormLabel>
-                                            <Selectfield name="unit"/>
+                                            <Selectfield name="unit" optionList={['Select Unit']}/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Designation</FormLabel>
-                                            <Selectfield name="designation"/>
+                                            <Selectfield name="designation" optionList={['Select Designation']}/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                            <Startdatepicker startyear="startdate3"/>
+                                            <Startdatepicker  year="start_year"/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>End / Passing Year</FormLabel><br/>
-                                            <Enddatepicker endyear="enddate3" />
+                                            <Startdatepicker  year="end_year"/>
                                         </Grid>
 
                                         <Grid item xs={12}>
@@ -157,11 +135,11 @@ const selectChange = (e) => {
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                                <Startdatepicker startyear='startdate4'/>
+                                                <Startdatepicker  year="start_year"/>
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <FormLabel>End Year</FormLabel>
-                                                <Enddatepicker endyear="endyear4"/><br/>
+                                                <FormLabel>End Year</FormLabel><br/>
+                                                <Startdatepicker  year="end_year"/>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
@@ -186,7 +164,7 @@ const selectChange = (e) => {
                                             <TextField
                                                 className='p-0'
                                                 fullWidth
-                                                name="desc"
+                                                name="description"
                                                 multiline
                                                 minRows={3}
                                                 maxRows={4}
@@ -213,7 +191,7 @@ const selectChange = (e) => {
                                                         <TextField
                                                             className='p-0'
                                                             fullWidth
-                                                            name="desc"
+                                                            name="description"
                                                             multiline
                                                             minRows={3}
                                                             maxRows={4}
@@ -243,10 +221,10 @@ const selectChange = (e) => {
                                             <FormLabel fullwidth>Have you contested any election?</FormLabel>
                                             <div className='d-flex'>
                                                 <label className='d-flex justify-content-start me-3 ' >
-                                                    <Field onChange={handleaddField} className="w-auto me-2" type="radio" name="picked" value="One" /> Yes
+                                                    <Field onChange={handleaddField} className="w-auto me-2" type="radio" name="won" value="One" /> Yes
                                                 </label>
                                                 <label className='d-flex justify-content-start'>
-                                                    <Field onChange={handlremoveField} type="radio" className="w-auto me-2" name="picked" value="Two" /> No
+                                                    <Field onChange={handlremoveField} type="radio" className="w-auto me-2" name="won" value="Two" /> No
                                                 </label>
                                             </div>
                                         </Grid>
@@ -254,7 +232,7 @@ const selectChange = (e) => {
                                             <Grid container spacing={2} className='px-5 py-3'>
                                                 <Grid item xs={4}>
                                                     {electfiled &&(
-                                                        <Selectfield selectedvalues={selectedOption} handleSelectChange={selectChange} name="election"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
+                                                        <Selectfield selectedvalues={selectedOption} handleSelectChange={selectChange} name="state"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
                                                     )}
                                                 </Grid>
                                                 <Grid item xs={9}>

@@ -1,15 +1,21 @@
 import * as React from 'react';
 import {Formik, Form, Field} from "formik";
 import "./inputfield.scss"
-const Inputfield=({name,type,placeholder, handlechange, value})=>{
+import { TextField , InputAdornment} from '@mui/material';
+const Inputfield=({name,type,placeholder,endicon, inputprop,maxnumber})=>{
     return(
         <>
             <Field
+
                 type={type}
                 name={name}
+                max={maxnumber}
                 placeholder={placeholder}
-                onChange={handlechange}
-                value={value}
+                InputProps={inputprop}
+                as={TextField} 
+                    endIcon={endicon}
+                fullWidth
+
             />
         </>
     )

@@ -4,7 +4,7 @@ import React from "react";
 
 const Savebtn=({handleSave})=>{
     return(<>
-            <Button onClick={handleSave} variant="text" endIcon={<InfoIcon/>}>Save Progress</Button>
+            <Button type="submit" disabled={handleSave} variant="text" endIcon={<InfoIcon/>}>Save Progress</Button>
         </>
     )
 

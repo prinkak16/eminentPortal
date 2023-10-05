@@ -1,18 +1,15 @@
-import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
+import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
-import Enddatepicker from "../component/enddatepicker/enddatepicker";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Selectfield from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import Primarybutton from '../component/primarybutton/primarybutton';
-const Educationform =()=>{
+const Educationform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -20,24 +17,6 @@ const Educationform =()=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [fields, setFields] = useState([""]);
-
-    const handleAddField = () => {
-        setFields([...fields, ""]);
-    };
-    const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
-    const [showFields, setShowFields] = useState(false);
-    const [formValues, setFormValues] = useState([])
-    let addFormFields = () => {
-        setFormValues([...formValues, { house: "", street: "", pincode:"", city:"", state:"", date: new Date() }])
-        setShowFields(true)
-    }
-
-    let removeFormFields = (i) => {
-        let newFormValues = [...formValues];
-        newFormValues.splice(i-1, 1);
-        setFormValues(newFormValues)
-    }
 
     return(
         <>
@@ -49,14 +28,14 @@ const Educationform =()=>{
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={12}>
                         <Formik
-                            initialValues={{education: "", qualification: "", college:"", board: "", school:"",profession:""}}
+                            initialValues={{qualification: "", subject:"" , college:"", board: "", school:"",profession:""}}
                             validate={(values) => {
                                 const errors = {};
-                                if (!values.education) {
-                                    errors.education = "Required";
-                                }
                                 if (!values.qualification) {
                                     errors.qualification = "Required";
+                                }
+                                if (!values.subject) {
+                                    errors.subject = "Required";
                                 }
                                 if(!values.college){
                                     errors.college="Required"
@@ -70,6 +49,7 @@ const Educationform =()=>{
                                 if (!values.profession) {
                                     errors.profession = "Required";
                                 }
+                                props.enableProgressAction(Objects.keys(errors).length===0);
                                 return errors;
                             }}
                             onSubmit={(values, { setSubmitting }) => {
@@ -85,8 +65,8 @@ const Educationform =()=>{
                                         <Grid item xs={6} className='education-field pb-3'>
                                             <Grid item xs={7}>
                                                 <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                                <Selectfield name="religion"/>
-                                                <ErrorMessage name="education" component="div" />
+                                                <Selectfield name="qualification"  optionList={['Select Highest Education','Delhi','Gurugram']}/>
+                                                <ErrorMessage name="qualification" component="div" />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -98,13 +78,13 @@ const Educationform =()=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Qualification <sup>*</sup></FormLabel>
-                                            <Selectfield name="qualification"/>
+                                            <Selectfield name="qualification"  optionList={['Select Qualification','Delhi','Gurugram']}/>
                                             <ErrorMessage name="qualification" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Course / Branch / Subject</FormLabel>
                                             <Inputfield type="text"
-                                                        name="course"
+                                                        name="subject"
                                                         placeholder="Enter Course / Branch / Subject"/>
                                         </Grid>
                                         <Grid item xs={4}>
@@ -123,11 +103,11 @@ const Educationform =()=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                            <Startdatepicker startyear="startdate" endIcon={<CalendarMonthIcon/>}/>
+                                            <Startdatepicker  year="start_year"/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>End / Passing Year</FormLabel><br/>
-                                            <Enddatepicker endyear="enddate1" />
+                                            <Startdatepicker year="end_year"/>
                                         </Grid>
 
                                         <Grid item xs={12}>
@@ -152,7 +132,7 @@ const Educationform =()=>{
                                             <Grid item xs={4}>
                                                 <FormLabel>Course / Branch / Subject</FormLabel>
                                                 <Inputfield type="text"
-                                                            name="sub"
+                                                            name="subject"
                                                             placeholder="Enter Course / Branch / Subject"/>
                                             </Grid>
                                             <Grid item xs={4}>
@@ -169,11 +149,11 @@ const Educationform =()=>{
                                             </Grid>
                                             <Grid item xs={4}>
                                                 <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                                <Startdatepicker startyear="startdate2"/>
+                                                <Startdatepicker  year="start_year"/>
                                             </Grid>
                                             <Grid item xs={4} textend>
                                                 <FormLabel>End / Passing Year</FormLabel><br/>
-                                                <Enddatepicker endyear="enddate2"/>
+                                                <Startdatepicker  year="end_year"/>
                                                 <FormLabel className="checkbox align-items-center d-flex"><Field type="checkbox"  className="w-auto me-1" name="checked" value="One" /> Currently Working </FormLabel>
                                             </Grid>
                                             <Grid item xs={12}>
@@ -183,7 +163,7 @@ const Educationform =()=>{
                                         </Grid>
                                     </Grid>
                                     <Grid container sx={{spacing:0}}>
-                                        <Grid item xs={12}>
+                                        <Grid item xs={8}>
                                             <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
                                             <TextField
                                                 className='p-0'

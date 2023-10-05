@@ -1,11 +1,10 @@
-import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
+import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea, InputAdornment} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
@@ -33,7 +32,10 @@ const Resumeform=()=>{
         allfields.splice(-1, 1);
         setFields(allfields)
     }
-
+    const [selectedOption, setSelectedOption] = useState('');
+    const selectChange = (e) => {
+        setSelectedOption(e.target.value);
+      };
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -44,27 +46,9 @@ const Resumeform=()=>{
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={8}>
                         <Formik
-                            initialValues={{name: "", relationship: "", profile:""}}
+                            initialValues={{name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"", }}
                             validate={(values) => {
                                 const errors = {};
-                                if (!values.education) {
-                                    errors.education = "Required";
-                                }
-                                if (!values.qualification) {
-                                    errors.qualification = "Required";
-                                }
-                                if(!values.college){
-                                    errors.college="Required"
-                                }
-                                if (!values.board) {
-                                    errors.board = "Required";
-                                }
-                                if (!values.school) {
-                                    errors.school = "Required";
-                                }
-                                if (!values.profession) {
-                                    errors.profession = "Required";
-                                }
                                 return errors;
                             }}
                             onSubmit={(values, { setSubmitting }) => {
@@ -85,14 +69,14 @@ const Resumeform=()=>{
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Relationship </FormLabel>
-                                            <Selectfield name="relationship"/>
+                                            <Selectfield name="relationship" selectedvalues={selectedOption} handleSelectChange={selectChange} optionList={['Select Relationship']}/>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
                                             <TextField
                                                 className='p-0'
                                                 fullWidth
-                                                name="desc"
+                                                name="profile"
                                                 multiline
                                                 minRows={3}
                                                 maxRows={4}
@@ -107,35 +91,38 @@ const Resumeform=()=>{
                                             </Typography>
                                         </Grid>
                                         <Grid container spacing={2} className="grid-wrap">
-                                            <Grid item xs={12}>
+                                            <Grid item xs={6}>
                                                 <FormLabel>Father's Name</FormLabel>
                                                 <Inputfield type="text"
-                                                            name="fathername"
-                                                            placeholder="Enter name"/>
+                                                            name="father"
+                                                            placeholder="Enter name"
+                                                            />
                                             </Grid>
-                                            <Grid item xs={12}>
+                                            <Grid item xs={6}>
                                                 <FormLabel>Mother's Name</FormLabel>
                                                 <Inputfield type="text"
-                                                            name="mothername"
-                                                            placeholder="Enter name"/>
+                                                            name="mother"
+                                                            placeholder="Enter name"
+                                                            />
                                             </Grid>
-                                            <Grid item xs={12}>
+                                            <Grid item xs={6}>
                                                 <FormLabel>Spouse Name</FormLabel>
                                                 <Inputfield type="text"
-                                                            name="spousename"
-                                                            placeholder="Enter name"/>
+                                                            name="spouse"
+                                                            placeholder="Enter name"
+                                                            />
                                             </Grid>
-                                            <Grid item xs={12}>
+                                            <Grid item xs={6}>
                                                 <FormLabel>Children Name</FormLabel>
                                                 <Inputfield type="text"
-                                                            name="childrenname"
+                                                            name="child"
                                                             placeholder="Enter name"/>
                                             </Grid>
                                             {showFields && fields.map((field, index) => (
-                                                <Grid item xs={12}>
+                                                <Grid item xs={6}>
                                                     <FormLabel>Children Name</FormLabel>
                                                     <Inputfield type="text"
-                                                                name="Add another detail"
+                                                                name="children"
                                                                 placeholder="Enter detail"/>
                                                 </Grid>
                                             ))}
@@ -147,18 +134,46 @@ const Resumeform=()=>{
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container sx={{spacing:0}} className="grid-wrap">
+                                    <Grid container spacing={2} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
                                                 <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>3</Box> Links <InfoOutlinedIcon/>
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={4} sx={{mb:2}}>
+                                        <Grid item xs={6} sx={{mb:2}}>
                                             <FormLabel>Website</FormLabel>
                                             <Inputfield type="text"
                                                         name="website"
                                                         placeholder="Enter Your website Url"
-                                                        endIcon={<HelpOutlineOutlinedIcon/>}/>
+                                                        inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                        </Grid>
+                                        <Grid item xs={6} sx={{mb:2}}>
+                                            <FormLabel>Twitter</FormLabel>
+                                            <Inputfield type="text"
+                                                        name="website"
+                                                        placeholder="Enter your twitter Url"
+                                                        inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                        </Grid>
+                                        <Grid item xs={6} sx={{mb:2}}>
+                                            <FormLabel>Linkedin</FormLabel>
+                                            <Inputfield type="text"
+                                                        name="website"
+                                                        placeholder="Enter your linkedin Url"
+                                                        inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                        </Grid>
+                                        <Grid item xs={6} sx={{mb:2}}>
+                                            <FormLabel>Facebook</FormLabel>
+                                            <Inputfield type="text"
+                                                        name="website"
+                                                        placeholder="Enter your facebook Url"
+                                                        inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                        </Grid>
+                                        <Grid item xs={6} sx={{mb:2}}>
+                                            <FormLabel>Instagram</FormLabel>
+                                            <Inputfield type="text"
+                                                        name="website"
+                                                        placeholder="Enter your instagram Url"
+                                                        inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <FormLabel>Description <InfoOutlinedIcon/></FormLabel>

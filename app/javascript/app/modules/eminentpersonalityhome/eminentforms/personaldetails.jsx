@@ -1,6 +1,6 @@
-import React from "react"
-import {Stack, Typography, Button, Box, Paper, Grid, FormLabel} from '@mui/material';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import React, {useState} from "react"
+import {Stack, Typography, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import ImageUpload from '../component/imageupload/imageupload';
 import './allfroms.scss'
@@ -9,7 +9,8 @@ import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Selectfield from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
-const Personaldetailsform=()=>{
+import DeleteIcon from '@mui/icons-material/Delete';
+const Personaldetailsform=(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -17,77 +18,93 @@ const Personaldetailsform=()=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+    const [selectedOption, setSelectedOption] = useState('');
+    const selectChange = (e) => {
+        setSelectedOption(e.target.value);
+    };
+    const mobilenum= /^([0]{1}|\+?[234]{3})([7-9]{1})([0|1]{1})([\d]{1})([\d]{7})$/g;
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
-
-                <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Personal Detail" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn handleSave={() => {save.submitForm()}}/></Item>
-                </Stack>
-                <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={8}>
-                        <Formik
-                            initialValues={{fullname: "", religion: "", gender: "", category:"",caste:"",subcaste:"",date:"", month:"", year:"" }}
-                            validate={(values) => {
-                                const errors = {};
-                                if (!values.fullname) {
-                                    errors.fullname = "Required";
-                                }
-                                if (!values.religion) {
-                                    errors.religion = "Required";
-                                }
-                                if (!values.gender) {
-                                    errors.gender = "Required";
-                                }
-                                if (!values.category) {
-                                    errors.category = "Required";
-                                }
-                                if (!values.caste) {
-                                    errors.religion = "Required";
-                                }
-                                if (!values.subcaste) {
-                                    errors.subcaste = "Required";
-                                }
-                                if (!values.date) {
-                                    errors.date = "Required";
-                                }
-                                if (!values.month) {
-                                    errors.month = "Required";
-                                }
-                                if (!values.year) {
-                                    errors.year = "Required";
-                                }
-                                return errors;
-                            }}
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                    alert(JSON.stringify(values, null, 2));
-                                    setSubmitting(false);
-                                }, 400);
-                            }}
-                        >
-                            {({save})=>(
-                                <Form>
+            <Formik
+                initialValues={{name: "", mobile:"", religion: "", gender: "", category:"", caste:"", sub_caste:"", dob:"", photo:"", languages:"", aadhar:"", voter_id:"",  }}
+                validate={(values) => {
+                    const errors = {};
+                    if (!values.name) {
+                        errors.name = "Please enter a name";
+                    }
+                    if(!/^\d+$/.test(value)){
+                        errors.mobile="Required"
+                    }else if(!regex.test(values.mobile)){
+                            errors.mobile="Please enter valid phone number"
+                    }
+                    if (!values.religion) {
+                        errors.religion = "Please select religion";
+                    }
+                    if (!values.gender) {
+                        errors.gender = "Required";
+                    }
+                    if (!values.category) {
+                        errors.category = "Required";
+                    }
+                    if (!values.caste) {
+                        errors.caste = "Required";
+                    }
+                    if (!values.sub_caste) {
+                        errors.sub_caste = "Required";
+                    }
+                    if (!values.dob) {
+                        errors.dob = "Required";
+                    }
+                    props.enableProgressAction(Object.keys(errors).length === 0);
+                    return errors;
+                }}
+                 onSubmit={(values, { setSubmitting }) => {
+                    setTimeout(() => {
+                    alert(JSON.stringify(values, null, 2));
+                    setSubmitting(false);
+                    }, 400);
+                }}
+            >
+                {({ isSubmitting }) => (
+                    <Form>
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
+                                <Item><Formheading number="1" heading="Personal Detail" /></Item>
+                                <Item sx={{textAlign:'right'}}>
+                                    <Savebtn handleSave={isSubmitting}/>
+                                    </Item>
+                            </Stack>
+                            <Grid className='detailFrom' container spacing={2}>
+                                <Grid item xs={8}>
                                     <Grid  className="grid-wrap" container spacing={2} sx={{mb:5}}>
-                                        <Grid item xs={12}>
+                                        <Grid item xs={6}>
+
                                             <FormLabel>Fullname <sup>*</sup></FormLabel>
-                                            <Inputfield  type="text" name="fullname" placeholder="Fullname (As Per Pan Card)"/>
-                                            <ErrorMessage name="fullname" component="div" />
+                                            <Inputfield endicon={<DeleteIcon/>} type="text" name="name" placeholder="Fullname (As Per Pan Card)"/>
+                                            <ErrorMessage name="name" component="div" />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <FormLabel>Mobile Number <sup>*</sup></FormLabel>
+                                            <Inputfield type="number"
+                                                        name="mobile"
+                                                        placeholder="Enter Mobile No."
+                                                        maxnumber="10"/>
+
+                                            <ErrorMessage name="mobile" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Religion <sup>*</sup></FormLabel>
-                                            <Selectfield name="religion"/>
+                                            <Selectfield name="religion" selectedvalues={selectedOption} handleSelectChange={selectChange}  optionList={['Select Religion', 'Hinduism', 'Islam']}/>
                                             <ErrorMessage name="religion" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Gender <sup>*</sup></FormLabel>
-                                            <Selectfield name="gender"/>
+                                            <Selectfield name="gender" selectedvalues={selectedOption} handleSelectChange={selectChange}  optionList={['Select Gender','Male', 'female', 'Other']}/>
                                             <ErrorMessage name="gender" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Category <sup>*</sup></FormLabel>
-                                            <Selectfield name="category"/>
+                                            <Selectfield name="category" selectedvalues={selectedOption} handleSelectChange={selectChange}  optionList={['Select Category','Gen']}/>
                                             <ErrorMessage name="category" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
@@ -97,39 +114,39 @@ const Personaldetailsform=()=>{
                                         </Grid>
                                         <Grid item xs={6} className="mb-md-0">
                                             <FormLabel>Sub Caste  <sup>*</sup></FormLabel>
-                                            <Inputfield type="text" name="subcaste" placeholder="Enter Sub Caste"/>
-                                            <ErrorMessage name="subcaste" component="div" />
+                                            <Inputfield type="text" name="sub_caste" placeholder="Enter Sub Caste"/>
+                                            <ErrorMessage name="sub_caste" component="div" />
                                         </Grid>
                                         <Grid item xs={6} className="mb-md-0">
                                             <FormLabel>Date of birth  <sup>*</sup></FormLabel>
                                             <Grid className='detailFrom' container spacing={2}>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="date"
+                                                                name="dob"
                                                                 placeholder="DD"/>
 
-                                                    <ErrorMessage name="date" component="div" />
+                                                    <ErrorMessage name="dob" component="div" value=""/>
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="month"
+                                                                name="dob"
                                                                 placeholder="MM"/>
 
-                                                    <ErrorMessage name="month" component="div" />
+                                                    <ErrorMessage name="dob" component="div" value=""/>
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="year"
+                                                                name="dob"
                                                                 placeholder="YYYY"/>
 
-                                                    <ErrorMessage name="year" component="div" />
+                                                    <ErrorMessage name="dob" component="div" value=""/>
                                                 </Grid>
                                             </Grid>
                                             <Typography><Age alt='age'/> 44 Years</Typography>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Languages known</FormLabel>
-                                            <Selectfield name="languageknown"/>
+                                            <Selectfield name="languages" selectedvalues={selectedOption} handleSelectChange={selectChange}  optionList={['Select Languge']}/>
                                         </Grid>
                                     </Grid>
                                     <Grid container spacing={2} sx={{mb:5}}>
@@ -139,32 +156,33 @@ const Personaldetailsform=()=>{
                                         <Grid item xs={6}>
                                             <FormLabel>Aadhar No. (optional)</FormLabel>
                                             <Inputfield type="text"
-                                                        name="aadharno"
+                                                        name="aadhaar"
                                                         placeholder="XXXX-XXXX-XXXX"/>
 
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Voter Id. (optional)</FormLabel>
                                             <Inputfield type="text"
-                                                        name="voterid"
+                                                        name="voter_id"
                                                         placeholder="Voter Id. (optional)"/>
 
                                         </Grid>
                                     </Grid>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <ImageUpload cardName="Input Image"/>
+                                    </Item>
+                                </Grid>
+                            </Grid>
 
-                                </Form>
-                            )}
+                        </Box>
+                        
+                    </Form>
 
-                        </Formik>
-                    </Grid>
-                    <Grid item xs={4}>
+                )}
 
-                        <Item>
-                            <ImageUpload cardName="Input Image"/>
-                        </Item>
-                    </Grid>
-                </Grid>
-            </Box>
+            </Formik>
         </>
 
     )

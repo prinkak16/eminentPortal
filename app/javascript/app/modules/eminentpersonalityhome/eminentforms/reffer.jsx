@@ -2,7 +2,6 @@ import React from "react"
 import {Stack, Typography, Button, Box, Paper, Grid, FormLabel} from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
-import './allfroms.scss'
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
@@ -25,7 +24,7 @@ const Refferedform=()=>{
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={8}>
                         <Formik
-                            initialValues={{name: "", phoneno: "", bjpid: "", write:""}}
+                            initialValues={{name: "", mobile: "", bjpid: "", grade:"", comments:""}}
                             validate={(values) => {
                                 const errors = {};
 
@@ -43,14 +42,14 @@ const Refferedform=()=>{
                                         <Grid item xs={6}>
                                             <FormLabel>Name</FormLabel>
                                             <Inputfield type="text"
-                                                        name="entername"
+                                                        name="name"
                                                         placeholder="Enter Name"/>
 
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Phone no.</FormLabel>
                                             <Inputfield type="text"
-                                                        name="phoneno"
+                                                        name="mobile"
                                                         placeholder="Enter phone no."/>
 
                                         </Grid>
@@ -62,10 +61,16 @@ const Refferedform=()=>{
 
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>BJP ID</FormLabel>
-                                            <Inputfield type="text"
-                                                        name="write"
-                                                        placeholder="Write something "/>
+                                            <FormLabel>Remark</FormLabel>
+                                            <TextField
+                                                className='p-0'
+                                                fullWidth
+                                                name="comments"
+                                                multiline
+                                                minRows={3}
+                                                maxRows={4}
+                                                placeholder="Write something"
+                                            />
                                         </Grid>
                                     </Grid>
                                 </Form>

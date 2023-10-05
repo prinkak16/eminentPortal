@@ -26,10 +26,10 @@ const  Winchoiseselect=()=>{
                     <FormLabel fullwidth>Do you win ?</FormLabel>
                     <div className='d-flex'>
                         <label className='d-flex justify-content-start me-3 ' >
-                            <Field onChange={handlewinyes} className="w-auto me-2" type="radio" name="picked" value="One" /> Yes
+                            <Field onChange={handlewinyes} className="w-auto me-2" type="radio" name="win" value="One" /> Yes
                         </label>
                         <label className='d-flex justify-content-start'>
-                            <Field onChange={handlewinno} type="radio" className="w-auto me-2" name="picked" value="Two" /> No
+                            <Field onChange={handlewinno} type="radio" className="w-auto me-2" name="win" value="Two" /> No
                         </label>
                     </div>
                 </Grid>
@@ -38,10 +38,10 @@ const  Winchoiseselect=()=>{
                         <FormLabel fullwidth>Do you have any portfolio as Minister ?</FormLabel>
                         <div className='d-flex'>
                             <label className='d-flex justify-content-start me-3 ' >
-                                <Field onChange={handleportyes} className="w-auto me-2" type="radio" name="port" value="One" /> Yes
+                                <Field onChange={handleportyes} className="w-auto me-2" type="radio" name="win" value="One" /> Yes
                             </label>
                             <label className='d-flex justify-content-start'>
-                                <Field  onChange={handleportno} type="radio" className="w-auto me-2" name="port" value="Two" /> No
+                                <Field  onChange={handleportno} type="radio" className="w-auto me-2" name="win" value="Two" /> No
                             </label>
                         </div>
                     </Grid>
@@ -51,7 +51,7 @@ const  Winchoiseselect=()=>{
                         <Grid item xs={6}>
                             <FormLabel fullwidth>Name of Ministry</FormLabel>
                             <Inputfield type="text"
-                            name="ministry"
+                            name="ministry_name "
                             placeholder="Enter Name of Ministry "/>
                             
                         </Grid>

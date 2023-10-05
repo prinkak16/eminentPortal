@@ -1,15 +1,31 @@
 $border: rgba(0, 0, 0, 0.40);
 $blackcolor: #000;
+.custom-select{
+  background-image: url('/assets/keyboard_arrow_down.png');
+  appearance: none;
+  background-size: 1.5rem;
+  background-repeat: no-repeat;
+  background-position: 98% 50%;
+  cursor: pointer;
+}
 select{
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 8px;
   border: 1px solid ($border);
-  padding: 18px 10px;
+  padding: 12.5px 10px;
   width: 100%;
-  margin-top: 6px;
+  margin-top: 2px;
   font-weight: 400;
   background: transparent;
+  color: rgba(0, 0, 0, 0.60);
   option{
     color: ($blackcolor);
   }
+  .selectOption{
+    padding: 8px 12px; /* Spacing inside each option */
+    background: red; /* Text color of the options */
+    cursor: pointer; /* Cursor on hover */
+    transition: background-color 0.2s;
+  }
 }
+
