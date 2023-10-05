@@ -11,25 +11,27 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_user
-    token = (request.env["HTTP_AUTHORIZATION"] || "").split(" ").last
-    if token&.present?
-      user = handle_api_auth(api_token: token)
-      if user.present?
-        session[:user_id] = user
+    unless current_user.present?
+      token = (request.env['HTTP_AUTHORIZATION'] || '').split(' ').last
+      if token&.present?
+        user = handle_api_auth(api_token: token)
+        if user.present?
+          session[:user_id] = user
+        else
+          render json: {
+            status: :redirect,
+            link: ENV['SIGN_IN_URL']
+          }
+        end
       else
-        render json: {
-          status: :redirect,
-          link: ENV['SIGN_IN_URL']
-        }
-      end
-    else
-      if session[:user_id].present?
-        current_user
-      else
-        render json: {
-          status: :redirect,
-          link: ENV['SIGN_IN_URL']
-        }
+        if session[:user_id].present?
+          current_user
+        else
+          render json: {
+            status: :redirect,
+            link: ENV['SIGN_IN_URL']
+          }
+        end
       end
     end
   end
