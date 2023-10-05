@@ -291,7 +291,7 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
@@ -320,12 +320,12 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
           'end_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           }
@@ -370,12 +370,12 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
           'end_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           }
@@ -456,12 +456,12 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
           'end_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           }
@@ -470,12 +470,12 @@ module CustomMemberFormHelper
       },
     },
     'rss_years': {
-      'type': 'integer',
+      'type': [nil,'integer'],
       'minimum': 0,
       'maximum': 80
     },
     'bjp_years': {
-      'type': 'integer',
+      'type': [nil,'integer'],
       'minimum': 0,
       'maximum': 80
     },
@@ -493,12 +493,12 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
           'end_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           }
@@ -531,7 +531,7 @@ module CustomMemberFormHelper
             'type': 'boolean'
           },
           'contesting_year': {
-            'type': 'integer',
+            'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
           },
