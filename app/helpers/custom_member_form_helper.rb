@@ -291,7 +291,9 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'year': {
-            'type': [nil,'string']
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'subject': {
             'type': [nil,'string'],
@@ -318,11 +320,15 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': [nil,'string']
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'end_year': {
-            'type': [nil,'string']
-          },
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
+          }
         },
         'required': %w[qualification school board year subject stream course university college department start_year end_year]
       }
@@ -364,10 +370,14 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'end_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           }
         },
         'required': %w[profession organisation position start_year end_year]
@@ -446,10 +456,14 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'end_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           }
         },
         'required': %w[party_level unit designation start_year end_year]
@@ -479,10 +493,14 @@ module CustomMemberFormHelper
             'maxLength': 200 # Max length of 200 characters
           },
           'start_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'end_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           }
         },
         'required': %w[party position start_year end_year]
@@ -513,7 +531,9 @@ module CustomMemberFormHelper
             'type': 'boolean'
           },
           'contesting_year': {
-            'type': 'string'
+            'type': 'integer',
+            'minimum': 1900,
+            'maximum': 3000
           },
           'electoral_type': {
             'type': 'string'
@@ -816,14 +836,14 @@ module CustomMemberFormHelper
             'maxLength': 10 # Max length of 10 characters
           },
           'grade': {
-            'type': 'string',
+            'type': 'string'
           },
           'comments': {
-            'type': 'string',
+            'type': 'string'
           }
         },
         'required': %w[name mobile bjp_id grade comments]
-      },
+      }
     }
   )
 
@@ -951,6 +971,18 @@ module CustomMemberFormHelper
           'type': error['type'],
           'key': attribute_key,
           'message': "'#{attribute_key}' maximum item should be of '#{error['schema']['maxItems']}' count."
+        }
+      when 'minimum'
+        error_messages << {
+          'type': error['type'],
+          'key': attribute_key,
+          'message': "'#{attribute_key}' minimum value should be #{error['schema']['minimum']}."
+        }
+      when 'maximum'
+        error_messages << {
+          'type': error['type'],
+          'key': attribute_key,
+          'message': "'#{attribute_key}' maximum value should be #{error['schema']['maximum']}."
         }
       end
     end
