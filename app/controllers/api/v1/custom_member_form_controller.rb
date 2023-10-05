@@ -217,8 +217,4 @@ class Api::V1::CustomMemberFormController < ApplicationController
       end
     end
   end
-
-  def check
-    render json: { success: true, message: 'success', data: validate_form }, status: :ok
-  end
 end
