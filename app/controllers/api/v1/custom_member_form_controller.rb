@@ -60,7 +60,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
           success: false,
           message: 'Invalid request',
           error: is_form_data_is_valid[:error],
-          log: is_form_data_is_valid[:log]
+          # log: is_form_data_is_valid[:log]
         }, status: :bad_request
       end
 
