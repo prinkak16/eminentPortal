@@ -1,4 +1,7 @@
 module AuthHelper
+  def ccdms_secret_key
+    return Rails.application.credentials.dig(:secret_key_ccdms)
+  end
   def is_signed_in_user?
     session[:user_id].present?
   end
@@ -25,5 +28,21 @@ module AuthHelper
     key = OpenSSL::PKey::RSA.new(REDIS_CLIENT_APP.get(params[:kid]))
     jti_token = JWT.decode token, key, true, { algorithm: 'RS512' }
     return User.find_by(jti: jti_token[0])&.id
+  end
+
+  def sync_auth_users(user_id)
+    user_detail = User.find_by(id: user_id)
+    fetch_user_detail = AuthUser.where(id: user_id).first_or_create!
+    auth_user = AuthUser.find_by(id: fetch_user_detail.id).update(name: user_detail&.name)
+    return auth_user
+  end
+
+  def handle_api_auth(api_token:)
+    jti_token = JWT.decode api_token, ccdms_secret_key
+    if jti_token[0]['user_id'].present?
+      return User.find_by(jti: jti_token[0]['user_id'])&.id
+    else
+      return nil
+    end
   end
 end
