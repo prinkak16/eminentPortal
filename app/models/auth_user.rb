@@ -1,0 +1,3 @@
+class AuthUser < ApplicationRecord
+
+end
