@@ -3,27 +3,80 @@ class Api::V1::CustomMemberFormController < ApplicationController
   before_action :authenticate_user
   include CustomMemberFormHelper
 
-  def custom_member_exists?(phone_number, form_type, cm_id)
-    CustomMemberForm.where.not(id: cm_id).where(phone: phone_number, form_type: form_type).exists?
-  end
   def add
     begin
-      unless params[:data].present?
-        render json: { success: false, message: 'Invalid request' }, status: :bad_request
+      # check if the base of the eminent form is valid
+      is_form_params_valid = validate_form(@@schema_base, params.as_json)
+      unless is_form_params_valid[:is_valid]
+        return render json: {
+          success: false,
+          message: 'Invalid request',
+          error: is_form_params_valid[:error],
+          # log: is_form_params_valid[:log]
+        }, status: :bad_request
       end
+
+      # check if the data of the eminent is valid
+      is_form_data_is_valid = {
+        'is_valid': false,
+        'error': [],
+        'log': []
+      }
+
+      case params['is_draft']
+      when true
+        case params['form_step']
+        when 1
+          is_form_data_is_valid = validate_form(@@schema_first_step_progress, params['data'].as_json)
+        when 2
+          is_form_data_is_valid = validate_form(@@schema_second_step_progress, params['data'].as_json)
+        when 3
+          is_form_data_is_valid = validate_form(@@schema_third_step_progress, params['data'].as_json)
+        when 4
+          is_form_data_is_valid = validate_form(@@schema_fourth_step_progress, params['data'].as_json)
+        when 5
+          is_form_data_is_valid = validate_form(@@schema_fifth_step_progress, params['data'].as_json)
+        when 6
+          is_form_data_is_valid = validate_form(@@schema_sixth_step_progress, params['data'].as_json)
+        end
+      else
+        case params['form_step']
+        when 1
+          is_form_data_is_valid = validate_form(@@schema_first_step, params['data'].as_json)
+        when 2
+          is_form_data_is_valid = validate_form(@@schema_second_step, params['data'].as_json)
+        when 3
+          is_form_data_is_valid = validate_form(@@schema_third_step, params['data'].as_json)
+        when 4
+          is_form_data_is_valid = validate_form(@@schema_fourth_step, params['data'].as_json)
+        when 5
+          is_form_data_is_valid = validate_form(@@schema_fifth_step, params['data'].as_json)
+        when 6
+          is_form_data_is_valid = validate_form(@@schema_sixth_step, params['data'].as_json)
+        end
+      end
+
+      unless is_form_data_is_valid[:is_valid]
+        return render json: {
+          success: false,
+          message: 'Invalid request',
+          error: is_form_data_is_valid[:error],
+          # log: is_form_data_is_valid[:log]
+        }, status: :bad_request
+      end
+
       custom_member = params[:data][:id].present? ? CustomMemberForm.find_by_id(params[:data][:id]) : nil
       phone_number = params[:data][:mobiles]
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       existing_custom_users_found = false
+
       if form_type === CustomMemberForm::TYPE_EMINENT
         unless existing_custom_users_found && phone_number.present?
           existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
         end
       end
-      if existing_custom_users_found
-        raise StandardError, "Phone number already exist"
-      end
+      raise StandardError, 'Phone number already exist' if existing_custom_users_found
 
       if custom_member.blank?
         # used only for creation of eminent_personality type custom member form
@@ -35,7 +88,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
           created_by: current_auth_user,
           device_info: params[:device_info],
           version: CustomMemberForm.latest_eminent_version,
-          phone: phone_number
+          phone: phone_number[0]
         )
         # check if is in draft state
         if is_draft && custom_member.may_mark_incomplete?
@@ -47,9 +100,12 @@ class Api::V1::CustomMemberFormController < ApplicationController
         end
         if is_draft
           render json: {
-            success: true, data: custom_member, message: 'Member.' }, status: :ok
+            success: true, data: custom_member, message: 'Member.'
+          }, status: :ok
         else
-          render json: { success: true, message: 'Member Saved successfully' }, status: :ok
+          render json: {
+            success: true, message: 'Member Saved successfully'
+          }, status: :ok
         end
       else
         # used for updation of eminent_personality custom member form
@@ -139,7 +195,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
 
     if custom_member_form.nil?
       render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
-      return
+      nil
     else
       unless custom_member_form.check_otp_validation(params[:otp])
         render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
@@ -150,17 +206,19 @@ class Api::V1::CustomMemberFormController < ApplicationController
       encrypted_key = BCrypt::Password.create("#{params[:phone]}-#{params[:otp]}")
       custom_member_form.token = encrypted_key
 
-      if custom_member_form.may_verify?
-        custom_member_form.verify!
-      end
+      custom_member_form.verify! if custom_member_form.may_verify?
 
       if custom_member_form.save
         render json: { success: true, auth_token: encrypted_key, id: custom_member_form.id, name: custom_member_form.data['name'] || '', is_view: custom_member_form.aasm_state == 'approved' }, status: :ok
-        return
+        nil
       else
         render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
-        return
+        nil
       end
     end
+  end
+
+  def check
+    render json: { success: true, message: 'success', data: validate_form }, status: :ok
   end
 end

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
+      get 'custom_member_forms/check', to: 'custom_member_form#check'
     end
     namespace :sync do
       get 'states', to: 'state#sync'
