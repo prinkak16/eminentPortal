@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'metadata/genders', to: 'metadata#genders'
       get 'metadata/categories', to: 'metadata#categories'
       get 'metadata/religions', to: 'metadata#religions'
       get 'metadata/educations', to: 'metadata#educations'

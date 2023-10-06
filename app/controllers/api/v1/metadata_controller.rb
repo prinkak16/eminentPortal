@@ -1,6 +1,24 @@
 class Api::V1::MetadataController < ApplicationController
   before_action :authenticate_user
 
+  def genders
+    render json: {
+      success: true,
+      data: [
+        {
+          'value': 'Male'
+        },
+        {
+          'value': 'Female'
+        },
+        {
+          'value': 'Others'
+        }
+      ],
+      message: 'Genders'
+    }, status: 200
+  end
+
   def categories
     condition = "CASE person_categories.name WHEN 'GEN' THEN '1' WHEN 'OBC' THEN '2' WHEN 'SC' THEN '3' WHEN 'ST' THEN '4' WHEN 'Minority' THEN '5' else 100 END"
     result = PersonCategory.all.order(Arel.sql(condition)).select(:id, :name)
