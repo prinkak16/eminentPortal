@@ -4,7 +4,7 @@ import "./inputfield.scss"
 import { TextField , InputAdornment} from '@mui/material';
 const Inputfield=({name,type,placeholder,endicon, inputprop,maxnumber, validatefield})=>{
 
-    console.log('asdfghjkl',name,type,placeholder,endicon, inputprop,maxnumber, validatefield)
+    console.log('asdfghjkl',name,type,placeholder,endicon, inputprop,maxnumber, validatefield, handleInputChange)
 
     return(
         <>
@@ -12,6 +12,7 @@ const Inputfield=({name,type,placeholder,endicon, inputprop,maxnumber, validatef
 
                 type={type}
                 name={name}
+                onChange={handleInputChange}
                 max={maxnumber}
                 validate={validatefield}
                 placeholder={placeholder}

@@ -10,10 +10,8 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Selectfield from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
 import DeleteIcon from '@mui/icons-material/Delete';
-import {getStepCtgry, getSteps} from "../../../api/./stepperApiEndpoints/stepper";
-import {stepOne} from "../../../api/api_endpoints";
-import axios from "axios";
-
+import {getFormData, getReligionData, getStepCtgry} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import * as Yup from 'yup';
 const Personaldetailsform = (props) => {
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -23,25 +21,28 @@ const Personaldetailsform = (props) => {
         flexGrow: 1,
     }));
     const [selectedOption, setSelectedOption] = useState('');
-    const [dropDownDataVishal, setDropDownDataVishal] = useState([]);
+    const [dropDownDataCategory, setDropDownDataCategory] = useState([]);
+    const [ReligionData, setReligionData] = useState([]);
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
     useEffect(() => {
         getcatgry()
+        getReligion()
     }, [])
-    //
-    // const getDetails = () => {
-    //     getSteps().then((res) => res.json())
-    //               .then((d)=>setData(d))
-    // }
     const getcatgry = () => {
         getStepCtgry.then(
             (res) => {
-                setDropDownDataVishal(res.data.data)
+                setDropDownDataCategory(res.data.data)
             }
         )
 
+    }
+    const getReligion=()=>{
+        getReligionData.then((response) => {
+            setReligionData(response.data.data)
+            console.log('API response:', response.data);
+        })
     }
 
     function validateMobile(value) {
@@ -105,8 +106,10 @@ const Personaldetailsform = (props) => {
                     setTimeout(() => {
                         alert(JSON.stringify(values, null, 2));
                         setSubmitting(false);
-                        axios
-                            .post(getSteps, values)
+                        getFormData(values).then(response => {
+                                console.log('API response:', response.data);
+                            })
+
                     }, 400);
 
 
@@ -145,21 +148,21 @@ const Personaldetailsform = (props) => {
                                             <FormLabel>Religion <sup>*</sup></FormLabel>
                                             <Selectfield name="religion" selectedvalues={selectedOption}
                                                          handleSelectChange={selectChange}
-                                                         optionList={dropDownDataVishal}/>
+                                                         optionList={ReligionData}/>
                                             <ErrorMessage name="religion" component="div"/>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Gender <sup>*</sup></FormLabel>
                                             <Selectfield name="gender" selectedvalues={selectedOption}
                                                          handleSelectChange={selectChange}
-                                                         optionList={['Select Gender', 'Male', 'female', 'Other']}/>
+                                                         optionList={['Female', 'Male', 'Other']}/>
                                             <ErrorMessage name="gender" component="div"/>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Category <sup>*</sup></FormLabel>
                                             <Selectfield name="category" selectedvalues={selectedOption}
                                                          handleSelectChange={selectChange}
-                                                         optionList={['Select Category', 'Gen']}/>
+                                                         optionList={dropDownDataCategory}/>
                                             <ErrorMessage name="category" component="div"/>
                                         </Grid>
                                         <Grid item xs={6}>
@@ -177,24 +180,24 @@ const Personaldetailsform = (props) => {
                                             <Grid className='detailFrom' container spacing={2}>
                                                 <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="date"
+                                                                name="dob"
                                                                 placeholder="DD"/>
 
-                                                    <ErrorMessage name="dob" component="div" value=""/>
+                                                    <ErrorMessage name="dob" component="div"/>
                                                 </Grid>
                                                 <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="month"
+                                                                name="dob"
                                                                 placeholder="MM"/>
 
-                                                    <ErrorMessage name="dob" component="div" value=""/>
+                                                    <ErrorMessage name="dob" component="div" />
                                                 </Grid>
                                                 <Grid item xs={2}>
                                                     <Inputfield type="text"
-                                                                name="year"
+                                                                name="dob"
                                                                 placeholder="YYYY"/>
 
-                                                    <ErrorMessage name="dob" component="div" value=""/>
+                                                    <ErrorMessage name="dob" component="div" />
                                                 </Grid>
                                             </Grid>
                                             <Typography><Age alt='age'/> 44 Years</Typography>

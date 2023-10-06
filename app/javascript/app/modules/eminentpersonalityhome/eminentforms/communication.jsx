@@ -10,6 +10,7 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import Selectfield from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
+import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 const Communicationform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -123,6 +124,9 @@ const Communicationform =(props)=>{
                                 setTimeout(() => {
                                 alert(JSON.stringify(values, null, 2));
                                 setSubmitting(false);
+                                    getFormData(values).then(response => {
+                                        console.log('API response:', response.data);
+                                    })
                                 }, 400);
                             }}
                         >

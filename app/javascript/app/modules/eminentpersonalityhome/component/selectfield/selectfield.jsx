@@ -16,8 +16,6 @@ const Selectfield=(props)=>{
                         return <option className="selectOption"  value={item.id}>{item.name}</option>;
                     })}
                 </Field>
-
-
                 : null}
         </>
     )
