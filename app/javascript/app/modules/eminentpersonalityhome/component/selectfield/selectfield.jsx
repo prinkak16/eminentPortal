@@ -6,12 +6,13 @@ import "./selectfield.scss"
 
 
 const Selectfield=(props)=>{
-    const {name, optionList} = props;
+    const {name, optionList, onChange, defaultOption} = props;
     return(
         <>
 
             {optionList !== undefined ?
-                <Field as="Select"   name={name} className="custom-select">
+                <Field as="Select"  onChange={onChange} name={name} className="custom-select">
+                    <option value="">{defaultOption}</option>
                     {optionList?.map(item=> {
                         return <option className="selectOption"  value={item.id}>{item.name}</option>;
                     })}

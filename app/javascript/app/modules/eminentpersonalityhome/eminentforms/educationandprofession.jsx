@@ -1,5 +1,5 @@
 import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
@@ -9,6 +9,7 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Selectfield from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
+import {getEducationData, getFormData, getGenderData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 const Educationform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -17,55 +18,79 @@ const Educationform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+    const [EducationData, setEducationData]= useState([])
+    useEffect(() => {
+        getEducation();
+    }, []);
+
+    const getEducation=()=>{
+        getEducationData.then((res)=>{
+            setEducationData(res.data.data)});
+    }
 
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
-                <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Education Details" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn/></Item>
-                </Stack>
-                <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={12}>
-                        <Formik
-                            initialValues={{qualification: "", subject:"" , college:"", board: "", school:"",profession:""}}
-                            validate={(values) => {
-                                const errors = {};
-                                if (!values.qualification) {
-                                    errors.qualification = "Required";
-                                }
-                                if (!values.subject) {
-                                    errors.subject = "Required";
-                                }
-                                if(!values.college){
-                                    errors.college="Required"
-                                }
-                                if (!values.board) {
-                                    errors.board = "Required";
-                                }
-                                if (!values.school) {
-                                    errors.school = "Required";
-                                }
-                                if (!values.profession) {
-                                    errors.profession = "Required";
-                                }
-                                props.enableProgressAction(Objects.keys(errors).length===0);
-                                return errors;
-                            }}
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                    alert(JSON.stringify(values, null, 2));
-                                    setSubmitting(false);
-                                }, 400);
-                            }}
-                        >
-                            {({save})=>(
-                                <Form>
+            <Grid className='detailFrom' container spacing={2}>
+                <Grid item xs={12}>
+                    <Formik
+                        initialValues={{
+                            qualification: "",
+                            subject: "",
+                            college: "",
+                            board: "",
+                            school: "",
+                            profession: "",
+                            qualification2:""
+                        }}
+                        validate={(values) => {
+                            const errors = {};
+                            // if (!values.qualification) {
+                            //     errors.qualification = "Required";
+                            // }
+                            // if (!values.subject) {
+                            //     errors.subject = "Required";
+                            // }
+                            // if(!values.college){
+                            //     errors.college="Required"
+                            // }
+                            // if (!values.board) {
+                            //     errors.board = "Required";
+                            // }
+                            // if (!values.school) {
+                            //     errors.school = "Required";
+                            // }
+                            // if (!values.profession) {
+                            //     errors.profession = "Required";
+                            // }
+                            props.enableProgressAction(Object.keys(errors).length === 0);
+                            return errors;
+                        }}
+                        onSubmit={(values, { setSubmitting }) => {
+                            setTimeout(() => {
+                                alert(JSON.stringify(values, null, 2));
+                                setSubmitting(false);
+                                getFormData().then(response => {
+                                    console.log('API response:', response.data);
+                                });
+                            }, 400);
+                        }}
+                    >
+                        {({ isSubmitting, setFieldValue, values }) => (
+                            <Form>
+                                <Box sx={{ flexGrow: 1 }}>
+                                    <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
+                                        <Item><Formheading number="1" heading="Education Details" /></Item>
+                                        <Item sx={{textAlign:'right'}}><Savebtn handleSave={isSubmitting}/></Item>
+                                    </Stack>
                                     <Grid container sx={{mb:5}} >
                                         <Grid item xs={6} className='education-field pb-3'>
                                             <Grid item xs={7}>
                                                 <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                                <Selectfield name="qualification"  optionList={['Select Highest Education','Delhi','Gurugram']}/>
+                                                <Selectfield
+                                                    name="qualification"
+                                                    defaultOption="Select Highest Education"
+                                                    optionList={EducationData}
+                                                />
                                                 <ErrorMessage name="qualification" component="div" />
                                             </Grid>
                                         </Grid>
@@ -78,8 +103,12 @@ const Educationform =(props)=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Qualification <sup>*</sup></FormLabel>
-                                            <Selectfield name="qualification"  optionList={['Select Qualification','Delhi','Gurugram']}/>
-                                            <ErrorMessage name="qualification" component="div" />
+                                            {values.qualification === '1' && (
+                                                <div>
+                                            <Selectfield name="qualification2"  defaultOption="Select Qualification" optionList={EducationData}/>
+                                            <ErrorMessage name="qualification2" component="div" />
+                                                </div>
+                                                )}
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Course / Branch / Subject</FormLabel>
@@ -176,13 +205,15 @@ const Educationform =(props)=>{
                                             />
                                         </Grid>
                                     </Grid>
-                                </Form>
-                            )}
-                        </Formik>
-                    </Grid>
-                </Grid>
 
-            </Box>
+                                </Box>
+                            </Form>
+                        )}
+                    </Formik>
+                </Grid>
+            </Grid>
+
+
         </>
 
     )

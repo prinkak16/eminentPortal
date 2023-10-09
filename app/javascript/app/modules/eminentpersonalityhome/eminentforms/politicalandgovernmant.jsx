@@ -1,5 +1,5 @@
 import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea} from '@mui/material';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
@@ -13,9 +13,11 @@ import Inputfield from "../component/inputfield/inputfield";
 import Stepfouraddmore from '../component/stepfouraddmore/selectlokshabha';
 import Rajyasabhaform from '../component/stepfouraddmore/selectrajyasabha';
 import Vidhansabhaform from '../component/stepfouraddmore/lagislativeassemblyform';
+import vidhanprishad from "../component/stepfouraddmore/vidhanprishad";
 import Urbanlocalfrom from '../component/stepfouraddmore/urbanlocal';
 import Primarybutton from '../component/primarybutton/primarybutton';
-const PolticalandGovrnform =()=>{
+import {getFormData, getPartyData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+const PolticalandGovrnform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -26,6 +28,7 @@ const PolticalandGovrnform =()=>{
     const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
     const [count, setcount]=useState(2)
+    const [PartyData, setPartyData]=useState([])
     const handlesocialfield = () => {
         setFormValues([...formValues, { organization: "", description: "" }])
         setShowFields(true);
@@ -38,43 +41,59 @@ const PolticalandGovrnform =()=>{
         setcount(count-1);
     }
 const [electfiled, setElectfield]=useState(false)
+    const [selectedOption, setSelectedOption] = useState('');
 const handleaddField = () => {
     setElectfield(true)
 }
 function handlremoveField(){
     setElectfield(false)
 }
+    const selectChange = (e) => {
+        setSelectedOption(e.target.value);
+    };
+    useEffect(() => {
+        getParty()
+    }, []);
+    const getParty=()=>{
+        getPartyData.then((res)=>{
+            setPartyData(res.data.data)})
+    }
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
-                <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Political Profile" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn/></Item>
-                </Stack>
+
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={12}>
                         <Formik
                             initialValues={{party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""}}
                             validate={(values) => {
                                 const errors = {};
-                                if (!values.party_level) {
-                                    errors.party_level = "Required";
-                                }
+                                // if (!values.party_level) {
+                                //     errors.party_level = "Required";
+                                // }
+                                props.enableProgressAction(Object.keys(errors).length === 0);
                                 return errors;
                             }}
                             onSubmit={(values, { setSubmitting }) => {
                                 setTimeout(() => {
                                     alert(JSON.stringify(values, null, 2));
                                     setSubmitting(false);
+                                    getFormData().then(response => {
+                                        console.log('API response:', response.data);
+                                    });
                                 }, 400);
                             }}
                         >
-                            {({save})=>(
+                            {({isSubmitting})=>(
                                 <Form>
+                                    <Box sx={{ flexGrow: 1 }}>
+                                        <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
+                                            <Item><Formheading number="1" heading="Political Profile" /></Item>
+                                            <Item sx={{textAlign:'right'}}><Savebtn/></Item>
+                                        </Stack>
                                     <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={4}>
                                             <FormLabel>Party level <sup>*</sup></FormLabel>
-                                            <Selectfield name="party_level" optionList={['Select Party Level']}/>
+                                            <Selectfield name="party_level" optionList={PartyData}/>
                                             <ErrorMessage name="party_level" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
@@ -83,7 +102,9 @@ function handlremoveField(){
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Designation</FormLabel>
-                                            <Selectfield name="designation" optionList={['Select Designation']}/>
+                                            <Inputfield type="text"
+                                                        name="designation"
+                                                        placeholder="Enter Designation"/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
@@ -262,18 +283,15 @@ function handlremoveField(){
                                             <Typography>( If fought any other election. )</Typography>
                                         </Grid>
                                     </Grid>
-
+                                    </Box>
                                 </Form>
                             )}
                         </Formik>
                     </Grid>
-                    <Grid item xs={4}>
-                        {/* <Button type="submit" className="savebtn" variant="contained" disabled={save}> Save Progress</Button> */}
 
-                    </Grid>
                 </Grid>
 
-            </Box>
+
         </>
 
     )

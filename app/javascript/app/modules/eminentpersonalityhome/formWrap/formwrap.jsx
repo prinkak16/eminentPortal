@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {Stack, Typography, Button, Box, Paper, Grid, FormLabel} from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -15,6 +15,7 @@ import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
 import '../eminentforms/allfroms.scss'
+import {getGenderData, getReligionData, getStepCtgry} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 const FormWrap=()=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -23,19 +24,84 @@ const FormWrap=()=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [formData, setFormData] = useState({});
+    const [selectedOption, setSelectedOption] = useState('');
+    const [dropDownDataCategory, setDropDownDataCategory] = useState([]);
+    const [ReligionData, setReligionData] = useState([]);
+    const[GenderData, setGenderData]= useState([])
+    const selectChange = (e) => {
+        setSelectedOption(e.target.value);
+    };
+    useEffect(() => {
+        getcatgry()
+        getReligion()
+        getGenders()
+    }, [])
+    const getcatgry = () => {
+        getStepCtgry.then(
+            (res) => {
+                setDropDownDataCategory(res.data.data)
+            }
+        )
+
+    }
+    const getReligion=()=>{
+        getReligionData.then((response) => {
+            setReligionData(response.data.data)
+        })
+    }
+    const getGenders=()=>{
+        getGenderData.then((response)=>{
+            setGenderData(response.data.data)})
+    }
+
+    const [activeField, setActiveField] = useState("day");
+
+    const handleFieldChange = (fieldName) => {
+        setActiveField(fieldName);
+    };
+
+
+
+
+    const [inputValues, setInputValues] = useState({
+        day: '',
+        month: '',
+        year: '',
+    });
+
+    const handleInput = (fieldName, value) => {
+        if (value.length === 2) {
+            // Move to the next field
+            const nextField = getNextField(fieldName);
+            if (nextField) {
+                document.getElementsByName(nextField)[0].focus();
+            }
+        }
+        setInputValues({
+            ...inputValues,
+            [fieldName]: value,
+        });
+    };
+
+    const getNextField = (currentField) => {
+        const fieldNames = ['day', 'month', 'year'];
+        const currentIndex = fieldNames.indexOf(currentField);
+        if (currentIndex < 0 || currentIndex === fieldNames.length - 1) {
+            return null; // No next field
+        }
+        return fieldNames[currentIndex + 1];
+    };
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={8}>
                         <Formik
-                            initialValues={{fullname: "", mobilenumber:"", religion: "", gender: "", category:"",caste:"",subcaste:"",date:"", month:"", year:"", mobile: "", email: "", address: "", pincode:"",area:"",town:"",state:"" }}
+                            initialValues={{name: "", mobilenumber:"", religion: "", gender: "", category:"",caste:"",subcaste:"",date:"", month:"", year:"", mobile: "", email: "", address: "", pincode:"",area:"",town:"",state:"" }}
                             validate={(values) => {
                                 const errors = {};
                                 if (!values.fullname) {
-                                    errors.fullname = "Required";
+                                    errors.name = "Required";
                                 }
                                 if (!values.mobilenumber) {
                                     errors.mobilenumber = "Required";
@@ -88,14 +154,17 @@ const FormWrap=()=>{
                                 }
                                 return errors;
                             }}
-                            onSubmit={(values, { setSubmitting }) => {
+                            onSubmit={(values, {setSubmitting}) => {
                                 setTimeout(() => {
                                     alert(JSON.stringify(values, null, 2));
                                     setSubmitting(false);
+                                    getFormData().then(response => {
+                                        console.log('API response:', response.data);
+                                    });
                                 }, 400);
                             }}
                         >
-                            {({save})=>(
+                            {({isSubmitting})=>(
                                 <Form>
                                    
                                    {activeStep === 0 && (

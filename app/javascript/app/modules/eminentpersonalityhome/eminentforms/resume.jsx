@@ -11,7 +11,8 @@ import Inputfield from "../component/inputfield/inputfield";
 import Selectfield from "../component/selectfield/selectfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
-const Resumeform=()=>{
+import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+const Resumeform=(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -38,28 +39,33 @@ const Resumeform=()=>{
       };
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
-                <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Political Legacy ( family in politics )" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn/></Item>
-                </Stack>
+
                 <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item xs={12}>
                         <Formik
                             initialValues={{name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"", }}
                             validate={(values) => {
                                 const errors = {};
+                                props.enableProgressAction(Object.keys(errors).length === 0);
                                 return errors;
                             }}
                             onSubmit={(values, { setSubmitting }) => {
                                 setTimeout(() => {
                                     alert(JSON.stringify(values, null, 2));
                                     setSubmitting(false);
+                                    getFormData().then(response => {
+                                        console.log('API response:', response.data);
+                                    });
                                 }, 400);
                             }}
                         >
-                            {({save})=>(
+                            {({isSubmitting})=>(
                                 <Form>
+                                    <Box sx={{ flexGrow: 1 }}>
+                                        <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
+                                            <Item><Formheading number="1" heading="Political Legacy ( family in politics )" /></Item>
+                                            <Item sx={{textAlign:'right'}}><Savebtn/></Item>
+                                        </Stack>
                                     <Grid container spacing={2} className="grid-wrap">
                                         <Grid item xs={6}>
                                             <FormLabel>Name</FormLabel>
@@ -188,18 +194,14 @@ const Resumeform=()=>{
                                             />
                                         </Grid>
                                     </Grid>
-
+                                    </Box>
                                 </Form>
                             )}
                         </Formik>
                     </Grid>
-                    <Grid item xs={4}>
-                        {/* <Button type="submit" className="savebtn" variant="contained" disabled={save}> Save Progress</Button> */}
-
-                    </Grid>
                 </Grid>
 
-            </Box>
+
         </>
 
     )

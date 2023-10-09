@@ -6,13 +6,13 @@ class Api::V1::MetadataController < ApplicationController
       success: true,
       data: [
         {
-          'value': 'Male'
+          'name': 'Male'
         },
         {
-          'value': 'Female'
+          'name': 'Female'
         },
         {
-          'value': 'Others'
+          'name': 'Others'
         }
       ],
       message: 'Genders'

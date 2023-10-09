@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./component/header/header";
+import Header from "./header/header"
 import FormStepper from "./component/stepper/stepper";
 import {Grid} from '@mui/material';
 import './eminentpersonalityhome.scss'
@@ -7,7 +7,7 @@ const EminentPersonality=()=> {
     return(
         <>
             <Header/>
-                <Grid className="detailHeading" sx={{textAlign:'center', my:8}}>
+                <Grid className="detailHeading" sx={{textAlign:'center', mb:8, mt:15 }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="456" height="48" viewBox="0 0 456 48" fill="none">
                         <g opacity="0.7">
                             <path d="M22.6807 36H0.888672V0.911964H22.6807V6.57596H7.03267V15.6H21.0487V21.024H7.03267V30.336H22.6807V36Z" fill="#575C61"/>

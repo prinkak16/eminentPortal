@@ -19,6 +19,7 @@ import PolticalandGovrnform from '../../eminentforms/politicalandgovernmant';
 import Resumeform from '../../eminentforms/resume';
 import Refferedform from '../../eminentforms/reffer';
 import Primarybutton from '../primarybutton/primarybutton';
+import {getFormData} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 
 const steps = [
     'Personal Details',
@@ -38,36 +39,65 @@ const FormStepper = () => {
     const isStepSkipped = (step) => {
         return skipped.has(step);
     };
-
-    const handleNext = () => {
-
-        let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
-        }
-
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
+    const isLastStep = () => {
+        // Determine if the current step is the last step
+        // Replace `totalSteps` with the actual total number of steps in your Stepper
+        const totalSteps = 6; // Replace with your actual number of steps
+        return activeStep === totalSteps - 1;
     };
 
+    const handleNext = () => {
+        if (isLastStep()) {
+            // If it's the last step, perform the submit action
+            handleSubmit(); // Call your submit function here
+        } else {
+            let newSkipped = skipped;
+            if (isStepSkipped(activeStep)) {
+                newSkipped = new Set(newSkipped.values());
+                newSkipped.delete(activeStep);
+            }
+
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            setSkipped(newSkipped);
+            setNextEnable(false);
+        }
+
+
+    };
+    const handleSubmit = (values, formikBag) => {
+        const { setSubmitting } = formikBag;
+
+        if (!isLastStep()) {
+            setSubmitting(false);
+            handleNext();
+            return;
+        }
+
+        console.log("hey");
+
+        setTimeout(() => {
+            setSubmitting(false);
+        }, 1000);
+    };
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleReset = () => {
-        setActiveStep(0);
+    const handleReset = (e) => {
+        setActiveStep(e.preventDefault.values);
     };
 
-    const saveProgressAction = (e) => {
-        const currentStepData = formData[activeStep];
-        //todo api calling with current step data
-    };
+    // const saveProgressAction = (e) => {
+    //     const currentStepData = formData[activeStep];
+    //     //todo api calling with current step data
+    // };
 
     const enableProgressAction = (isPassed) => {
       setNextEnable(isPassed);
     }
-
+    const handleStepClick = (step) => {
+        setActiveStep(step);
+    };
     return (
         <Box className="stepouter" sx={{ width: '100%' }}>
     <div className="container-fluid px-md-5">
@@ -115,7 +145,7 @@ const FormStepper = () => {
                 },
             }}
         >
-            <StepLabel sx={{ colo: '#FF9559' }} {...labelProps}>
+            <StepLabel sx={{ colo: '#FF9559' }} {...labelProps} onClick={() => handleStepClick(index)} >
             {label}
             </StepLabel>
             </Step>
@@ -139,22 +169,22 @@ const FormStepper = () => {
             )}
         {activeStep === 1 && (
             <>
-                <Communicationform enableProgressAction={enableProgressAction}/>
+                <Communicationform  enableProgressAction={enableProgressAction}/>
             </>
         )}
         {activeStep === 2 && (
             <>
-                <Educationform />
+                <Educationform  enableProgressAction={enableProgressAction}/>
             </>
         )}
         {activeStep === 3 && (
             <>
-                <PolticalandGovrnform enableProgressAction={enableProgressAction} />
+                <PolticalandGovrnform  enableProgressAction={enableProgressAction} />
         </>
         )}
         {activeStep === 4 && (
             <>
-                <Resumeform enableProgressAction={enableProgressAction}/>
+                <Resumeform onSubmit={onSubmit} enableProgressAction={enableProgressAction}/>
             </>
         )}
         {activeStep === 5 && (
@@ -181,11 +211,11 @@ const FormStepper = () => {
     </Box>
     <Primarybutton
         addclass="nextbtn"
-        disabled={!nextEnable}
+        disabled={!nextEnable && isSubmitting}
         type="submit"
         handleclick={handleNext}
         starticon={<EastIcon />}
-        buttonlabel="Next"
+        buttonlabel={isLastStep() ? 'Submit' : 'Next'}
             />
             </Box>
             </React.Fragment>

@@ -1,5 +1,5 @@
-import { Typography, Stack, Box, Paper, Grid, FormLabel} from '@mui/material';
-import React, { useState } from 'react';
+import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
+import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -10,7 +10,8 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import Selectfield from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFormData, getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import NumberField from "../component/numberfield/numberfield";
 const Communicationform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -23,6 +24,8 @@ const Communicationform =(props)=>{
     const [count, setcount]=useState(2)
     const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
+    const [StateData, setStateData]= useState([])
+    const [PinCodeData, setPinCodeData] = useState(null);
 
     const handleAddField = () => {
         if(fields.length<2){
@@ -53,7 +56,61 @@ const Communicationform =(props)=>{
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
       };
+    useEffect(() => {
+        getState()
+        if (PinCodeData) {
+            // Update the "city" field with the retrieved city
+            setFieldValue('city', PinCodeData.current_street);
+        }
+    }, [PinCodeData]);
 
+    const validatePinCode = (value) => {
+        const PinCodePattern = /^\d{6}$/;
+        if (!value) {
+            return 'Pin code is required';
+        } else if (!PinCodePattern.test(value)) {
+            return 'Invalid pin code format. It should be a 6-digit number.';
+        }
+        return null;
+    };
+    const getPinCode = async (value, setFieldValue) => {
+        // Check if the pin code is valid
+        const validationError = validatePinCode(value);
+        if (validationError) {
+            setFieldValue('city', ''); // Clear the city field if the pin code is invalid
+            return;
+        }
+        getPinCodeData.then((res)=>{
+            setPinCodeData(data);
+        })
+
+    };
+    const getState =()=>{
+        getStateData.then((res)=>{
+            setStateData(res.data.data)
+        })
+
+    }
+    const validateSTDCode = (value) => {
+        if (!value) {
+            return null; // Field is empty, so no validation error
+        }
+        const stdPattern = /^\d{3,5}$/;
+        if (!stdPattern.test(value)) {
+            return 'Enter a valid STD Code with 3 to 5 digits';
+        }
+        return null;
+    };
+    const validateLandline = (value) => {
+        if (!value) {
+            return null; // Field is empty, so no validation error
+        }
+        const stdPattern = /^\d{6,8}$/;
+        if (!stdPattern.test(value)) {
+            return 'Enter a valid landline number with 6 to 8 digits';
+        }
+        return null;
+    };
     return(
         <>
             
@@ -61,62 +118,70 @@ const Communicationform =(props)=>{
                             initialValues={{whatsapp_number: "", std_code: "", landline: "", current_flat:"",current_pincode:"", current_street:"",current_district:"",current_state:"", home_flat:"",home_pincode:"", home_street:"", home_district:"", home_state:"", other_flat:"", check:"", type_of_other_address:"", other_district:"", other_state:"", other_pincode:"",   }}
                             validate={(values) => {
                                 const errors = {};
-                                if (!/^\d+$/.whatsapp_number(value)) {
-                                    errors.whatsapp_number = "Required";
+                            //     if (!/^\d+$/.test(values.whatsapp_number)) {
+                            //         errors.whatsapp_number = "Required";
+                            //     }
+                                const stdError = validateSTDCode(values.std_code);
+                                if (stdError) {
+                                    errors.std_code = stdError;
                                 }
-                                if (!values.email) {
-                                    errors.email = "Required";
-                                } else if (
-                                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                                ) {
-                                    errors.email = "Invalid email address";
+                                const landlineError = validateLandline(values.landline);
+                                if (landlineError) {
+                                    errors.landline = landlineError;
                                 }
-                                if (!values.current_flat) {
-                                    errors.current_flat = "Required";
-                                }
-                                if (!values.current_pincode) {
-                                    errors.current_pincode = "Required";
-                                }
-                                if (!values.current_street) {
-                                    errors.current_street = "Required";
-                                }
-                                if (!values.current_district) {
-                                    errors.current_district = "Required";
-                                }
-                                if (!values.current_state) {
-                                    errors.current_state = "Required";
-                                }
-                                if (!values.home_flat) {
-                                    errors.home_flat = "Required";
-                                }
-                                if (!values.home_pincode) {
-                                    errors.home_pincode = "Required";
-                                }
-                                if (!values.home_street) {
-                                    errors.home_street = "Required";
-                                }
-                                if (!values.home_district) {
-                                    errors.home_district = "Required";
-                                }
-                                if (!values.home_state) {
-                                    errors.home_state = "Required";
-                                }
-                                if (!values.other_flat) {
-                                    errors.other_flat = "Required";
-                                }
-                                if (!values.other_street) {
-                                    errors.other_street = "Required";
-                                }
-                                if (!values.other_district) {
-                                    errors.other_district = "Required";
-                                }
-                                if (!values.other_state) {
-                                    errors.other_state = "Required";
-                                }
-                                if (!values.other_pincode) {
-                                    errors.other_pincode = "Required";
-                                }
-                                props.enableProgressAction(Object.keys(errors).length === 1);
+                            //     if (!values.email) {
+                            //         errors.email = "Required";
+                            //     } else if (
+                            //         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                            //     ) {
+                            //         errors.email = "Invalid email address";
+                            //     }
+                            //     if (!values.current_flat) {
+                            //         errors.current_flat = "Required";
+                            //     }
+                            //     if (!values.current_pincode) {
+                            //         errors.current_pincode = "Required";
+                            //     }
+                            //     if (!values.current_street) {
+                            //         errors.current_street = "Required";
+                            //     }
+                            //     if (!values.current_district) {
+                            //         errors.current_district = "Required";
+                            //     }
+                            //     if (!values.current_state) {
+                            //         errors.current_state = "Required";
+                            //     }
+                            //     if (!values.home_flat) {
+                            //         errors.home_flat = "Required";
+                            //     }
+                            //     if (!values.home_pincode) {
+                            //         errors.home_pincode = "Required";
+                            //     }
+                            //     if (!values.home_street) {
+                            //         errors.home_street = "Required";
+                            //     }
+                            //     if (!values.home_district) {
+                            //         errors.home_district = "Required";
+                            //     }
+                            //     if (!values.home_state) {
+                            //         errors.home_state = "Required";
+                            //     }
+                            //     if (!values.other_flat) {
+                            //         errors.other_flat = "Required";
+                            //     }
+                            //     if (!values.other_street) {
+                            //         errors.other_street = "Required";
+                            //     }
+                            //     if (!values.other_district) {
+                            //         errors.other_district = "Required";
+                            //     }
+                            //     if (!values.other_state) {
+                            //         errors.other_state = "Required";
+                            //     }
+                            //     if (!values.other_pincode) {
+                            //         errors.other_pincode = "Required";
+                            //     }
+                                props.enableProgressAction(Object.keys(errors).length===0);
                                 return errors;
                             }}
                             
@@ -124,13 +189,13 @@ const Communicationform =(props)=>{
                                 setTimeout(() => {
                                 alert(JSON.stringify(values, null, 2));
                                 setSubmitting(false);
-                                    getFormData(values).then(response => {
+                                    getFormData().then(response => {
                                         console.log('API response:', response.data);
-                                    })
+                                    });
                                 }, 400);
                             }}
                         >
-                            {({isSubmitting})=>(
+                            {({isSubmitting, values, handleChange, handleBlur})=>(
                                 <Form>
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Stack direction="row" useFlexGap flexWrap="wrap">
@@ -146,10 +211,18 @@ const Communicationform =(props)=>{
                                                                 <Grid  container spacing={2}>
                                                                     <Grid item xs={4}>
                                                                         <FormLabel>Mobile Number <sup>*</sup></FormLabel>
-                                                                        <Inputfield type="text"
-                                                                                    name="whatsapp_number"
-                                                                                    placeholder="Enter Mobile No."/>
-
+                                                                        <NumberField
+                                                                            id="outlined-number"
+                                                                            name="whatsapp_number"
+                                                                            placeholder='Search by phone no.'
+                                                                            onInput={(event) => {
+                                                                                // Remove non-numeric characters and limit the length to 10 characters
+                                                                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
+                                                                            }}
+                                                                            inputProps={{
+                                                                                maxLength: 10,
+                                                                            }}
+                                                                        />
                                                                         <ErrorMessage name="whatsapp_number" component="div" />
                                                                     </Grid>
                                                                     
@@ -157,14 +230,32 @@ const Communicationform =(props)=>{
                                                                         <Grid item xs={4}>
                                                                             <div key={index}>
                                                                                 <FormLabel>Another number</FormLabel>
-                                                                                <Inputfield type="text"
-                                                                                            name="mobile"
-                                                                                            placeholder="Enter Mobile No."
-                                                                                            handlechange={(e) => {
-                                                                                                const updatedFields = [...fields];
-                                                                                                updatedFields[index] = e.target.value;
-                                                                                                setFields(updatedFields);
-                                                                                            }}/>
+                                                                                <NumberField
+                                                                                    name="whatsapp_number"
+                                                                                    placeholder='Enter Mobile No.'
+                                                                                    onInput={(event) => {
+                                                                                        // Remove non-numeric characters and limit the length to 10 characters
+                                                                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
+                                                                                    }}
+                                                                                    handlechange={(e) => {
+                                                                                        const updatedFields = [...fields];
+                                                                                        updatedFields[index] = e.target.value;
+                                                                                        setFields(updatedFields);
+                                                                                    }}
+                                                                                    inputProps={{
+                                                                                        maxLength: 10,
+                                                                                    }}
+                                                                                />
+                                                                                <ErrorMessage name="whatsapp_number" component="div" />
+
+                                                                                {/*<Inputfield type="text"*/}
+                                                                                {/*            name="mobile"*/}
+                                                                                {/*            placeholder="Enter Mobile No."*/}
+                                                                                {/*            handlechange={(e) => {*/}
+                                                                                {/*                const updatedFields = [...fields];*/}
+                                                                                {/*                updatedFields[index] = e.target.value;*/}
+                                                                                {/*                setFields(updatedFields);*/}
+                                                                                {/*            }}/>*/}
                                                                                 <div className="text-end">
                                                                                     {fields.length>=1 ?(
                                                                                         <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>} handleclick={handledelete}/>
@@ -177,9 +268,7 @@ const Communicationform =(props)=>{
                                                                 </Grid>
                                                             </Grid>
                                                             <Grid item xs={12}>
-                                                                {fields.length>=2 ?(
-                                                                    null
-                                                                ):<Primarybutton addclass="addanotherfieldsbtn me-2 mb-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={handleAddField}/>}
+                                                                {fields.length>=2 ? (null):<Primarybutton addclass="addanotherfieldsbtn me-2 mb-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={handleAddField}/>}
                                                                     </Grid>
                                                         </Grid>
                                                     </Grid>
@@ -191,14 +280,26 @@ const Communicationform =(props)=>{
                                                                 <FormLabel>Landline</FormLabel>
                                                                 <Grid className='detailFrom' container spacing={2}>
                                                                     <Grid item xs={6}>
-                                                                        <Inputfield type="text"
-                                                                                    name="std_code"
-                                                                                    placeholder="STD Code"/>
+                                                                        <NumberField
+                                                                            name="std_code"
+                                                                            placeholder='STD Code'
+                                                                            inputProps={{
+                                                                                maxLength: 5,
+                                                                                minLength:3,
+                                                                            }}
+                                                                        />
+                                                                        <ErrorMessage name="std_code" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
-                                                                        <Inputfield type="text"
-                                                                                    name="landline"
-                                                                                    placeholder="Number"/>
+                                                                        <NumberField
+                                                                            name="landline"
+                                                                            placeholder='Landline Number'
+                                                                            inputProps={{
+                                                                                maxLength: 6,
+                                                                                minLength:8,
+                                                                            }}
+                                                                        />
+                                                                        <ErrorMessage name="landline" component="div" />
 
                                                                     </Grid>
                                                                 </Grid>
@@ -229,26 +330,34 @@ const Communicationform =(props)=>{
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>PIN Code <sup>*</sup></FormLabel>
-                                                                        <Inputfield type="text"
-                                                                                    name="current_pincode"
-                                                                                    placeholder="Enter pin code"/>
+                                                                        {/*<Inputfield type="text"*/}
+                                                                        {/*            name="current_pincode"*/}
+                                                                        {/*            placeholder="Enter pin code"/>*/}
+                                                                        <Field
+                                                                            type="text"
+                                                                            id="current_pincode"
+                                                                            name="current_pincode"
+                                                                            placeholder="Enter pin code"
+                                                                            as={TextField}
+                                                                            onChange={(e) => getPinCode(e.target.value, setFieldValue)}
+                                                                        />
                                                                         <ErrorMessage name="current_pincode" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
                                                                         <Inputfield type="text"
                                                                                     name="current_street"
-                                                                                    placeholder="Enter Area, Street, Etc.s"/>
+                                                                                    placeholder="Enter Area, Street, Etc.s" readOnly/>
                                                                         <ErrorMessage name="current_street" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="current_district"   optionList={['Select Town','Delhi','Gurugram']}/>
+                                                                        <Selectfield name="current_district"   defaultOption="Select District" optionList={StateData}/>
                                                                         <ErrorMessage name="current_district" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>State <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="current_state" optionList={['Select State','Delhi','Gurugram']}/>
+                                                                        <Selectfield name="current_state" defaultOption="Select State" optionList={StateData}/>
                                                                         <ErrorMessage name="current_state" component="div" />
                                                                     </Grid>
                                                                 </Grid>
@@ -284,12 +393,12 @@ const Communicationform =(props)=>{
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="home_district"  optionList={['Select Town','Delhi','Gurugram']}/>
+                                                                        <Selectfield name="home_district"  defaultOption="Select District" optionList={StateData}/>
                                                                         <ErrorMessage name="home_district" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>State <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="home_state"  optionList={['Select State','Delhi','Gurugram']}/>
+                                                                        <Selectfield name="home_state"  defaultOption="Select State" optionList={StateData}/>
                                                                         <ErrorMessage name="home_state" component="div" />
                                                                     </Grid>
                                                                 </Grid>
@@ -308,8 +417,6 @@ const Communicationform =(props)=>{
                                                                                                 name="other_flat"
                                                                                                 value={element.other_flat || ""}
                                                                                                 placeholder="Enter Area, Street, Etc.s"/>
-
-                                                                                    <ErrorMessage name="house" component="div" />
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>PIN Code <sup>*</sup></FormLabel>
@@ -317,7 +424,6 @@ const Communicationform =(props)=>{
                                                                                                 name="other_pincode"
                                                                                                 value={element.other_pincode || ""}
                                                                                                 placeholder="Enter pin code"/>
-                                                                                    <ErrorMessage name="other_pincode" component="div" />
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
@@ -325,17 +431,14 @@ const Communicationform =(props)=>{
                                                                                                 name="other_street"
                                                                                                 value={element.other_street || ""}
                                                                                                 placeholder="Enter Area, Street, Etc.s"/>
-                                                                                    <ErrorMessage name="other_street" component="div" />
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                                    <Selectfield name="other_district"  optionList={['Select City','Delhi','Gurugram']}/>
-                                                                                    <ErrorMessage name="other_district" component="div" />
+                                                                                    <Selectfield name="other_district"  defaultOption="Select District" optionList={StateData}/>
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>State <sup>*</sup></FormLabel>
-                                                                                <Selectfield name="other_state"  optionList={['Select State','Delhi','Gurugram']}/>
-                                                                                    <ErrorMessage name="other_state" component="div" />
+                                                                                <Selectfield name="other_state"  defaultOption="Select State" optionList={StateData}/>
                                                                                 </Grid>
                                                                             </Grid>
 
