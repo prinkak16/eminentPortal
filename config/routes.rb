@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'metadata/user_allotted_states', to: 'metadata#user_allotted_states'
       get 'metadata/genders', to: 'metadata#genders'
       get 'metadata/categories', to: 'metadata#categories'
       get 'metadata/religions', to: 'metadata#religions'
@@ -20,6 +21,9 @@ Rails.application.routes.draw do
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
+      get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
+      post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
+      get 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
     end
     namespace :sync do
       get 'states', to: 'state#sync'

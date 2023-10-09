@@ -21,7 +21,6 @@ class Api::V1::CustomMemberFormController < ApplicationController
         'error': [],
         'log': []
       }
-
       case params['is_draft']
       when true
         case params['form_step']
@@ -54,7 +53,6 @@ class Api::V1::CustomMemberFormController < ApplicationController
           is_form_data_is_valid = validate_form(@@schema_sixth_step, params['data'].as_json)
         end
       end
-
       unless is_form_data_is_valid[:is_valid]
         return render json: {
           success: false,
@@ -69,17 +67,27 @@ class Api::V1::CustomMemberFormController < ApplicationController
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       existing_custom_users_found = false
+      eminent_channel = params[:channel].present? ? params[:channel] : nil
+
+      # check if the country state id valid used only for creation of eminent_personality type custom member form
+      cs = params[:state_id].present? ? params[:state_id] : nil
+      country_state = CountryState.where(id: cs).exists?
+      unless country_state
+        return render json: {
+          success: false,
+          message: 'Invalid country state id provided.'
+        }, status: :bad_request
+      end
 
       if form_type === CustomMemberForm::TYPE_EMINENT
         unless existing_custom_users_found && phone_number.present?
           existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
         end
       end
-      raise StandardError, 'Phone number already exist' if existing_custom_users_found
 
       if custom_member.blank?
-        # used only for creation of eminent_personality type custom member form
-        cs = params[:state_id].present? ? params[:state_id] : nil
+        raise StandardError, 'Phone number already exist' if existing_custom_users_found
+
         custom_member = CustomMemberForm.create!(
           data: params[:data],
           form_type: params[:form_type],
@@ -87,7 +95,8 @@ class Api::V1::CustomMemberFormController < ApplicationController
           created_by: current_auth_user,
           device_info: params[:device_info],
           version: CustomMemberForm.latest_eminent_version,
-          phone: phone_number[0]
+          phone: phone_number[0],
+          channel: eminent_channel
         )
         # check if is in draft state
         if is_draft && custom_member.may_mark_incomplete?
@@ -107,8 +116,10 @@ class Api::V1::CustomMemberFormController < ApplicationController
           }, status: :ok
         end
       else
-        # used for updation of eminent_personality custom member form
-        custom_member.update!(data: params[:data], device_info: params[:device_info])
+        raise StandardError, 'State id can not be changed.' if custom_member.country_state_id != cs
+
+        # used for update of eminent_personality custom member form
+        custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
         end
@@ -214,6 +225,78 @@ class Api::V1::CustomMemberFormController < ApplicationController
         render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
         nil
       end
+    end
+  end
+
+  def select_member
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      custom_member.is_selected = true
+      custom_member.selection_reason = params[:reason].present? ? params[:reason] : nil
+      custom_member.selected_by_id = current_auth_user.id
+      custom_member.save!
+      return render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def update_aasm_state
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: true, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      unless ['approve', 'reject'].include? params[:aasm_state]
+        return render json: { success: true, message: 'Please provide a valid aasm state.' }, status: :bad_request
+      end
+
+      if params[:aasm_state] == 'approve'
+        if custom_member.may_approve?
+          custom_member.approve!
+          custom_member.update(approved_by_id: current_auth_user.id)
+        else
+          return render json: { success: false, message: 'Transaction not allowed.' }, status: :bad_request
+        end
+      elsif params[:aasm_state] == 'reject'
+        if custom_member.may_reject?
+          custom_member.reject!
+          custom_member.update(
+            rejection_reason: params[:reason].present? ? params[:reason] : nil,
+            rejected_by_id: current_auth_user.id
+          )
+        else
+          return render json: { success: false, message: 'Transaction not allowed.' }, status: :bad_request
+        end
+      end
+      return render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def delete_member
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      if custom_member.destroy
+        custom_member.deletion_reason = params[:reason].present? ? params[:reason] : nil
+        custom_member.deleted_by_id = current_auth_user.id
+        custom_member.save!
+      else
+        return render json: { success: false, message: 'Record deletion failed! Please try later!' }, status: :bad_request
+      end
+      render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
     end
   end
 end

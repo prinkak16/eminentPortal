@@ -32,9 +32,21 @@ module CustomMemberFormHelper
           4,
           5
         ]
-      }
+      },
+      'state_id': {
+        'type': 'integer',
+        'min': 1
+      },
+      'channel': {
+        'type': 'string',
+        'enum': [
+          nil,
+          'Link',
+          'Office'
+        ]
+      },
     },
-    'required': %w[form_type data device_info is_draft version form_step]
+    'required': %w[form_type data device_info is_draft version form_step state_id]
   }
 
   first_step_validations = {

@@ -1,5 +1,6 @@
 class Api::V1::MetadataController < ApplicationController
   before_action :authenticate_user
+  skip_before_action :verify_authenticity_token
 
   def genders
     render json: {
@@ -51,5 +52,9 @@ class Api::V1::MetadataController < ApplicationController
                                  .where(political_party_country_states: { country_state_id: cs.id })
                                  .select(:id, :name, :abbreviation)
     render json: { success: true, data: parties_list, message: 'Profession List' }, status: 200
+  end
+
+  def user_allotted_states
+    render json: { success: true, data: fetch_user_assigned_country_states, message: 'User Assigned States' }, status: 200
   end
 end
