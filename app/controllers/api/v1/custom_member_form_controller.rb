@@ -21,7 +21,6 @@ class Api::V1::CustomMemberFormController < ApplicationController
         'error': [],
         'log': []
       }
-
       case params['is_draft']
       when true
         case params['form_step']
@@ -54,7 +53,6 @@ class Api::V1::CustomMemberFormController < ApplicationController
           is_form_data_is_valid = validate_form(@@schema_sixth_step, params['data'].as_json)
         end
       end
-
       unless is_form_data_is_valid[:is_valid]
         return render json: {
           success: false,
@@ -70,16 +68,25 @@ class Api::V1::CustomMemberFormController < ApplicationController
       is_draft = params[:is_draft]
       existing_custom_users_found = false
 
+      # check if the country state id valid used only for creation of eminent_personality type custom member form
+      cs = params[:state_id].present? ? params[:state_id] : nil
+      country_state = CountryState.where(id: cs).exists?
+      unless country_state
+        return render json: {
+          success: false,
+          message: 'Invalid country state id provided.'
+        }, status: :bad_request
+      end
+
       if form_type === CustomMemberForm::TYPE_EMINENT
         unless existing_custom_users_found && phone_number.present?
           existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
         end
       end
-      raise StandardError, 'Phone number already exist' if existing_custom_users_found
 
       if custom_member.blank?
-        # used only for creation of eminent_personality type custom member form
-        cs = params[:state_id].present? ? params[:state_id] : nil
+        raise StandardError, 'Phone number already exist' if existing_custom_users_found
+
         custom_member = CustomMemberForm.create!(
           data: params[:data],
           form_type: params[:form_type],
@@ -107,6 +114,8 @@ class Api::V1::CustomMemberFormController < ApplicationController
           }, status: :ok
         end
       else
+        raise StandardError, 'State id can not be changed.' if custom_member.country_state_id != cs
+
         # used for updation of eminent_personality custom member form
         custom_member.update!(data: params[:data], device_info: params[:device_info])
         if is_draft && custom_member.may_mark_incomplete?
