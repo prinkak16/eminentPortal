@@ -67,6 +67,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       existing_custom_users_found = false
+      eminent_channel = params[:channel].present? ? params[:channel] : nil
 
       # check if the country state id valid used only for creation of eminent_personality type custom member form
       cs = params[:state_id].present? ? params[:state_id] : nil
@@ -94,7 +95,8 @@ class Api::V1::CustomMemberFormController < ApplicationController
           created_by: current_auth_user,
           device_info: params[:device_info],
           version: CustomMemberForm.latest_eminent_version,
-          phone: phone_number[0]
+          phone: phone_number[0],
+          channel: eminent_channel
         )
         # check if is in draft state
         if is_draft && custom_member.may_mark_incomplete?
@@ -116,8 +118,8 @@ class Api::V1::CustomMemberFormController < ApplicationController
       else
         raise StandardError, 'State id can not be changed.' if custom_member.country_state_id != cs
 
-        # used for updation of eminent_personality custom member form
-        custom_member.update!(data: params[:data], device_info: params[:device_info])
+        # used for update of eminent_personality custom member form
+        custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
         end

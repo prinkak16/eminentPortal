@@ -38,6 +38,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065453) do
     t.datetime "approved_at"
     t.jsonb "device_info", default: "{}", null: false
     t.integer "version", default: 3, null: false
+    t.string "channel"
     t.boolean "is_selected", default: false, null: false
     t.bigint "selected_by_id"
     t.string "selection_reason"
