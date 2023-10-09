@@ -18,6 +18,7 @@ class CreateCustomMemberForm < ActiveRecord::Migration[7.0]
       t.datetime :approved_at, default: nil
       t.jsonb :device_info, null: false, default: '{}'
       t.integer :version, null: false, default: 3
+      t.string :channel, default: nil
       t.boolean :is_selected, null: false, default: false
       t.bigint :selected_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
       t.string :selection_reason
