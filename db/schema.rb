@@ -31,10 +31,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065453) do
     t.datetime "otp_created_at"
     t.string "token"
     t.string "aasm_state"
+    t.bigint "rejected_by_id"
     t.datetime "rejected_at"
     t.string "rejected_reason"
     t.datetime "verified_at"
     t.datetime "submitted_at"
+    t.bigint "approved_by_id"
     t.datetime "approved_at"
     t.jsonb "device_info", default: "{}", null: false
     t.integer "version", default: 3, null: false
@@ -42,14 +44,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065453) do
     t.boolean "is_selected", default: false, null: false
     t.bigint "selected_by_id"
     t.string "selection_reason"
-    t.bigint "delete_by_id"
+    t.bigint "deleted_by_id"
     t.string "deletion_reason"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_custom_member_forms_on_approved_by_id"
     t.index ["country_state_id"], name: "index_custom_member_forms_on_country_state_id"
     t.index ["created_by_id"], name: "index_custom_member_forms_on_created_by_id"
-    t.index ["delete_by_id"], name: "index_custom_member_forms_on_delete_by_id"
+    t.index ["deleted_by_id"], name: "index_custom_member_forms_on_deleted_by_id"
+    t.index ["rejected_by_id"], name: "index_custom_member_forms_on_rejected_by_id"
     t.index ["selected_by_id"], name: "index_custom_member_forms_on_selected_by_id"
   end
 
