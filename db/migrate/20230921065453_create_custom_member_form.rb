@@ -11,10 +11,12 @@ class CreateCustomMemberForm < ActiveRecord::Migration[7.0]
       t.datetime :otp_created_at, default: nil
       t.string :token
       t.string :aasm_state
+      t.bigint :rejected_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
       t.datetime :rejected_at, default: nil
       t.string :rejected_reason
       t.datetime :verified_at, default: nil
       t.datetime :submitted_at, default: nil
+      t.bigint :approved_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
       t.datetime :approved_at, default: nil
       t.jsonb :device_info, null: false, default: '{}'
       t.integer :version, null: false, default: 3
@@ -22,7 +24,7 @@ class CreateCustomMemberForm < ActiveRecord::Migration[7.0]
       t.boolean :is_selected, null: false, default: false
       t.bigint :selected_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
       t.string :selection_reason
-      t.bigint :delete_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
+      t.bigint :deleted_by_id, foreign_key: {to_table: :auth_users}, index: true, default: nil
       t.string :deletion_reason
       t.datetime :deleted_at, default: nil
       t.timestamps

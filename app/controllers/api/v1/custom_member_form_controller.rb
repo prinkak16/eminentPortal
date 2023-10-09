@@ -227,4 +227,76 @@ class Api::V1::CustomMemberFormController < ApplicationController
       end
     end
   end
+
+  def select_member
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      custom_member.is_selected = true
+      custom_member.selection_reason = params[:reason].present? ? params[:reason] : nil
+      custom_member.selected_by_id = current_auth_user.id
+      custom_member.save!
+      return render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def update_aasm_state
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: true, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      unless ['approve', 'reject'].include? params[:aasm_state]
+        return render json: { success: true, message: 'Please provide a valid aasm state.' }, status: :bad_request
+      end
+
+      if params[:aasm_state] == 'approve'
+        if custom_member.may_approve?
+          custom_member.approve!
+          custom_member.update(approved_by_id: current_auth_user.id)
+        else
+          return render json: { success: false, message: 'Transaction not allowed.' }, status: :bad_request
+        end
+      elsif params[:aasm_state] == 'reject'
+        if custom_member.may_reject?
+          custom_member.reject!
+          custom_member.update(
+            rejection_reason: params[:reason].present? ? params[:reason] : nil,
+            rejected_by_id: current_auth_user.id
+          )
+        else
+          return render json: { success: false, message: 'Transaction not allowed.' }, status: :bad_request
+        end
+      end
+      return render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def delete_member
+    begin
+      custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
+      if custom_member.nil?
+        return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
+      end
+
+      if custom_member.destroy
+        custom_member.deletion_reason = params[:reason].present? ? params[:reason] : nil
+        custom_member.deleted_by_id = current_auth_user.id
+        custom_member.save!
+      else
+        return render json: { success: false, message: 'Record deletion failed! Please try later!' }, status: :bad_request
+      end
+      render json: { success: true, message: 'Success' }, status: :ok
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
 end
