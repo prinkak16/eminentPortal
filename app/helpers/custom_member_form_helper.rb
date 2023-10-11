@@ -68,6 +68,14 @@ module CustomMemberFormHelper
       'minLength': 2, # Min length of 3 characters
       'maxLength': 100 # Max length of 100 characters
     },
+    'gender': {
+      'type': 'string',
+      'enum': [
+        'Male',
+        'Female',
+        'Others'
+      ]
+    },
     'religion': {
       'type': 'string',
       'minLength': 2, # Min length of 3 characters
@@ -132,6 +140,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -249,6 +258,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -414,6 +424,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -611,6 +622,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -778,6 +790,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -873,6 +886,7 @@ module CustomMemberFormHelper
       id
       mobiles
       name
+      gender
       religion
       category
       caste
@@ -935,7 +949,7 @@ module CustomMemberFormHelper
       case error['type']
       when 'required'
         error['details']['missing_keys'].each do |missing_key|
-          missing_key_path = attribute_key.length > 0 ? "#{attribute_key}.#{missing_key}" : missing_key.to_s
+          missing_key_path = attribute_key.length.positive? ? "#{attribute_key}.#{missing_key}" : missing_key.to_s
           error_messages << {
             'type': 'required',
             'key': missing_key_path,
@@ -1045,5 +1059,33 @@ module CustomMemberFormHelper
   def custom_member_exists?(phone_number, form_type, cm_id)
     CustomMemberForm.where.not(id: cm_id).where(phone: phone_number, form_type: form_type).exists? ||
       CustomMemberForm.where.not(id: cm_id).select("data -> 'mobiles' as mobiles, id").where("data->'mobiles' ?| array[:query]", query: phone_number).exists?
+  end
+
+  def custom_member_age_group_query(age_groups)
+    total_age_groups = age_groups.length
+    query = total_age_groups.positive? ? "data->>'dob' != '' AND" : ''
+
+    age_groups&.each_with_index do |age_group, index|
+      query += index.zero? ? ' (' : ' OR '
+      case age_group
+      when 'age_18_to_25'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 18 AND date_part('year', age((data->>'dob')::timestamp)) < 25)"
+      when 'age_25_to_30'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 25 AND date_part('year', age((data->>'dob')::timestamp)) < 30)"
+      when 'age_30_to_35'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 30 AND date_part('year', age((data->>'dob')::timestamp)) < 35)"
+      when 'age_35_to_40'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 35 AND date_part('year', age((data->>'dob')::timestamp)) < 40)"
+      when 'age_40_to_45'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 40 AND date_part('year', age((data->>'dob')::timestamp)) < 45)"
+      when 'age_45_to_50'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 45 AND date_part('year', age((data->>'dob')::timestamp)) < 50)"
+      when 'age_50_to_65'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) >= 50 AND date_part('year', age((data->>'dob')::timestamp)) < 65)"
+      when 'age_greater_65'
+        query += "(date_part('year', age((data->>'dob')::timestamp)) > 65)"
+      end
+    end
+    query += total_age_groups.positive? ? ')' : ''
   end
 end

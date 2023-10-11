@@ -17,13 +17,15 @@ Rails.application.routes.draw do
       get 'metadata/professions', to: 'metadata#professions'
       get 'metadata/states', to: 'metadata#states'
       get 'metadata/state_party_list', to: 'metadata#state_party_list'
+      get 'metadata/config/home', to: 'metadata#config_home'
+      get 'custom_member_forms/list', to: 'custom_member_form#list'
+      get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
+      get 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
       post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
-      get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
-      get 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
     end
     namespace :sync do
       get 'states', to: 'state#sync'
