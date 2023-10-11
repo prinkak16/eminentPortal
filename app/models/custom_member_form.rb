@@ -9,6 +9,7 @@ class CustomMemberForm < ApplicationRecord
   belongs_to :deleted_by, class_name: 'AuthUser', optional: true
   belongs_to :selected_by, class_name: 'AuthUser', optional: true
   validates_uniqueness_of :phone, scope: :form_type, :allow_blank => true, :allow_nil => true
+  belongs_to :country_state
 
   scope :buddhist_leader, -> { where(form_type: 'buddhist_leader') }
   acts_as_paranoid

@@ -1,6 +1,7 @@
 class Api::V1::MetadataController < ApplicationController
   before_action :authenticate_user
   skip_before_action :verify_authenticity_token
+  include MetadataHelper
 
   def genders
     render json: {
@@ -56,5 +57,21 @@ class Api::V1::MetadataController < ApplicationController
 
   def user_allotted_states
     render json: { success: true, data: fetch_user_assigned_country_states, message: 'User Assigned States' }, status: 200
+  end
+
+  def config_home
+    result = {
+      'filters': {
+        'entry_type': get_entry_type_filter,
+        'channel': get_channel_filter,
+        'age_group': get_age_group_filter,
+        'form_status': get_aasm_state_filter,
+        'education': get_qualification_filter,
+        'gender': get_gender_filter,
+        'profession': get_profession_filter,
+        'category': get_category_filter
+      }
+    }
+    render json: { success: true, data: result, message: 'User Assigned States' }, status: 200
   end
 end
