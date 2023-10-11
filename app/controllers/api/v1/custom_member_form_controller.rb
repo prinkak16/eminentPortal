@@ -299,4 +299,122 @@ class Api::V1::CustomMemberFormController < ApplicationController
       return render json: { success: false, message: e.message }, status: :bad_request
     end
   end
+
+  def list
+    # compute limit and offset
+    limit = params[:limit].present? ? params[:limit] : 10
+    offset = params[:offset].present? ? params[:offset] : 0
+    is_download = params[:offset].present? ? params[:offset] : false
+
+    # compute search by eminent id
+    eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
+    unless eminent_ids.nil?
+      eminent_ids = eminent_ids.map(&:to_i)
+      custom_members = custom_members.where(id: eminent_ids)
+    end
+
+    # check form type
+    type = params[:type]
+    unless params[:type].present? && params[:type] === CustomMemberForm::TYPE_EMINENT
+      return render json: { success: false, message: 'Please provide a valid form.' }, status: :bad_request
+    end
+
+    # compute state id
+    state_ids = params[:entry_type].present? ? params[:entry_type].split(',') : nil
+    if state_ids.nil?
+      state_ids = []
+      fetch_user_assigned_country_states.each do |country_state|
+        state_ids << country_state['id']
+      end
+    end
+    custom_members = CustomMemberForm.where(form_type: type, country_state_id: state_ids)
+
+    # compute channel filter
+    channel = params[:channel].present? ? params[:channel].split(',') : nil
+    unless channel.nil?
+      custom_members = custom_members.where(channel: channel)
+    end
+
+    # compute age group filter
+    age_groups = params[:age_group].present? ? params[:age_group].split(',') : nil
+    unless age_groups.nil?
+      age_group_query = custom_member_age_group_query(age_groups)
+      custom_members = custom_members.where(age_group_query)
+    end
+
+    # compute channel filter
+    form_status = params[:form_status].present? ? params[:form_status].split(',') : nil
+    unless form_status.nil?
+      custom_members = custom_members.where(aasm_state: form_status)
+    end
+
+    # compute education filter
+    educations = params[:education].present? ? params[:education].split(',') : nil
+    unless educations.nil?
+      custom_members = custom_members.where("data->'education_level' ?| array[:education_values]", education_values: educations)
+    end
+
+    # compute gender filter
+    genders = params[:gender].present? ? params[:gender].split(',') : nil
+    unless genders.nil?
+      custom_members = custom_members.where("data->'gender' ?| array[:gender_values]", gender_values: genders)
+    end
+
+    # compute profession filter
+    professions = params[:profession].present? ? params[:profession].split(',') : nil
+    unless professions.nil?
+      custom_members = custom_members.where("data->'profession' ?| array[:profession_values]", profession_values: professions)
+    end
+
+    # compute profession filter
+    category = params[:category].present? ? params[:category].split(',') : nil
+    unless category.nil?
+      custom_members = custom_members.where("data->'category' ?| array[:category_values]", category_values: category)
+    end
+
+    # compute search
+    query_search = params[:query].present? ? params[:query].split(',') : nil
+    unless query_search.nil?
+      search_query = []
+      phone_numbers_query = query_search.select { |number| number.match?(/^\d+$/) }
+      names_query = query_search.reject { |number| number.match?(/^\d{10}$/) }
+
+      if names_query.size.positive?
+        modified_names_query = names_query.map { |element| "LOWER(data->>'name') LIKE '%#{element.downcase}%'" }
+        search_query += modified_names_query
+      end
+
+      if phone_numbers_query.size.positive?
+        modified_names_query = phone_numbers_query.map { |element| "data->>'mobiles' LIKE '%#{element}%'" }
+        search_query += modified_names_query
+      end
+      custom_members = custom_members.where(search_query.join(' OR '))
+    end
+    length = custom_members.length
+    custom_members = custom_members.order('created_at desc')
+
+    if !custom_members.blank?
+      if is_download == true
+        render json: {
+          success: false,
+          message: 'Success.',
+          data: {
+            'members': custom_members,
+            'length': length
+          }
+        }, status: :ok
+      else
+        render json: {
+          success: false,
+          message: 'Success.',
+          data: {
+            'members': custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state]),
+            'length': length
+          }
+        }, status: :ok
+      end
+    else
+      render json: { success: false, message: 'No member found.' }, status: :not_found
+    end
+  end
 end
