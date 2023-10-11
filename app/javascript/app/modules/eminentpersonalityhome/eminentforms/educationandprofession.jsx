@@ -6,11 +6,13 @@ import Startdatepicker from '../component/startdatepicker/startdatepicker';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
-import Selectfield from "../component/selectfield/selectfield";
+import SelectField from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getEducationData, getFormData, getGenderData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import * as Yup from "yup";
 const Educationform =(props)=>{
+
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -30,63 +32,17 @@ const Educationform =(props)=>{
 
     return(
         <>
-            <Grid className='detailFrom' container spacing={2}>
-                <Grid item xs={12}>
-                    <Formik
-                        initialValues={{
-                            qualification: "",
-                            subject: "",
-                            college: "",
-                            board: "",
-                            school: "",
-                            profession: "",
-                            qualification2:""
-                        }}
-                        validate={(values) => {
-                            const errors = {};
-                            // if (!values.qualification) {
-                            //     errors.qualification = "Required";
-                            // }
-                            // if (!values.subject) {
-                            //     errors.subject = "Required";
-                            // }
-                            // if(!values.college){
-                            //     errors.college="Required"
-                            // }
-                            // if (!values.board) {
-                            //     errors.board = "Required";
-                            // }
-                            // if (!values.school) {
-                            //     errors.school = "Required";
-                            // }
-                            // if (!values.profession) {
-                            //     errors.profession = "Required";
-                            // }
-                            props.enableProgressAction(Object.keys(errors).length === 0);
-                            return errors;
-                        }}
-                        onSubmit={(values, { setSubmitting }) => {
-                            setTimeout(() => {
-                                alert(JSON.stringify(values, null, 2));
-                                setSubmitting(false);
-                                getFormData().then(response => {
-                                    console.log('API response:', response.data);
-                                });
-                            }, 400);
-                        }}
-                    >
-                        {({ isSubmitting, setFieldValue, values }) => (
-                            <Form>
+
                                 <Box sx={{ flexGrow: 1 }}>
                                     <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                                         <Item><Formheading number="1" heading="Education Details" /></Item>
-                                        <Item sx={{textAlign:'right'}}><Savebtn handleSave={isSubmitting}/></Item>
+                                        <Item sx={{textAlign:'right'}}><Savebtn/></Item>
                                     </Stack>
                                     <Grid container sx={{mb:5}} >
                                         <Grid item xs={6} className='education-field pb-3'>
                                             <Grid item xs={7}>
                                                 <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                                <Selectfield
+                                                <SelectField
                                                     name="qualification"
                                                     defaultOption="Select Highest Education"
                                                     optionList={EducationData}
@@ -103,12 +59,12 @@ const Educationform =(props)=>{
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Qualification <sup>*</sup></FormLabel>
-                                            {values.qualification === '1' && (
-                                                <div>
-                                            <Selectfield name="qualification2"  defaultOption="Select Qualification" optionList={EducationData}/>
-                                            <ErrorMessage name="qualification2" component="div" />
-                                                </div>
-                                                )}
+                                            <SelectField
+                                                name="qualification"
+                                                defaultOption="Select Highest Education"
+                                                optionList={EducationData}
+                                            />
+                                            <ErrorMessage name="qualification" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Course / Branch / Subject</FormLabel>
@@ -207,15 +163,24 @@ const Educationform =(props)=>{
                                     </Grid>
 
                                 </Box>
-                            </Form>
-                        )}
-                    </Formik>
-                </Grid>
-            </Grid>
 
 
         </>
 
     )
 }
+Educationform.label = 'Education and Profession'
+Educationform.initialValues = {
+    qualification: "",
+    subject: "",
+    college: "",
+    board: "",
+    school: "",
+    profession: "",
+    qualification2:""
+};
+Educationform.validationSchema = Yup.object().shape({
+    whatsapp_number: Yup.number().required('Please enter your first name'),
+    std_code: Yup.number().required('Please enter your last name')
+});
 export default Educationform

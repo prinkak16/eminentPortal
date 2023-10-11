@@ -12,6 +12,7 @@ import Selectfield from "../component/selectfield/selectfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import * as Yup from "yup";
 const Resumeform=(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -37,30 +38,10 @@ const Resumeform=(props)=>{
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
       };
+
     return(
         <>
 
-                <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={12}>
-                        <Formik
-                            initialValues={{name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"", }}
-                            validate={(values) => {
-                                const errors = {};
-                                props.enableProgressAction(Object.keys(errors).length === 0);
-                                return errors;
-                            }}
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                    alert(JSON.stringify(values, null, 2));
-                                    setSubmitting(false);
-                                    getFormData().then(response => {
-                                        console.log('API response:', response.data);
-                                    });
-                                }, 400);
-                            }}
-                        >
-                            {({isSubmitting})=>(
-                                <Form>
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                                             <Item><Formheading number="1" heading="Political Legacy ( family in politics )" /></Item>
@@ -195,15 +176,16 @@ const Resumeform=(props)=>{
                                         </Grid>
                                     </Grid>
                                     </Box>
-                                </Form>
-                            )}
-                        </Formik>
-                    </Grid>
-                </Grid>
-
-
         </>
 
     )
 }
+Resumeform.label = 'Resume'
+Resumeform.initialValues = {
+    name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"",
+};
+Resumeform.validationSchema = Yup.object().shape({
+    whatsapp_number: Yup.number().required('Please enter your first name'),
+    std_code: Yup.number().required('Please enter your last name')
+});
 export default Resumeform

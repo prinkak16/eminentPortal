@@ -1,0 +1,58 @@
+$basicColor: #FF9559;
+$whiteColor:#fff;
+$graybg: #C9C9C9;
+$blackcolor:#000;
+.stepperwrap{
+  color: ($basicColor) ;
+  .MuiSvgIcon-root{
+    width: 50px;
+    height: 50px;
+  }
+  .MuiStepLabel-label{
+    font-size: 16px;
+  }
+  .css-zpcwqm-MuiStepConnector-root{
+    top:24px
+  }
+}
+@mixin btndesign{
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: normal;
+  box-shadow: none;
+}
+.stepouter{
+  .nextbtn, .backbtn{
+    background-color: ($basicColor);
+    color: $whiteColor;
+    @include btndesign;
+    &:hover{
+      background: ($basicColor);
+      color: $whiteColor;
+      @include btndesign;
+    }
+  }
+  .backbtn{
+    &:disabled{
+      @include btndesign;
+      background-color: ($graybg);
+      color: $whiteColor;
+      &:hover{
+        background: ($graybg);
+        color: $whiteColor;
+        @include btndesign;
+      }
+    }
+  }
+}
+button.deletebtn {
+  @include btndesign;
+  background-color: ($graybg);
+  color: ($blackcolor);
+  &:hover{
+    background-color: ($graybg);
+    color: ($blackcolor);
+  }
+}

@@ -6,7 +6,9 @@ import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
-const Refferedform=(props)=>{
+import * as Yup from "yup";
+const Refferedform=({enableProgressAction })=>{
+
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -14,31 +16,11 @@ const Refferedform=(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+
     return(
         <>
 
-                <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={12}>
-                        <Formik
-                            initialValues={{name: "", mobile: "", bjpid: "", grade:"", comments:""}}
-                            validate={(values) => {
-                                const errors = {};
 
-                                props.enableProgressAction(Object.keys(errors).length === 0);
-                                return errors;
-                            }}
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                    alert(JSON.stringify(values, null, 2));
-                                    setSubmitting(false);
-                                    getFormData().then(response => {
-                                        console.log('API response:', response.data);
-                                    });
-                                }, 400);
-                            }}
-                        >
-                            {({isSubmitting})=>(
-                                <Form>
                                     <Box sx={{ flexGrow: 1 }}>
 
                                         <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
@@ -81,17 +63,23 @@ const Refferedform=(props)=>{
                                         </Grid>
                                     </Grid>
                                     </Box>
-                                </Form>
-
-                            )}
-
-                        </Formik>
-                    </Grid>
-
-                </Grid>
 
         </>
 
     )
 }
+Refferedform.label = 'Referred By'
+Refferedform.initialValues = {
+    qualification: "",
+    subject: "",
+    college: "",
+    board: "",
+    school: "",
+    profession: "",
+    qualification2:""
+};
+Refferedform.validationSchema = Yup.object().shape({
+    whatsapp_number: Yup.number().required('Please enter your first name'),
+    std_code: Yup.number().required('Please enter your last name')
+});
 export default Refferedform;

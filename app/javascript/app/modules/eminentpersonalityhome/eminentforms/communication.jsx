@@ -8,10 +8,12 @@ import Checkbox from '@mui/material/Checkbox';
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
-import Selectfield from "../component/selectfield/selectfield";
+import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFormData, getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
+import * as Yup from "yup";
+import PersonalDetails from "./personaldetails";
 const Communicationform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -91,116 +93,35 @@ const Communicationform =(props)=>{
         })
 
     }
-    const validateSTDCode = (value) => {
-        if (!value) {
-            return null; // Field is empty, so no validation error
-        }
-        const stdPattern = /^\d{3,5}$/;
-        if (!stdPattern.test(value)) {
-            return 'Enter a valid STD Code with 3 to 5 digits';
-        }
-        return null;
-    };
-    const validateLandline = (value) => {
-        if (!value) {
-            return null; // Field is empty, so no validation error
-        }
-        const stdPattern = /^\d{6,8}$/;
-        if (!stdPattern.test(value)) {
-            return 'Enter a valid landline number with 6 to 8 digits';
-        }
-        return null;
-    };
+    // const validateSTDCode = (value) => {
+    //     if (!value) {
+    //         return null; // Field is empty, so no validation error
+    //     }
+    //     const stdPattern = /^\d{3,5}$/;
+    //     if (!stdPattern.test(value)) {
+    //         return 'Enter a valid STD Code with 3 to 5 digits';
+    //     }
+    //     return null;
+    // };
+    // const validateLandline = (value) => {
+    //     if (!value) {
+    //         return null; // Field is empty, so no validation error
+    //     }
+    //     const stdPattern = /^\d{6,8}$/;
+    //     if (!stdPattern.test(value)) {
+    //         return 'Enter a valid landline number with 6 to 8 digits';
+    //     }
+    //     return null;
+    // };
+
     return(
         <>
             
-                        <Formik
-                            initialValues={{whatsapp_number: "", std_code: "", landline: "", current_flat:"",current_pincode:"", current_street:"",current_district:"",current_state:"", home_flat:"",home_pincode:"", home_street:"", home_district:"", home_state:"", other_flat:"", check:"", type_of_other_address:"", other_district:"", other_state:"", other_pincode:"",   }}
-                            validate={(values) => {
-                                const errors = {};
-                            //     if (!/^\d+$/.test(values.whatsapp_number)) {
-                            //         errors.whatsapp_number = "Required";
-                            //     }
-                                const stdError = validateSTDCode(values.std_code);
-                                if (stdError) {
-                                    errors.std_code = stdError;
-                                }
-                                const landlineError = validateLandline(values.landline);
-                                if (landlineError) {
-                                    errors.landline = landlineError;
-                                }
-                            //     if (!values.email) {
-                            //         errors.email = "Required";
-                            //     } else if (
-                            //         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                            //     ) {
-                            //         errors.email = "Invalid email address";
-                            //     }
-                            //     if (!values.current_flat) {
-                            //         errors.current_flat = "Required";
-                            //     }
-                            //     if (!values.current_pincode) {
-                            //         errors.current_pincode = "Required";
-                            //     }
-                            //     if (!values.current_street) {
-                            //         errors.current_street = "Required";
-                            //     }
-                            //     if (!values.current_district) {
-                            //         errors.current_district = "Required";
-                            //     }
-                            //     if (!values.current_state) {
-                            //         errors.current_state = "Required";
-                            //     }
-                            //     if (!values.home_flat) {
-                            //         errors.home_flat = "Required";
-                            //     }
-                            //     if (!values.home_pincode) {
-                            //         errors.home_pincode = "Required";
-                            //     }
-                            //     if (!values.home_street) {
-                            //         errors.home_street = "Required";
-                            //     }
-                            //     if (!values.home_district) {
-                            //         errors.home_district = "Required";
-                            //     }
-                            //     if (!values.home_state) {
-                            //         errors.home_state = "Required";
-                            //     }
-                            //     if (!values.other_flat) {
-                            //         errors.other_flat = "Required";
-                            //     }
-                            //     if (!values.other_street) {
-                            //         errors.other_street = "Required";
-                            //     }
-                            //     if (!values.other_district) {
-                            //         errors.other_district = "Required";
-                            //     }
-                            //     if (!values.other_state) {
-                            //         errors.other_state = "Required";
-                            //     }
-                            //     if (!values.other_pincode) {
-                            //         errors.other_pincode = "Required";
-                            //     }
-                                props.enableProgressAction(Object.keys(errors).length===0);
-                                return errors;
-                            }}
-                            
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                alert(JSON.stringify(values, null, 2));
-                                setSubmitting(false);
-                                    getFormData().then(response => {
-                                        console.log('API response:', response.data);
-                                    });
-                                }, 400);
-                            }}
-                        >
-                            {({isSubmitting, values, handleChange, handleBlur})=>(
-                                <Form>
+
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Stack direction="row" useFlexGap flexWrap="wrap">
                                             <Formheading number="1" heading="Communication" />
-                                            <Item sx={{textAlign:'right'}}><Savebtn handleSave={isSubmitting}/>
+                                            <Item sx={{textAlign:'right'}}><Savebtn/>
                                             </Item>
                                         </Stack>
                                         <div className="detailFrom">
@@ -352,12 +273,12 @@ const Communicationform =(props)=>{
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="current_district"   defaultOption="Select District" optionList={StateData}/>
+                                                                        <SelectField name="current_district"   defaultOption="Select District" optionList={StateData}/>
                                                                         <ErrorMessage name="current_district" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>State <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="current_state" defaultOption="Select State" optionList={StateData}/>
+                                                                        <SelectField name="current_state" defaultOption="Select State" optionList={StateData}/>
                                                                         <ErrorMessage name="current_state" component="div" />
                                                                     </Grid>
                                                                 </Grid>
@@ -393,12 +314,12 @@ const Communicationform =(props)=>{
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="home_district"  defaultOption="Select District" optionList={StateData}/>
+                                                                        <SelectField name="home_district"  defaultOption="Select District" optionList={StateData}/>
                                                                         <ErrorMessage name="home_district" component="div" />
                                                                     </Grid>
                                                                     <Grid item xs={6}>
                                                                         <FormLabel>State <sup>*</sup></FormLabel>
-                                                                        <Selectfield name="home_state"  defaultOption="Select State" optionList={StateData}/>
+                                                                        <SelectField name="home_state"  defaultOption="Select State" optionList={StateData}/>
                                                                         <ErrorMessage name="home_state" component="div" />
                                                                     </Grid>
                                                                 </Grid>
@@ -434,11 +355,11 @@ const Communicationform =(props)=>{
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                                                    <Selectfield name="other_district"  defaultOption="Select District" optionList={StateData}/>
+                                                                                    <SelectField name="other_district"  defaultOption="Select District" optionList={StateData}/>
                                                                                 </Grid>
                                                                                 <Grid item xs={6}>
                                                                                     <FormLabel>State <sup>*</sup></FormLabel>
-                                                                                <Selectfield name="other_state"  defaultOption="Select State" optionList={StateData}/>
+                                                                                <SelectField name="other_state"  defaultOption="Select State" optionList={StateData}/>
                                                                                 </Grid>
                                                                             </Grid>
 
@@ -464,11 +385,17 @@ const Communicationform =(props)=>{
                                                 </Grid>
                                         </div>
                                     </Box>
-                                </Form>
-                            )}
-                        </Formik>            
+
         </>
 
     )
 }
+Communicationform.label = 'Communication Details'
+Communicationform.initialValues = {
+    whatsapp_number: "", std_code: "", landline: "", current_flat:"",current_pincode:"", current_street:"",current_district:"",current_state:"", home_flat:"",home_pincode:"", home_street:"", home_district:"", home_state:"", other_flat:"", check:"", type_of_other_address:"", other_district:"", other_state:"", other_pincode:"",
+};
+Communicationform.validationSchema = Yup.object().shape({
+    whatsapp_number: Yup.number().required('Please enter your number'),
+    std_code: Yup.number().required('Please enter valid STD Code')
+});
 export default Communicationform

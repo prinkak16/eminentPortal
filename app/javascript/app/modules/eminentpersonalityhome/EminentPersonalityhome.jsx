@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "./header/header"
-import FormStepper from "./component/stepper/stepper";
-import {Grid} from '@mui/material';
+import {Grid, Typography} from '@mui/material';
 import './eminentpersonalityhome.scss'
+import FormWrap from "./formWrap/formwrap";
 const EminentPersonality=()=> {
     return(
         <>
@@ -31,15 +31,7 @@ const EminentPersonality=()=> {
                         </g>
                     </svg>
                 </Grid>
-                <Grid className="notes">
-                    {/* {reqmessage &&(
-                    <Typography sx={{ padding: '1rem' }} variant="p" component="p">
-                    Note :  All Fields Marked with * (star) are compulsory without filling them you won’t be
-                        able to submit the form. Click Save and continue to save your progress.
-                    </Typography>
-                    )} */}
-                </Grid>
-                <FormStepper/>
+            <FormWrap/>
         </>
     )
 }

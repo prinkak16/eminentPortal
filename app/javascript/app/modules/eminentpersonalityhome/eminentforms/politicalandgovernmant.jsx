@@ -7,7 +7,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
-import Selectfield from "../component/selectfield/selectfield";
+import SelectField from "../component/selectfield/selectfield";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import Stepfouraddmore from '../component/stepfouraddmore/selectlokshabha';
@@ -17,6 +17,7 @@ import vidhanprishad from "../component/stepfouraddmore/vidhanprishad";
 import Urbanlocalfrom from '../component/stepfouraddmore/urbanlocal';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFormData, getPartyData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import * as Yup from "yup";
 const PolticalandGovrnform =(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -58,33 +59,9 @@ function handlremoveField(){
         getPartyData.then((res)=>{
             setPartyData(res.data.data)})
     }
+
     return(
         <>
-
-                <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={12}>
-                        <Formik
-                            initialValues={{party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""}}
-                            validate={(values) => {
-                                const errors = {};
-                                // if (!values.party_level) {
-                                //     errors.party_level = "Required";
-                                // }
-                                props.enableProgressAction(Object.keys(errors).length === 0);
-                                return errors;
-                            }}
-                            onSubmit={(values, { setSubmitting }) => {
-                                setTimeout(() => {
-                                    alert(JSON.stringify(values, null, 2));
-                                    setSubmitting(false);
-                                    getFormData().then(response => {
-                                        console.log('API response:', response.data);
-                                    });
-                                }, 400);
-                            }}
-                        >
-                            {({isSubmitting})=>(
-                                <Form>
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                                             <Item><Formheading number="1" heading="Political Profile" /></Item>
@@ -93,12 +70,12 @@ function handlremoveField(){
                                     <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={4}>
                                             <FormLabel>Party level <sup>*</sup></FormLabel>
-                                            <Selectfield name="party_level" optionList={PartyData}/>
+                                            <SelectField name="party_level" optionList={PartyData}/>
                                             <ErrorMessage name="party_level" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Unit</FormLabel>
-                                            <Selectfield name="unit" optionList={['Select Unit']}/>
+                                            <SelectField name="unit" optionList={['Select Unit']}/>
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>Designation</FormLabel>
@@ -253,7 +230,7 @@ function handlremoveField(){
                                             <Grid container spacing={2} className='px-5 py-3'>
                                                 <Grid item xs={4}>
                                                     {electfiled &&(
-                                                        <Selectfield selectedvalues={selectedOption} handleSelectChange={selectChange} name="state"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
+                                                        <SelectField selectedvalues={selectedOption} handleSelectChange={selectChange} name="state"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
                                                     )}
                                                 </Grid>
                                                 <Grid item xs={9}>
@@ -284,16 +261,18 @@ function handlremoveField(){
                                         </Grid>
                                     </Grid>
                                     </Box>
-                                </Form>
-                            )}
-                        </Formik>
-                    </Grid>
-
-                </Grid>
 
 
         </>
 
     )
 }
+PolticalandGovrnform.label = 'Political and Government'
+PolticalandGovrnform.initialValues = {
+    party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""
+};
+PolticalandGovrnform.validationSchema = Yup.object().shape({
+    whatsapp_number: Yup.number().required('Please enter your first name'),
+    std_code: Yup.number().required('Please enter your last name')
+});
 export default PolticalandGovrnform
