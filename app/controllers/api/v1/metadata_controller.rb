@@ -1,6 +1,5 @@
 class Api::V1::MetadataController < BaseApiController
   before_action :authenticate_user
-  skip_before_action :verify_authenticity_token
   include MetadataHelper
 
   def genders

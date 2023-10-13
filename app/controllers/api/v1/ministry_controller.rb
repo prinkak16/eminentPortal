@@ -1,6 +1,5 @@
 class Api::V1::MinistryController < BaseApiController
   before_action :authenticate_user
-  skip_before_action :verify_authenticity_token
   include Validators::Ministry::Validator
   include UtilHelper
 
