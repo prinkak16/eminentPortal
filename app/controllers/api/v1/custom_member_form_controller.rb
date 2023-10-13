@@ -1,4 +1,4 @@
-class Api::V1::CustomMemberFormController < ApplicationController
+class Api::V1::CustomMemberFormController < BaseController
   before_action :authenticate_user
   include CustomMemberFormHelper
   include UtilHelper

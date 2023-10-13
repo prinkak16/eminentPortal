@@ -1,6 +1,5 @@
-class Api::V1::Ministry::DepartmentController < ApplicationController
+class Api::V1::Ministry::DepartmentController < BaseController
   before_action :authenticate_user
-  skip_before_action :verify_authenticity_token
   include Validators::Ministry::Department::Validator
   include Validators::Ministry::Validator
   include UtilHelper
