@@ -5,7 +5,6 @@ class HomeController < ApplicationController
 
   def status
     render json: { message: 'Success.' }, status: 200
-    return
   end
 
 end
