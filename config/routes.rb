@@ -26,7 +26,22 @@ Rails.application.routes.draw do
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
+
+      get 'ministry', to: 'ministry#get_ministries'
+      post 'ministry', to: 'ministry#add_ministry'
+      get 'ministry/:ministry_id', to: 'ministry#get_ministry'
+
+      namespace :ministry, path: 'ministry/:ministry_id' do
+        post '/department', to: 'department#add_department'
+        get '/department', to: 'department#get_departments'
+        get '/department/:department_id', to: 'department#get_department'
+
+        namespace :department, path: 'department/:department_id' do
+          post '/organization', to: 'organization#add_organization'
+        end
+      end
     end
+
     namespace :sync do
       get 'states', to: 'state#sync'
     end

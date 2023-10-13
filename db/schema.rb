@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_21_065453) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,53 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_065453) do
     t.index ["deleted_by_id"], name: "index_custom_member_forms_on_deleted_by_id"
     t.index ["rejected_by_id"], name: "index_custom_member_forms_on_rejected_by_id"
     t.index ["selected_by_id"], name: "index_custom_member_forms_on_selected_by_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.integer "ministry_id"
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.integer "order_id", default: 1, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ministry_id"], name: "index_departments_on_ministry_id"
+    t.index ["name"], name: "index_departments_on_name"
+    t.index ["slug"], name: "index_departments_on_slug"
+  end
+
+  create_table "ministries", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.integer "order_id", default: 1, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_ministries_on_name"
+    t.index ["slug"], name: "index_ministries_on_slug"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "order_id", default: 1, null: false
+    t.integer "country_state_id"
+    t.integer "ministry_id"
+    t.integer "department_id"
+    t.string "type"
+    t.string "ratna_type"
+    t.boolean "is_listed", default: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "abbreviation"
+    t.jsonb "location", default: "{}", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_state_id"], name: "index_organizations_on_country_state_id"
+    t.index ["department_id"], name: "index_organizations_on_department_id"
+    t.index ["ministry_id"], name: "index_organizations_on_ministry_id"
+    t.index ["name"], name: "index_organizations_on_name"
+    t.index ["slug"], name: "index_organizations_on_slug"
   end
 
   create_table "states", id: :serial, force: :cascade do |t|

@@ -1,6 +1,7 @@
 class Api::V1::CustomMemberFormController < ApplicationController
   before_action :authenticate_user
   include CustomMemberFormHelper
+  include UtilHelper
 
   def add
     begin
@@ -396,7 +397,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
     if !custom_members.blank?
       if is_download == true
         render json: {
-          success: false,
+          success: true,
           message: 'Success.',
           data: {
             'members': custom_members,
@@ -405,7 +406,7 @@ class Api::V1::CustomMemberFormController < ApplicationController
         }, status: :ok
       else
         render json: {
-          success: false,
+          success: true,
           message: 'Success.',
           data: {
             'members': custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state]),
