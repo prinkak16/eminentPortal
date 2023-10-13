@@ -31,6 +31,7 @@ const PersonalDetails = props => {
     const [ReligionData, setReligionData] = useState([]);
     const[GenderData, setGenderData]= useState([]);
     const selectChange = (e) => {
+        console.log(`e`, e);
         setSelectedOption(e.target.value);
     };
     useEffect(() => {
@@ -99,13 +100,17 @@ const PersonalDetails = props => {
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
                             <Grid item xs={6}>
                                 <FormLabel>Fullname <sup>*</sup></FormLabel>
-                                <Inputfield type="number" name="name" placeholder="Enter Fullname"/>
+                                <Inputfield type="text" name="name" placeholder="Enter Fullname"/>
                                 <ErrorMessage name="name" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Mobile Number <sup>*</sup></FormLabel>
-                                <Inputfield type="text" name="mobile" placeholder="Enter Mobile number" inputMode="numeric"/>
-                                <ErrorMessage name="mobile" component="div"/>
+                                <NumberField
+                                    name="mobile"
+                                    placeholder='Search by phone no.'
+
+                                />
+                                <ErrorMessage name="mobile" component="div" as={TextField} />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Religion <sup>*</sup></FormLabel>
@@ -151,8 +156,8 @@ const PersonalDetails = props => {
                                             placeholder="DD"
                                             as={TextField}
                                             fullWidth
-                                            value={inputValues.day}
-                                            onInput={(e) => handleInput('day', e.target.value)}
+                                            value={inputValues.dob}
+                                            onInput={(e) => handleInput('dob', e.target.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={2}>
@@ -221,7 +226,10 @@ const PersonalDetails = props => {
                     </Grid>
                     <Grid item xs={4}>
                         <Item>
-                            <ImageUpload cardName="Input Image"/>
+                            <ImageUpload
+                                validationSchema={props.validationSchema}
+                                isSubmitting={props.isSubmitting}
+                                cardName="Input Image"/>
                         </Item>
                     </Grid>
                 </Grid>
@@ -241,28 +249,38 @@ PersonalDetails.initialValues = {
     caste: "",
     sub_caste: "",
     dob: "",
-    photo: "",
+    // photo: "",
     languages: "",
     aadhaar: "",
     voter_id: "",
-    day: "",
+    // day: "",
     month: "",
     year: ""
 };
 PersonalDetails.validationSchema = Yup.object().shape({
     name: Yup.string().required('Please enter your first name'),
-    mobile: Yup.string().matches(/^[0-9]{10}$/, 'Invalid mobile number')
-        .test('first-three-digits', 'First three digits should be >= 5', (value) => {
-            const firstThreeDigits = value.substring(0, 3);
-            return parseInt(firstThreeDigits) >= 5;
+    mobile: Yup.string()
+        .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
+            if (!value) return true; // No validation if the field is empty
+            const mobileNumbers = value.split(',').map((number) => number.trim());
+            return mobileNumbers.every((number) => {
+                const firstDigit = parseInt(number.charAt(0));
+                return !isNaN(firstDigit) && firstDigit > 4;
+            });
         })
-        .required('Please enter your mobile number'),
+        .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
+            if (!value) return true; // No validation if the field is empty
+            const mobileNumbers = value.split(',').map((number) => number.trim());
+            return mobileNumbers.every((number) => number.length === 10);
+        })
+        .required('Please enter at least one contact number'),
     religion: Yup.string().required('Please select your Religion'),
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
     caste: Yup.string().required('Please select your Caste'),
-    dob: Yup.string().matches(/^\d{2}\/\d{2}\/\d{4}$/, 'Invalid date format (MM/DD/YYYY)').required('Please enter your Date of Birth'),
-    photo: Yup.mixed().required('Please upload your photo'),
+    dob: Yup.string().required('Please enter your Date of Birth'),
+    // photo: Yup.mixed().required('Please upload your photo'),
+    languages: Yup.string().required('Please select your Category'),
 
 });
 export default PersonalDetails;

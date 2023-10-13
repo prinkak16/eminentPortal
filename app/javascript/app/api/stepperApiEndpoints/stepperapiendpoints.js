@@ -1,16 +1,12 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps} from "../api_endpoints";
-
-
-
-
 export const getFormData = (data) => {
   return axios.post(apiBaseUrl + allSteps, data)
       .then((response) => {
-          console.log('API response:', response.data);
+          // console.log('API response:', response.data);
       })
       .catch((error) => {
-          console.error('API error:', error);
+          // console.error('API error:', error);
       });
 }
 

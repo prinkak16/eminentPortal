@@ -1,5 +1,5 @@
-import React from 'react';
-import './stepper.scss'
+import React, { useState } from 'react';
+import './stepper.scss';
 import {
     Typography,
     Button,
@@ -7,13 +7,9 @@ import {
     Step,
     StepLabel,
     Box,
+    Grid,
+    StepButton,
 } from '@mui/material';
-import PersonalDetails from "../../eminentforms/personaldetails";
-import Communicationform from "../../eminentforms/communication";
-import Educationform from "../../eminentforms/educationandprofession";
-import PolticalandGovrnform from "../../eminentforms/politicalandgovernmant";
-import Resumeform from "../../eminentforms/resume";
-import Refferedform from "../../eminentforms/reffer"
 
 const FormStepper = ({
                          activeStep,
@@ -24,101 +20,58 @@ const FormStepper = ({
                          steps,
                          values,
                          touched,
-                         handleSubmit
+                         handleSubmit,
+                         handleStep,
                      }) => {
+    const [cumulativeData, setCumulativeData] = useState({});
+    const [completed, setCompleted] = React.useState({});
 
+    // Function to update cumulative data
+    const updateCumulativeData = (data) => {
+        setCumulativeData((prevData) => ({ ...prevData, ...data }));
+    };
+
+    const ActiveStep = steps[activeStep];
 
     return (
         <>
-            <Stepper alternativeLabel activeStep={activeStep}>
-                {steps.map((step, index) => (
-                    <Step key={index}  sx={{
-                        '& .MuiStepLabel-root .Mui-completed': {
-                            color: '#FF9559',
-                        },
-                        '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel':
-                            {
-                                color: '#FF9559', // Just text label (COMPLETED)
-                            },
-                        '& .MuiStepLabel-root .Mui-active': {
-                            color: '#FF9559', // circle color (ACTIVE)
-                        },
-                        '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
-                            {
-                                color: '#FF9559', // Just text label (ACTIVE)
-                            },
-                        '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
-                            fill: '#fff', // circle's number (ACTIVE)
-                        },
-                        '& .MuiStepConnector-root': {
-                            left: 'calc(-54% + 20px)',
-                            right: 'calc(46% + 20px)',
-                            zIndex: '-1',
-                            height: '4px',
-                        },
-                        '& .MuiStepConnector-line': {
-                            borderTopWidth: '4px',
-                        },
-                    }}>
-                        <StepLabel>{steps[index].label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-            <div className="stepouter px-md-5 mt-5">
-                {activeStep === 0 && (
-                    <>
-                        <PersonalDetails/>
-                    </>
-                )}
-                {activeStep === 1 && (
-                    <>
-                        <Communicationform />
-                    </>
-                )}
-                {activeStep === 2 && (
-                    <>
-                        <Educationform/>
-                    </>
-                )}
-                {activeStep === 3 && (
-                    <>
-                        <PolticalandGovrnform/>
-                    </>
-                )}
-                {activeStep === 4 && (
-                    <>
-                        <Resumeform/>
-                    </>
-                )}
-                {activeStep === 5 && (
-                    <>
-                        <Refferedform />
-                    </>
-                )}
+            <div className="stepperwrap">
+                <Stepper alternativeLabel activeStep={activeStep}>
+                    {steps.map((step, index) => (
+                        <Step key={index} completed={completed[index]}>
+                            <StepButton onClick={() => handleStep(index)}>
+                                {steps[index].label}
+                            </StepButton>
+                        </Step>
+                    ))}
+                </Stepper>
+                <div className="stepouter px-md-5 mt-5">
+                    <Grid className="notes my-5">
+                        <Typography sx={{ padding: '1rem' }} variant="p" component="p">
+                            Note: All Fields Marked with * (star) are compulsory without filling them you won't be
+                            able to submit the form. Click Save and continue to save your progress.
+                        </Typography>
+                    </Grid>
+                    <ActiveStep onUpdate={updateCumulativeData} />
 
-                <Box mt={2}  className="mb-5 d-flex align-items-center justify-content-between">
-                    <Button
-                        disabled={activeStep === 0 || isSubmitting}
-                        onClick={handlePrev}
-                        className="backbtn"
-                    >
-                        Previous
-                    </Button>
-                    <Typography variant="p" component="p" >
-                        Step {activeStep + 1} of Step 6
-                    </Typography>
-                    <Button
-                        disabled={isSubmitting}
-                        type="submit"
-                        onClick={isLastStep() ? handleSubmit : handleNext}
-                        className="nextbtn"
-                    >
-                        {isLastStep() ? 'Submit' : 'Next'}
-                    </Button>
-                </Box>
+                    <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between">
+                        <Button
+                            disabled={activeStep === 0 || isSubmitting}
+                            onClick={handlePrev}
+                            className="backbtn"
+                        >
+                            Previous
+                        </Button>
+                        <Typography variant="p" component="p">
+                            Step {activeStep + 1} of Step 6
+                        </Typography>
+                        <Button className="nextbtn" type="submit">
+                            {isLastStep() ? "Submit" : "Save & Next"}
+                        </Button>
+                    </Box>
+                </div>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
             </div>
-            {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
-            {/*<pre>{JSON.stringify(touched, null, 2)}</pre>*/}
         </>
     );
 };

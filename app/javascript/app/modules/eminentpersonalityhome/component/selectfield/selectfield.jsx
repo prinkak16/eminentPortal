@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
-import {Formik, Form, Field} from "formik";
+import {Formik, Form, Field, ErrorMessage} from "formik";
 import { Select} from '@mui/material';
 import "./selectfield.scss"
 
 
 const Selectfield=(props)=>{
-    const {name, optionList, onChange, defaultOption} = props;
+    const {name, optionList} = props;
     return(
         <>
+            <Field as="select" name={name} className="custom-select">
+                <option value="">Select Language</option>
+                {optionList?.map(item => (
+                    <option key={item.id} className="selectOption" value={item.id}>
+                        {item.name}
+                    </option>
+                ))}
+            </Field>
 
-            {optionList !== undefined ?
-                <Field as="Select"  onChange={onChange} name={name} className="custom-select">
-                    <option value="">{defaultOption}</option>
-                    {optionList?.map(item=> {
-                        return <option key={item.name}  className="selectOption"  value={item.id}>{item.name}</option>;
-                    })}
-                </Field>
-                : null}
         </>
     )
 }
