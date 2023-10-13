@@ -1,4 +1,4 @@
-class Api::V1::Ministry::DepartmentController < BaseController
+class Api::V1::Ministry::DepartmentController < BaseApiController
   before_action :authenticate_user
   include Validators::Ministry::Department::Validator
   include Validators::Ministry::Validator

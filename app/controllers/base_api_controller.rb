@@ -1,4 +1,4 @@
-class BaseController < ActionController::API
+class BaseApiController < ActionController::API
   include ApplicationHelper
   include AuthHelper
 
