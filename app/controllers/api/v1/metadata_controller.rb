@@ -60,16 +60,16 @@ class Api::V1::MetadataController < BaseApiController
 
   def config_home
     result = {
-      'filters': {
-        'entry_type': get_entry_type_filter,
-        'channel': get_channel_filter,
-        'age_group': get_age_group_filter,
-        'form_status': get_aasm_state_filter,
-        'education': get_qualification_filter,
-        'gender': get_gender_filter,
-        'profession': get_profession_filter,
-        'category': get_category_filter
-      }
+      'filters': [
+        get_entry_type_filter,
+        get_channel_filter,
+        get_age_group_filter,
+        get_aasm_state_filter,
+        get_qualification_filter,
+        get_gender_filter,
+        get_profession_filter,
+        get_category_filter
+      ]
     }
     render json: { success: true, data: result, message: 'User Assigned States' }, status: 200
   end
