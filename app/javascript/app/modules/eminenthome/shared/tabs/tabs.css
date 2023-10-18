@@ -1,0 +1,42 @@
+
+.tabsDiv{
+    border-radius: var(--Candidate-count, 0px);
+}
+.heading{
+
+    color: #343434;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.navBar ul{
+    list-style: none;
+    display: inline-flex;
+    padding: var(--Candidate-count, 0px);
+    align-items: flex-start;
+    gap: 20px;
+    border-radius: var(--Candidate-count, 0px);
+}
+
+.navBar ul li{
+    display: flex;
+    padding: 10px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.opentab{
+    color: #FFF;
+    background-color: #383737 !important;
+
+}
+
+.closedtab{
+    background-color: rgba(0,0,0,0.02) !important;
+
+}
