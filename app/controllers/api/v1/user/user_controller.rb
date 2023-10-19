@@ -269,7 +269,7 @@ class Api::V1::User::UserController < BaseApiController
         assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
       }
     end
-    
+
     render json: {
       success: true,
       message: 'Success',
@@ -281,6 +281,8 @@ class Api::V1::User::UserController < BaseApiController
     # compute limit and offset
     limit = params[:limit].present? ? params[:limit] : 50
     offset = params[:offset].present? ? params[:offset] : 0
+    name = params[:name].present? ? params[:name] : nil
+
     sql = "SELECT
       u.id,
       u.name,
@@ -302,8 +304,9 @@ class Api::V1::User::UserController < BaseApiController
     ON up.user_tag_id = utl.user_tag_id
     LEFT JOIN public.country_states AS cs
     ON utl.location_id = cs.id
-    WHERE
-    ca.name = '#{ENV['CLIENT_APP_PERMISSION']}'
+    WHERE"
+    sql += " u.name LIKE '%#{name}%' AND " unless name.nil?
+    sql += "ca.name = '#{ENV['CLIENT_APP_PERMISSION']}'
     AND
     up.deleted_at IS null
     AND
