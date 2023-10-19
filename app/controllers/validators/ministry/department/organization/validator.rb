@@ -63,7 +63,7 @@ module Validators
             }
           end
 
-          def get_ministry_department_validation
+          def get_organizations_validation
             {
               'type': 'object',
               'properties': {
@@ -79,6 +79,31 @@ module Validators
               'required': %w[
                 ministry_id
                 department_id
+              ]
+            }
+          end
+
+          def get_organization_validation
+            {
+              'type': 'object',
+              'properties': {
+                'ministry_id': {
+                  'type': 'integer',
+                  'minimum': 1 # Min length of 3 characters
+                },
+                'department_id': {
+                  'type': 'integer',
+                  'minimum': 1 # Min length of 3 characters
+                },
+                'organization_id': {
+                  'type': 'integer',
+                  'minimum': 1 # Min length of 3 characters
+                }
+              },
+              'required': %w[
+                ministry_id
+                department_id
+                organization_id
               ]
             }
           end
