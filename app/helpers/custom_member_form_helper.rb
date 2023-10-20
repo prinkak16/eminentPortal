@@ -197,7 +197,8 @@ module CustomMemberFormHelper
             'minLength': 6, # Min length of 6 characters
             'maxLength': 6 # Max length of 6 characters
           }
-        }
+        },
+        'required': %w[address_type flat street district state pincode]
       }
     }
   )
