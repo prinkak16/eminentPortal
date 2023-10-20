@@ -57,16 +57,18 @@ module CustomMemberFormHelper
       'type': 'array',
       'items': {
         'type': 'string',
-        'minLength': 10, # Min length of 10 characters
-        'maxLength': 10 # Max length of 10 characters
+        'pattern': "^[5-9]{1}\\d{9}$",
+        'minLength': 10,
+        'maxLength': 10,
+        'pattern_example': '9876543210'
       },
-      'minItems': 1, # Min length of 1 phone number
-      'maxItems': 3 # Max length of 3 phone number
+      'minItems': 1,
+      'maxItems': 3
     },
     'name': {
       'type': 'string',
-      'minLength': 2, # Min length of 3 characters
-      'maxLength': 100 # Max length of 100 characters
+      'minLength': 2,
+      'maxLength': 100
     },
     'gender': {
       'type': 'string',
@@ -78,33 +80,33 @@ module CustomMemberFormHelper
     },
     'religion': {
       'type': 'string',
-      'minLength': 2, # Min length of 3 characters
-      'maxLength': 100 # Max length of 100 characters
+      'minLength': 2,
+      'maxLength': 100
     },
     'category': {
       'type': 'string',
-      'minLength': 2, # Min length of 2 characters
-      'maxLength': 100 # Max length of 100 characters
+      'minLength': 2,
+      'maxLength': 100
     },
     'caste': {
       'type': 'string',
-      'minLength': 2, # Min length of 2 characters
-      'maxLength': 100 # Max length of 100 characters
+      'minLength': 2,
+      'maxLength': 100
     },
     'sub_caste': {
       'type': 'string',
-      'minLength': 2, # Min length of 2 characters
-      'maxLength': 100 # Max length of 100 characters
+      'minLength': 2,
+      'maxLength': 100
     },
     'languages': {
       'type': 'array',
       'items': {
         'type': 'string',
-        'minLength': 2, # Min length of 10 characters
-        'maxLength': 30 # Max length of 10 characters
+        'minLength': 2,
+        'maxLength': 30
       },
-      'minItems': 1, # Min length of 1 phone number
-      'maxItems': 100 # Max length of 3 phone number
+      'minItems': 1,
+      'maxItems': 100
     },
     'dob': {
       'type': 'string',
@@ -112,13 +114,17 @@ module CustomMemberFormHelper
     },
     'aadhaar': {
       'type': 'string',
+      'pattern': "^$|^\\d{12}$",
       'minLength': 0, # Min length of 12 characters
-      'maxLength': 12 # Max length of 12 characters
+      'maxLength': 12, # Max length of 12 characters
+      'pattern_example': '123456789012'
     },
     'voter_id': {
       'type': 'string',
+      'pattern': "^$|^[A-Za-z]{3}\\d{7}$",
       'minLength': 0, # Min length of 12 characters
-      'maxLength': 20 # Max length of 12 characters
+      'maxLength': 10, # Max length of 12 characters
+      'pattern_example': 'ABC1234567'
     },
     'photo': {
       'type': 'string',
@@ -153,11 +159,15 @@ module CustomMemberFormHelper
   second_step_validations = first_step_validations.merge(
     'std_code': {
       'type': 'string',
-      'maxLength': 6 # Max length of 100 characters
+      'pattern': "^$|^\\d{3,6}$",
+      'maxLength': 6,
+      'pattern_example': '0120'
     },
     'landline': {
       'type': 'string',
-      'maxLength': 12 # Max length of 20 characters
+      'pattern': "^$|^\\d{6,10}$",
+      'maxLength': 12,
+      'pattern_example': '22324252'
     },
     'email': {
       'type': 'string',
@@ -194,8 +204,10 @@ module CustomMemberFormHelper
           },
           'pincode': {
             'type': 'string',
-            'minLength': 6, # Min length of 6 characters
-            'maxLength': 6 # Max length of 6 characters
+            'pattern': "^\\d{6}$",
+            'minLength': 6,
+            'maxLength': 6,
+            'pattern_example': '110001'
           }
         },
         'required': %w[address_type flat street district state pincode]
@@ -346,7 +358,7 @@ module CustomMemberFormHelper
           }
         },
         'required': %w[profession organisation position start_year end_year]
-      },
+      }
     },
     'description': {
       'type': 'string'

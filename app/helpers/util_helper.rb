@@ -2,6 +2,7 @@ module UtilHelper
   def custom_error_message(errors)
     error_messages = []
     errors.each do |error|
+      puts error
       attribute_key = ''
       if error['data_pointer'].present? && error['data_pointer'].length
         attribute_key = (error['data_pointer'].sub! '/', '').gsub('/', '.').to_s
@@ -69,6 +70,12 @@ module UtilHelper
           'type': error['type'],
           'key': attribute_key,
           'message': "'#{attribute_key}' maximum value should be #{error['schema']['maximum']}."
+        }
+      when 'pattern'
+        error_messages << {
+          'type': error['type'],
+          'key': attribute_key,
+          'message': "Invalid '#{attribute_key}' (for ex. #{error['schema']['pattern_example']})."
         }
       end
     end
