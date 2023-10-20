@@ -4,12 +4,14 @@ import Usergroup from "../../../../../../../public/images/usergroup.svg"
 import CheckList from "./../../../../../../../public/images/checklist.svg"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
+import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
     const [analyticsHeading, setAnalyticsHeading] = useState('');
     const [cardLabel1, setCardLabel1] = useState('');
     const [cardLabel2, setCardLabel2] = useState('');
     const [cardLabel3, setCardLabel3] = useState('');
     const [showSeeMore, setShowSeeMore] = useState(false);
+    const [homeStats,setHomeStats] = useState([]);
 
 
     useEffect(() => {
@@ -27,6 +29,48 @@ const Analytics = (props) => {
         }
     }, [props.toggle]);
 
+    useEffect(()=>{
+        statsData().then(res=> {
+            setHomeStats(res.data.data);
+        })
+
+    },[])
+
+    const createAnalyticCard = () => {
+        return Object.keys(homeStats).map(value=>{
+            let label = '';
+            let icon = null;
+            switch (value) {
+                case 'incomplete': {
+                    label = 'Total Incomplete Form';
+                    icon = <IncompleteFile />;
+                    break;
+                }
+                case 'completed': {
+                    label = 'Total Completed Form';
+                    icon = <CheckList />;
+                    break;
+                }
+                case 'overall': {
+                    label = 'Total Eminent Personality';
+                    icon = <Usergroup />;
+                    break;
+                }
+            }
+           return <div className="col">
+               <div className="card">
+                   <div className="card-body d-flex p-0">
+                       <div><p className="align-middle">{icon}</p></div>
+                       <div className="ms-4">
+                           <p className="cardlabel mb-0">{label}</p>
+                           <p className="cardvalue">{homeStats[value]}</p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+        })
+    }
+
     return (
         <>
             <div className="analyticsDiv">
@@ -35,40 +79,7 @@ const Analytics = (props) => {
                 </div>
 
                 <div className="d-flex grid gap-0 column-gap-4 row me-5">
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-body d-flex p-0">
-                                <div><p className="align-middle"><Usergroup/></p></div>
-                                <div className="ms-4">
-                                    <p className="cardlabel mb-0">{cardLabel1}</p>
-                                    <p className="cardvalue">Value</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-body p-0 d-flex">
-                                <div><CheckList/></div>
-                                <div className="ms-4">
-                                    <p className="cardlabel mb-0">{cardLabel2}</p>
-                                    <p className="cardvalue">Value</p>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-body d-flex p-0">
-                                <div><IncompleteFile /></div>
-                                    <div className="ms-4">
-                                        <p className="cardlabel mb-0">{cardLabel3}</p>
-                                        <p className="cardvalue">Value</p>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
+                    {createAnalyticCard()}
                 </div>
                 <div>
 
@@ -81,22 +92,7 @@ const Analytics = (props) => {
                         <div className="card seemorecard">
                            <div className="card-body"> More Analytics </div>
                         </div>
-                    }                    {/*<Accordion>*/}
-                    {/*    <div className="d-flex justify-content-end mt-3">*/}
-                    {/*        <AccordionSummary>*/}
-
-                    {/*        <Typography className='seemorebutton'>See More</Typography>*/}
-                    {/*            <ExpandMoreIcon />*/}
-
-                    {/*        </AccordionSummary>*/}
-                    {/*    </div>*/}
-                    {/*    <AccordionDetails>*/}
-                    {/*        <Typography>*/}
-                    {/*            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse*/}
-                    {/*            malesuada lacus ex, sit amet blandit leo lobortis eget.*/}
-                    {/*        </Typography>*/}
-                    {/*    </AccordionDetails>*/}
-                    {/*</Accordion>*/}
+                    }
                 </div>
             </div>
         </>

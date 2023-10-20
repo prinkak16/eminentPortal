@@ -8,3 +8,7 @@ export const getFilters = ()  => {
 export const getData = (filters = '') => {
     return axios.get(apiBaseUrl + 'custom_member_forms/list?type=eminent_personality' + filters);
 }
+
+export const statsData = () => {
+    return axios.get(apiBaseUrl + '/stats/home');
+}

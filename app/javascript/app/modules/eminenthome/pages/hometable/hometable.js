@@ -13,6 +13,7 @@ import IdBadge from "./../../../../../../../public/images/idbadge.svg"
 import SearchIcon from './../../../../../../../public/images/search.svg'
 import {debounce} from "lodash";
 import {getData} from "../../../../api/eminentapis/endpoints";
+import ReactPaginate from "react-paginate";
 
 
 const HomeTable = (props) => {
@@ -98,7 +99,7 @@ const HomeTable = (props) => {
                                             <div/>
                                             <div className="d-flex">
                                                 <IdBadge/>
-                                                <p className="id-text">ID-No.{member.data.id}</p>
+                                                <p className="id-text">ID-No.{member.id}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -179,6 +180,14 @@ const HomeTable = (props) => {
                     </div>
 
                 ))}
+                <ReactPaginate
+                    previousLabel="< Previous"
+                    nextLabel="Next"
+                    breakLabel="...."
+                    pageCount={}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={6}
+                    onPageChange={()=>pageChange()}/>
             </div>
         </>
 

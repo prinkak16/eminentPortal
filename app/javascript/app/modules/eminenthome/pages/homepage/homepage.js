@@ -17,7 +17,8 @@ import {useState} from "react";
 import BellIcon from "../../../../../../../public/images/bellicon.svg"
 import Header from "../../shared/header/header";
 import {Pagination} from "@mui/material";
-import UsePagination from "../../shared/pagination/pagination";
+import SideBarIcon from "./../../../../../../../public/images/sidebaricon.svg"
+import ReactPaginate from "react-paginate";
 
 
 const drawerWidth = 240;
@@ -125,7 +126,7 @@ export default function PersistentDrawerLeft() {
                             edge="start"
                             sx={{mr: 2, ...(open && {display: 'none'})}}
                         >
-                            <MenuIcon/>
+                            <SideBarIcon/>
                         </IconButton>
                             </span>
                             Eminent Personality</p>
@@ -172,10 +173,12 @@ export default function PersistentDrawerLeft() {
                         <Analytics toggle={toggle}/>
                         <HomeTable filterString={filterString}/>
                         <div className="d-flex justify-content-end mt-4">
-                        <UsePagination />
+
                             </div>
                     </>
                     {/*</div>*/}
+
+
 
                 </Typography>
             </Main>
