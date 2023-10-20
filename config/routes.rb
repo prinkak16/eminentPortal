@@ -27,6 +27,12 @@ Rails.application.routes.draw do
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
 
+      get 'stats/home', to: 'stats#home'
+
+      namespace :admin, path: 'admin' do
+        post '/eminent_manual_data_upload', to: 'admin#eminent_manual_data_upload'
+      end
+
       namespace :user, path: 'user' do
         get '/minister_list', to: 'user#minister_list'
         get '/assigned_ministries', to: 'user#user_assigned_ministries'
