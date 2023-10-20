@@ -163,84 +163,42 @@ module CustomMemberFormHelper
       'type': 'string',
       'format': 'email'
     },
-    'current_flat': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'current_street': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'current_district': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'current_state': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'current_pincode': {
-      'type': 'string',
-      'minLength': 6, # Min length of 6 characters
-      'maxLength': 6 # Max length of 6 characters
-    },
-    'home_flat': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'home_street': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'home_district': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'home_state': {
-      'type': 'string',
-      'minLength': 1, # Min length of 3 characters
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'home_pincode': {
-      'type': 'string',
-      'minLength': 6, # Min length of 6 characters
-      'maxLength': 6 # Max length of 6 characters
-    },
-    "type_of_other_address": {
-      'type': 'string',
-      'minLength': 0, # Min length of 3 characters
-      'maxLength': 100 # Max length of 100 characters
-    },
-    'other_flat': {
-      'type': 'string',
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'other_street': {
-      'type': 'string',
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'other_district': {
-      'type': 'string',
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'other_state': {
-      'type': 'string',
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'other_pincode': {
-      'type': 'string',
-      'minLength': 0, # Min length of 6 characters
-      'maxLength': 6 # Max length of 6 characters
-    },
-    'check': {
-      'type': 'boolean'
+    'address': {
+      'type': 'array',
+      'items': {
+        'type': 'object',
+        'properties': {
+          'address_type': {
+            'minLength': 1, # Min length of 3 characters
+            'maxLength': 200 # Max length of 200 characters
+          },
+          'flat': {
+            'type': 'string',
+            'minLength': 1, # Min length of 3 characters
+            'maxLength': 200 # Max length of 200 characters
+          },
+          'street': {
+            'type': 'string',
+            'minLength': 1, # Min length of 3 characters
+            'maxLength': 200 # Max length of 200 characters
+          },
+          'district': {
+            'type': 'string',
+            'minLength': 1, # Min length of 3 characters
+            'maxLength': 200 # Max length of 200 characters
+          },
+          'state': {
+            'type': 'string',
+            'minLength': 1, # Min length of 3 characters
+            'maxLength': 200 # Max length of 200 characters
+          },
+          'pincode': {
+            'type': 'string',
+            'minLength': 6, # Min length of 6 characters
+            'maxLength': 6 # Max length of 6 characters
+          }
+        }
+      }
     }
   )
 
@@ -266,23 +224,7 @@ module CustomMemberFormHelper
       dob
       photo
       email
-      current_flat
-      current_street
-      current_district
-      current_state
-      current_pincode
-      home_flat
-      home_street
-      home_district
-      home_state
-      home_pincode
-      type_of_other_address
-      other_flat
-      other_street
-      other_district
-      other_state
-      other_pincode
-      check
+      address
     ]
   )
 
@@ -432,23 +374,7 @@ module CustomMemberFormHelper
       dob
       photo
       email
-      current_flat
-      current_street
-      current_district
-      current_state
-      current_pincode
-      home_flat
-      home_street
-      home_district
-      home_state
-      home_pincode
-      type_of_other_address
-      other_flat
-      other_street
-      other_district
-      other_state
-      other_pincode
-      check
+      address
       educations
       education_level
       profession
@@ -630,23 +556,7 @@ module CustomMemberFormHelper
       dob
       photo
       email
-      current_flat
-      current_street
-      current_district
-      current_state
-      current_pincode
-      home_flat
-      home_street
-      home_district
-      home_state
-      home_pincode
-      type_of_other_address
-      other_flat
-      other_street
-      other_district
-      other_state
-      other_pincode
-      check
+      address
       educations
       education_level
       profession
@@ -798,23 +708,7 @@ module CustomMemberFormHelper
       dob
       photo
       email
-      current_flat
-      current_street
-      current_district
-      current_state
-      current_pincode
-      home_flat
-      home_street
-      home_district
-      home_state
-      home_pincode
-      type_of_other_address
-      other_flat
-      other_street
-      other_district
-      other_state
-      other_pincode
-      check
+      address
       educations
       education_level
       profession
@@ -894,23 +788,7 @@ module CustomMemberFormHelper
       dob
       photo
       email
-      current_flat
-      current_street
-      current_district
-      current_state
-      current_pincode
-      home_flat
-      home_street
-      home_district
-      home_state
-      home_pincode
-      type_of_other_address
-      other_flat
-      other_street
-      other_district
-      other_state
-      other_pincode
-      check
+      address
       educations
       education_level
       profession

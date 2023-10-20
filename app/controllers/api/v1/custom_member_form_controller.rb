@@ -168,19 +168,17 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def send_otp
     if params[:phone].blank?
-      render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
+      return render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
     end
 
     if params[:form_type].blank?
-      render json: { success: false, message: 'You are not authorized to access this form.' }, status: :unauthorized
+      return render json: { success: false, message: 'You are not authorized to access this form.' }, status: :unauthorized
     end
 
     custom_member_form = fetch_member(params[:phone], params[:form_type])
     if custom_member_form.nil?
-      render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
+      return render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
     end
-
-    custom_member_form.generate_otp
 
     send_sms("Your OTP is #{custom_member_form.otp} - BJP SARAL", params[:phone])
     render json: { success: true, message: 'Otp Sent successfully.' }, status: :ok
@@ -188,29 +186,24 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def validate_otp
     if params[:phone].blank?
-      render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
-      return
+      return render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
     end
 
     if params[:form_type].blank?
-      render json: { success: false, message: 'You are not authorized to access this form.' }, status: :unauthorized
-      return
+      return render json: { success: false, message: 'You are not authorized to access this form.' }, status: :unauthorized
     end
 
     if params[:otp].blank?
-      render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
-      return
+      return render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
     end
 
     custom_member_form = fetch_member(params[:phone], params[:form_type])
 
     if custom_member_form.nil?
-      render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
-      nil
+      return render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
     else
       unless custom_member_form.check_otp_validation(params[:otp])
-        render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
-        return
+        return render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
       end
 
       require 'bcrypt'
@@ -220,11 +213,9 @@ class Api::V1::CustomMemberFormController < BaseApiController
       custom_member_form.verify! if custom_member_form.may_verify?
 
       if custom_member_form.save
-        render json: { success: true, auth_token: encrypted_key, id: custom_member_form.id, name: custom_member_form.data['name'] || '', is_view: custom_member_form.aasm_state == 'approved' }, status: :ok
-        nil
+        return render json: { success: true, auth_token: encrypted_key, id: custom_member_form.id, name: custom_member_form.data['name'] || '', is_view: custom_member_form.aasm_state == 'approved' }, status: :ok
       else
-        render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
-        nil
+        return render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
       end
     end
   end
@@ -308,6 +299,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     is_download = params[:offset].present? ? params[:offset] : false
 
     # compute search by eminent id
+    custom_members = CustomMemberForm
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
     unless eminent_ids.nil?
       eminent_ids = eminent_ids.map(&:to_i)
@@ -328,7 +320,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
         state_ids << country_state['id']
       end
     end
-    custom_members = CustomMemberForm.where(form_type: type, country_state_id: state_ids)
+    custom_members = custom_members.where(form_type: type, country_state_id: state_ids)
 
     # compute channel filter
     channel = params[:channel].present? ? params[:channel].split(',') : nil
