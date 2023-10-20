@@ -1,6 +1,7 @@
 class Organization < ApplicationRecord
   self.table_name = 'organizations'
   acts_as_paranoid
+  scope :name_similar, ->(name) { where('name % :name', name: name) }
 
   validates_uniqueness_of :slug, scope: [:ministry_id, :department_id]
   belongs_to :ministry, class_name: 'Ministry'
