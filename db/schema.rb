@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_16_053351) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "auth_users", force: :cascade do |t|
@@ -66,6 +67,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ministry_id"], name: "index_departments_on_ministry_id"
+    t.index ["name"], name: "index_department_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "index_departments_on_name"
     t.index ["slug"], name: "index_departments_on_slug"
   end
@@ -78,6 +80,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_ministries_on_name"
+    t.index ["name"], name: "index_ministry_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["slug"], name: "index_ministries_on_slug"
   end
 
@@ -100,6 +103,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
     t.index ["country_state_id"], name: "index_organizations_on_country_state_id"
     t.index ["department_id"], name: "index_organizations_on_department_id"
     t.index ["ministry_id"], name: "index_organizations_on_ministry_id"
+    t.index ["name"], name: "index_organization_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "index_organizations_on_name"
     t.index ["slug"], name: "index_organizations_on_slug"
   end
@@ -109,6 +113,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_11_124018) do
     t.string "state_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_ministries", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "ministry_id"
+    t.boolean "is_minister", default: false, null: false
+    t.boolean "has_ministry", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ministry_id"], name: "index_user_ministries_on_ministry_id"
+    t.index ["user_id"], name: "index_user_ministries_on_user_id"
   end
 
 end

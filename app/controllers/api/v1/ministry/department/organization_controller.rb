@@ -92,4 +92,67 @@ class Api::V1::Ministry::Department::OrganizationController < BaseApiController
       }, status: :bad_request
     end
   end
+
+  def get_organizations
+    # check validations
+    params['ministry_id'] = params['ministry_id'].to_i
+    params['department_id'] = params['department_id'].to_i
+    is_param_data_is_valid = validate_form(get_organizations_validation, params.as_json)
+    unless is_param_data_is_valid[:is_valid]
+      return render json: {
+        success: false,
+        message: 'Invalid request',
+        error: is_param_data_is_valid[:error]
+      }, status: :bad_request
+    end
+
+    # compute limit and offset
+    limit = params[:limit].present? ? params[:limit] : 50
+    offset = params[:offset].present? ? params[:offset] : 0
+
+    render json: {
+      success: true,
+      message: 'Success',
+      data: {
+        'ministries': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).includes(:ministry, :department).order('created_at desc').limit(limit).offset(offset).as_json(include: [:ministry, :department]),
+        'count': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).count
+      }
+    }, status: :ok
+  rescue StandardError => e
+    return render json: {
+      success: false,
+      message: e.message
+    }, status: :bad_request
+  end
+
+  def get_organization
+    # check validations
+    params['ministry_id'] = params['ministry_id'].to_i
+    params['department_id'] = params['department_id'].to_i
+    params['organization_id'] = params['organization_id'].to_i
+    is_param_data_is_valid = validate_form(get_organization_validation, params.as_json)
+    unless is_param_data_is_valid[:is_valid]
+      return render json: {
+        success: false,
+        message: 'Invalid request',
+        error: is_param_data_is_valid[:error]
+      }, status: :bad_request
+    end
+
+    # fetch the of ministry department organization
+    organization = Organization.includes(:ministry, :department).find_by(id: params['organization_id'], ministry_id: params['ministry_id'], department_id: params['department_id']).as_json(include: [:ministry, :department])
+    return render json: {
+      success: true,
+      message: 'Success',
+      data: {
+        'organization': organization,
+        'isExist': !organization.nil?
+      }
+    }, status: :ok
+  rescue StandardError => e
+    return render json: {
+      success: false,
+      message: e.message
+    }, status: :bad_request
+  end
 end
