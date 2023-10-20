@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       get 'metadata/config/home', to: 'metadata#config_home'
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
-      get 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
+      delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
       post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
