@@ -49,12 +49,40 @@
 
 .input-field{
   display: flex;
+  width: 300px !important;
+  align-items: center;
+  gap: 8px;
+  border: none !important;
+  margin-right: 10px;
+}
+.search-icon{
+  margin-top: 12px;
+  margin-left: 20px !important;
+  margin-right: 10px !important;
+}
+.search-field{
+  width: 400px;
+border: solid 1px rgba(0,0,0,0.3);
+  border-radius: 12px;
+}
+
+.search-field input:focus{
+  outline: none ;
+}
+.filestatusfield{
+  display: flex;
   width: 400px !important;
   align-items: center;
   gap: 8px;
+  border: solid 1px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding-left: 20px;
 
 }
 
+.filestatusfield:focus{
+  outline: none;
+}
 .headingName{
   color: #000;
   font-size: 16px;
@@ -71,7 +99,7 @@
   line-height: normal;
 }
 
-.lightP{
+.text-labels{
   color: #000;
   font-size: 10px !important;
   font-weight: 400;
@@ -111,7 +139,6 @@
 .single-row {
   border-bottom: solid 1px rgba(0,0,0,0.1);
   padding-bottom: 20px;
-  margin-bottom: 200px;
 }
 
 .br-label {
@@ -162,4 +189,14 @@
 
 .pt-5 {
   padding-top: 5px !important;
+}
+
+.imgdiv{
+ width: 80%;
+}
+.img{
+  width: 80%;;
+  flex-shrink: 0;
+  border-radius: 40px;
+  background: lightgray 50%;
 }

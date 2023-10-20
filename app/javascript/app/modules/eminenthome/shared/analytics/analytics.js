@@ -2,14 +2,8 @@ import React, {useEffect, useState} from "react";
 import "./analytics.css"
 import Usergroup from "../../../../../../../public/images/usergroup.svg"
 import CheckList from "./../../../../../../../public/images/checklist.svg"
-import IncompleteFile from "../../../../../../assets/images/occupied-_1_ 1.svg"
-
-import {Typography} from "@mui/material";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AccordionDetails from "@mui/material/AccordionDetails";
-
+import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
 const Analytics = (props) => {
     const [analyticsHeading, setAnalyticsHeading] = useState('');
     const [cardLabel1, setCardLabel1] = useState('');
@@ -84,7 +78,7 @@ const Analytics = (props) => {
                     </div>
 
                     { showSeeMore &&
-                        <div className="card">
+                        <div className="card seemorecard">
                            <div className="card-body"> More Analytics </div>
                         </div>
                     }                    {/*<Accordion>*/}

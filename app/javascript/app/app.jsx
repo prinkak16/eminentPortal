@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Routes} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app.scss';
-import HomePage from "./modules/eminenthome/pages/homepage";
+import HomePage from "./modules/eminenthome/pages/homepage/homepage";
 function App() {
     return (
         <>
