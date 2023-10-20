@@ -40,12 +40,15 @@ class Api::V1::MinistryController < BaseApiController
       limit = params[:limit].present? ? params[:limit] : 50
       offset = params[:offset].present? ? params[:offset] : 0
 
+      ministries = Ministry
+      ministries = (params[:name].present? && params[:name].length > 3) ? ministries.name_similar(params[:name]) : ministries.select(:id, :name).order(order_id: :desc)
+
       render json: {
         success: true,
         message: 'Success',
         data: {
-          'ministries': Ministry.order('created_at desc').limit(limit).offset(offset),
-          'count': Ministry.unscoped.count
+          'ministries': ministries.limit(limit).offset(offset),
+          'count': ministries
         }
       }, status: :ok
     rescue StandardError => e

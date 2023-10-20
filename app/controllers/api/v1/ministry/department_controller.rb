@@ -20,7 +20,7 @@ class Api::V1::Ministry::DepartmentController < BaseApiController
       end
 
       # fetch the of ministry department
-      department = Department.includes(:ministry).where(id: params['department_id'], ministry_id: params['ministry_id']).as_json(include: [:ministry])
+      department = Department.includes(:ministry).find_by(id: params['department_id'], ministry_id: params['ministry_id']).as_json(include: [:ministry])
 
       return render json: {
         success: true,
