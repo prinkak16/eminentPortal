@@ -1,23 +1,37 @@
 import * as React from 'react';
-import { useState } from 'react';
-import {Formik, Form, Field, ErrorMessage} from "formik";
-import { Select} from '@mui/material';
-import "./selectfield.scss"
-
-
+import { Formik, Field, ErrorMessage } from 'formik';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import './selectfield.scss';
 const Selectfield=(props)=>{
-    const {name, optionList} = props;
+    const {name, optionList, defaultOption, heading, handleSelectChange} = props;
+
+    const capitalizeFirstLetter = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     return(
         <>
-            <Field as="select" name={name} className="custom-select">
-                <option value="">Select Language</option>
-                {optionList?.map(item => (
-                    <option key={item.id} className="selectOption" value={item.id}>
-                        {item.name}
-                    </option>
-                ))}
-            </Field>
+            <FormControl>
+                <Field
+                    as={Select}
+                    name={name}
+                    labelId={`${name}-label`}
+                    className="custom-select"
+                    fullWidth
+                    displayEmpty
+                    inputProps={{ 'aria-label': 'Without label' }}
+                >
 
+                    <MenuItem value="">
+                        <em>{defaultOption}</em>
+                    </MenuItem>
+                    {optionList?.map((item) => (
+                        <MenuItem key={item.id} value={item.name}>
+                            {item.name}
+                        </MenuItem>
+                    ))}
+                </Field>
+            </FormControl>
         </>
     )
 }

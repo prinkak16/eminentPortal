@@ -1,4 +1,15 @@
-import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField,Textarea, InputAdornment} from '@mui/material';
+import {
+    Typography,
+    Stack,
+    Box,
+    Paper,
+    Grid,
+    FormLabel,
+    TextField,
+    Textarea,
+    InputAdornment,
+    Button
+} from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -11,7 +22,7 @@ import Inputfield from "../component/inputfield/inputfield";
 import Selectfield from "../component/selectfield/selectfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 const Resumeform=(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
@@ -38,7 +49,29 @@ const Resumeform=(props)=>{
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
       };
+    const [pdfUrl, setPdfUrl] = useState('');
 
+    const handlePdfUpload = (event) => {
+        const uploadedFile = event.currentTarget.files[0];
+        if (uploadedFile) {
+            getFileUpload(uploadedFile)
+                .then((pdfUrl) => {
+                    if (pdfUrl) {
+                        setPdfUrl(pdfUrl); // Set the PDF URL in the state
+                    } else {
+                        console.error('File upload failed or URL not found');
+                    }
+                })
+                .catch((error) => {
+                    console.error('File upload failed', error);
+                });
+        }
+    };
+
+    const handleViewPdf = () => {
+        window.open(pdfUrl, "_blank");
+        console.log(pdfUrl);
+    };
     return(
         <>
 
@@ -163,16 +196,29 @@ const Resumeform=(props)=>{
                                                         inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
-                                            <TextField
-                                                className='p-0'
-                                                fullWidth
-                                                name="desc"
-                                                multiline
-                                                minRows={3}
-                                                maxRows={4}
-                                                placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
-                                            />
+                                            <Grid item sx={{mb:2}} xs={12}>
+                                                <Typography variant="h5" content="h5">
+                                                    <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>4</Box> Upload your Resume/Biodata <sup>*</sup>
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item sx={{mb:2}} xs={12}>
+                                                <Field
+                                                    type="file"
+                                                    name="attachment"
+                                                    accept=".pdf"
+                                                    onChange={handlePdfUpload}
+                                                    as={TextField}
+                                                />
+
+                                                {pdfUrl && (
+                                                    <Grid item xs={6}>
+                                                        <Button variant="contained" color="primary" onClick={handleViewPdf}>
+                                                            View PDF
+                                                        </Button>
+                                                    </Grid>
+                                                )}
+                                            </Grid>
+
                                         </Grid>
                                     </Grid>
                                     </Box>
@@ -182,10 +228,10 @@ const Resumeform=(props)=>{
 }
 Resumeform.label = 'Resume'
 Resumeform.initialValues = {
-    name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"",
+    // name: "", relationship: "", profile:"", father:"", mother:"", spouse:"", child:"",children:"",website:"",twitter:"", linkedin:"", facebook:"", instagram:"", won:"", state:"",
 };
 Resumeform.validationSchema = Yup.object().shape({
-    whatsapp_number: Yup.number().required('Please enter your first name'),
-    std_code: Yup.number().required('Please enter your last name')
+    // whatsapp_number: Yup.number().required('Please enter your first name'),
+    // std_code: Yup.number().required('Please enter your last name')
 });
 export default Resumeform

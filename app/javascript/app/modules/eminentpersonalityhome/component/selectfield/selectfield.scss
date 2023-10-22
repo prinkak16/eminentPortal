@@ -1,31 +1,43 @@
 $border: rgba(0, 0, 0, 0.40);
 $blackcolor: #000;
-.custom-select{
-  background-image: url('/assets/keyboard_arrow_down.png');
-  appearance: none;
-  background-size: 1.5rem;
-  background-repeat: no-repeat;
-  background-position: 98% 50%;
-  cursor: pointer;
+.MuiSelect-multiple{
+  display: flex !important;
+  align-items: center;
+  .MuiCheckbox-root {
+    .MuiSvgIcon-root {
+      color: transparent;
+      border: 1px solid #000000;
+      width: 25px;
+      height: 25px;
+    }
+
+  }
+  .Mui-checked{
+    .MuiSvgIcon-root {
+      color: #000000;
+    }
+    .MuiSvgIcon-root {
+      border: 1px solid transparent;
+    }
+
+  }
+  .MuiSelect-icon {
+    top:50%;
+    transform: translateY(-50%);
+  }
+
 }
-select{
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid ($border);
-  padding: 12.5px 10px;
+.MuiFormControl-root.css-1nrlq1o-MuiFormControl-root{
   width: 100%;
-  margin-top: 2px;
-  font-weight: 400;
-  background: transparent;
-  color: rgba(0, 0, 0, 0.60);
-  option{
-    color: ($blackcolor);
-  }
-  .selectOption{
-    padding: 8px 12px; /* Spacing inside each option */
-    background: red; /* Text color of the options */
-    cursor: pointer; /* Cursor on hover */
-    transition: background-color 0.2s;
+  .MuiSelect-icon {
+    width: 36px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+
   }
 }
+
+
+
 

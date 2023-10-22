@@ -12,9 +12,8 @@ import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
 steps=[PersonalDetails, Communicationform, Educationform,PolticalandGovrnform, Resumeform, Refferedform]
-newSteps=[PersonalDetails]
+// newSteps=[PersonalDetails]
 const FormWrap=(props)=>{
-
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -23,43 +22,41 @@ const FormWrap=(props)=>{
         flexGrow: 1,
     }));
     const [activeStep, setActiveStep] = useState(0);
-
     const isLastStep = () => {
         return activeStep === steps.length - 1;
     };
-
     const handlePrev = () => {
         setActiveStep(Math.max(activeStep - 1, 0));
     };
-
     const handleNext = () => {
             setActiveStep(Math.min(activeStep + 1, steps.length - 1));
     };
     const handleStep = useCallback((step) => {
         setActiveStep(step);
-        console.log("test")
     }, []);
+    // const stepData = steps.map((item,index)=> ({
+    //     console.log(item)
+    // }));
+    const stepData = steps.map((item)=> {
+        // console.log('item', item);
+    })
+
     const onSubmit = (values, formikBag) => {
         const { setSubmitting } = formikBag;
+        const activeStepData = stepData[activeStep];
         if (!isLastStep()) {
             setSubmitting(false);
             handleNext();
+            getFormData(activeStepData).then(response => {
+                console.log('API response:', response.data);
+            });
             return;
         }
-
         // console.log(values);
-
         setTimeout(() => {
             setSubmitting(false);
-            getFormData().then(response => {
-                console.log('API response:', response.data);
-                // resetForm({ values: '' }); // Reset the form after successful submission
-                // setCurrentStep(0); //
-            });
         }, 1000);
-
     };
-
     const initialValues = steps.reduce(
         (values, { initialValues }) => ({
             ...values,
@@ -70,6 +67,12 @@ const FormWrap=(props)=>{
 
     const ActiveStep = steps[activeStep];
     const validationSchema = ActiveStep.validationSchema;
+    const [formData, setFormData] = useState({}); // State to store form data
+
+    const handleSave = (data) => {
+        setFormData(data);
+    };
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -80,7 +83,7 @@ const FormWrap=(props)=>{
                             onSubmit={onSubmit}
                             validationSchema={validationSchema}
                         >
-                            {({isSubmitting, touched, values})=>(
+                            {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
                                 <Form>
                                     <FormStepper
                                         activeStep={activeStep}
@@ -92,6 +95,8 @@ const FormWrap=(props)=>{
                                         values={values}
                                         touched={touched}
                                         handleStep={handleStep}
+                                        onChange={handleChange}
+                                        setFieldValue={setFieldValue}
                                     />
 
                                 </Form>

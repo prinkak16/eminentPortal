@@ -70,16 +70,16 @@ const Refferedform=({enableProgressAction })=>{
 }
 Refferedform.label = 'Referred By'
 Refferedform.initialValues = {
-    qualification: "",
-    subject: "",
-    college: "",
-    board: "",
-    school: "",
-    profession: "",
-    qualification2:""
+    // qualification: "",
+    // subject: "",
+    // college: "",
+    // board: "",
+    // school: "",
+    // profession: "",
+    // qualification2:""
 };
 Refferedform.validationSchema = Yup.object().shape({
-    whatsapp_number: Yup.number().required('Please enter your first name'),
-    std_code: Yup.number().required('Please enter your last name')
+    // whatsapp_number: Yup.number().required('Please enter your first name'),
+    // std_code: Yup.number().required('Please enter your last name')
 });
 export default Refferedform;

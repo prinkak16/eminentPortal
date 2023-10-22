@@ -13,7 +13,9 @@ import Primarybutton from '../component/primarybutton/primarybutton';
 import {getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
+import {boolean} from "yup";
 const Communicationform =(props)=>{
+    console.log(props.formValues)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -111,18 +113,14 @@ const Communicationform =(props)=>{
                                         <Grid item xs={4}>
                                             <FormLabel>Mobile Number <sup>*</sup></FormLabel>
                                             <NumberField
-                                                id="outlined-number"
-                                                name="whatsapp_number"
-                                                placeholder='Search by phone no.'
-                                                onInput={(event) => {
-                                                    // Remove non-numeric characters and limit the length to 10 characters
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-                                                }}
+                                                placeholder='Please Seach by Phone no.'
                                                 inputProps={{
                                                     maxLength: 10,
                                                 }}
+                                                fullWidth
+                                                name="mobiles"
                                             />
-                                            <ErrorMessage name="whatsapp_number" component="div" />
+                                            <ErrorMessage name="mobiles" component="div" />
                                         </Grid>
 
                                         {showFields && fields.map((field, index) => (
@@ -130,31 +128,13 @@ const Communicationform =(props)=>{
                                                 <div key={index}>
                                                     <FormLabel>Another number</FormLabel>
                                                     <NumberField
-                                                        name="whatsapp_number"
-                                                        placeholder='Enter Mobile No.'
-                                                        onInput={(event) => {
-                                                            // Remove non-numeric characters and limit the length to 10 characters
-                                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-                                                        }}
-                                                        handlechange={(e) => {
-                                                            const updatedFields = [...fields];
-                                                            updatedFields[index] = e.target.value;
-                                                            setFields(updatedFields);
-                                                        }}
+                                                        placeholder='Please Seach by Phone no.'
                                                         inputProps={{
                                                             maxLength: 10,
                                                         }}
+                                                        fullWidth
+                                                        name="mobiles.2"
                                                     />
-                                                    <ErrorMessage name="whatsapp_number" component="div" />
-
-                                                    {/*<Inputfield type="text"*/}
-                                                    {/*            name="mobile"*/}
-                                                    {/*            placeholder="Enter Mobile No."*/}
-                                                    {/*            handlechange={(e) => {*/}
-                                                    {/*                const updatedFields = [...fields];*/}
-                                                    {/*                updatedFields[index] = e.target.value;*/}
-                                                    {/*                setFields(updatedFields);*/}
-                                                    {/*            }}/>*/}
                                                     <div className="text-end">
                                                         {fields.length>=1 ?(
                                                             <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>} handleclick={handledelete}/>
@@ -229,9 +209,6 @@ const Communicationform =(props)=>{
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <sup>*</sup></FormLabel>
-                                            {/*<Inputfield type="text"*/}
-                                            {/*            name="current_pincode"*/}
-                                            {/*            placeholder="Enter pin code"/>*/}
                                             <Field
                                                 type="text"
                                                 id="current_pincode"
@@ -251,7 +228,10 @@ const Communicationform =(props)=>{
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                            <SelectField name="current_district"   defaultOption="Select District" optionList={StateData}/>
+                                            <Inputfield type="text"
+                                                        name="current_district"
+                                                        placeholder="Enter Area, Street, Etc."
+                                            />
                                             <ErrorMessage name="current_district" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
@@ -267,37 +247,58 @@ const Communicationform =(props)=>{
                                             <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>2</Box> Home Town Address</FormLabel>
                                         </Grid>
                                         <Grid className='testright' item xs={7}>
-                                            <FormLabel >Home town address is same as current?  Yes <Checkbox {...label} /></FormLabel>
+                                            {/*<FormLabel >Home town address is same as current?  Yes <Checkbox name="currentAddress" {...label} /></FormLabel>*/}
+                                            <FormLabel>Home town address is same as current?  Yes<sup>*</sup></FormLabel>
+                                            <Field type="checkbox" name="check" />
                                         </Grid>
+
                                         <Grid item xs={12}>
                                             <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="home_flat"
-                                                        placeholder="Enter your address"/>
-                                            <ErrorMessage name="home_flat" component="div" />
+                                            <Inputfield
+                                                type="text"
+                                                name="home_flat"
+                                                placeholder="Enter your address"
+                                                value={props.formValues.check ? props.formValues.current_flat: props.formValues.home_flat}
+                                            />
+                                            {props.formValues.check ? '' : <ErrorMessage name="home_flat" component="div" /> }
+
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
                                                         name="home_pincode"
-                                                        placeholder="Enter pin code"/>
-                                            <ErrorMessage name="home_pincode" component="div" />
+                                                        placeholder="Enter pin code"
+                                                        value={props.formValues.check ? props.formValues.current_pincode: props.formValues.home_pincode}
+                                            />
+                                            {props.formValues.check ?  '' : <ErrorMessage name="home_pincode" component="div" /> }
+
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
                                                         name="home_street"
-                                                        placeholder="Enter Area, Street, Etc.s"/>
-                                            <ErrorMessage name="home_street" component="div" />
+                                                        placeholder="Enter Area, Street, Etc.s"
+                                                        value={props.formValues.check ? props.formValues.current_street: props.formValues.home_street}
+                                            />
+                                            {props.formValues.check ? '' : <ErrorMessage name="home_street" component="div" /> }
+
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                            <SelectField name="home_district"  defaultOption="Select District" optionList={StateData}/>
-                                            <ErrorMessage name="home_district" component="div" />
+                                            <Inputfield type="text"
+                                                        name="home_district"
+                                                        placeholder="Enter Area, Street, Etc."
+                                                        value={props.formValues.check ? props.formValues.current_district: props.formValues.home_district}
+                                            />
+                                            {props.formValues.check ? '' : <ErrorMessage name="home_district" component="div" /> }
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>State <sup>*</sup></FormLabel>
-                                            <SelectField name="home_state"  defaultOption="Select State" optionList={StateData}/>
+                                            <SelectField name="home_state"  defaultOption="Select State" optionList={StateData}
+                                                         value={props.formValues.check ? props.formValues.current_state: props.formValues.home_state}
+                                            />
+                                            {props.formValues.check ? '' : <ErrorMessage name="home_state" component="div" /> }
+
                                             <ErrorMessage name="home_state" component="div" />
                                         </Grid>
                                     </Grid>
@@ -314,7 +315,7 @@ const Communicationform =(props)=>{
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
                                                         <Inputfield type="text"
                                                                     name="other_flat"
-                                                                    value={element.other_flat || ""}
+                                                                    // value={element.other_flat || ""}
                                                                     placeholder="Enter Area, Street, Etc.s"/>
                                                     </Grid>
                                                     <Grid item xs={6}>
@@ -370,10 +371,57 @@ const Communicationform =(props)=>{
 }
 Communicationform.label = 'Communication Details'
 Communicationform.initialValues = {
-    whatsapp_number: "", std_code: "", landline: "", current_flat:"",current_pincode:"", current_street:"",current_district:"",current_state:"", home_flat:"",home_pincode:"", home_street:"", home_district:"", home_state:"", other_flat:"", check:"", type_of_other_address:"", other_district:"", other_state:"", other_pincode:"",
+    mobiles: "",
+    std_code: "",
+    landline: "",
+    current_flat:"",
+    // current_pincode:"",
+    current_street:"",
+    current_district:"",
+    current_state:"",
+    // home_flat:"",
+    // home_pincode:"",
+    // home_street:"",
+    // home_district:"",
+    // home_state:"",
+    // other_flat:"",
+    // check:false,
+    // type_of_other_address:"",
+    // other_district:"",
+    // other_state:"",
+    // other_pincode:"",
 };
 Communicationform.validationSchema = Yup.object().shape({
-    whatsapp_number: Yup.number().required('Please enter your number'),
-    std_code: Yup.number().required('Please enter valid STD Code')
+    // mobiles: Yup.array().of(Yup.string().min(1))
+    //     .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
+    //         if (!value) return true; // No validation if the field is empty
+    //         const mobileNumbers = value.map((number) => number.trim());
+    //         return mobileNumbers.every((number) => {
+    //             const firstDigit = parseInt(number.charAt(0));
+    //             return !isNaN(firstDigit) && firstDigit > 4;
+    //         });
+    //     })
+    //     .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
+    //         if (!value) return true; // No validation if the field is empty
+    //         const mobileNumbers = value.map((number) => number.trim());
+    //         return mobileNumbers.every((number) => number.length === 10);
+    //     })
+    //     .required('Please enter at least one contact number'),
+    //      // email: Yup.string().required('Please enter your email address'),
+    // current_flat: Yup.string().required('Please enter your Address'),
+    // current_street: Yup.string().required('Please enter your Street'),
+    // current_district: Yup.string().required('Please enter your District'),
+    // current_state: Yup.string().required('Please enter your State'),
+    // current_pincode: Yup.string().required('Please enter your Pincode'),
+    // home_flat: Yup.string().required('Please enter your Address'),
+    // home_street: Yup.string().required('Please enter your Street'),
+    // home_district: Yup.string().required('Please enter your District'),
+    // home_state: Yup.string().required('Please enter your State'),
+    // home_pincode: Yup.string().required('Please enter your Pincode'),
+    // other_flat: Yup.string().required('Please enter your Street'),
+    // other_street: Yup.string().required('Please enter your District'),
+    // other_state: Yup.string().required('Please enter your State'),
+    // other_pincode: Yup.string().required('Please enter your Pincode'),
+    // type_of_other_address: Yup.string().required('Please enter your type of Address'),
 });
 export default Communicationform

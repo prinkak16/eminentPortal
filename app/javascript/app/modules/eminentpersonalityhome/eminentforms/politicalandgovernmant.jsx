@@ -269,10 +269,10 @@ function handlremoveField(){
 }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
-    party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""
+    // party_level: "", unit: "", designation:"", startyear: "", endyear:"", party:"", position:"", organization:"", description:""
 };
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    whatsapp_number: Yup.number().required('Please enter your first name'),
-    std_code: Yup.number().required('Please enter your last name')
+    // whatsapp_number: Yup.number().required('Please enter your first name'),
+    // std_code: Yup.number().required('Please enter your last name')
 });
 export default PolticalandGovrnform
