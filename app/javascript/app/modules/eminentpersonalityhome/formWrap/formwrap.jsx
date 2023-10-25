@@ -21,6 +21,7 @@ const FormWrap=(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+    const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
     const isLastStep = () => {
         return activeStep === steps.length - 1;
@@ -30,6 +31,7 @@ const FormWrap=(props)=>{
     };
     const handleNext = () => {
             setActiveStep(Math.min(activeStep + 1, steps.length - 1));
+
     };
     const handleStep = useCallback((step) => {
         setActiveStep(step);
@@ -38,17 +40,29 @@ const FormWrap=(props)=>{
     //     console.log(item)
     // }));
     const stepData = steps.map((item)=> {
-        // console.log('item', item);
-    })
 
+    })
+    function mergeObjectsUpToIndex(arr, index) {
+        if (index < 0 || index >= arr.length) {
+            return
+        }
+
+        return arr.slice(0, index + 1).reduce((acc, obj) => {
+            return { ...acc, ...obj };
+        }, {});
+    }
     const onSubmit = (values, formikBag) => {
         const { setSubmitting } = formikBag;
-        const activeStepData = stepData[activeStep];
+        const newStepValues = [...stepValues];
+        newStepValues[activeStep] = values;
+        setStepValues(newStepValues)
+        const activeStepData=mergeObjectsUpToIndex(newStepValues, activeStep);
         if (!isLastStep()) {
             setSubmitting(false);
             handleNext();
-            getFormData(activeStepData).then(response => {
-                console.log('API response:', response.data);
+            getFormData({...activeStepData, dob:"2023-10-21"}).then(response => {
+                console.log('API response:', response);
+
             });
             return;
         }
@@ -64,6 +78,7 @@ const FormWrap=(props)=>{
         }),
         {}
     );
+
 
     const ActiveStep = steps[activeStep];
     const validationSchema = ActiveStep.validationSchema;

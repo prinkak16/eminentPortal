@@ -96,4 +96,4 @@ export const getGenderData = axios.get(apiBaseUrl + 'metadata/genders');
 export const getStateData = axios.get(apiBaseUrl + 'metadata/states');
 export const getEducationData = axios.get(apiBaseUrl + 'metadata/educations');
 export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');
-export const getPinCodeData = axios.get('https://api.postalpincode.in/pincode/122017')
+export const getPinCodeData = axios.get('https://api.postalpincode.in/pincode')

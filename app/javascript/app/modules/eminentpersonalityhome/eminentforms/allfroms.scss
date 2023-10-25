@@ -171,3 +171,31 @@ button.cancelbtn{
   border: 2px solid #0077cc;
   padding: 8px;
 }
+.data-table{
+  border: 1px solid ($borderColor);
+  margin-bottom: 20px;
+  border-radius: 15px;
+  td,th{
+    border-right: 1px solid ($borderColor);
+    font-size: 14px;
+
+    &:last-child{
+      border-right: none;
+    }
+  }
+  th{
+    color: rgba(0,0,0,0.5);
+    font-weight:400;
+    padding: 14px;
+  }
+  td{
+    border-top:1px solid ($borderColor);
+    padding:10px
+  }
+  .MuiSvgIcon-root {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+

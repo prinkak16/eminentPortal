@@ -114,27 +114,27 @@ const PersonalDetails = (props) => {
         'French',
         'Punjabi',
     ];
-const handleLanguageChanges = (event) => {
-    let selectedLang = []
-    selectedLang = selectedLanguages
-    const selcLang = event.target.textContent
-    if (selectedLang.includes(selcLang)) {
-        selectedLang = selectedLang.filter(item => item !== selcLang);
-    } else {
-        selectedLang.push(selcLang)
+    const handleLanguageChanges = (event) => {
+        let selectedLang = []
+        selectedLang = selectedLanguages
+        const selcLang = event.target.textContent
+        if (selectedLang.includes(selcLang)) {
+            selectedLang = selectedLang.filter(item => item !== selcLang);
+        } else {
+            selectedLang.push(selcLang)
+        }
+        setSelectedLanguages(selectedLang)
     }
-    setSelectedLanguages(selectedLang)
-}
 
-const selectedLangSubmission = (type) => ()=>  {
-    if (type === 'submit') {
-        props.languages.value = selectedLanguages
+    const selectedLangSubmission = (type) => ()=>  {
+        if (type === 'submit') {
+            props.languages.value = selectedLanguages
+        }
+        if (type === 'cancel') {
+            props.languages.value = ''
+            setSelectedLanguages([])
+        }
     }
-    if (type === 'cancel') {
-        props.languages.value = ''
-        setSelectedLanguages([])
-    }
-}
     const [customDD, setCustomDD]=useState('')
     const [customMM, setCustomMM]=useState('')
     const [customYear, setCustomYear]=useState('')
@@ -210,8 +210,8 @@ const selectedLangSubmission = (type) => ()=>  {
         return age;
     };
 
-        const {setFieldValue, values} = useFormikContext();
-        const age = calculateAge(values.dob);
+    const {setFieldValue, values} = useFormikContext();
+    const age = calculateAge(values.dob);
 
     useEffect(() => {
         if (customYear.length === 4) {
@@ -278,7 +278,7 @@ const selectedLangSubmission = (type) => ()=>  {
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
                                              optionList={ReligionData}
-                                             />
+                                />
                                 <ErrorMessage name="religion" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
@@ -342,6 +342,7 @@ const selectedLangSubmission = (type) => ()=>  {
                                         value={props.formValues.languages}
                                         onClick={handleLanguageChanges}
                                         displayEmpty
+                                        setFieldValue={props.setFieldValue}
                                     >
                                         <MenuItem value="">Select Language</MenuItem>
                                         {names.map((name) => (
@@ -356,7 +357,7 @@ const selectedLangSubmission = (type) => ()=>  {
                                         </div>
                                     </Field>
                                     <ErrorMessage name="languages" component="div" />
-                                    </FormControl>
+                                </FormControl>
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} sx={{mb: 5}}>
@@ -369,9 +370,9 @@ const selectedLangSubmission = (type) => ()=>  {
                                     name="aadhaar"
                                     placeholder='Enter Aadhaar number'
                                     onInput={(event) => {
-                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 12);
+                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 12);
 
-                                        }}
+                                    }}
                                 />
                                 <ErrorMessage name="aadhaar" component="div" />
 
@@ -416,7 +417,7 @@ PersonalDetails.initialValues = {
     category: "",
     caste: "",
     sub_caste: "",
-    // dob: "",
+    dob: "",
     photo: "",
     languages: [],
     aadhaar: '',
@@ -424,37 +425,33 @@ PersonalDetails.initialValues = {
     month: "",
     year: "",
     id: "",
-    end_year:""
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    // end_year: Yup.string().required('Please enter your first name'),
-    // name: Yup.string().required('Please enter your first name'),
-    // mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
-    //     .required('Please enter at least one contact number'),
-    // mobiles: Yup.array()
-    //     .of(Yup.string().min(1))
-    //     .required('Field is required')
-    //     .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => {
-    //             const firstDigit = parseInt(number.charAt(0));
-    //             return !isNaN(firstDigit) && firstDigit >= 5;
-    //         });
-    //     })
-    //     .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => number.length === 10);
-    //     }),
-    // religion: Yup.string().required('Please select your Religion'),
-    // gender: Yup.string().required('Please select your Gender'),
-    // category: Yup.string().required('Please select your Category'),
-    // caste: Yup.string().required('Please select your Caste'),
-    // // dob: Yup.number().required('Date is required'),
-    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    // photo:Yup.string().required('Please select your Photo'),
+    name: Yup.string().required('Please enter your first name'),
+    mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
+        .of(Yup.string().min(1))
+        .required('Field is required')
+        .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
+            if (!value) return true; // No validation if the field is empty
+            const mobileNumbers = value.map((number) => number.trim());
+            return mobileNumbers.every((number) => {
+                const firstDigit = parseInt(number.charAt(0));
+                return !isNaN(firstDigit) && firstDigit >= 5;
+            });
+        })
+        .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
+            if (!value) return true; // No validation if the field is empty
+            const mobileNumbers = value.map((number) => number.trim());
+            return mobileNumbers.every((number) => number.length === 10);
+        }),
+    religion: Yup.string().required('Please select your Religion'),
+    gender: Yup.string().required('Please select your Gender'),
+    category: Yup.string().required('Please select your Category'),
+    caste: Yup.string().required('Please select your Caste'),
+    dob: Yup.string().required('Please select your Caste'),
+    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;

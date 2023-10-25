@@ -9,14 +9,22 @@ import Savebtn from "../component/saveprogressbutton/button";
 import SelectField from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getEducationData, getFormData, getGenderData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {
+    getEducationData,
+    getFormData,
+    getGenderData,
+    getReligionData
+} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 const Educationform =(props)=>{
-
+    const [selectedOption, setSelectedOption] = useState('');
+    const selectChange = (e) => {
+        setSelectedOption(e.target.value);
+    };
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -25,14 +33,14 @@ const Educationform =(props)=>{
         flexGrow: 1,
     }));
     const [EducationData, setEducationData]= useState([])
+    const getEducation=()=>{
+        getEducationData.then((response) => {
+            setEducationData(response.data.data)
+        })
+    }
     useEffect(() => {
         getEducation();
     }, []);
-
-    const getEducation=()=>{
-        getEducationData.then((res)=>{
-            setEducationData(res.data.data)});
-    }
 
     const [savedData, setSavedData] = useState(null);
 
@@ -49,6 +57,10 @@ const Educationform =(props)=>{
 
         setSavedData(props.formValues);
     };
+    const [saveParty, setSaveParty]=useState(null)
+    const  handlepartysave=()=>{
+        setSaveParty(props.formValues)
+    }
     return(
         <>
 
@@ -60,22 +72,20 @@ const Educationform =(props)=>{
                                     <Grid container sx={{mb:5}} >
                                         <Grid item xs={6} className='education-field pb-3'>
                                             <Grid item xs={7}>
-                                                <Primarybutton addclass="nextbtn" handleclick={handleSave} buttonlabel="Save"/>
                                                 <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                                <SelectField
-                                                    name="education_level"
-                                                    defaultOption="Select Highest Education"
-                                                    optionList={EducationData}
+                                                <SelectField name="education_level" selectedvalues={selectedOption}
+                                                             defaultOption="Select Highest Education"
+                                                             handleSelectChange={selectChange}
+                                                             optionList={EducationData}/>
 
-                                                />
                                                 <ErrorMessage name="education_level" component="div" />
                                             </Grid>
                                         </Grid>
                                     </Grid>
 
                                         {savedData && (
-                                            <div>
-                                            <table className="w-100 table-responsive">
+                                            <div className="data-table">
+                                            <table className="w-100 table-responsive ">
                                                 <thead>
                                                 <tr>
                                                     <th>Qualification</th>
@@ -93,8 +103,8 @@ const Educationform =(props)=>{
                                                     <td>{savedData.subject}</td>
                                                     <td>{savedData.university}</td>
                                                     <td>{savedData.college}</td>
-                                                    <td>{savedData.start_year instanceof Date ? savedData.start_year.toDateString() : ''}</td>
-                                                    <td>{savedData.end_year instanceof Date ? savedData.end_year.toDateString() : ''}</td>
+                                                    {/*<td>{savedData.start_year}</td>*/}
+                                                    {/*<td>{savedData.end_year}</td>*/}
                                                     <td><MoreVertIcon/></td>
                                                 </tr>
                                                 </tbody>
@@ -112,7 +122,7 @@ const Educationform =(props)=>{
                                             <FormLabel>Qualification <sup>*</sup></FormLabel>
                                             <SelectField
                                                 name="qualification"
-                                                defaultOption="Select Highest Education"
+                                                defaultOption="Select Highest Qualification"
                                                 optionList={EducationData}
                                             />
                                             <ErrorMessage name="qualification" component="div" />
@@ -126,9 +136,9 @@ const Educationform =(props)=>{
                                         <Grid item xs={4}>
                                             <FormLabel>University / Board <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
-                                                        name="university"
+                                                        name="board"
                                                         placeholder="Enter University / Board"/>
-
+                                            <ErrorMessage name="board" component="div" />
                                         </Grid>
                                         <Grid item xs={4}>
                                             <FormLabel>College / School <sup>*</sup></FormLabel>
@@ -145,9 +155,10 @@ const Educationform =(props)=>{
                                                         <DatePicker
                                                             {...field}
                                                             value={field.value} // Use field.value to get the current value
-                                                            onChange={(date) => form.setFieldValue("start_year", date)} // Update the value
+                                                            onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
+                                                            views={['year']}
                                                         />
-                                                    )}
+                                                        )}
                                                 </Field>
                                             </LocalizationProvider>
                                         </Grid>
@@ -159,7 +170,8 @@ const Educationform =(props)=>{
                                                         <DatePicker
                                                             {...field}
                                                             value={field.value} // Use field.value to get the current value
-                                                            onChange={(date) => form.setFieldValue("end_year", date)} // Update the value
+                                                            onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
+                                                            views={['year']}
                                                         />
                                                     )}
                                                 </Field>
@@ -169,9 +181,37 @@ const Educationform =(props)=>{
 
                                         <Grid item xs={12}>
                                             <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                                            <Primarybutton addclass="nextbtn" onClick={handleSave} buttonlabel="Save"/>
+                                            <Primarybutton addclass="nextbtn" handleclick={handleSave} buttonlabel="Save"/>
                                         </Grid>
                                     </Grid>
+                                    {saveParty && (
+                                        <div className="data-table">
+                                            <table className="w-100 table-responsive ">
+                                                <thead>
+                                                <tr>
+                                                    <th>Profession</th>
+                                                    <th>Course/Branch/Subject</th>
+                                                    <th>Position</th>
+                                                    <th>Organization Name</th>
+                                                    <th>Start Year</th>
+                                                    <th>End Year</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>{saveParty.profession}</td>
+                                                    <td>{saveParty.subject}</td>
+                                                    <td>{saveParty.position}</td>
+                                                    <td>{saveParty.organization}</td>
+                                                    {/*<td>{savedData.start_year}</td>*/}
+                                                    {/*<td>{savedData.end_year}</td>*/}
+                                                    <td><MoreVertIcon/></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
                                     <Grid container sx={{my:5}} className="grid-wrap">
                                         <Grid item sx={{mb:2}} xs={12}>
                                             <Typography variant="h5" content="h5">
@@ -207,12 +247,13 @@ const Educationform =(props)=>{
                                             <Grid item xs={4}>
                                                 <FormLabel  fullwidth>Start Year</FormLabel><br/>
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <Field name="start_year">
+                                                    <Field name="start_year1">
                                                         {({ field, form }) => (
                                                             <DatePicker
                                                                 {...field} // Pass the field's props to the DatePicker
                                                                 value={field.value} // Set the value explicitly if needed
-                                                                onChange={(date) => form.setFieldValue("start_year", date)} // Handle date changes
+                                                                onChange={(year) => form.setFieldValue("start_year1", year)} // Handle date changes
+                                                                views={['year']}
                                                             />
                                                         )}
                                                     </Field>
@@ -221,12 +262,13 @@ const Educationform =(props)=>{
                                             <Grid item xs={4} textend>
                                                 <FormLabel>End / Passing Year</FormLabel><br/>
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <Field name="end_year">
+                                                    <Field name="end_year1">
                                                         {({ field, form }) => (
                                                             <DatePicker
                                                                 {...field} // Pass the field's props to the DatePicker
                                                                 value={field.value} // Set the value explicitly if needed
-                                                                onChange={(date) => form.setFieldValue("end_year", date)} // Handle date changes
+                                                                onChange={(year) => form.setFieldValue("end_year1", year)} // Handle date changes
+                                                                views={['year']}
                                                             />
                                                         )}
                                                     </Field>
@@ -235,7 +277,7 @@ const Educationform =(props)=>{
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                                                <Primarybutton addclass="nextbtn" buttonlabel="Save"/>
+                                                <Primarybutton addclass="nextbtn" handleclick={handlepartysave} buttonlabel="Save"/>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -264,23 +306,31 @@ const Educationform =(props)=>{
 Educationform.label = 'Education and Profession'
 Educationform.initialValues = {
     education_level:"",
+    profession: "",
     qualification: "",
     subject: "",
     college: "",
     board: "",
     school: "",
-    profession: "",
     qualification2:"",
+    department:"",
     year:"",
     stream:"",
     course:"",
     university:"",
-    start_year: null,
-    end_year:null,
+    start_year:"",
+        end_year:"",
+        // profession: "",
+        organisation:"",
+        position:"",
+        // start_year:"",
+        // end_year:""
 };
-// Educationform.validationSchema = Yup.object().shape({
-//     education_level: Yup.number().required('Please select your education'),
-//     qualification: Yup.number().required('Please enter your qualification')
-//     board: Yup.number().required('Please enter your qualification')
-// });
+Educationform.validationSchema = Yup.object().shape({
+    // education_level: Yup.string().required('Please select your education'),
+    // qualification: Yup.string().required('Please enter your qualification'),
+    // board: Yup.string().required('Please enter your board'),
+    // profession: Yup.string().required('Please enter your profession'),
+    // college:Yup.string().required('Please enter your college')
+});
 export default Educationform
