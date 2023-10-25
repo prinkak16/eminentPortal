@@ -115,7 +115,6 @@ const PolticalandGovrnform =(props)=>{
                             defaultOption="Select Highest Qualification"
                             optionList={PartyData}
                         />
-
                         <ErrorMessage name="party_level" component="div" />
                     </Grid>
                     <Grid item xs={4}>
@@ -391,7 +390,7 @@ const PolticalandGovrnform =(props)=>{
                                 <Field name="state">
                                     {({ field }) => (
                                         <div>
-                                            {field.value === 'Lok sabha' && <Stepfouraddmore />}
+                                            {field.value === 'Lok sabha' && <Stepfou0raddmore />}
                                             {field.value === 'Rajya sabha' && <Rajyasabhaform />}
                                             {field.value === 'Legislative Assembly (vidhan sabha)' && <Vidhansabhaform />}
                                             {field.value === 'Legislative Council (vidhan sabha)' && <Vidhanparishadform />}

@@ -91,23 +91,23 @@ const PersonalDetails = (props) => {
     const handleViewPdf = () => {
         window.open(pdfUrl, "_blank");
     };
-// const saveProgress=()=>{
-//     const fieldsWithValues = {};
-//     for (const fieldName of Object.keys(props.formValues)) {
-//         const fieldValue = props.formValues[fieldName];
-//         if (fieldValue) {
-//             if (props.formValues[fieldName] === 'mobile') {
-//                 fieldsWithValues[fieldName] = [fieldValue];
-//             }  else {
-//                 fieldsWithValues[fieldName] = fieldValue;
-//             }
-//         }
-//     }
-//     getFormData(fieldsWithValues).then(response => {
-//         console.log('API response:', response.data);
-//
-//     });
-// }
+const saveProgress=()=>{
+    const fieldsWithValues = {};
+    for (const fieldName of Object.keys(props.formValues)) {
+        const fieldValue = props.formValues[fieldName];
+        if (fieldValue) {
+            if (props.formValues[fieldName] === 'mobile') {
+                fieldsWithValues[fieldName] = [fieldValue];
+            }  else {
+                fieldsWithValues[fieldName] = fieldValue;
+            }
+        }
+    }
+    getFormData(fieldsWithValues).then(response => {
+        console.log('API response:', response.data);
+
+    });
+}
     const names = [
         'Hindi',
         'English',
@@ -228,7 +228,7 @@ const PersonalDetails = (props) => {
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Personal Detail"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        {/*<Button onClick={saveProgress}>Save Progress</Button>*/}
+                        <Button onClick={saveProgress}>Save Progress</Button>
                     </Item>
                 </Stack>
                 <Grid className='detailFrom' container spacing={2}>
@@ -250,6 +250,7 @@ const PersonalDetails = (props) => {
                                     placeholder='Enter ID'
                                     fullWidth
                                     name="id"
+                                    disabled
                                 />
                                 <ErrorMessage name="id" component="div"/>
                             </Grid>

@@ -10,7 +10,7 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFormData, getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {boolean} from "yup";
@@ -29,7 +29,23 @@ const Communicationform =(props)=>{
     const [formValues, setFormValues] = useState([])
     const [StateData, setStateData]= useState([])
     const [PinCodeData, setPinCodeData] = useState(null);
+    const saveProgress=()=>{
+        const fieldsWithValues = {};
+        for (const fieldName of Object.keys(props.formValues)) {
+            const fieldValue = props.formValues[fieldName];
+            if (fieldValue) {
+                if (props.formValues[fieldName] === 'mobile') {
+                    fieldsWithValues[fieldName] = [fieldValue];
+                }  else {
+                    fieldsWithValues[fieldName] = fieldValue;
+                }
+            }
+        }
+        getFormData(fieldsWithValues).then(response => {
+            console.log('API response:', response.data);
 
+        });
+    }
     const handleAddField = () => {
         if(fields.length<2){
             setFields([...fields, ""]);
@@ -100,7 +116,8 @@ const Communicationform =(props)=>{
             <Box sx={{ flexGrow: 1 }}>
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
-                    <Item sx={{textAlign:'right'}}><Savebtn/>
+                    <Item sx={{textAlign:'right'}}>
+                        <Savebtn/>
                     </Item>
                 </Stack>
                 <div className="detailFrom">
@@ -214,9 +231,9 @@ const Communicationform =(props)=>{
                                         <Grid item xs={12}>
                                             <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
-                                                        name="current_flat"
+                                                        name="flat"
                                                         placeholder="Enter your address"/>
-                                            <ErrorMessage name="current_flat" component="div" />
+                                            <ErrorMessage name="flat" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <sup>*</sup></FormLabel>
@@ -232,29 +249,29 @@ const Communicationform =(props)=>{
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
                                                 }}
-                                                name="current_pincode"
+                                                name="pincode"
                                             />
-                                            <ErrorMessage name="current_pincode" component="div" />
+                                            <ErrorMessage name="pincode" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
-                                                        name="current_street"
+                                                        name="street"
                                                         placeholder="Enter Area, Street, Etc.s" readOnly/>
-                                            <ErrorMessage name="current_street" component="div" />
+                                            <ErrorMessage name="street" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <sup>*</sup></FormLabel>
                                             <Inputfield type="text"
-                                                        name="current_district"
+                                                        name="district"
                                                         placeholder="Enter Area, Street, Etc."
                                             />
-                                            <ErrorMessage name="current_district" component="div" />
+                                            <ErrorMessage name="district" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>State <sup>*</sup></FormLabel>
-                                            <SelectField name="current_state" defaultOption="Select State" optionList={StateData}/>
-                                            <ErrorMessage name="current_state" component="div" />
+                                            <SelectField name="state" defaultOption="Select State" optionList={StateData}/>
+                                            <ErrorMessage name="state" component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -275,9 +292,8 @@ const Communicationform =(props)=>{
                                                 type="text"
                                                 name="home_flat"
                                                 placeholder="Enter your address"
-                                                value={props.formValues.check ? props.formValues.current_flat: props.formValues.home_flat}
+                                                value={props.formValues.check ? props.formValues.flat: props.formValues.home_flat}
                                             />
-                                            {props.formValues.check ? '' : <ErrorMessage name="home_flat" component="div" /> }
 
                                         </Grid>
                                         <Grid item xs={6}>
@@ -294,10 +310,9 @@ const Communicationform =(props)=>{
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
                                                 }}
-                                                value={props.formValues.check ? props.formValues.current_pincode: props.formValues.home_pincode}
+                                                value={props.formValues.check ? props.formValues.pincode: props.formValues.home_pincode}
                                                 name="home_pincode"
                                             />
-                                            {props.formValues.check ?  '' : <ErrorMessage name="home_pincode" component="div" /> }
 
                                         </Grid>
                                         <Grid item xs={6}>
@@ -305,9 +320,8 @@ const Communicationform =(props)=>{
                                             <Inputfield type="text"
                                                         name="home_street"
                                                         placeholder="Enter Area, Street, Etc.s"
-                                                        value={props.formValues.check ? props.formValues.current_street: props.formValues.home_street}
+                                                        value={props.formValues.check ? props.formValues.street: props.formValues.home_street}
                                             />
-                                            {props.formValues.check ? '' : <ErrorMessage name="home_street" component="div" /> }
 
                                         </Grid>
                                         <Grid item xs={6}>
@@ -315,16 +329,14 @@ const Communicationform =(props)=>{
                                             <Inputfield type="text"
                                                         name="home_district"
                                                         placeholder="Enter Area, Street, Etc."
-                                                        value={props.formValues.check ? props.formValues.current_district: props.formValues.home_district}
+                                                        value={props.formValues.check ? props.formValues.district: props.formValues.home_district}
                                             />
-                                            {props.formValues.check ? '' : <ErrorMessage name="home_district" component="div" /> }
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>State <sup>*</sup></FormLabel>
                                             <SelectField name="home_state" defaultOption="Select State" optionList={StateData}
-                                                         value={props.formValues.check ? props.formValues.current_state: props.formValues.home_state}
+                                                         value={props.formValues.check ? props.formValues.state: props.formValues.home_state}
                                             />
-                                            {props.formValues.check ? '' : <ErrorMessage name="home_state" component="div" /> }
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -411,21 +423,21 @@ Communicationform.initialValues = {
     std_code: "",
     landline: "",
     email:"",
-    current_flat:"",
-    current_pincode:"",
-    current_street:"",
-    current_district:"",
-    current_state:"",
+    flat:"",
+    pincode:"",
+    street:"",
+    district:"",
+    state:"",
     home_flat:"",
     home_pincode:"",
     home_street:"",
     home_district:"",
     home_state:"",
-    // other_flat:"",
-    // check:false,
-    // other_district:"",
-    // other_state:"",
-    // other_pincode:"",
+    other_flat:"",
+    check:false,
+    other_district:"",
+    other_state:"",
+    other_pincode:"",
 };
 Communicationform.validationSchema = Yup.object().shape({
     email:Yup.string()
@@ -434,36 +446,11 @@ Communicationform.validationSchema = Yup.object().shape({
             /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             'Invalid email format'
         ),
-    current_flat: Yup.string().required('Please enter your Address'),
-    current_street: Yup.string().required('Please enter your Street'),
-    current_district: Yup.string().required('Please enter your District'),
-    current_state: Yup.string().required('Please enter your State'),
-    current_pincode: Yup.string().required('Please enter your Pincode'),
-    home_flat: Yup.string().required('Please enter your Address'),
-    home_street: Yup.string().required('Please enter your Street'),
-    home_district: Yup.string().required('Please enter your District'),
-    home_state: Yup.string().required('Please enter your State'),
-    home_pincode: Yup.string().required('Please enter your Pincode'),
-    // check: Yup.boolean(),
-    // other_flat: Yup.string().when('check', {
-    //     is: true,
-    //     then: Yup.string().required('Please enter your Street'),
-    // }),
-    // other_street: Yup.string().when('check', {
-    //     is: true,
-    //     then: Yup.string().required('Please enter your District'),
-    // }),
-    // other_state: Yup.string().when('check', {
-    //     is: true,
-    //     then: Yup.string().required('Please enter your State'),
-    // }),
-    // other_pincode: Yup.string().when('check', {
-    //     is: true,
-    //     then: Yup.string().required('Please enter your Pincode'),
-    // }),
-    // type_of_other_address: Yup.string().when('check', {
-    //     is: true,
-    //     then: Yup.string().required('Please enter your type of Address'),
-    // }),
+    flat: Yup.string().required('Please enter your Address'),
+    street: Yup.string().required('Please enter your Street'),
+    district: Yup.string().required('Please enter your District'),
+    state: Yup.string().required('Please enter your State'),
+    pincode: Yup.string().required('Please enter your Pincode')
+
 });
 export default Communicationform

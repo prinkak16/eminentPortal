@@ -327,10 +327,10 @@ Educationform.initialValues = {
         // end_year:""
 };
 Educationform.validationSchema = Yup.object().shape({
-    // education_level: Yup.string().required('Please select your education'),
-    // qualification: Yup.string().required('Please enter your qualification'),
-    // board: Yup.string().required('Please enter your board'),
-    // profession: Yup.string().required('Please enter your profession'),
-    // college:Yup.string().required('Please enter your college')
+    education_level: Yup.string().required('Please select your education'),
+    qualification: Yup.string().required('Please enter your qualification'),
+    board: Yup.string().required('Please enter your board'),
+    profession: Yup.string().required('Please enter your profession'),
+    college:Yup.string().required('Please enter your college')
 });
 export default Educationform
