@@ -1,0 +1,52 @@
+$ligtbackground:rgba(222, 229, 238, 0.26);
+$baselight:#FFE8DB;
+$basicColor: #FF9559;
+@mixin btndesign{
+  padding: 12px 24px;
+  background: ($baselight);
+  border: 0.786px solid ($basicColor);
+  border-radius: 4.714px;
+  color: ($basicColor);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.75px;
+  position: relative;
+  margin-top: -30px;
+  margin-right: 35px;
+}
+.imgupload{
+  text-align: right;
+}
+.Imagewrap{
+  width: 250px;
+  height: 225px;
+  border-radius: 8px;
+  background:($ligtbackground);
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.image-item{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+  }
+}
+.upload__image-wrapper{
+  button {
+    @include btndesign;
+    &:hover{
+      @include btndesign;
+    }
+  }
+}

@@ -25,7 +25,6 @@ ENV ACCESS_TOKEN=$_ACCESS_TOKEN
 WORKDIR /usr/src/
 
 COPY Gemfile Gemfile
-#COPY Gemfile.lock Gemfile.lock
 RUN bundle config github.com $ACCESS_TOKEN
 COPY . .
 
