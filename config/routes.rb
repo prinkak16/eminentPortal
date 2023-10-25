@@ -20,12 +20,31 @@ Rails.application.routes.draw do
       get 'metadata/config/home', to: 'metadata#config_home'
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
-      get 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
+      delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
       post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
+
+      get 'stats/home', to: 'stats#home'
+
+      namespace :admin, path: 'admin' do
+        post '/eminent_manual_data_upload', to: 'admin#eminent_manual_data_upload'
+      end
+
+      namespace :user, path: 'user' do
+        get '/minister_list', to: 'user#minister_list'
+        get '/assigned_ministries', to: 'user#user_assigned_ministries'
+      end
+      namespace :user, path: 'user/:user_id' do
+        get '/assigned_ministries', to: 'user#assigned_ministries'
+        post '/assign_ministries', to: 'user#assign_ministries'
+        delete '/dissociate_ministries', to: 'user#dissociate_ministries'
+        get '/allocated_ministries', to: 'user#allocated_ministries'
+        post '/allocate_ministries', to: 'user#allocate_ministries'
+        delete '/deallocate_ministries', to: 'user#deallocate_ministries'
+      end
 
       get 'ministry', to: 'ministry#get_ministries'
       post 'ministry', to: 'ministry#add_ministry'
@@ -38,7 +57,10 @@ Rails.application.routes.draw do
 
         namespace :department, path: 'department/:department_id' do
           post '/organization', to: 'organization#add_organization'
+          get '/organization', to: 'organization#get_organizations'
+          get '/organization/:organization_id', to: 'organization#get_organization'
         end
+
       end
     end
 

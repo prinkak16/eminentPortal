@@ -3,6 +3,8 @@ module MetadataHelper
 
   def get_entry_type_filter
     result = {
+      'key': 'entry_type',
+      'display_name': 'Entry Type',
       'type': 'array',
       'values': []
     }
@@ -18,7 +20,9 @@ module MetadataHelper
 
   def get_channel_filter
     {
+      'key': 'channel',
       'type': 'array',
+      'display_name': 'Channel',
       'values': [
         {
           'value': 'Office',
@@ -34,7 +38,9 @@ module MetadataHelper
 
   def get_aasm_state_filter
     {
+      'key': 'form_status',
       'type': 'array',
+      'display_name': 'Form Status',
       'values': [
         {
           'value': 'pending',
@@ -66,7 +72,9 @@ module MetadataHelper
 
   def get_qualification_filter
     result = {
+      'key': 'education',
       'type': 'array',
+      'display_name': 'Qualification',
       'values': []
     }
     educations = PersonEducation.order(:order).select(:id, :name)
@@ -81,7 +89,9 @@ module MetadataHelper
 
   def get_gender_filter
     result = {
+      'key': 'gender',
       'type': 'array',
+      'display_name': 'Gender',
       'values': [
         {
           'value': 'Male',
@@ -101,7 +111,9 @@ module MetadataHelper
 
   def get_profession_filter
     result = {
+      'key': 'profession',
       'type': 'array',
+      'display_name': 'Profession',
       'values': []
     }
     professions = PersonProfession.select(:id, :name)
@@ -116,7 +128,9 @@ module MetadataHelper
 
   def get_category_filter
     result = {
+      'key': 'category',
       'type': 'array',
+      'display_name': 'Category',
       'values': []
     }
     condition = "CASE person_categories.name WHEN 'GEN' THEN '1' WHEN 'OBC' THEN '2' WHEN 'SC' THEN '3' WHEN 'ST' THEN '4' WHEN 'Minority' THEN '5' else 100 END"
@@ -132,7 +146,9 @@ module MetadataHelper
 
   def get_age_group_filter
     result = {
+      'key': 'age_group',
       'type': 'array',
+      'display_name': 'Age Group',
       'values': [
         {
           'value': 'age_18_to_25',

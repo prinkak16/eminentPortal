@@ -1,5 +1,7 @@
 class CreateOrganizationTable < ActiveRecord::Migration[7.0]
   def change
+    enable_extension :pg_trgm
+
     create_table :organizations do |t|
       t.integer :parent_id, null: true, default: nil
       t.integer :order_id, null: false, default: 1
@@ -15,6 +17,7 @@ class CreateOrganizationTable < ActiveRecord::Migration[7.0]
       t.jsonb :location, null: false, default: '{}'
       t.datetime :deleted_at, default: nil
       t.timestamps
+      t.index :name, opclass: :gin_trgm_ops, using: :gin, name: 'index_organization_name_search'
     end
   end
 end
