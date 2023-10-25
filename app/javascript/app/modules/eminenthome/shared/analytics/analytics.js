@@ -7,27 +7,11 @@ import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
     const [analyticsHeading, setAnalyticsHeading] = useState('');
-    const [cardLabel1, setCardLabel1] = useState('');
-    const [cardLabel2, setCardLabel2] = useState('');
-    const [cardLabel3, setCardLabel3] = useState('');
+
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
 
 
-    useEffect(() => {
-        if(props.toggle===1){
-            setAnalyticsHeading('Eminent Analytics')
-            setCardLabel1('Total Eminent Personality')
-            setCardLabel2('Total Completed Form')
-            setCardLabel3('Total Incomplete Form')
-        }
-        else if(props.toggle===2){
-            setAnalyticsHeading('Position Analytics')
-            setCardLabel1('Total Slotted Psotion')
-            setCardLabel2('Assigned')
-            setCardLabel3('Yet to Assign')
-        }
-    }, [props.toggle]);
 
     useEffect(()=>{
         statsData().then(res=> {

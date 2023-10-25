@@ -73,6 +73,7 @@ export default function PersistentDrawerLeft() {
     const [open, setOpen] = React.useState(false);
     const [toggle, setToggle] = useState(1);
     const [filterString, setFilterString] = useState('');
+    const [wantToAddNew, setWantToAddNew] = useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -87,6 +88,7 @@ export default function PersistentDrawerLeft() {
     }
 
     return (
+        <>
         <Box sx={{display: 'flex'}}>
 
             <Drawer
@@ -130,7 +132,7 @@ export default function PersistentDrawerLeft() {
                         </IconButton>
                             </span>
                             Eminent Personality</p>
-                        <button className="addNewBtn">
+                        <button className="addNewBtn" onClick={()=>setWantToAddNew(true)}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -140,6 +142,7 @@ export default function PersistentDrawerLeft() {
                             Add New
                         </button>
                     </div>
+
                     <div className="tabsDiv d-flex flex-column">
                         <div className="navBar d-flex justify-content-between mt-2">
                             <ul>
@@ -172,9 +175,7 @@ export default function PersistentDrawerLeft() {
                     <>
                         <Analytics toggle={toggle}/>
                         <HomeTable filterString={filterString}/>
-                        <div className="d-flex justify-content-end mt-4">
 
-                            </div>
                     </>
                     {/*</div>*/}
 
@@ -183,5 +184,24 @@ export default function PersistentDrawerLeft() {
                 </Typography>
             </Main>
         </Box>
+            {wantToAddNew && <div className="modal customModal">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <span>Add New</span><button type="button" className="btn-close" onClick={() => setWantToAddNew(false)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <p>Enter mobile number</p>
+                            <input className="form-control" type="number" maxLength={10}/>
+                        </div>
+                        {/*<div className="modal-footer">*/}
+                        {/*    <button type="button" className="btn btn-secondary" onClick={() => setWantToDelete(false)}>No</button>*/}
+                        {/*    <button type="button" className="btn btn-primary" onClick={() => delUsers(delUser)}>Yes</button>*/}
+                        {/*</div>*/}
+                    </div>
+                </div>
+            </div>}
+            </>
+
     );
 }

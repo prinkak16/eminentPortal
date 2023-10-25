@@ -20,6 +20,7 @@ const HomeTable = (props) => {
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState('');
     const [searchId, setSearchId] = useState('');
+    const [currentPage, setCurrentPage] = useState('');
 
 
     const displayPhoneNumbers = (member) => {
@@ -39,8 +40,13 @@ const HomeTable = (props) => {
         if (searchId && searchId.length > 0) {
             searched += `&search_by_id=${searchId}`;
         }
-        tableDataDisplay(searched);
-    }, [searchedName, props.filterString, searchId]);
+        let pageString = '';
+        let offset=0;
+        let limit=2;
+        offset= currentPage*limit;
+        pageString=`&offset=${offset}&limit=${limit}`;
+        tableDataDisplay(searched+pageString);
+    }, [searchedName, props.filterString, searchId, currentPage]);
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -56,10 +62,9 @@ const HomeTable = (props) => {
         });
     }
 
-
     return (
         <>
-            <div className=" hometable mt-4">
+            <div className=" hometable mt-4 mb-4">
                 <div className="mt-4 d-flex justify-content-between ">
                     <div className="d-flex">
                         <div className='d-flex search-field'>
@@ -180,15 +185,31 @@ const HomeTable = (props) => {
                     </div>
 
                 ))}
-                <ReactPaginate
-                    previousLabel="< Previous"
-                    nextLabel="Next"
-                    breakLabel="...."
-                    pageCount={}
-                    marginPagesDisplayed={1}
-                    pageRangeDisplayed={6}
-                    onPageChange={()=>pageChange()}/>
+
             </div>
+                <div>
+                        <p className="d-flex justify-content-center">{currentPage+1}&nbsp;of&nbsp;{(tableData?.data?.data.length/2)+0.5}</p>
+                    <ReactPaginate
+                        previousLabel={"<Previous"}
+                        nextLabel={"Next"}
+                        breakLabel={"...."}
+                        pageCount={tableData?.data?.data.length/2}
+                        marginPagesDisplayed={1}
+                        pageRangeDisplayed={5}
+                        onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                        containerClassName={'pagination justify-content-end'}
+                        pageClassName={'page-item'}
+                        pageLinkClassName={'page-link'}
+                        previousClassName={'page-item'}
+                        previousLinkClassName={'page-link'}
+                        nextClassName={'page-item'}
+                        nextLinkClassName={'page-link'}
+                        breakClassName={'page-link'}
+                        breakLinkClassName={'page-item'}
+                        activeClassName={'active'} />
+
+                </div>
+
         </>
 
     )
