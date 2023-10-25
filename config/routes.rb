@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       get 'metadata/states', to: 'metadata#states'
       get 'metadata/state_party_list', to: 'metadata#state_party_list'
       get 'metadata/config/home', to: 'metadata#config_home'
+      get 'metadata/get_required_locations', to: 'metadata#get_required_locations'
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
@@ -30,6 +31,7 @@ Rails.application.routes.draw do
       get 'stats/home', to: 'stats#home'
 
       namespace :admin, path: 'admin' do
+        get '/manual_upload', to: 'admin#manual_data_upload'
         post '/eminent_manual_data_upload', to: 'admin#eminent_manual_data_upload'
       end
 
@@ -60,7 +62,6 @@ Rails.application.routes.draw do
           get '/organization', to: 'organization#get_organizations'
           get '/organization/:organization_id', to: 'organization#get_organization'
         end
-
       end
     end
 
