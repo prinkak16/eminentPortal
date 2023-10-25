@@ -1,6 +1,8 @@
 class Api::V1::MetadataController < BaseApiController
   before_action :authenticate_user
   include MetadataHelper
+  include Validators::Metadata::Validator
+  include UtilHelper
 
   def genders
     render json: {
@@ -72,5 +74,45 @@ class Api::V1::MetadataController < BaseApiController
       ]
     }
     render json: { success: true, data: result, message: 'User Assigned States' }, status: 200
+  end
+
+  def get_required_locations
+    # check validations
+    params['location_id'] = params['location_id'].present? ? params['location_id'].to_i : nil
+    is_param_data_is_valid = validate_form(required_locations_validator, params.as_json)
+    unless is_param_data_is_valid[:is_valid]
+      return render json: {
+        success: false,
+        message: 'Invalid request',
+        error: is_param_data_is_valid[:error]
+      }, status: :bad_request
+    end
+
+    location_type = params['location_type']
+    location_id = params['location_id']
+    required_location_type = params['required_location_type']
+
+    data = {
+      'location_type': required_location_type,
+      'locations': []
+    }
+
+    case location_type
+    when 'State'
+      case required_location_type
+      when 'AssemblyConstituency'
+        data[:locations] = AssemblyConstituency.where(country_state_id: location_id).select("CONCAT(number, ' - ',name) AS name, id AS id").order(number: :asc)
+      when 'ParliamentaryConstituency'
+        data[:locations] = ParliamentaryConstituency.where(country_state_id: location_id).select("CONCAT(number, ' - ',name) AS name, id AS id").order(number: :asc)
+      when 'AdministrativeDistrict'
+        data[:locations] = AdministrativeDistrict.where(country_state_id: location_id).select("name, id").order(name: :asc)
+      end
+    end
+
+    return render json: {
+      success: true,
+      message: 'Required locations',
+      data: data
+    }, status: :ok
   end
 end
