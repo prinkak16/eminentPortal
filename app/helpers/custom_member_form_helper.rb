@@ -750,32 +750,28 @@ module CustomMemberFormHelper
 
   sixth_step_validations = fifth_step_validations.merge(
     'reference': {
-      'type': 'array',
-      'items': {
-        'type': 'object',
-        'properties': {
-          'name': {
-            'type': 'string',
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'mobile': {
-            'type': 'string',
-            'minLength': 10, # Min length of 10 characters
-            'maxLength': 10 # Max length of 10 characters
-          },
-          'bjp_id': {
-            'type': 'string',
-            'maxLength': 10 # Max length of 10 characters
-          },
-          'grade': {
-            'type': 'string'
-          },
-          'comments': {
-            'type': 'string'
-          }
+      'type': 'object',
+      'properties': {
+        'name': {
+          'type': 'string',
+          'maxLength': 200 # Max length of 200 characters
         },
-        'required': %w[name mobile bjp_id grade comments]
-      }
+        'mobile': {
+          'type': 'string',
+          'minLength': 10, # Min length of 10 characters
+          'maxLength': 10 # Max length of 10 characters
+        },
+        'bjp_id': {
+          'type': 'string'
+        },
+        'grade': {
+          'type': 'string'
+        },
+        'comments': {
+          'type': 'string'
+        }
+      },
+      'required': %w[name mobile bjp_id grade comments]
     }
   )
 
@@ -851,8 +847,13 @@ module CustomMemberFormHelper
         "template_id": ct_id.to_s
       }.to_json
     }
-    response = HTTParty.post('http://34.93.208.112/send_sms', options)
-    print "\n-------\nSent Message: #{message}\nResponse code is #{response&.code&.to_s}\n"
+    if Rails.env == "production"
+      response = HTTParty.post('http://34.93.208.112/send_sms', options)
+      print "\n-------\nSent Message: #{message}\nResponse code is #{response&.code&.to_s}\n"
+    else
+      print "\n-------\nSent Message: #{message}"
+    end
+
   end
 
   def custom_member_exists?(phone_number, form_type, cm_id)

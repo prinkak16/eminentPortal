@@ -36,4 +36,8 @@ module ApplicationHelper
   def user_sign_out
     session[:user_id] = nil
   end
+
+  def phone_regex
+    '^[1-9][0-9]{9}$'
+  end
 end

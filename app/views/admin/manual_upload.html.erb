@@ -54,12 +54,13 @@
                 <h4>Upload eminent users for whitelisting</h4>
           </div>
           <div class="col-2">
-                <button type="button" class="btn btn-dark">Download Format</button>
+                <a href="https://storage.googleapis.com/public-saral/sample_eminent_whitelist.csv" download="proposed_file_name" class="btn btn-dark">Download Format</a>
+
           </div>
         </div>
       </article>
     </section>
-    <%= form_tag api_v1_admin_eminent_manual_data_upload_path, multipart: true do |form| %>
+    <%= form_tag admin_manual_upload_path, multipart: true do |form| %>
       <section>
         <article>
             <% if flash[:error] %>
@@ -72,7 +73,7 @@
                 <%= flash[:success] %>
               </div>
             <% end %>
-          ` <div class="form-group">
+            <div class="form-group">
               <label for="file" class="form-label">CSV File<span class="text-danger">*</span></label>
               <input class="form-control form-control-lg" name="file" id="file" type="file" required="required">
             </div>

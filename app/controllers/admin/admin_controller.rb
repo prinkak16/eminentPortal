@@ -17,8 +17,8 @@ class Admin::AdminController < ApplicationController
       # check if file not exist
       file = params[:file].present? ? params[:file] : nil
       if file.nil? || file.content_type != 'text/csv'
-        flash.now[:error] = 'Please provide a valid csv file.'
-        redirect_to 'admin/manual_upload', allow_other_host: true
+        flash[:error] = 'Please provide a valid csv file.'
+        redirect_to admin_manual_upload_path, allow_other_host: true
         return
       end
 
@@ -26,7 +26,7 @@ class Admin::AdminController < ApplicationController
       email = params[:email].present? ? params[:email] : nil
       if email.nil?
         flash[:error] = 'Please provide a valid email for notification.'
-        redirect_to 'admin/manual_upload', allow_other_host: true
+        redirect_to admin_manual_upload_path, allow_other_host: true
         return
       end
 
@@ -45,7 +45,7 @@ class Admin::AdminController < ApplicationController
       # check if file not exist
       unless rows.length.positive?
         flash[:error] = 'Please provide a valid csv file.'
-        redirect_to 'admin/manual_upload', allow_other_host: true
+        redirect_to admin_manual_upload_path, allow_other_host: true
         return
       end
 
