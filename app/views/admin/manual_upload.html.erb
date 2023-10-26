@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title>Admin Panel</title>
+  <style>
+      /* Style the header */
+      header {
+          background-color: #666;
+          padding: 30px;
+          text-align: center;
+          font-size: 35px;
+          color: white;
+      }
+
+      /* Container for flexboxes */
+      section {
+          display: -webkit-flex;
+          display: flex;
+      }
+
+      /* Style the content */
+      article {
+          -webkit-flex: 3;
+          -ms-flex: 3;
+          flex: 3;
+          background-color: #f1f1f1;
+          padding: 50px;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section>
+      <article>
+        <div class="row">
+          <header>
+            <h2>Admin Dashboard</h2>
+          </header>
+        </div>
+      </article>
+    </section>
+    <section>
+      <article>
+        <div class="row">
+          <div class="col-10">
+                <h4>Upload eminent users for whitelisting</h4>
+          </div>
+          <div class="col-2">
+                <button type="button" class="btn btn-dark">Download Format</button>
+          </div>
+        </div>
+      </article>
+    </section>
+    <%= form_tag api_v1_admin_eminent_manual_data_upload_path, multipart: true do |form| %>
+      <section>
+        <article>
+            <% if flash[:error] %>
+              <div class="alert alert-danger">
+                <%= flash[:error] %>
+              </div>
+            <% end %>
+            <% if flash[:success] %>
+              <div class="alert alert-success">
+                <%= flash[:success] %>
+              </div>
+            <% end %>
+          ` <div class="form-group">
+              <label for="file" class="form-label">CSV File<span class="text-danger">*</span></label>
+              <input class="form-control form-control-lg" name="file" id="file" type="file" required="required">
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com">
+            </div>
+        </article>
+      </section>
+      <section>
+        <article>
+        <div class="form-group">
+          <button type="submit" class="btn btn-dark">Submit</button>
+        </div>
+        </article>
+      </section>
+    <% end %>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
