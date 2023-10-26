@@ -85,8 +85,10 @@ gem 'json_schemer'
 gem 'jwt'
 gem 'listen'
 gem 'paranoia'
+gem 'sendgrid-ruby'
 gem 'sidekiq'
 gem 'sidekiq-cron'
+
 
 
 

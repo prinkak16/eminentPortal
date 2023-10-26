@@ -15,6 +15,7 @@ class BaseApiController < ActionController::API
       if token&.present?
         user = handle_api_auth(api_token: token)
         if user.present?
+          sync_auth_users(user)
           session[:user_id] = user
         else
           render json: {
