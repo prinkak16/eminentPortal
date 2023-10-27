@@ -27,7 +27,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
       }, status: :bad_request
     end
 
-    if assigned_states.include? 20
+    if assigned_states.include? custom_member.country_state_id
       return render json: {
         success: true,
         message: 'Eminent exist.',
@@ -38,7 +38,6 @@ class Api::V1::CustomMemberFormController < BaseApiController
       eminent_name = cm_data['name'].present? ? cm_data['name'] : nil
       state_name = custom_member.country_state.present? ? custom_member.country_state.name : nil
 
-      # puts eminent_name, custom_member[:data][:name]
       return render json: {
         success: false,
         message: "User(#{eminent_name}) exist in other state(#{state_name}).",
