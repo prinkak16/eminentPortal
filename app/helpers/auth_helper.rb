@@ -33,7 +33,7 @@ module AuthHelper
   def sync_auth_users(user_id)
     user_detail = User.find_by(id: user_id)
     fetch_user_detail = AuthUser.where(id: user_id).first_or_create!
-    auth_user = AuthUser.find_by(id: fetch_user_detail.id).update(name: user_detail&.name)
+    auth_user = AuthUser.find_by(id: fetch_user_detail.id).update(name: user_detail&.name, phone_number: user_detail&.phone_number)
     return auth_user
   end
 

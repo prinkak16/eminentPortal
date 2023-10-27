@@ -15,6 +15,7 @@ class BaseApiController < ActionController::API
       if token&.present?
         user = handle_api_auth(api_token: token)
         if user.present?
+          sync_auth_users(user)
           session[:user_id] = user
         else
           render json: {
@@ -47,4 +48,21 @@ class BaseApiController < ActionController::API
     upload_file.public_url
   end
 
+  def authenticate_eminent
+    if request.env['HTTP_AUTHORIZATION'].present?
+      token = (request.env['HTTP_AUTHORIZATION'] || '').split(' ').last
+      eminent_user = CustomMemberForm.find_by(token: token)
+      if eminent_user.nil?
+        render json: {
+          status: :redirect,
+          link: ENV['SIGN_IN_EMINENT_URL']
+        }
+      end
+    else
+      render json: {
+        status: :redirect,
+        link: ENV['SIGN_IN_EMINENT_URL']
+      }
+    end
+  end
 end

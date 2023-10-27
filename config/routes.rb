@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 
   get 'auth/callback', to: 'auth#callback'
 
+  namespace :admin do
+    get 'manual_upload', to: 'admin#manual_upload'
+    post 'manual_upload', to: 'admin#manual_upload_data'
+  end
+
   namespace :api do
     namespace :v1 do
       get 'metadata/user_allotted_states', to: 'metadata#user_allotted_states'
@@ -24,15 +29,17 @@ Rails.application.routes.draw do
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
       post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
       post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
+      delete 'custom_member_forms/logout' => 'custom_member_form#destroy_session'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
 
       get 'stats/home', to: 'stats#home'
 
-      namespace :admin, path: 'admin' do
-        get '/manual_upload', to: 'admin#manual_data_upload'
-        post '/eminent_manual_data_upload', to: 'admin#eminent_manual_data_upload'
+      namespace :eminent, path: 'eminent' do
+        get '/fetch', to: 'eminent#fetch_eminent'
+        post '/update', to: 'eminent#update_eminent'
+        delete '/logout', to: 'eminent#logout'
       end
 
       namespace :user, path: 'user' do
