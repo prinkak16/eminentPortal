@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get 'manual_upload', to: 'admin#manual_upload'
-    post 'manual_upload', to: 'admin#eminent_manual_data_upload'
+    post 'manual_upload', to: 'admin#manual_upload_data'
   end
 
   namespace :api do
@@ -35,6 +35,12 @@ Rails.application.routes.draw do
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
 
       get 'stats/home', to: 'stats#home'
+
+      namespace :eminent, path: 'eminent' do
+        get '/fetch', to: 'eminent#fetch_eminent'
+        post '/update', to: 'eminent#update_eminent'
+        delete '/logout', to: 'eminent#logout'
+      end
 
       namespace :user, path: 'user' do
         get '/minister_list', to: 'user#minister_list'
