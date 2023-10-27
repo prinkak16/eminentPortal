@@ -70,6 +70,31 @@ border-radius: 8px !important;
     display:block;
 }
 
-.customModal{
+.customModals{
     display: block !important;
+}
+
+.addNewInput{
+    border-radius: 5px;
+    border-color: red;
+    width: 100%;
+    height: 60px;
+}
+
+.addNewInput:focus{
+    outline-color: #e50202;
+}
+
+
+.deleteModal{
+    padding-left: 5%;
+    padding-right:4%;
+    padding-top:2%;
+    padding-bottom:2%;
+    width: 80%;
+    height: 50%;
+}
+
+.addNewSubmit{
+    border: none;
 }

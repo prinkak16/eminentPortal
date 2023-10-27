@@ -68,7 +68,8 @@ export default function FiltersSidebar(props) {
             </div>
             {filtersList?.filters && filtersList.filters.map((filter) => (
                 <Accordion className={`accordion ${expandedFilter === filter.key ? 'accordian-with-bt' : ''}`}
-                           expanded={expandedFilter === filter.key} onChange={handleChange(filter.key)}>
+                           expanded={expandedFilter === filter.key} onChange={handleChange(filter.key)}
+                 key={filter.key}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1bh-content"
