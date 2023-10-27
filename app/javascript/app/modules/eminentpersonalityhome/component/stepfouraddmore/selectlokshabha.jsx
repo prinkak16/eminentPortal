@@ -30,7 +30,7 @@ const Stepfouraddmore=()=>{
             <Grid container spacing={2} className='px-5 py-3'>
                 <Grid item xs={6}>
                 <FormLabel>State</FormLabel>
-                    <SelectField name="current_state" defaultOption="Select State" optionList={StateData}/>
+                    <SelectField name="current_state" selectedvalues={selectedOption}  handleSelectChange={selectChange} defaultOption="Select State" optionList={StateData}/>
                 </Grid>
                 <Grid item xs={6}>
                 <FormLabel>PC</FormLabel>

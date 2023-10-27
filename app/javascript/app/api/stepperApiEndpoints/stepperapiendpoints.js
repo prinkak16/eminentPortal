@@ -38,25 +38,6 @@ export const getFormData = async (data) => {
     }
 }
 
-// export const getFileUpload = async (file) => {
-//     alert('data')
-//     console.log(`file`, file);
-//     const formData = new FormData();
-//     formData.append('pdfFile', file);
-//     try {
-//         const response = await axios.post(apiBaseUrl + fileUpload, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//             },
-//         });
-//         return response.data;
-//
-//     } catch (error) {
-//         throw error;
-//     }
-//
-// };
-
 export const getFileUpload = async (file, pdfUrl) => {
     let url = ''
     const formData = new FormData();
@@ -96,4 +77,14 @@ export const getGenderData = axios.get(apiBaseUrl + 'metadata/genders');
 export const getStateData = axios.get(apiBaseUrl + 'metadata/states');
 export const getEducationData = axios.get(apiBaseUrl + 'metadata/educations');
 export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');
-export const getPinCodeData = axios.get('https://api.postalpincode.in/pincode')
+// export const getPinCodeData = axios.get(`https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:${pincode}`)
+
+const params = {
+    location_type: 'State',
+    location_id: 1,
+    required_location_type: 'AssemblyConstituency',
+};
+
+export const getAssemblyData = (assembly) => {
+    return axios.get(apiBaseUrl + 'metadata/get_required_locations' + assembly)
+}

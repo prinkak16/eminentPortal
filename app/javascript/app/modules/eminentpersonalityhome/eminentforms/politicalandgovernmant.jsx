@@ -1,4 +1,4 @@
-import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Textarea, Select, MenuItem} from '@mui/material';
+import {Fade, Button,Typography, Popper, Stack, Box, Paper, Grid, FormLabel, TextField, TextareaAutosize, Select, MenuItem, FormControl} from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -16,13 +16,16 @@ import Vidhansabhaform from '../component/stepfouraddmore/lagislativeassemblyfor
 import Vidhanparishadform from "../component/stepfouraddmore/vidhanprishad";
 import Urbanlocalfrom from '../component/stepfouraddmore/urbanlocal';
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getFormData, getPartyData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {getAssemblyData, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
+import {Edit} from "@mui/icons-material";
 const PolticalandGovrnform =(props)=>{
+    console.log('props', props)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -56,13 +59,16 @@ const PolticalandGovrnform =(props)=>{
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
+    const [assemblyData, setAssemblyData]=useState()
+    // const getAssembly=()=>{
+    //     getAssemblyData.then((res)=>{
+    //         setAssemblyData(res.data.data)
+    //     })
+    // }
     useEffect(() => {
-        getParty()
+        // getAssembly()
     }, []);
-    const getParty=()=>{
-        getPartyData.then((res)=>{
-            setPartyData(res.data.data)})
-    }
+
     const [saveParty, setSaveParty]=useState(null);
     const handleSaveParty=()=>{
         setSaveParty(props.formValues)
@@ -71,6 +77,8 @@ const PolticalandGovrnform =(props)=>{
     const  handleSaveProfile=()=>{
         setSaveProfile(props.formValues)
     }
+
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -96,7 +104,29 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{saveParty.unit}</td>
                                 <td></td>
                                 <td></td>
-                                <td><MoreVertIcon/></td>
+                                <td>
+                                    <PopupState variant="popper" popupId="demo-popup-popper">
+                                        {(popupState) => (
+                                            <>
+                                                <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
+                                                    <MoreVertIcon/>
+                                                </Button>
+                                                <Popper {...bindPopper(popupState)} transition>
+                                                    {({ TransitionProps }) => (
+                                                        <Fade {...TransitionProps} timeout={350}>
+                                                            <Paper>
+                                                                <Typography sx={{ p: 2 }}><Edit/></Typography>
+                                                                <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
+                                                            </Paper>
+                                                        </Fade>
+                                                    )}
+                                                </Popper>
+                                            </>
+                                        )}
+                                    </PopupState>
+
+
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -105,16 +135,9 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container className="educationforms grid-wrap" >
                     <Grid item xs={4}>
                         <FormLabel>Party level <sup>*</sup></FormLabel>
-                        {/*<SelectField*/}
-                        {/*    name="party_level"*/}
-                        {/*    defaultOption="Select Party Level"*/}
-                        {/*    optionList={PartyData}*/}
-                        {/*/>*/}
-                        <SelectField
-                            name="party_level"
-                            defaultOption="Select Highest Qualification"
-                            optionList={PartyData}
-                        />
+                        <Inputfield type="text"
+                                    name="party_level"
+                                    placeholder="Enter Party Level"/>
                         <ErrorMessage name="party_level" component="div" />
                     </Grid>
                     <Grid item xs={4}>
@@ -132,12 +155,12 @@ const PolticalandGovrnform =(props)=>{
                     <Grid item xs={4}>
                         <FormLabel  fullwidth>Start Year</FormLabel><br/>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <Field name="start_year2">
+                            <Field name="start_year">
                                 {({ field, form }) => (
                                     <DatePicker
                                         {...field}
                                         value={field.value} // Use field.value to get the current value
-                                        onChange={(year) => form.setFieldValue("start_year2", year)} // Update the value
+                                        onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
                                         views={['year']}
                                     />
                                 )}
@@ -148,12 +171,12 @@ const PolticalandGovrnform =(props)=>{
                     <Grid item xs={4}>
                         <FormLabel>End / Passing Year</FormLabel><br/>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <Field name="end_year2">
+                            <Field name="end_year">
                                 {({ field, form }) => (
                                     <DatePicker
                                         {...field}
                                         value={field.value} // Use field.value to get the current value
-                                        onChange={(year) => form.setFieldValue("end_year2", year)} // Update the value
+                                        onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
                                         views={['year']}
                                     />
                                 )}
@@ -199,7 +222,27 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{saveProfile.position}</td>
                                 <td></td>
                                 <td></td>
-                                <td><MoreVertIcon/></td>
+                                <td>
+                                    <PopupState variant="popper" popupId="demo-popup-popper">
+                                        {(popupState) => (
+                                            <>
+                                                <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
+                                                    <MoreVertIcon/>
+                                                </Button>
+                                                <Popper {...bindPopper(popupState)} transition>
+                                                    {({ TransitionProps }) => (
+                                                        <Fade {...TransitionProps} timeout={350}>
+                                                            <Paper>
+                                                                <Typography sx={{ p: 2 }}><Edit/></Typography>
+                                                                <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
+                                                            </Paper>
+                                                        </Fade>
+                                                    )}
+                                                </Popper>
+                                            </>
+                                        )}
+                                    </PopupState>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -228,12 +271,12 @@ const PolticalandGovrnform =(props)=>{
                         <Grid item xs={4}>
                             <FormLabel  fullwidth>Start Year</FormLabel><br/>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Field name="start_year3">
+                                <Field name="start_year">
                                     {({ field, form }) => (
                                         <DatePicker
                                             {...field}
                                             value={field.value} // Use field.value to get the current value
-                                            onChange={(year) => form.setFieldValue("start_year3", year)} // Update the value
+                                            onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
                                             views={['year']}
                                         />
                                     )}
@@ -243,12 +286,12 @@ const PolticalandGovrnform =(props)=>{
                         <Grid item xs={4}>
                             <FormLabel>End Year</FormLabel><br/>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Field name="end_year3">
+                                <Field name="end_year">
                                     {({ field, form }) => (
                                         <DatePicker
                                             {...field}
                                             value={field.value} // Use field.value to get the current value
-                                            onChange={(year) => form.setFieldValue("end_year3", year)} // Update the value
+                                            onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
                                             views={['year']}
                                         />
                                     )}
@@ -302,7 +345,7 @@ const PolticalandGovrnform =(props)=>{
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
-                                    <TextField
+                                    <TextareaAutosize
                                         className='p-0'
                                         fullWidth
                                         name="description"
@@ -341,13 +384,13 @@ const PolticalandGovrnform =(props)=>{
                                 <Field onChange={handlremoveField} type="radio" className="w-auto me-2" name="won" value="Two" /> No
                             </label>
                         </div>
+                        <ErrorMessage name="won" component="div" />
                     </Grid>
                     <Grid item xs={12} sx={{mb:2}}>
                         <Grid container spacing={2} className='px-5 py-3'>
                             <Grid item xs={4}>
                                 {electfiled &&(
-
-                                    // <SelectField selectedvalues={selectedOption} handleSelectChange={selectChange} name="state"  optionList={['Select Type','Lok sabha','Rajya sabha', 'Legislative Assembly (vidhan sabha)', 'Legislative Council (vidhan sabha)', 'Urban Local body', 'Rural Local body', 'Other']}/>
+                                    <FormControl>
                                     <Field
                                     as={Select}
                                 name="state"
@@ -357,7 +400,7 @@ const PolticalandGovrnform =(props)=>{
                                 inputProps={{ 'aria-label': 'Without label' }}
                             >
 
-                                <MenuItem value="Select Type">
+                                <MenuItem value="">
                                     <em>Select Type</em>
                                 </MenuItem>
 
@@ -383,6 +426,7 @@ const PolticalandGovrnform =(props)=>{
                                         <em>Other</em>
                                     </MenuItem>
                             </Field>
+                                        </FormControl>
                                 )}
 
                             </Grid>
@@ -390,9 +434,9 @@ const PolticalandGovrnform =(props)=>{
                                 <Field name="state">
                                     {({ field }) => (
                                         <div>
-                                            {field.value === 'Lok sabha' && <Stepfou0raddmore />}
+                                            {field.value === 'Lok sabha' && <Stepfouraddmore values={props.formValues}/>}
                                             {field.value === 'Rajya sabha' && <Rajyasabhaform />}
-                                            {field.value === 'Legislative Assembly (vidhan sabha)' && <Vidhansabhaform />}
+                                            {field.value === 'Legislative Assembly (vidhan sabha)' && <Vidhansabhaform values={props.formValues}/>}
                                             {field.value === 'Legislative Council (vidhan sabha)' && <Vidhanparishadform />}
                                             {field.value === 'Urban Local body' && <Urbanlocalfrom />}
                                             {field.value === 'Rural Local body' && <Urbanlocalfrom />}
@@ -402,10 +446,10 @@ const PolticalandGovrnform =(props)=>{
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} sx={{mb:2}}>
-                        <Primarybutton  addclass="nextbtn mb-2" starticon={<AddIcon/>} buttonlabel="Add More"/>
-                        <Typography>( If fought any other election. )</Typography>
-                    </Grid>
+                    {/*<Grid item xs={12} sx={{mb:2}}>*/}
+                    {/*    <Primarybutton  addclass="nextbtn mb-2" starticon={<AddIcon/>} buttonlabel="Add More"/>*/}
+                    {/*    <Typography>( If fought any other election. )</Typography>*/}
+                    {/*</Grid>*/}
                 </Grid>
             </Box>
 
@@ -414,30 +458,71 @@ const PolticalandGovrnform =(props)=>{
 
     )
 }
+// const data={
+//     political_profile:[
+//         {  party_level: "",
+//             unit: "",
+//             designation: "",
+//             start_year: "",
+//             end_year: "",
+//         }
+//     ],
+//     rss_years:"",
+//     bjp_years:"",
+//     other_parties:[{
+//         party: "",
+//         position: "",
+//         start_year: "",
+//         end_year: "",
+//     }],
+//     social_profiles:[{
+//         organization: "",
+//         description: "",
+//     }],
+//
+// }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
-    political_profile:[
-        {  party_level: "",
-            unit: "",
-            designation: "",
-            start_year: "",
-            end_year: "",
-        }
+    state_name:'',
+    pc:'',
+    ac:'',
+    ad_name:'',
+    political_profile: [
+        {
+            party_level: '',
+            unit: '',
+            designation: '',
+            start_year: '',
+            end_year: '',
+        },
     ],
-    rss_years:"",
-    bjp_years:"",
-    other_parties:[{
-        party: "",
-        position: "",
-        start_year: "",
-        end_year: "",
-    }],
-    social_profiles:[{
-        organization: "",
-        description: "",
-    }],
+    rss_years: '',
+    bjp_years: '',
+    other_parties: [
+        {
+            party: '',
+            position: '',
+            start_year: '',
+            end_year: '',
+        },
+    ],
+    social_profiles: [
+        {
+            organization: '',
+            description: '',
+        },
+    ],
+    election_fought:[
+        {
+        election_contested:'',
+        }
+    ]
+
 };
+
+
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    party_level: Yup.string().required('Please enter your first name'),
+    // party_level: Yup.string().required('Please enter your party level'),
+    // won:Yup.string().required("A radio option is required")
 });
 export default PolticalandGovrnform

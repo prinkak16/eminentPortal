@@ -10,10 +10,15 @@ import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {getFormData, getPinCodeData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {
+    getFormData,
+    // getPinCodeData,
+    getReligionData,
+    getStateData
+} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {boolean} from "yup";
+import axios from "axios";
 const Communicationform =(props)=>{
     console.log(props.formValues)
     const Item = styled(Paper)(({ theme }) => ({
@@ -29,23 +34,23 @@ const Communicationform =(props)=>{
     const [formValues, setFormValues] = useState([])
     const [StateData, setStateData]= useState([])
     const [PinCodeData, setPinCodeData] = useState(null);
-    const saveProgress=()=>{
-        const fieldsWithValues = {};
-        for (const fieldName of Object.keys(props.formValues)) {
-            const fieldValue = props.formValues[fieldName];
-            if (fieldValue) {
-                if (props.formValues[fieldName] === 'mobile') {
-                    fieldsWithValues[fieldName] = [fieldValue];
-                }  else {
-                    fieldsWithValues[fieldName] = fieldValue;
-                }
-            }
-        }
-        getFormData(fieldsWithValues).then(response => {
-            console.log('API response:', response.data);
-
-        });
-    }
+    // const saveProgress=()=>{
+    //     const fieldsWithValues = {};
+    //     for (const fieldName of Object.keys(props.formValues)) {
+    //         const fieldValue = props.formValues[fieldName];
+    //         if (fieldValue) {
+    //             if (props.formValues[fieldName] === 'mobile') {
+    //                 fieldsWithValues[fieldName] = [fieldValue];
+    //             }  else {
+    //                 fieldsWithValues[fieldName] = fieldValue;
+    //             }
+    //         }
+    //     }
+    //     getFormData(fieldsWithValues).then(response => {
+    //         console.log('API response:', response.data);
+    //
+    //     });
+    // }
     const handleAddField = () => {
         if(fields.length<2){
             setFields([...fields, ""]);
@@ -64,7 +69,6 @@ const Communicationform =(props)=>{
         setShowFields(true)
 
     }
-
     let removeFormFields = () => {
         const newFormValues = [...formValues];
         newFormValues.splice(-1, 1);
@@ -74,41 +78,46 @@ const Communicationform =(props)=>{
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
-    useEffect(() => {
-        getState()
-        if (PinCodeData) {
-            // Update the "city" field with the retrieved city
-            setFieldValue('city', PinCodeData.current_street);
-        }
-    }, [PinCodeData]);
+    const [pincodeData, setPincodeData] = useState({ district: '', state: '' });
 
-    const validatePinCode = (value) => {
-        const PinCodePattern = /^\d{6}$/;
-        if (!value) {
-            return 'Pin code is required';
-        } else if (!PinCodePattern.test(value)) {
-            return 'Invalid pin code format. It should be a 6-digit number.';
-        }
-        return null;
-    };
-    const getPinCode = async (value, setFieldValue) => {
-        // Check if the pin code is valid
-        const validationError = validatePinCode(value);
-        if (validationError) {
-            setFieldValue('city', ''); // Clear the city field if the pin code is invalid
-            return;
-        }
-        getPinCodeData.then((res)=>{
-            setPinCodeData(data);
-        })
+    const handlePincodeChange = (e) => {
+        debugger
+        const userEnteredPincode = e.target.value;
+        const  pinApi= `https://api.postalpincode.in/pincode/${userEnteredPincode}`
 
+        if (userEnteredPincode) {
+            axios.get(pinApi)
+                .then((response) => {
+                    const responseData = response.data[''];
+                    if (responseData) {
+                        const district = responseData.PostOffice[''].District;
+                        const state = responseData.PostOffice[''].State;
+                        setPincodeData({ district, state });
+                        console.log('res', responseData)
+                    } else {
+                        setPincodeData({ district: '', state: '' });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                });
+        } else {
+            setPincodeData({ district: '', state: '' });
+        }
+        console.log('test', pinApi)
     };
+
+
     const getState =()=>{
         getStateData.then((res)=>{
             setStateData(res.data.data)
         })
 
     }
+    useEffect(() => {
+        getState()
+    }, []);
+
     return(
         <>
 
@@ -140,7 +149,7 @@ const Communicationform =(props)=>{
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
 
                                                 }}
-                                                name="mobiles.1"
+                                                name="mobiles.0"
                                             />
                                             <ErrorMessage name="mobiles" component="div" />
                                         </Grid>
@@ -149,6 +158,7 @@ const Communicationform =(props)=>{
                                             <Grid item xs={4}>
                                                 <div key={index}>
                                                     <FormLabel>Another number</FormLabel>
+
                                                     <Field
                                                         placeholder='Please Seach by Phone no.'
                                                         inputProps={{
@@ -161,7 +171,7 @@ const Communicationform =(props)=>{
                                                             event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
 
                                                         }}
-                                                        name="mobiles.2"
+                                                        name="mobiles"
                                                     />
                                                     <div className="text-end">
                                                         {fields.length>=1 ?(
@@ -238,33 +248,44 @@ const Communicationform =(props)=>{
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <sup>*</sup></FormLabel>
                                             <Field
-                                                placeholder='Enter pin code'
-                                                inputProps={{
-                                                    maxLength: 6,
-                                                }}
                                                 type="text"
-                                                as={TextField}
-                                                fullWidth
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
-
-                                                }}
                                                 name="pincode"
                                             />
+                                            {/*<Field*/}
+                                            {/*    placeholder='Enter pin code'*/}
+                                            {/*    inputProps={{*/}
+                                            {/*        maxLength: 6,*/}
+                                            {/*    }}*/}
+                                            {/*    type="text"*/}
+                                            {/*    as={TextField}*/}
+                                            {/*    fullWidth*/}
+                                            {/*    onInput={(event) => {*/}
+                                            {/*        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);*/}
+
+                                            {/*    }}*/}
+                                            {/*    name="pincode"*/}
+                                            {/*/>*/}
                                             <ErrorMessage name="pincode" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="street"
-                                                        placeholder="Enter Area, Street, Etc.s" readOnly/>
+                                            {/*<Inputfield type="text"*/}
+                                            {/*            name="street"*/}
+                                            {/*            placeholder="Enter Area, Street, Etc.s" readOnly/>*/}
+                                            <Field type="text" id="street"  as={TextField} name="street" />
                                             <ErrorMessage name="street" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="district"
-                                                        placeholder="Enter Area, Street, Etc."
+                                            {/*<Inputfield type="text"*/}
+                                            {/*            name="district"*/}
+                                            {/*            placeholder="Enter Area, Street, Etc."*/}
+                                            {/*/>*/}
+                                            <Field
+                                                type="text"
+                                                name="district"
+                                                value={pincodeData.district}
+                                                readOnly
                                             />
                                             <ErrorMessage name="district" component="div" />
                                         </Grid>
@@ -346,7 +367,7 @@ const Communicationform =(props)=>{
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
                                                     <Grid item xs={12}>
-                                                        <FormLabel><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}></Box> Other</FormLabel>
+                                                        <FormLabel> Other</FormLabel>
                                                     </Grid>
                                                     <Grid item xs={12}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
@@ -440,17 +461,17 @@ Communicationform.initialValues = {
     other_pincode:"",
 };
 Communicationform.validationSchema = Yup.object().shape({
-    email:Yup.string()
-        .required('Email is required')
-        .matches(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            'Invalid email format'
-        ),
-    flat: Yup.string().required('Please enter your Address'),
-    street: Yup.string().required('Please enter your Street'),
-    district: Yup.string().required('Please enter your District'),
-    state: Yup.string().required('Please enter your State'),
-    pincode: Yup.string().required('Please enter your Pincode')
+    // email:Yup.string()
+    //     .required('Email is required')
+    //     .matches(
+    //         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    //         'Invalid email format'
+    //     ),
+    // flat: Yup.string().required('Please enter your Address'),
+    // street: Yup.string().required('Please enter your Street'),
+    // district: Yup.string().required('Please enter your District'),
+    // state: Yup.string().required('Please enter your State'),
+    // pincode: Yup.string().required('Please enter your Pincode')
 
 });
 export default Communicationform

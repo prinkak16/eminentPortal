@@ -57,7 +57,9 @@ const  Winchoiseselect=()=>{
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel fullwidth>Designation</FormLabel>
-                            <Selectfield  name="designation"  optionList={['Select Designation']}/>
+                            <Inputfield type="text"
+                                        name="designation"
+                                        placeholder="Enter your designation "/>
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel fullwidth> Duration</FormLabel>
@@ -65,11 +67,11 @@ const  Winchoiseselect=()=>{
                             name="duration"
                             placeholder="Enter Duration (in Months)"/>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button className="addbtn mt-3" startIcon={<AddIcon/>}>
-                                Add Ministry
-                            </Button>
-                        </Grid>
+                        {/*<Grid item xs={12}>*/}
+                        {/*    <Button className="addbtn mt-3" startIcon={<AddIcon/>}>*/}
+                        {/*        Add Ministry*/}
+                        {/*    </Button>*/}
+                        {/*</Grid>*/}
                     </Grid>
                         )} 
 

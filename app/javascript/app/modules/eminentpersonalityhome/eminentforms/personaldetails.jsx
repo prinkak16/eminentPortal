@@ -60,6 +60,7 @@ const PersonalDetails = (props) => {
             }
         )
     }
+
     const getReligion=()=>{
         getReligionData.then((response) => {
             setReligionData(response.data.data)
@@ -69,25 +70,6 @@ const PersonalDetails = (props) => {
         getGenderData.then((response)=>{
             setGenderData(response.data.data)})
     }
-    const [pdfUrl, setPdfUrl] = useState('');
-
-    const handlePdfUpload = (event) => {
-        const uploadedFile = event.currentTarget.files[0];
-        if (uploadedFile) {
-            getFileUpload(uploadedFile)
-                .then((pdfUrl) => {
-                    if (pdfUrl) {
-                        setPdfUrl(pdfUrl); // Set the PDF URL in the state
-                    } else {
-                        console.error('File upload failed or URL not found');
-                    }
-                })
-                .catch((error) => {
-                    console.error('File upload failed', error);
-                });
-        }
-    };
-
     const handleViewPdf = () => {
         window.open(pdfUrl, "_blank");
     };
@@ -428,31 +410,31 @@ PersonalDetails.initialValues = {
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    name: Yup.string().required('Please enter your first name'),
-    mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
-        .of(Yup.string().min(1))
-        .required('Field is required')
-        .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
-            if (!value) return true; // No validation if the field is empty
-            const mobileNumbers = value.map((number) => number.trim());
-            return mobileNumbers.every((number) => {
-                const firstDigit = parseInt(number.charAt(0));
-                return !isNaN(firstDigit) && firstDigit >= 5;
-            });
-        })
-        .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
-            if (!value) return true; // No validation if the field is empty
-            const mobileNumbers = value.map((number) => number.trim());
-            return mobileNumbers.every((number) => number.length === 10);
-        }),
-    religion: Yup.string().required('Please select your Religion'),
-    gender: Yup.string().required('Please select your Gender'),
-    category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
-    dob: Yup.string().required('Please select your Caste'),
-    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    photo:Yup.string().required('Please select your Photo'),
+    // name: Yup.string().required('Please enter your first name'),
+    // mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
+    //     .of(Yup.string().min(1))
+    //     .required('Field is required')
+    //     .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
+    //         if (!value) return true; // No validation if the field is empty
+    //         const mobileNumbers = value.map((number) => number.trim());
+    //         return mobileNumbers.every((number) => {
+    //             const firstDigit = parseInt(number.charAt(0));
+    //             return !isNaN(firstDigit) && firstDigit >= 5;
+    //         });
+    //     })
+    //     .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
+    //         if (!value) return true; // No validation if the field is empty
+    //         const mobileNumbers = value.map((number) => number.trim());
+    //         return mobileNumbers.every((number) => number.length === 10);
+    //     }),
+    // religion: Yup.string().required('Please select your Religion'),
+    // gender: Yup.string().required('Please select your Gender'),
+    // category: Yup.string().required('Please select your Category'),
+    // caste: Yup.string().required('Please select your Caste'),
+    // dob: Yup.string().required('Please select your Caste'),
+    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    // photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;

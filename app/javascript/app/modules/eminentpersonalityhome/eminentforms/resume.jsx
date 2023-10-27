@@ -8,7 +8,7 @@ import {
     TextField,
     Textarea,
     InputAdornment,
-    Button
+    Button, Select, MenuItem, FormControl
 } from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -89,7 +89,36 @@ const Resumeform=(props)=>{
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Relationship </FormLabel>
-                                            <Selectfield name="relationship" selectedvalues={selectedOption} handleSelectChange={selectChange} optionList={['Select Relationship']}/>
+                                            <FormControl>
+                                            <Field
+                                                as={Select}
+                                                name="relationship"
+                                                labelId="relationship"
+                                                className="custom-select"
+                                                fullWidth
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                            >
+
+                                                <MenuItem value="0">
+                                                    <em>Select Relationship</em>
+                                                </MenuItem>
+                                                <MenuItem value="Father">
+                                                    <em>Father</em>
+                                                </MenuItem>
+                                                <MenuItem value="Mother">
+                                                    <em>Mother</em>
+                                                </MenuItem>
+                                                <MenuItem value="Sister">
+                                                    <em>Sister</em>
+                                                </MenuItem>
+                                                <MenuItem value="Brother">
+                                                    <em>Brother</em>
+                                                </MenuItem>
+
+                                            </Field>
+                                            </FormControl>
+                                            {/*<Selectfield name="relationship" selectedvalues={selectedOption} handleSelectChange={selectChange} optionList={['Select Relationship']}/>*/}
                                         </Grid>
                                         <Grid item xs={12}>
                                             <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
@@ -211,11 +240,9 @@ const Resumeform=(props)=>{
                                                 />
 
                                                 {pdfUrl && (
-                                                    <Grid item xs={6}>
-                                                        <Button variant="contained" color="primary" onClick={handleViewPdf}>
-                                                            View PDF
-                                                        </Button>
-                                                    </Grid>
+                                                    <Button variant="contained" color="primary" onClick={handleViewPdf}>
+                                                        View PDF
+                                                    </Button>
                                                 )}
                                             </Grid>
 

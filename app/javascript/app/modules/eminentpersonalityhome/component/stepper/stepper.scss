@@ -4,15 +4,17 @@ $graybg: #C9C9C9;
 $blackcolor:#000;
 .stepperwrap{
   //color: ($basicColor) ;
-  .MuiSvgIcon-root{
-    width: 50px;
-    height: 50px;
-  }
-  .MuiStepLabel-label{
-    font-size: 18px;
-  }
-  .css-zpcwqm-MuiStepConnector-root{
-    top:24px
+  .MuiStep-root{
+    .MuiSvgIcon-root{
+      width: 50px;
+      height: 50px;
+    }
+    .MuiStepLabel-label{
+      font-size: 18px;
+    }
+    .css-zpcwqm-MuiStepConnector-root{
+      top:24px
+    }
   }
 }
 @mixin btndesign{

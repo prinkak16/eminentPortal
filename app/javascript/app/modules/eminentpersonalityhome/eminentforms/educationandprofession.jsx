@@ -1,4 +1,4 @@
-import { Typography, Stack, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
+import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Popper, Fade} from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -20,6 +20,9 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
+import {Edit} from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
 const Educationform =(props)=>{
     const [selectedOption, setSelectedOption] = useState('');
     const selectChange = (e) => {
@@ -45,22 +48,33 @@ const Educationform =(props)=>{
     const [savedData, setSavedData] = useState(null);
 
     const handleSave = () => {
-        const savedValues = { ...props.formValues };
-
-        // Convert start_year and end_year to Date objects if they exist
-        if (savedValues.start_year) {
-            savedValues.start_year = new Date(savedValues.start_year);
-        }
-        if (savedValues.end_year) {
-            savedValues.end_year = new Date(savedValues.end_year);
-        }
-
+        // const savedValues = { ...props.formValues };
+        //
+        // // Convert start_year and end_year to Date objects if they exist
+        // if (savedValues.education_start_year) {
+        //     savedValues.start_year = new Date(savedValues.start_year);
+        // }
+        // if (savedValues.end_year) {
+        //     savedValues.end_year = new Date(savedValues.end_year);
+        // }
         setSavedData(props.formValues);
     };
     const [saveParty, setSaveParty]=useState(null)
+    const [tableData, setTableData] = useState([]);
     const  handlepartysave=()=>{
+        const newRow = {
+            profession: saveParty.profession,
+            subject: saveParty.subject,
+            position: saveParty.position,
+            organization: saveParty.organization,
+            start_year: saveParty.start_year,
+            end_year: isCurrentlyWorking ? 'Currently Working' : saveParty.end_year,
+        };
+        setTableData([...tableData, newRow]);
         setSaveParty(props.formValues)
+        console.log('test', tableData)
     }
+    const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
     return(
         <>
 
@@ -82,36 +96,60 @@ const Educationform =(props)=>{
                                             </Grid>
                                         </Grid>
                                     </Grid>
-
-                                        {savedData && (
-                                            <div className="data-table">
-                                            <table className="w-100 table-responsive ">
-                                                <thead>
-                                                <tr>
-                                                    <th>Qualification</th>
-                                                    <th>Course/Branch/Subject</th>
-                                                    <th>University/Board Name</th>
-                                                    <th>College/ School Name</th>
-                                                    <th>Start Year</th>
-                                                    <th>End Year</th>
-                                                    <th></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td>{savedData.qualification}</td>
-                                                    <td>{savedData.subject}</td>
-                                                    <td>{savedData.university}</td>
-                                                    <td>{savedData.college}</td>
-                                                    {/*<td>{savedData.start_year}</td>*/}
-                                                    {/*<td>{savedData.end_year}</td>*/}
-                                                    <td><MoreVertIcon/></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                            </div>
-                                        )}
-
+                                    {savedData && (
+                                                <div className="data-table">
+                                                    <table className="w-100 table-responsive ">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Qualification</th>
+                                                            <th>Course/Branch/Subject</th>
+                                                            <th>University/Board Name</th>
+                                                            <th>College/ School Name</th>
+                                                            <th>Start Year</th>
+                                                            <th>End Year</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {savedData.map((data, index) => (
+                                                        <tr>
+                                                            <td>{data.qualification}</td>
+                                                            <td>{data.subject}</td>
+                                                            <td>{data.university}</td>
+                                                            <td>{data.college}</td>
+                                                            <td>{data.start_year}</td>
+                                                            <td></td>
+                                                            <td>
+                                                                <PopupState variant="popper" popupId="demo-popup-popper">
+                                                                    {(popupState) => (
+                                                                        <>
+                                                                            <Button
+                                                                                variant="contained" {...bindToggle(popupState)}
+                                                                                className="bg-transparent text-black">
+                                                                                <MoreVertIcon/>
+                                                                            </Button>
+                                                                            <Popper {...bindPopper(popupState)} transition>
+                                                                                {({TransitionProps}) => (
+                                                                                    <Fade {...TransitionProps}
+                                                                                          timeout={350}>
+                                                                                        <Paper>
+                                                                                            <Typography sx={{p: 2}}><Edit/></Typography>
+                                                                                            <Typography
+                                                                                                sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                                        </Paper>
+                                                                                    </Fade>
+                                                                                )}
+                                                                            </Popper>
+                                                                        </>
+                                                                    )}
+                                                                </PopupState>
+                                                            </td>
+                                                        </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                    )}
                                     <Grid container className="educationforms grid-wrap" >
                                         <Grid item xs={12}>
                                             <Typography variant="h5" content="h5">
@@ -165,12 +203,12 @@ const Educationform =(props)=>{
                                         <Grid item xs={4}>
                                             <FormLabel>End / Passing Year</FormLabel>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <Field name="end_year">
+                                                <Field name="education_end_year">
                                                     {({ field, form }) => (
                                                         <DatePicker
                                                             {...field}
                                                             value={field.value} // Use field.value to get the current value
-                                                            onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
+                                                            onChange={(year) => form.setFieldValue("education_end_year", year)} // Update the value
                                                             views={['year']}
                                                         />
                                                     )}
@@ -184,9 +222,9 @@ const Educationform =(props)=>{
                                             <Primarybutton addclass="nextbtn" handleclick={handleSave} buttonlabel="Save"/>
                                         </Grid>
                                     </Grid>
-                                    {saveParty && (
+                                    {tableData.length > 0 && (
                                         <div className="data-table">
-                                            <table className="w-100 table-responsive ">
+                                            <table className="w-100 table-responsive">
                                                 <thead>
                                                 <tr>
                                                     <th>Profession</th>
@@ -199,15 +237,37 @@ const Educationform =(props)=>{
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td>{saveParty.profession}</td>
-                                                    <td>{saveParty.subject}</td>
-                                                    <td>{saveParty.position}</td>
-                                                    <td>{saveParty.organization}</td>
-                                                    {/*<td>{savedData.start_year}</td>*/}
-                                                    {/*<td>{savedData.end_year}</td>*/}
-                                                    <td><MoreVertIcon/></td>
-                                                </tr>
+                                                {tableData.map((row, index) => (
+                                                    <tr key={index}>
+                                                        <td>{row.profession}</td>
+                                                        <td>{row.subject}</td>
+                                                        <td>{row.position}</td>
+                                                        <td>{row.organization}</td>
+                                                        <td>{row.start_year}</td>
+                                                        <td>{row.end_year}</td>
+                                                        <td>
+                                                            <PopupState variant="popper" popupId="demo-popup-popper">
+                                                                {(popupState) => (
+                                                                    <>
+                                                                        <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
+                                                                            <MoreVertIcon/>
+                                                                        </Button>
+                                                                        <Popper {...bindPopper(popupState)} transition>
+                                                                            {({ TransitionProps }) => (
+                                                                                <Fade {...TransitionProps} timeout={350}>
+                                                                                    <Paper>
+                                                                                        <Typography sx={{ p: 2 }}><Edit/></Typography>
+                                                                                        <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
+                                                                                    </Paper>
+                                                                                </Fade>
+                                                                            )}
+                                                                        </Popper>
+                                                                    </>
+                                                                )}
+                                                            </PopupState>
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -267,13 +327,35 @@ const Educationform =(props)=>{
                                                             <DatePicker
                                                                 {...field} // Pass the field's props to the DatePicker
                                                                 value={field.value} // Set the value explicitly if needed
-                                                                onChange={(year) => form.setFieldValue("end_year1", year)} // Handle date changes
+                                                                onChange={(year) => {
+                                                                    if (!isCurrentlyWorking) {
+                                                                        formikProps.setFieldValue('end_year1', year);
+                                                                    }
+                                                                }}
                                                                 views={['year']}
+                                                                disabled={isCurrentlyWorking}
                                                             />
                                                         )}
                                                     </Field>
                                                 </LocalizationProvider>
-                                                <FormLabel className="checkbox align-items-center d-flex"><Field type="checkbox"  className="w-auto me-1" name="checked" value="One" /> Currently Working </FormLabel>
+                                                <label>
+                                                    <Field type="checkbox" name="checked" value="One"  onChange={() => {
+                                                        setIsCurrentlyWorking(!isCurrentlyWorking);
+                                                        props.setFieldValue(
+                                                            'end_year1',
+                                                            isCurrentlyWorking ? '' : 'Currently Working'
+                                                        );
+                                                    }}/>
+                                                    Currently Working
+                                                </label>
+                                                {/*<FormLabel className="checkbox align-items-center d-flex">*/}
+                                                {/*    <Field type="checkbox" name="checked" value="One" onChange={() => {*/}
+                                                {/*        setIsCurrentlyWorking(!isCurrentlyWorking);*/}
+                                                {/*        props.setFieldValue(*/}
+                                                {/*            'end_year1',*/}
+                                                {/*            isCurrentlyWorking ? '' : 'Currently Working'*/}
+                                                {/*        );*/}
+                                                {/*    }}/>Currently Working </FormLabel>*/}
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
@@ -306,7 +388,7 @@ const Educationform =(props)=>{
 Educationform.label = 'Education and Profession'
 Educationform.initialValues = {
     education_level:"",
-    profession: "",
+    // profession: "",
     qualification: "",
     subject: "",
     college: "",
@@ -318,19 +400,25 @@ Educationform.initialValues = {
     stream:"",
     course:"",
     university:"",
-    start_year:"",
-        end_year:"",
+    educations:[{
+            start_year:"",
+            end_year:"",
+    }],
         // profession: "",
         organisation:"",
         position:"",
-        // start_year:"",
-        // end_year:""
+    profession:[{
+        start_year:"",
+        end_year:""
+    }],
+
+
 };
 Educationform.validationSchema = Yup.object().shape({
-    education_level: Yup.string().required('Please select your education'),
-    qualification: Yup.string().required('Please enter your qualification'),
-    board: Yup.string().required('Please enter your board'),
-    profession: Yup.string().required('Please enter your profession'),
-    college:Yup.string().required('Please enter your college')
+    // education_level: Yup.string().required('Please select your education'),
+    // qualification: Yup.string().required('Please enter your qualification'),
+    // board: Yup.string().required('Please enter your board'),
+    // profession: Yup.string().required('Please enter your profession'),
+    // college:Yup.string().required('Please enter your college')
 });
 export default Educationform
