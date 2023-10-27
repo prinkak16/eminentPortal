@@ -7,7 +7,7 @@ class Admin::AdminController < ApplicationController
   def manual_upload
     render 'admin/manual_upload'
   end
-  def eminent_manual_data_upload
+  def manual_upload_data
     begin
       phone_regex = '^[1-9][0-9]{9}$'
       eminent_users = []
