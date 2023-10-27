@@ -411,11 +411,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
           }
         }, status: :ok
       else
+        res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
+        res_data[0]['attached'] = 'https://www.africau.edu/images/default/sample.pdf'
         render json: {
           success: true,
           message: 'Success.',
           data: {
-            'members': custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state]),
+            'members': res_data,
             'length': length
           }
         }, status: :ok

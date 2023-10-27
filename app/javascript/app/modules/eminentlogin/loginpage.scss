@@ -1,0 +1,10 @@
+.inputNumber{
+  border-radius: 5px;
+  border-color: red;
+  width: 100%;
+  height: 60px;
+}
+
+.inputNumber:focus{
+  outline-color: #e50202;
+}

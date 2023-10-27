@@ -1,0 +1,370 @@
+import React, {useEffect, useState} from "react";
+import "./hometable.scss"
+
+import Phone from "./../../../../../../../public/images/phone.svg"
+import {Button, FormLabel, Grid, TextField} from "@mui/material";
+import Download from "./../../../../../../../public/images/download.svg"
+import Icon from "./../../../../../../../public/images/icon.svg"
+import Typography from '@mui/material/Typography';
+import Popper from '@mui/material/Popper';
+import PopupState, {bindToggle, bindPopper} from 'material-ui-popup-state';
+import Fade from '@mui/material/Fade';
+import Paper from '@mui/material/Paper';
+import IdBadge from "./../../../../../../../public/images/idbadge.svg"
+import SearchIcon from './../../../../../../../public/images/search.svg'
+import {debounce} from "lodash";
+import {deleteMember, getData, updateState} from "../../../../api/eminentapis/endpoints";
+import ReactPaginate from "react-paginate";
+import Modal from "react-bootstrap/Modal";
+import {useNavigate} from "react-router-dom";
+import { ClickAwayListener } from '@mui/base';
+import {Link} from 'react-router-dom';
+
+
+
+
+
+const HomeTable = (props) => {
+    const [searchedName, setSearchedName] = useState('');
+    const [tableData, setTableData] = useState(null);
+    const [searchId, setSearchId] = useState('');
+    const [currentPage, setCurrentPage] = useState('');
+    const [deleteMemberId, setDeleteMemberId] = useState(null);
+    const [reasonToDelete, setReasonToDelete] = useState('');
+    const [deleteDisabled, setDeleteDisabled] = useState(true);
+    const [wantToChangeStatus, setWantToChangeStatus] = useState(false);
+    const [reasonToUpdateState,  setReasonToUpdateState] = useState('');
+    const [currStatus,setCurrStatus] = useState('');
+    const [currId, setCurrId] = useState('');
+    const [open, setOpen] = useState(true);
+
+
+
+    const navigate = useNavigate();
+    const offset = 0;
+    const limit = 2;
+
+
+    const displayPhoneNumbers = (member) => {
+        const displayingNumbers = member.data.mobiles.splice(0, 2);
+        return displayingNumbers.map((number, index) => (
+            <div className="col-md-6 text-container pe-0 ps-2.5">
+                {index === 0 && <Phone/>}
+                <p className={`ml-2 label-text ${index === 0 ? 'br-label first-number' : 'br-label2 pt-5'}`}>{number}</p>
+            </div>
+        ))
+    }
+
+    const deleteCurrentMember = (deleteId) => {
+        setDeleteMemberId(deleteId);
+    }
+
+    useEffect(() => {
+        if (reasonToDelete && reasonToDelete.length > 0) {
+            setDeleteDisabled(false);
+        }
+    }, [reasonToDelete]);
+
+    const updateCurrentState = (id, status) => {
+        setWantToChangeStatus(true);
+        setCurrId(id);
+        setCurrStatus(status);
+    }
+     const updateCurrentStatus = () => {
+        const newState ={
+            "id": currId,
+            "aasm_state": currStatus=== 'freeze' ? 'approve' : 'reject',
+            "reason": reasonToUpdateState
+        }
+      updateState(newState).then(res=>{
+          setWantToChangeStatus(false);
+          prepareToGetDisplayData();
+        console.log(res);
+      }).catch(err=>{
+          console.log(err);
+      })
+     }
+    const deleteMem = () => {
+        let deleteString = `id=${deleteMemberId}`;
+        if (reasonToDelete && reasonToDelete.length > 0) {
+            deleteString += `&reason=${reasonToDelete}`;
+        }
+        deleteMember(deleteString).then(res => {
+            prepareToGetDisplayData();
+            setDeleteMemberId(null)
+        }).catch(err => {
+            console.log("Error With Deleting Member", err);
+        })
+    }
+
+    const prepareToGetDisplayData = () => {
+        let searched = props?.filterString;
+        if (searchedName && searchedName.length > 0) {
+            searched += `&query=${searchedName}`;
+        }
+        if (searchId && searchId.length > 0) {
+            searched += `&search_by_id=${searchId}`;
+        }
+        let pageString = '';
+        let offset = currentPage * limit;
+        pageString = `&offset=${offset}&limit=${limit}`;
+        tableDataDisplay(searched + pageString);
+    }
+
+    useEffect(() => {
+        prepareToGetDisplayData();
+    }, [searchedName, props.filterString, searchId, currentPage]);
+
+    const onSearchNameId = (e, isNameSearch = true) => {
+        const value = e.target.value;
+        debounce(isNameSearch ? setSearchedName(value) : setSearchId(value), 500)
+    }
+    const tableDataDisplay = (searchedUser) => {
+        getData(searchedUser).then(res => {
+            setTableData(res);
+        }).catch(err => {
+            setTableData(null);
+            console.log(err);
+        });
+    }
+
+    useEffect(() => {
+        console.log('value change of table data', tableData);
+    }, [tableData]);
+
+    const openDocument = (filePath) => {
+        window.open(filePath);
+    }
+
+    const handleClickAway = () => {
+        setOpen(false);
+    };
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = 'url';
+        link.download = "ExamplePdf.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+
+    return (
+        <>
+            <div className=" hometable mt-4 mb-4">
+                <div className="mt-4 d-flex justify-content-between ">
+                    <div className="d-flex">
+                        <div className='d-flex search-field'>
+                            <SearchIcon className='search-icon'/>
+                            <input className="input-field" placeholder="Search by Name or Phone no."
+                                   onChange={(e) => onSearchNameId(e)}/>
+                        </div>
+                        <div className='d-flex search-field ms-5'>
+                            <SearchIcon className='search-icon'/>
+                            <input className="input-field " placeholder="Search by ID"
+                                   onChange={(e) => onSearchNameId(e, false)}/>
+                        </div>
+                    </div>
+                    <div className="d-flex me-0 ">
+                        {/*<input className="filestatusfield" placeholder="Person file status"/>*/}
+                        <button className="downloadBtn ms-4">Download {<Download/>}</button>
+                    </div>
+
+                </div>
+
+                {tableData?.data?.data?.members && tableData?.data?.data?.members.map((member) => (
+
+                    <div className="table-container mt-4" key={member.id}>
+                        <Grid container className="single-row">
+                            <Grid item xs={3} className="gridItem">
+                                <div className="row">
+                                    <div className="col-md-4 pe-0">
+                                        <div className='imgdiv circle'>
+                                            <img className='img' src={member.data.photo}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <h2 className="headingName">{member.data.name}</h2>
+                                        <div className="row d-flex">
+                                            {displayPhoneNumbers(member)}
+                                            <div/>
+                                            <div className="d-flex">
+                                                <IdBadge/>
+                                                <p className="id-text">ID-No.{member.id}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Grid>
+                            <Grid item xs className="gridItem">
+                                <div className="row">
+                                    <div className="col-md-6 data-display">
+                                        <p className="text-labels">Age</p>
+                                        <p>xx Years</p>
+                                    </div>
+                                    <div className="col-md-6 data-display">
+                                        <p className="text-labels">Profession</p>
+                                        <p>xx</p>
+                                    </div>
+                                    <div className="col-md-6 data-display">
+                                        <p className="text-labels">Education</p>
+                                        <p>xx</p>
+                                    </div>
+
+                                </div>
+                            </Grid>
+                            <Grid item xs className="gridItem">
+                                <div className="row data-display">
+                                    <p className="text-labels">Address</p>
+                                    <p>Value</p>
+                                </div>
+                            </Grid>
+                            <Grid item xs className="gridItem">
+                                <div className="row data-display">
+                                    <p className="text-labels">Form Status</p>
+                                    <p>{member.aasm_state}</p>
+                                </div>
+                                <div className="row data-display">
+                                    <p className="text-labels">Channel</p>
+                                    <p>{member.channel}</p>
+                                </div>
+
+                            </Grid>
+                            <Grid item xs className="gridItemLast">
+                                <div className="d-flex">
+                                    <div className="row data-display">
+                                        <p className="text-labels">Referred by</p>
+                                        <p>Name</p>
+                                        <p>98765467</p>
+
+                                    </div>
+                                    <ClickAwayListener onClickAway={handleClickAway}>
+                                        <PopupState variant="popper" popupId="demo-popup-popper">
+                                        {(popupState) => (
+                                            <div>
+                                                <p variant="contained" {...bindToggle(popupState)}
+                                                   className="popupicon">
+                                                    <Icon/>
+                                                </p>
+                                                {open ? (
+                                                <Popper {...bindPopper(popupState)} transition>
+                                                    {({TransitionProps}) => (
+                                                        <Fade {...TransitionProps} timeout={350}>
+                                                            <Paper>
+
+                                                                <Typography sx={{p: 2}} className="tableiconlist">
+                                                                    {  (member.aasm_state !== 'approved') &&
+                                                                        <p onClick={() => navigate(`/EminentPersonality?id=${member.id}`)}>Edit</p>
+                                                                    }
+                                                                    <p onClick={()=>navigate(`/EminentPersonality?id=${member.id}`)}>View</p>
+                                                                    {member.attached && <p onClick={() => openDocument(member.attached)}>View Documents</p>}
+                                                                    <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
+                                                                    { (member.aasm_state === 'submitted') &&
+                                                                    <div className="btn-group dropstart">
+                                                                        <p type="button" className="dropdown-toggle"
+                                                                           data-bs-toggle="dropdown"
+                                                                           data-mdb-toggle="dropdown"
+                                                                           aria-expanded="false">
+                                                                            Freeze/ Re-edit
+                                                                        </p>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li
+                                                                                className="ms-4"
+                                                                                onClick={()=>updateCurrentState(member.id, 'freeze')}>
+                                                                                Freeze
+                                                                            </li>
+                                                                            <li
+                                                                                className="ms-4"
+                                                                                onClick={()=>updateCurrentState(member.id, 're-edit')}
+                                                                            >
+                                                                                Re-edit
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    }
+
+                                                                    <p onClick={()=>handleDownload(member.attached)}>Download</p>
+                                                                </Typography>
+                                                            </Paper>
+                                                        </Fade>
+                                                    )}
+                                                </Popper>):null}
+                                            </div>
+                                        )}
+                                    </PopupState>
+                                    </ClickAwayListener>
+
+                                </div>
+                            </Grid>
+
+                        </Grid>
+                    </div>
+
+                ))}
+
+            </div>
+            <div>
+                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>
+                <ReactPaginate
+                    previousLabel={"<Previous"}
+                    nextLabel={"Next"}
+                    breakLabel={"...."}
+                    pageCount={Math.ceil(tableData?.data?.data.length / limit)}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={5}
+                    onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                    containerClassName={'pagination justify-content-end'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-link'}
+                    breakLinkClassName={'page-item'}
+                    activeClassName={'active'}/>
+
+            </div>
+            <Modal
+                contentClassName="addModal"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={wantToChangeStatus}
+            >
+                <Modal.Body>
+                    <textarea  className="ps-2 reasontext" rows={3} cols={40} placeholder="Write your reason here"
+                               onChange={(e) => setReasonToUpdateState(e.target.value)}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <p className="cancelbtn" onClick={() => setWantToChangeStatus(false)}>Cancel</p>
+                    <button className="btn" onClick={()=>updateCurrentStatus()}>Submit
+                    </button>
+                </Modal.Footer>
+            </Modal>
+            <Modal
+                contentClassName="addModal"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={deleteMemberId}
+            >
+                <Modal.Body>
+                    <textarea  className="ps-2 reasontext" rows={3} cols={40} placeholder="Write your reason here"
+                               onChange={(e) => setReasonToDelete(e.target.value)}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <p className="cancelbtn" onClick={() => setDeleteMemberId(null)}>Cancel</p>
+                    <button className="btn btn-danger" disabled={deleteDisabled} onClick={() => deleteMem()}>Delete
+                    </button>
+                </Modal.Footer>
+            </Modal>
+
+        </>
+
+    )
+}
+export default HomeTable;
