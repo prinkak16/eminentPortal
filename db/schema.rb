@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_26_050208) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_27_062711) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -51,6 +51,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_26_050208) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "eminent_updated_at"
+    t.datetime "office_updated_at"
     t.index ["approved_by_id"], name: "index_custom_member_forms_on_approved_by_id"
     t.index ["country_state_id"], name: "index_custom_member_forms_on_country_state_id"
     t.index ["created_by_id"], name: "index_custom_member_forms_on_created_by_id"

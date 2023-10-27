@@ -138,7 +138,7 @@ class Api::V1::Eminent::EminentController < BaseApiController
       end
 
       # used for update of eminent_personality custom member form
-      custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
+      custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel, eminent_updated_at: DateTime.now)
       if is_draft && custom_member.may_mark_incomplete?
         custom_member.mark_incomplete!
       end
