@@ -99,6 +99,11 @@ class Api::V1::CustomMemberFormController < BaseApiController
           phone: phone_number[0],
           channel: eminent_channel
         )
+
+        # update the user id
+        params[:data][:id] = custom_member.id.to_i
+        custom_member.update!(data: params[:data])
+
         # check if is in draft state
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
@@ -167,8 +172,8 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def send_otp
-    if params[:phone].blank?
-      return render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
+    if params[:phone].blank? || !params[:phone].match?('^[1-9][0-9]{9}$')
+      return render json: { success: false, message: 'Please provide a valid phone number.' }, status: :bad_request
     end
 
     if params[:form_type].blank?
@@ -180,12 +185,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
       return render json: { success: false, message: 'No record found with this phone number.' }, status: :unauthorized
     end
 
+    custom_member_form.generate_otp
     send_sms("Your OTP is #{custom_member_form.otp} - BJP SARAL", params[:phone])
     render json: { success: true, message: 'Otp Sent successfully.' }, status: :ok
   end
 
   def validate_otp
-    if params[:phone].blank?
+    if params[:phone].blank? || !params[:phone].match?('^[1-9][0-9]{9}$')
       return render json: { success: false, message: 'Phone number can\'t be empty' }, status: :bad_request
     end
 
@@ -209,8 +215,6 @@ class Api::V1::CustomMemberFormController < BaseApiController
       require 'bcrypt'
       encrypted_key = BCrypt::Password.create("#{params[:phone]}-#{params[:otp]}")
       custom_member_form.token = encrypted_key
-
-      custom_member_form.verify! if custom_member_form.may_verify?
 
       if custom_member_form.save
         return render json: { success: true, auth_token: encrypted_key, id: custom_member_form.id, name: custom_member_form.data['name'] || '', is_view: custom_member_form.aasm_state == 'approved' }, status: :ok
@@ -411,5 +415,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
     else
       render json: { success: false, message: 'No member found.' }, status: :not_found
     end
+  end
+
+  def destroy_session
+    user_sign_out
+    render json: {
+      success: true,
+      message: 'Success.'
+    }, status: :ok
   end
 end
