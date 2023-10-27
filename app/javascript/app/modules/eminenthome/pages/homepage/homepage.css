@@ -98,3 +98,8 @@ border-radius: 8px !important;
 .addNewSubmit{
     border: none;
 }
+
+.MuiDrawer-paperAnchorLeft{
+    position: static !important;
+    margin-top: 20% !important;
+}

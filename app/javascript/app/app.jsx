@@ -5,6 +5,7 @@ import './app.scss';
 import {Navigate} from "react-router";
 import HomePage from "./modules/eminenthome/pages/homepage/homepage";
 import EminentPersonality from "./modules/eminentpersonalityhome/EminentPersonalityhome";
+import LoginPage from "./modules/./eminentlogin/loginpage";
 function App() {
     return (
         <>
@@ -13,6 +14,7 @@ function App() {
                 <Route path='/*' element={<Navigate to="/"/>}/>
                 {/*<Route path='/' element={<HomeComponent/>}/>*/}
                 <Route path='/EminentPersonality' element={<EminentPersonality/>}/>
+                <Route path={'/Login'} element={<LoginPage/>}/>
             </Routes>
         </>
     );

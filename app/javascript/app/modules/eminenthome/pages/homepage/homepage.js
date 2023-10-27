@@ -80,11 +80,11 @@ export default function PersistentDrawerLeft() {
             getData(numberString).then(res => {
                 console.log(res);
                 setExistingData(res?.data?.data)
-                setSubmitDisabled(true);
+                setSubmitDisabled(false);
             }).catch(err => {
                 console.log(err);
             });
-            setSubmitDisabled(false);
+            setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
             setErrorNumber('Please enter a valid number');
         } else {
