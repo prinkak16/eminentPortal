@@ -158,7 +158,8 @@ class Admin::AdminController < ApplicationController
                 country_state_id: county_state_id,
                 version: version,
                 created_by_id: current_auth_user.present? ? current_auth_user.id.to_i : nil,
-                channel: 'Office'
+                channel: 'Office',
+                office_updated_at: DateTime.now
               )
               row_data[:data][:id] = custom_member_form.id.to_i
               update_member_id = custom_member_form.update!(data: row_data[:data])
