@@ -81,14 +81,19 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
 
       if form_type === CustomMemberForm::TYPE_EMINENT
-        unless existing_custom_users_found && phone_number.present?
+        if !existing_custom_users_found && phone_number.present?
           existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
         end
       end
 
-      if custom_member.blank?
-        raise StandardError, 'Phone number already exist' if existing_custom_users_found
+      if existing_custom_users_found
+        return render json: {
+          success: false,
+          message: 'Phone number already exist.'
+        }, status: :bad_request
+      end
 
+      if custom_member.blank?
         custom_member = CustomMemberForm.create!(
           data: params[:data],
           form_type: params[:form_type],
@@ -122,7 +127,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
           }, status: :ok
         end
       else
-        raise StandardError, 'State id can not be changed.' if custom_member.country_state_id != cs
+        if custom_member.country_state_id != cs
+          return render json: {
+            success: false,
+            message: 'State id can not be changed.'
+          }, status: :bad_request
+        end
 
         # used for update of eminent_personality custom member form
         custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
