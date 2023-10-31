@@ -6,8 +6,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
-    const [analyticsHeading, setAnalyticsHeading] = useState('');
-
+    const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
 
@@ -17,7 +16,6 @@ const Analytics = (props) => {
         statsData().then(res=> {
             setHomeStats(res.data.data);
         })
-
     },[])
 
     const createAnalyticCard = () => {
@@ -26,7 +24,7 @@ const Analytics = (props) => {
             let icon = null;
             switch (value) {
                 case 'incomplete': {
-                    label = 'Total Incomplete Form';
+                    label = 'Total ';
                     icon = <IncompleteFile />;
                     break;
                 }
@@ -40,6 +38,8 @@ const Analytics = (props) => {
                     icon = <Usergroup />;
                     break;
                 }
+
+
             }
            return <div className="col">
                <div className="card">
@@ -69,7 +69,7 @@ const Analytics = (props) => {
 
                     <div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>
                         <p className="seemorebutton">See More</p>
-                    <ExpandMoreIcon className='expandicon'/>
+                        <ExpandMoreIcon className='expandicon'/>
                     </div>
 
                     { showSeeMore &&

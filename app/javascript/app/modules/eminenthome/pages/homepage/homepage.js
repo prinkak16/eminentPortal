@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import Analytics from "../../shared/analytics/analytics";
+import Analytics from "../../shared/././analytics/analytics";
 import HomeTable from "../hometable/hometable";
 import "./homepage.css"
 import "../../shared/tabs/tabs.css"
@@ -21,6 +21,7 @@ import {useNavigate} from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import {getData} from "../../../../api/eminentapis/endpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
+import BasicTabs from "../../shared/tabs/tabs";
 
 
 const drawerWidth = 240;
@@ -158,38 +159,10 @@ export default function PersistentDrawerLeft() {
                             </button>
                         </div>
 
-                        <div className="tabsDiv d-flex flex-column">
-                            <div className="navBar d-flex justify-content-between mt-2">
-                                <ul>
-                                    <li onClick={() => updateToggle(1)}
-                                        className={toggle === 1 ? "opentab" : "closedtab"}>Home
-                                    </li>
-                                    <li onClick={() => updateToggle(2)}
-                                        className={toggle === 2 ? "opentab" : "closedtab"}>Allotment
-                                    </li>
-                                    <li onClick={() => updateToggle(3)}
-                                        className={toggle === 3 ? "opentab" : "closedtab"}>File Status
-                                    </li>
-                                    <li onClick={() => updateToggle(4)}
-                                        className={toggle === 4 ? "opentab" : "closedtab"}>Master of Vacancies
-                                    </li>
-                                    <li onClick={() => updateToggle(5)}
-                                        className={toggle === 5 ? "opentab" : "closedtab"}>Slotting
-                                    </li>
-                                    <li onClick={() => updateToggle(6)}
-                                        className={toggle === 6 ? "opentab" : "closedtab"}>GOM Management
-                                    </li>
-                                </ul>
-                                {/*<div className="fa-border">*/}
-                                {/*    <BellIcon/>*/}
-                                {/*</div>*/}
-                            </div>
-                        </div>
-                        {/*<Tabs/>*/}
-                        {/*<div className={toggle=== 1 ? "opencontent" : "content"}>*/}
+                    <BasicTabs/>
                         <>
-                            <Analytics toggle={toggle}/>
-                            <HomeTable filterString={filterString}/>
+                            {/*<Analytics toggle={toggle}/>*/}
+                            {/*<HomeTable filterString={filterString}/>*/}
 
                         </>
                         {/*</div>*/}

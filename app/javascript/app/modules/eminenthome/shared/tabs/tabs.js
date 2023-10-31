@@ -1,32 +1,73 @@
-import React, {useState} from "react";
-import "./tabs.css"
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import HomeTable from "../../pages/hometable/hometable";
+import {useState} from "react";
+import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
+import  './tabs.css'
 
-const Tabs = (props) => {
-
+function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
 
     return (
-        <>
-
-            <div className="tabsDiv d-flex flex-column">
-                <div className="navBar d-flex justify-content-between mt-2">
-                    <ul>
-                        <li>Home</li>
-                        <li>Allotment</li>
-                        <li>File Status</li>
-                        <li>Master of Vacancies</li>
-                        <li>Slotting</li>
-                        <li>GOM Management</li>
-                    </ul>
-                    <p className="fa-border">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12.0001 22C13.1001 22 14.0001 21.1 14.0001 20H10.0001C10.0001 20.5304 10.2108 21.0391 10.5858 21.4142C10.9609 21.7893 11.4696 22 12.0001 22ZM18.0001 16V11C18.0001 7.93 16.3601 5.36 13.5001 4.68V4C13.5001 3.17 12.8301 2.5 12.0001 2.5C11.1701 2.5 10.5001 3.17 10.5001 4V4.68C7.63005 5.36 6.00005 7.92 6.00005 11V16L4.71005 17.29C4.08005 17.92 4.52005 19 5.41005 19H18.5801C19.4701 19 19.9201 17.92 19.2901 17.29L18.0001 16Z"
-                                fill="black"/>
-                        </svg>
-                    </p>
-                </div>
-            </div>
-        </>
-    )
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
 }
-export default Tabs;
+
+CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+export default function BasicTabs() {
+    const [filterString, setFilterString] = useState('');
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    return (
+        <Box sx={{ width: '100%' }} >
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs">
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="Home" {...a11yProps(0)} />
+                    <Tab label="Master of Vacancies" {...a11yProps(1)} />
+                    <Tab label="File Stauts" {...a11yProps(2)} />
+                </Tabs>
+            </Box>
+            <CustomTabPanel value={value} index={0}>
+                <HomeTable filterString={filterString}/>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={1}>
+                <MasterVacancies/>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+                Item Three
+            </CustomTabPanel>
+        </Box>
+    );
+}

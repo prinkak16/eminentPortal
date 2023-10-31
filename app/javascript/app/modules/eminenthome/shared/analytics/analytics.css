@@ -1,17 +1,10 @@
 .analyticsDiv{
     padding-left: 24px;
-    padding-bottom: 64px;
+    padding-bottom: 20px;
     border-radius: 15px;
     background: #FAFAFA;
     flex-shrink: 0;
     background-color: rgba(0,0,0,0.01);
-}
-
-.card-body{
-    /*margin-right: 10% !important;*/
-    /*margin-left: 5% !important;*/
-    /*margin-top: 5% !important;*/
-    /*margin-bottom: 5% !important;*/
 }
 
 .card{
