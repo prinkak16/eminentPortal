@@ -13,6 +13,9 @@ import { Formik, useFormik } from 'formik';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import {
     getFileUpload,
     getFormData,
@@ -39,6 +42,8 @@ const PersonalDetails = (props) => {
     const [ReligionData, setReligionData] = useState([]);
     const[GenderData, setGenderData]= useState([]);
     const[selectedLanguages, setSelectedLanguages]= useState([]);
+    const[customSelectedLanguages, setCustomSelectedLanguages]= useState([]);
+    const[langDrawer, setLangDrawer]= useState(false);
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -90,23 +95,30 @@ const saveProgress=()=>{
 
     });
 }
-    const names = [
-        'Hindi',
-        'English',
-        'French',
-        'Punjabi',
+    const languagesName = [
+        'Hindi1',
+        'English1',
+        'French1',
+        'Punjabi1',
+        'Hindi2',
+        'English2',
+        'French2',
+        'Punjabi2',
+        'Hindi3',
+        'English3',
+        'Frenc3',
+        'Punjabi3',
     ];
-    const handleLanguageChanges = (event) => {
-        let selectedLang = []
-        selectedLang = selectedLanguages
-        const selcLang = event.target.textContent
-        if (selectedLang.includes(selcLang)) {
-            selectedLang = selectedLang.filter(item => item !== selcLang);
+    const handleLanguageChanges = (lang) => {
+        let languages = []
+        if (customSelectedLanguages.includes(lang)) {
+            languages = selectedLanguages.filter(item => item !== lang)
+            setCustomSelectedLanguages(languages)
         } else {
-            selectedLang.push(selcLang)
+            setCustomSelectedLanguages([...customSelectedLanguages, lang])
         }
-        setSelectedLanguages(selectedLang)
     }
+
 
     const selectedLangSubmission = (type) => ()=>  {
         if (type === 'submit') {
@@ -203,7 +215,27 @@ const saveProgress=()=>{
         setFieldValue('age', newAge);
     }, [customYear, values.dob, setFieldValue]);
 
+    const openLangDrawer = () => {
+        setLangDrawer(!langDrawer)
+        setCustomSelectedLanguages(selectedLanguages)
+    }
 
+    const saveLanguages = () => {
+        setLangDrawer(false)
+        setSelectedLanguages(customSelectedLanguages)
+        props.formValues.languages = customSelectedLanguages
+    }
+
+    const removeLanguage = (selLang) => {
+        let languages = selectedLanguages.filter(item => item !== selLang)
+        setCustomSelectedLanguages(languages)
+        setSelectedLanguages(languages)
+        props.formValues.languages = languages
+    }
+
+    useEffect(() => {
+        props.formValues.mobiles = [9876543210]
+    }, []);
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -216,47 +248,18 @@ const saveProgress=()=>{
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={8}>
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
-                            <Grid item xs={6}>
-                                <FormLabel>Fullname <sup>*</sup></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Enter Fullname" onKeyPress={(e) => {
+                            <Grid item xs={12}>
+                                <FormLabel>Name  <mark>*</mark></FormLabel>
+                                <Inputfield type="text" name="name" placeholder="Enter Name" onKeyPress={(e) => {
                                     const key = e.key;
-                                    if (!/^[A-Za-z]+$/.test(key)) {
+                                    if(!/^[A-Za-z\s]+$/.test(key)) {
                                         e.preventDefault();
                                     }
                                 }}/>
                                 <ErrorMessage name="name" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>State ID</FormLabel>
-                                <NumberField
-                                    placeholder='Enter ID'
-                                    fullWidth
-                                    name="id"
-                                    disabled
-                                />
-                                <ErrorMessage name="id" component="div"/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormLabel>Mobile Number <sup>*</sup></FormLabel>
-                                <Field
-                                    placeholder='Please Seach by Phone no.'
-                                    inputProps={{
-                                        maxLength: 10,
-                                    }}
-                                    type="text"
-                                    as={TextField}
-                                    fullWidth
-                                    onInput={(event) => {
-                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-
-                                    }}
-                                    name="mobiles.0"
-                                />
-
-                                <ErrorMessage name="mobiles" component="div" />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormLabel>Religion <sup>*</sup></FormLabel>
+                                <FormLabel>Religion  <mark>*</mark></FormLabel>
                                 <SelectField name="religion" selectedvalues={selectedOption}
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
@@ -265,7 +268,7 @@ const saveProgress=()=>{
                                 <ErrorMessage name="religion" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Gender <sup>*</sup></FormLabel>
+                                <FormLabel>Gender  <mark>*</mark></FormLabel>
                                 <SelectField name="gender" selectedvalues={selectedOption}
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
@@ -273,7 +276,7 @@ const saveProgress=()=>{
                                 <ErrorMessage name="gender" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Category <sup>*</sup></FormLabel>
+                                <FormLabel>Category <mark>*</mark></FormLabel>
                                 <SelectField name="category" selectedvalues={selectedOption}
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
@@ -281,7 +284,7 @@ const saveProgress=()=>{
                                 <ErrorMessage name="category" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Caste <sup>*</sup></FormLabel>
+                                <FormLabel>Caste  <mark>*</mark></FormLabel>
                                 <Inputfield type="text" name="caste" placeholder="Enter Caste" onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z]+$/.test(key)) {
@@ -301,7 +304,7 @@ const saveProgress=()=>{
                                 <ErrorMessage name="sub_caste" component="div"/>
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
-                                <FormLabel>Date of birth <sup>*</sup></FormLabel>
+                                <FormLabel>Date of birth  <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <Field name="dob">
                                         {({ field, form }) => (
@@ -315,32 +318,39 @@ const saveProgress=()=>{
                                 </LocalizationProvider>
                                 <Typography><Age alt='age'/> {age} Years</Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
-                                <FormControl className="custom-select">
-                                    <Field
-                                        as={Select}
-                                        name="languages"
-                                        multiple
-                                        value={props.formValues.languages}
-                                        onClick={handleLanguageChanges}
-                                        displayEmpty
-                                        setFieldValue={props.setFieldValue}
-                                    >
-                                        <MenuItem value="">Select Language</MenuItem>
-                                        {names.map((name) => (
-                                            <MenuItem key={name} value={name}>
-                                                <Checkbox checked={selectedLanguages.includes(name)} />
-                                                <ListItemText primary={name} />
-                                            </MenuItem>
-                                        ))}
-                                        <div className="text-end me-2">
-                                            <Button onClick={selectedLangSubmission('cancel')} className="">cancel</Button>
-                                            <Button onClick={selectedLangSubmission('submit')}  className="save">Save</Button>
+                                <div className="language-container" onClick={() => openLangDrawer()}>
+                                    <span>Select Languages</span>
+                                    <span className={`arrow-down-icon ${langDrawer ? 'rotate-180' : ''}`}><FontAwesomeIcon icon={faChevronDown} /></span>
+                                </div>
+                                {!langDrawer && selectedLanguages.length > 0 ?
+                                    <div className='selected-languages'>
+                                    {selectedLanguages.map((selLang) => (
+                                        <div className='selected-lang'>
+                                            <span>{selLang}</span>
+                                            <span onClick={() => removeLanguage(selLang)}><FontAwesomeIcon icon={faTimes} />
+                                            </span>
                                         </div>
-                                    </Field>
-                                    <ErrorMessage name="languages" component="div" />
-                                </FormControl>
+                                    ))}
+                                    </div>:''
+                                }
+
+                                {langDrawer &&
+                                <div className='language-selection-container' >
+                                    <div className='languages-list'>
+                                        {languagesName && languagesName.map((lang) => (
+                                            <div className='language' onClick={() => handleLanguageChanges(lang)}>
+                                                <span>{lang}</span> <span><input className='lang-input-box' type='checkbox' checked={customSelectedLanguages.includes(lang)}/></span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className='language-selected-buttons'>
+                                        <span className='lang-btn' onClick={openLangDrawer}>Cancel</span>
+                                        <span className='lang-btn save-btn' onClick={saveLanguages}>Save</span>
+                                    </div>
+                                </div>
+                                }
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} sx={{mb: 5}}>
@@ -366,7 +376,7 @@ const saveProgress=()=>{
                                     type="text"
                                     id="voter_id"
                                     name="voter_id"
-                                    placeholder="Enter Voter ID"
+                                    placeholder="XXYYZZ1234"
                                     as={TextField}
                                 />
                                 <ErrorMessage name="voter_id" component="div" className="error"/>
@@ -394,7 +404,7 @@ const saveProgress=()=>{
 PersonalDetails.label="Personal Details"
 PersonalDetails.initialValues = {
     name: "",
-    mobiles: [],
+    mobiles: [9876543210],
     religion: "",
     gender: "",
     category: "",
@@ -410,31 +420,15 @@ PersonalDetails.initialValues = {
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    // name: Yup.string().required('Please enter your first name'),
-    // mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
-    //     .of(Yup.string().min(1))
-    //     .required('Field is required')
-    //     .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => {
-    //             const firstDigit = parseInt(number.charAt(0));
-    //             return !isNaN(firstDigit) && firstDigit >= 5;
-    //         });
-    //     })
-    //     .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => number.length === 10);
-    //     }),
-    // religion: Yup.string().required('Please select your Religion'),
-    // gender: Yup.string().required('Please select your Gender'),
-    // category: Yup.string().required('Please select your Category'),
-    // caste: Yup.string().required('Please select your Caste'),
-    // dob: Yup.string().required('Please select your Caste'),
-    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    // photo:Yup.string().required('Please select your Photo'),
+    name: Yup.string().required('Please enter your first name'),
+    religion: Yup.string().required('Please select your Religion'),
+    gender: Yup.string().required('Please select your Gender'),
+    category: Yup.string().required('Please select your Category'),
+    caste: Yup.string().required('Please select your Caste'),
+    dob: Yup.string().required('Please select your Caste'),
+    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;
