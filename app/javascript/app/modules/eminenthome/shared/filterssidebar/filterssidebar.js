@@ -1,17 +1,33 @@
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "./filterssidebar.scss"
-import {useEffect, useState} from "react";
-import {getData, getFilters} from "../../../../api/eminentapis/endpoints";
-
+import {getFilters} from "../../../../api/eminentapis/endpoints";
 export default function FiltersSidebar(props) {
     const [filtersList, setFiltersList] = useState([]);
     const [expandedFilter, setExpandedFilter] = useState('');
     const [appliedFilters, setAppliedFilters] = useState([]);
+    const [title, setTitle] = useState('');
+
+
+    useEffect(()=>{
+       const urlSearchString = window.location.search;
+       const params = new URLSearchParams(urlSearchString);
+       console.log(params);
+       setTitle(params.get('form_status'));
+
+   },[])
+
+    useEffect(() => {
+        getFilters().then(res => {
+            setFiltersList(res.data.data)
+        });
+        applyFilter();
+    }, []);
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
@@ -36,16 +52,12 @@ export default function FiltersSidebar(props) {
         appliedFiltersValue.filter(item => item.selectedValues.length > 0).forEach(value => {
             filterString += `&${value.parent_key}=${value.selectedValues.join(',')}`;
         });
+        const currentUrl = window.location.href;
+        const newUrl= (filterString ? `${currentUrl}?${filterString}` : currentUrl);
+        window.history.replaceState({}, document.title, newUrl);
         props.setFilterString(filterString);
-        console.log(appliedFilters);
     }
 
-    useEffect(() => {
-        getFilters().then(res => {
-            setFiltersList(res.data.data)
-        });
-        applyFilter();
-    }, []);
 
     const handleChange = (value) => (event, isExpanded) => {
         if (expandedFilter === value) {

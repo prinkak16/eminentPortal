@@ -72,7 +72,6 @@ export default function PersistentDrawerLeft() {
         return regex.test(number);
 
     }
-
     const changeInputNumber = (number) => {
         setInputNumber(number.replace(/[^0-9]/g, ''));
         if (number && number.length === 10 && isValidNumber(number)) {
@@ -80,7 +79,7 @@ export default function PersistentDrawerLeft() {
             getData(numberString).then(res => {
                 console.log(res);
                 setExistingData(res?.data?.data)
-                setSubmitDisabled(false);
+                // setSubmitDisabled(false);
             }).catch(err => {
                 console.log(err);
             });
@@ -91,7 +90,8 @@ export default function PersistentDrawerLeft() {
             setErrorNumber('');
         }
         setExistingData(null);
-        setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
+        // {existingData ? setSubmitDisabled(false): setSubmitDisabled(true)}
+        // setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
     }
     const handleDrawerOpen = () => {
         setOpen(true);

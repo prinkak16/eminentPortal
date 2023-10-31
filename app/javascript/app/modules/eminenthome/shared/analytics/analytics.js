@@ -6,7 +6,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
-    const [analyticsHeading, setAnalyticsHeading] = useState('');
 
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
@@ -59,7 +58,7 @@ const Analytics = (props) => {
         <>
             <div className="analyticsDiv">
                 <div className="headdiv">
-                    <p className="analyticsHeading">{analyticsHeading}</p>
+                    <p className="analyticsHeading">Eminent Analytics</p>
                 </div>
 
                 <div className="d-flex grid gap-0 column-gap-4 row me-5">
