@@ -2,7 +2,50 @@ class Api::V1::CustomMemberFormController < BaseApiController
   before_action :authenticate_user
   include CustomMemberFormHelper
   include UtilHelper
+  include MetadataHelper
 
+  def fetch_by_number
+    if params[:phone_number].nil? || !params[:phone_number].match?(phone_regex)
+      return render json: {
+        success: false,
+        message: 'Please provide a phone number.',
+        data: nil
+      }, status: :bad_request
+    end
+
+    assigned_states = []
+    fetch_user_assigned_country_states.each do |country_state|
+      assigned_states << country_state['id']
+    end
+
+    custom_member = fetch_member(params[:phone_number], CustomMemberForm::TYPE_EMINENT)
+    if custom_member.nil?
+      return render json: {
+        success: false,
+        message: 'No eminent associated with the phone number.',
+        data: nil
+      }, status: :bad_request
+    end
+
+    if assigned_states.include? custom_member.country_state_id
+      return render json: {
+        success: true,
+        message: 'Eminent exist.',
+        data: custom_member
+      }, status: :ok
+    else
+      cm_data = custom_member[:data].present? ? custom_member[:data] : nil
+      eminent_name = cm_data['name'].present? ? cm_data['name'] : nil
+      state_name = custom_member.country_state.present? ? custom_member.country_state.name : nil
+
+      return render json: {
+        success: false,
+        message: "User(#{eminent_name}) exist in other state(#{state_name}).",
+        data: nil
+      }, status: :bad_request
+    end
+
+  end
   def add
     begin
       # check if the base of the eminent form is valid
@@ -81,14 +124,19 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
 
       if form_type === CustomMemberForm::TYPE_EMINENT
-        unless existing_custom_users_found && phone_number.present?
+        if !existing_custom_users_found && phone_number.present?
           existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
         end
       end
 
-      if custom_member.blank?
-        raise StandardError, 'Phone number already exist' if existing_custom_users_found
+      if existing_custom_users_found
+        return render json: {
+          success: false,
+          message: 'Phone number already exist.'
+        }, status: :bad_request
+      end
 
+      if custom_member.blank?
         custom_member = CustomMemberForm.create!(
           data: params[:data],
           form_type: params[:form_type],
@@ -122,10 +170,15 @@ class Api::V1::CustomMemberFormController < BaseApiController
           }, status: :ok
         end
       else
-        raise StandardError, 'State id can not be changed.' if custom_member.country_state_id != cs
+        if custom_member.country_state_id != cs
+          return render json: {
+            success: false,
+            message: 'State id can not be changed.'
+          }, status: :bad_request
+        end
 
         # used for update of eminent_personality custom member form
-        custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
+        custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel, office_updated_at: DateTime.now)
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
         end

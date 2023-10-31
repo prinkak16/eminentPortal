@@ -11,6 +11,7 @@ module Jumpstart
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
+    config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
 
     # Configuration for the application, engines, and railties goes here.
     #

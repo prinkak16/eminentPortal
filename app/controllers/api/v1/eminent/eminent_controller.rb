@@ -98,6 +98,21 @@ class Api::V1::Eminent::EminentController < BaseApiController
       is_draft = params[:is_draft]
       eminent_channel = params[:channel].present? ? params[:channel] : nil
 
+      # check if the phone numbers already exist
+      existing_custom_users_found = false
+      if form_type === CustomMemberForm::TYPE_EMINENT
+        if phone_number.present?
+          existing_custom_users_found = custom_member_exists?(phone_number, form_type, custom_member&.id)
+        end
+      end
+
+      if existing_custom_users_found
+        return render json: {
+          success: false,
+          message: 'Phone number already assigned to another eminent. Please contact administrator.'
+        }, status: :bad_request
+      end
+
       # check if the country state id valid used only for creation of eminent_personality type custom member form
       cs = params[:state_id].present? ? params[:state_id] : nil
       country_state = CountryState.where(id: cs).exists?
@@ -123,7 +138,7 @@ class Api::V1::Eminent::EminentController < BaseApiController
       end
 
       # used for update of eminent_personality custom member form
-      custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel)
+      custom_member.update!(data: params[:data], device_info: params[:device_info], channel: eminent_channel, eminent_updated_at: DateTime.now)
       if is_draft && custom_member.may_mark_incomplete?
         custom_member.mark_incomplete!
       end
