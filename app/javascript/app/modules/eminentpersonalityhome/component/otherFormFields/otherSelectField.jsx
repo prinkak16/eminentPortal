@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Formik, Field, ErrorMessage } from 'formik';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import './selectfield.scss';
-const Selectfield=(props)=>{
-    const {name, optionList, defaultOption, heading, handleSelectChange, placeholder} = props;
+import './otherSelectField.scss';
+const OtherSelectField=(props)=>{
+    const {name, optionList, defaultOption, heading, handleSelectChange, placeholder, onChange} = props;
 
-    const capitalizeFirstLetter = (str) => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
+    const onFieldChange = (event) => {
+        onChange(event.target.value)
     }
-
     return(
         <>
             <FormControl>
@@ -20,6 +19,7 @@ const Selectfield=(props)=>{
                     className="custom-select"
                     fullWidth
                     displayEmpty
+                    onChange={onFieldChange}
                     inputProps={{ 'aria-label': 'Without label' }}
                 >
 
@@ -36,4 +36,4 @@ const Selectfield=(props)=>{
         </>
     )
 }
-export default Selectfield;
+export default OtherSelectField;

@@ -295,3 +295,67 @@ button.cancelbtn{
   background: ($basicColor) !important;
   color: #FFFFFF !important;
 }
+
+.mobile-fields {
+  width: 20rem;
+  height: 3.1rem;
+  border-radius: 13px;
+  border: 1px solid grey;
+  background: #ffffff;
+  padding-left: 1.2rem;
+}
+
+
+
+.mobile-number-field {
+  display: grid;
+  max-width: 20rem;
+}
+
+.mobile-label {
+  margin-left: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobiles-container {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  min-height: 12rem;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 0px 1px;
+  width: 95rem;
+}
+
+.add-delete-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem
+}
+
+.primary-number {
+  margin-top: -1rem;
+}
+
+.delete-button {
+  background: rgb(0, 0, 0, 0.07);
+  height: 2.5rem;
+  width: 2.5rem;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  border-radius: 0.6rem;
+  cursor: pointer;
+}
+
+.add-btn {
+  gap: 1rem;
+  display: flex;
+  border: 1px solid #FF9559;
+  color: #FF9559;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+}
+
+
