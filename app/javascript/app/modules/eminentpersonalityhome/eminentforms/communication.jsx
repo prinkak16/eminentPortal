@@ -115,16 +115,22 @@ const Communicationform =(props)=>{
 
     const userMobileNumber = 9999223772
 
-    const addMobileField = (i) => {
-        setMobileFields([...mobileFields, {index:i,number:'' }])
+    const addMobileField = () => {
+        setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
     }
 
-    const enterMobileNumber = (index) => (event) => {
-        const field  = mobileFields.find((f) => f.index === index)
-        if (field) {
-            field.number = event.target.value
-            mobileFieldsNumbers[index] = event.target.value
-        }
+    const enterMobileNumber = (id) => (event) => {
+        setMobileFields((preMobileFields) => {
+            return preMobileFields.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['number']: event.target.value,
+                    };
+                }
+                return form;
+            });
+        });
     }
 
     const phoneNumber = (index) => {
@@ -133,10 +139,9 @@ const Communicationform =(props)=>{
             return  field.number
         }
     }
-    const deleteMobileNumber = (i) => {
-        const updatedMobileFields = mobileFields.filter((field) => field.index !== i)
+    const deleteMobileNumber = (id) => {
+        const updatedMobileFields = mobileFields.filter((field) => field.id !== id)
         setMobileFields(updatedMobileFields)
-        mobileFieldsNumbers.splice(i, 1)
     }
 
 
@@ -215,7 +220,6 @@ const Communicationform =(props)=>{
         });
     };
 
-    console.log(formValues)
 
     const fieldValue = (id, name) => {
         const form = formValues.find((field) => field.id === id)
@@ -256,7 +260,7 @@ const Communicationform =(props)=>{
                                     <input value={userMobileNumber}  className="primary-number mobile-fields" disabled={true}/>
                                     <div className='add-delete-btns'>
                                         {mobileFields.length === 0 &&
-                                            <span className='add-btn' onClick={() => addMobileField(0)}>
+                                            <span className='add-btn' onClick={() => addMobileField()}>
                                                 <span>
                                                      <FontAwesomeIcon icon={faPlus}/>
                                                  </span>
@@ -270,18 +274,18 @@ const Communicationform =(props)=>{
                                     <div className='mobile-number-field'>
                                         <FormLabel className="mobile-label">{i+2}. Mobile Number <mark>*</mark></FormLabel>
                                         <input
-                                            value={mobileFieldsNumbers[field.index]}
                                             placeholder='Enter Mobile Number'
-                                            onChange={enterMobileNumber(i)}
+                                            value={field.number}
+                                            onChange={enterMobileNumber(field.id)}
                                             className="mobile-fields" />
                                         <div className='add-delete-btns'>
-                                        <span className='add-btn' onClick={() => addMobileField(field.index+1)}>
+                                        <span className='add-btn' onClick={() => addMobileField()}>
                                             <span>
                                                 <FontAwesomeIcon icon={faPlus} />
                                             </span>
                                             Add Another
                                         </span>
-                                            <span className='delete-button' onClick={() => deleteMobileNumber(field.index)}>
+                                            <span className='delete-button' onClick={() => deleteMobileNumber(field.id)}>
                                                 <FontAwesomeIcon icon={faTrash}/>
                                             </span>
                                         </div>
