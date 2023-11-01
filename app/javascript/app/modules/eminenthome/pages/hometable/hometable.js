@@ -48,7 +48,7 @@ const HomeTable = (props) => {
     const displayPhoneNumbers = (member) => {
         const displayingNumbers = member.data.mobiles.splice(0, 2);
         return displayingNumbers.map((number, index) => (
-            <div className="col-md-6 text-container pe-0 ps-2.5">
+            <div className="col-md-6 text-container pe-0 ps-2.5" key={member.id}>
                 {index === 0 && <Phone/>}
                 <p className={`ml-2 label-text ${index === 0 ? 'br-label first-number' : 'br-label2 pt-5'}`}>{number}</p>
             </div>
@@ -128,9 +128,7 @@ const HomeTable = (props) => {
         });
     }
 
-    useEffect(() => {
-        console.log('value change of table data', tableData);
-    }, [tableData]);
+
 
     const openDocument = (filePath) => {
         window.open(filePath);
@@ -368,3 +366,4 @@ const HomeTable = (props) => {
     )
 }
 export default HomeTable;
+

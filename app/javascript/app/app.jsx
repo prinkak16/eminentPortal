@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, redirect} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.scss';
 import {Navigate} from "react-router";
@@ -10,7 +10,8 @@ function App() {
     return (
         <>
             <Routes>
-                <Route path='/' element={<HomePage/>}/>
+                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path='/home' element={<HomePage/>}/>
                 <Route path='/*' element={<Navigate to="/"/>}/>
                 {/*<Route path='/' element={<HomeComponent/>}/>*/}
                 <Route path='/EminentPersonality' element={<EminentPersonality/>}/>

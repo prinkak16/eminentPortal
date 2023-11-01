@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import "./analytics.css"
-import Usergroup from "../../../../../../../public/images/usergroup.svg"
-import CheckList from "./../../../../../../../public/images/checklist.svg"
+import Usergroup from "../../../../../../../public/images/usergroup.svg";
+import Checklist from "./../../../../../../../public/images/checklist.svg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
+import Incompletefile from './../../../../../../../public/images/incomplete.svg';
+import iconUrl from './../../../../../../../public/images/plus.svg';
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
 
@@ -26,12 +27,12 @@ const Analytics = (props) => {
             switch (value) {
                 case 'incomplete': {
                     label = 'Total Incomplete Form';
-                    icon = <IncompleteFile />;
+                    icon = <Incompletefile />;
                     break;
                 }
                 case 'completed': {
                     label = 'Total Completed Form';
-                    icon = <CheckList />;
+                    icon = <Checklist />;
                     break;
                 }
                 case 'overall': {
@@ -40,7 +41,7 @@ const Analytics = (props) => {
                     break;
                 }
             }
-           return <div className="col">
+            return <div className="col" key={value}>
                <div className="card">
                    <div className="card-body d-flex p-0">
                        <div><p className="align-middle">{icon}</p></div>

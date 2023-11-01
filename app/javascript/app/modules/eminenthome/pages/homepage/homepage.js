@@ -19,8 +19,9 @@ import {Button, Pagination} from "@mui/material";
 import SideBarIcon from "./../../../../../../../public/images/sidebaricon.svg"
 import {useNavigate} from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
-import {getData} from "../../../../api/eminentapis/endpoints";
+import {fetchMobile, getData} from "../../../../api/eminentapis/endpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
+import PlusIcon from './../../../../../../../public/images/plus.svg'
 
 
 const drawerWidth = 240;
@@ -75,11 +76,11 @@ export default function PersistentDrawerLeft() {
     const changeInputNumber = (number) => {
         setInputNumber(number.replace(/[^0-9]/g, ''));
         if (number && number.length === 10 && isValidNumber(number)) {
-            let numberString = `&query=${number}`;
-            getData(numberString).then(res => {
-                console.log(res);
-                setExistingData(res?.data?.data)
-                // setSubmitDisabled(false);
+            let numberString = `${number}`;
+            fetchMobile(numberString).then(res => {
+                console.log('new data',res);
+                setExistingData(res);
+                setSubmitDisabled(false);
             }).catch(err => {
                 console.log(err);
             });
@@ -90,8 +91,7 @@ export default function PersistentDrawerLeft() {
             setErrorNumber('');
         }
         setExistingData(null);
-        // {existingData ? setSubmitDisabled(false): setSubmitDisabled(true)}
-        // setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
+        setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number) || !existingData);
     }
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -148,12 +148,7 @@ export default function PersistentDrawerLeft() {
                             </span>
                                 Eminent Personality</p>
                             <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M13 6C13 5.44772 12.5523 5 12 5C11.4477 5 11 5.44772 11 6V11H6C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H11V18C11 18.5523 11.4477 19 12 19C12.5523 19 13 18.5523 13 18V13H18C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11H13V6Z"
-                                        fill="white"/>
-                                </svg>
+                                <PlusIcon/>
                                 Add New
                             </button>
                         </div>
@@ -185,7 +180,6 @@ export default function PersistentDrawerLeft() {
                                 {/*</div>*/}
                             </div>
                         </div>
-                        {/*<Tabs/>*/}
                         {/*<div className={toggle=== 1 ? "opencontent" : "content"}>*/}
                         <>
                             <Analytics toggle={toggle}/>
@@ -212,7 +206,8 @@ export default function PersistentDrawerLeft() {
                            value={inputNumber}
                            placeholder="Enter mobile number"
                            onChange={(e) => changeInputNumber(e.target.value)}/>
-                    {(existingData && existingData.length > 0) && <span>Number Already Exist</span>}
+                    <span>{existingData?.data?.message}</span>
+                    {/*{(existingData && existingData.length > 0) && <span>Number Already Exist</span>}*/}
                     {(errorNumber && errorNumber.length > 0) && <span>{errorNumber}</span>}
 
                 </Modal.Body>

@@ -1220,22 +1220,9 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mui/base@5.0.0-beta.21", "@mui/base@^5.0.0-beta.20":
+"@mui/base@5.0.0-beta.21", "@mui/base@^5.0.0-beta.20", "@mui/base@^5.0.0-beta.21":
   version "5.0.0-beta.21"
   resolved "https://registry.npmjs.org/@mui/base/-/base-5.0.0-beta.21.tgz"
-  integrity sha512-eTKWx3WV/nwmRUK4z4K1MzlMyWCsi3WJ3RtV4DiXZeRh4qd4JCyp1Zzzi8Wv9xM4dEBmqQntFoei716PzwmFfA==
-  dependencies:
-    "@babel/runtime" "^7.23.2"
-    "@floating-ui/react-dom" "^2.0.2"
-    "@mui/types" "^7.2.7"
-    "@mui/utils" "^5.14.15"
-    "@popperjs/core" "^2.11.8"
-    clsx "^2.0.0"
-    prop-types "^15.8.1"
-
-"@mui/base@^5.0.0-beta.21":
-  version "5.0.0-beta.21"
-  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.21.tgz#5bf952c9d3703ae4f697702f0821e5dea178f34e"
   integrity sha512-eTKWx3WV/nwmRUK4z4K1MzlMyWCsi3WJ3RtV4DiXZeRh4qd4JCyp1Zzzi8Wv9xM4dEBmqQntFoei716PzwmFfA==
   dependencies:
     "@babel/runtime" "^7.23.2"
