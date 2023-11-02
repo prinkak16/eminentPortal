@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       namespace :user, path: 'user' do
         get '/minister_list', to: 'user#minister_list'
         get '/assigned_ministries', to: 'user#user_assigned_ministries'
+        post '/manual_upload/minister_assistant_mapping', to: 'user#upload_minister_assistant_mapping'
       end
       namespace :user, path: 'user/:user_id' do
         get '/assigned_ministries', to: 'user#assigned_ministries'

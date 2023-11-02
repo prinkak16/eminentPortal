@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_27_065744) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_27_065744) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone_number"
+    t.integer "assist_to_id"
   end
 
   create_table "custom_member_forms", force: :cascade do |t|
@@ -144,7 +145,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_27_065744) do
     t.integer "user_id"
     t.integer "ministry_id"
     t.boolean "is_minister", default: false, null: false
-    t.boolean "has_ministry", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ministry_id"], name: "index_user_ministries_on_ministry_id"
