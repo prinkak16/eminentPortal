@@ -180,7 +180,8 @@ button.cancelbtn{
     font-size: 14px;
 
     &:last-child{
-      border-right: none;
+      border-right: none !important;
+      display: flex;
     }
   }
   th{
@@ -196,6 +197,10 @@ button.cancelbtn{
     width: 20px;
     height: 20px;
   }
+}
+
+.data-table th:last-child {
+  border-right: none !important;
 }
 
 .language-container {
@@ -356,6 +361,22 @@ button.cancelbtn{
   border-radius: 10px;
   cursor: pointer;
   align-items: center;
+}
+
+.css-17ffvgn-MuiTypography-root {
+  cursor: pointer;
+
+  font-size: 0.5rem !important;
+  padding: 5px!important;
+}
+
+.display-contents {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.edit-button-logo {
+  margin-left: auto;
 }
 
 
