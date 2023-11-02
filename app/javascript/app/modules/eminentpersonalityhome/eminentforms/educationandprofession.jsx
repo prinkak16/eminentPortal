@@ -25,18 +25,15 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, educationProfessionJson, isValuePresent} from "../../utils";
+import {educationDetailsJson, ProfessionJson, isValuePresent} from "../../utils";
 
 const Educationform = (props) => {
     const [selectedOption, setSelectedOption] = useState('');
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
-    const [saveParty, setSaveParty] = useState(null)
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
-
-
 
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
@@ -54,12 +51,6 @@ const Educationform = (props) => {
             setEducationData(response.data.data)
         })
     }
-
-    useEffect(() => {
-        getEducation();
-    }, []);
-
-
 
     const handleSave = ( title, formData, id) => {
        if (title === 'Education Details') {
@@ -113,23 +104,8 @@ const Educationform = (props) => {
     }, [educationDetails]);
 
     useEffect(() => {
-        props.formValues.educations = educationDetails;
-    }, [educationDetails]);
-
-    const handlepartysave = () => {
-        const newRow = {
-            profession: saveParty.profession,
-            subject: saveParty.subject,
-            position: saveParty.position,
-            organization: saveParty.organization,
-            start_year: saveParty.start_year,
-            end_year: isCurrentlyWorking ? 'Currently Working' : saveParty.end_year,
-        };
-        setProfessionDetails([...professionDetails, newRow]);
-        setSaveParty(props.formValues)
-    }
-    const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
-
+        props.formValues.professions = professionDetails;
+    }, [professionDetails]);
 
     const editEducationForm = (type,id) => {
         if (type === 'education') {
@@ -145,8 +121,6 @@ const Educationform = (props) => {
         }
 
     };
-
-    console.log(educationDetails)
 
 
     return (
@@ -283,7 +257,7 @@ const Educationform = (props) => {
                                  sx={{display: 'inline-block'}}>2</Box> Professional Profile
                         </Typography>
                     </Grid>
-                    <ComponentOfFields jsonForm={educationProfessionJson} saveData={handleSave} isEditable={professionEditField}/>
+                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave} isEditable={professionEditField}/>
                 </Grid>
                 <Grid container sx={{spacing: 0}}>
                     <Grid item xs={8}>
@@ -315,16 +289,16 @@ Educationform.initialValues = {
     education_level: "",
     profession_description:"",
     educations: [],
-    profession: [],
+    professions: [],
 
 
 };
 Educationform.validationSchema = Yup.object().shape({
-    educations: Yup.array()
-        .of(Yup.string()) // Assuming elements in the array are strings
-        .required('Please select at least one education'),
-    profession: Yup.array()
-        .of(Yup.string()) // Assuming elements in the array are strings
-        .required('Please select at least one Profession')
+    // educations: Yup.array()
+    //     .of(Yup.string()) // Assuming elements in the array are strings
+    //     .required('Please select at least one education'),
+    // profession: Yup.array()
+    //     .of(Yup.string()) // Assuming elements in the array are strings
+    //     .required('Please select at least one Profession')
 });
 export default Educationform

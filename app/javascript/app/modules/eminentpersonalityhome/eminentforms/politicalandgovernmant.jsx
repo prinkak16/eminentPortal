@@ -24,6 +24,9 @@ import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
 import {Edit} from "@mui/icons-material";
+import {isValuePresent, otherPartyJson, politicalProfileJson} from "../../utils";
+import ComponentOfFields from "./componentOfFields";
+import {v4 as uuidv4} from "uuid";
 const PolticalandGovrnform =(props)=>{
     console.log('props', props)
     const Item = styled(Paper)(({ theme }) => ({
@@ -37,11 +40,16 @@ const PolticalandGovrnform =(props)=>{
     const [formValues, setFormValues] = useState([])
     const [count, setcount]=useState(2)
     const [PartyData, setPartyData]=useState([])
+    const [politicalProfileDetails, setPoliticalProfileDetails] = useState([]);
+    const [otherPartyDetails, setOtherPartyDetails] = useState([]);
+    const [editableProfileField, setEditableProfileField] = useState({})
+    const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
     const handlesocialfield = () => {
         setFormValues([...formValues, { organization: "", description: "" }])
         setShowFields(true);
         setcount(count+1);
     }
+
     const handledelete = () => {
         const newFormValues = [...formValues];
         newFormValues.splice(-1, 1);
@@ -78,6 +86,66 @@ const PolticalandGovrnform =(props)=>{
         setSaveProfile(props.formValues)
     }
 
+    const handleSave = ( title, formData, id) => {
+        if (title === 'Political Profile') {
+            politicalProfileSave(formData, id)
+        }
+
+        if (title === 'Other Party Profile') {
+            otherPartiProfileSave(formData, id)
+        }
+
+    };
+
+    const editForm = (type,id) => {
+        if (type === 'Political Profile') {
+            const form = politicalProfileDetails.find((item) => item.id === id);
+            if (form) {
+                setEditableProfileField(form)
+            }
+        }
+        else {
+            const form = otherPartyDetails.find((item) => item.id === id);
+            if (form) {
+                setEditableOtherPartyField(form)
+            }
+        }
+
+    };
+
+    const politicalProfileSave = (formData, id) => {
+        const newFormData = {
+            id: uuidv4(),
+            level: formData.level,
+            unit: formData.unit,
+            designation: formData.designation,
+            start_year: formData.start_year,
+            end_year: formData.end_year,
+        };
+
+        setPoliticalProfileDetails((prevData) =>
+            isValuePresent(id)
+                ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
+                : [...prevData, newFormData]
+        );
+    }
+
+
+    const otherPartiProfileSave = (formData, id) => {
+        const newFormData = {
+            id: uuidv4(),
+            party: formData.party,
+            position: formData.position,
+            start_year: formData.start_year,
+            end_year: formData.end_year,
+        };
+
+        setOtherPartyDetails((prevData) =>
+            isValuePresent(id)
+                ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
+                : [...prevData, newFormData]
+        );
+    }
 
     return(
         <>
@@ -86,110 +154,59 @@ const PolticalandGovrnform =(props)=>{
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
                     <Item sx={{textAlign:'right'}}><Savebtn/></Item>
                 </Stack>
-                {saveParty && (
+                {politicalProfileDetails.length > 0 && (
                     <div className="data-table">
                         <table className="w-100 table-responsive ">
                             <thead>
                             <tr>
                                 <th>Party level</th>
                                 <th>Unit</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>Designation</th>
+                                <th>Start Year</th>
+                                <th>End Year</th>
                             </tr>
                             </thead>
                             <tbody>
+                            {politicalProfileDetails.map((data, index) => (
                             <tr>
-                                <td>{saveParty.party_level}</td>
-                                <td>{saveParty.unit}</td>
-                                <td></td>
-                                <td></td>
-                                <td>
+                                <td>{data.level}</td>
+                                <td>{data.unit}</td>
+                                <td>{data.designation}</td>
+                                <td>{data.start_year}</td>
+                                <td className='end-date-td'>{data.end_year}
                                     <PopupState variant="popper" popupId="demo-popup-popper">
                                         {(popupState) => (
-                                            <>
-                                                <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
+                                            <div className='edit-button-logo'>
+                                                <Button
+                                                    variant="contained" {...bindToggle(popupState)}
+                                                    className="bg-transparent text-black display-contents">
                                                     <MoreVertIcon/>
                                                 </Button>
                                                 <Popper {...bindPopper(popupState)} transition>
-                                                    {({ TransitionProps }) => (
-                                                        <Fade {...TransitionProps} timeout={350}>
+                                                    {({TransitionProps}) => (
+                                                        <Fade {...TransitionProps}
+                                                              timeout={350}>
                                                             <Paper>
-                                                                <Typography sx={{ p: 2 }}><Edit/></Typography>
-                                                                <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
+                                                                <Typography sx={{p: 2}}
+                                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/></Typography>
+                                                                <Typography
+                                                                    sx={{p: 2}}><DeleteIcon/></Typography>
                                                             </Paper>
                                                         </Fade>
                                                     )}
                                                 </Popper>
-                                            </>
+                                            </div>
                                         )}
                                     </PopupState>
-
-
                                 </td>
                             </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
                 )}
-                <Grid container className="educationforms grid-wrap" >
-                    <Grid item xs={4}>
-                        <FormLabel>Party level <sup>*</sup></FormLabel>
-                        <Inputfield type="text"
-                                    name="party_level"
-                                    placeholder="Enter Party Level"/>
-                        <ErrorMessage name="party_level" component="div" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormLabel>Unit</FormLabel>
-                        <Inputfield type="text"
-                                    name="unit"
-                                    placeholder="Enter Unit "/>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormLabel>Designation</FormLabel>
-                        <Inputfield type="text"
-                                    name="designation"
-                                    placeholder="Enter Designation"/>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <Field name="start_year">
-                                {({ field, form }) => (
-                                    <DatePicker
-                                        {...field}
-                                        value={field.value} // Use field.value to get the current value
-                                        onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
-                                        views={['year']}
-                                    />
-                                )}
-                            </Field>
-                        </LocalizationProvider>
-                        {/*<Startdatepicker  year="start_year"/>*/}
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormLabel>End / Passing Year</FormLabel><br/>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <Field name="end_year">
-                                {({ field, form }) => (
-                                    <DatePicker
-                                        {...field}
-                                        value={field.value} // Use field.value to get the current value
-                                        onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
-                                        views={['year']}
-                                    />
-                                )}
-                            </Field>
-                        </LocalizationProvider>
-                    </Grid>
 
-                    <Grid item xs={12}>
-                        <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                        <Primarybutton addclass="nextbtn" handleclick={handleSaveParty} buttonlabel="Save"/>
-                    </Grid>
-                </Grid>
-
+                <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField}/>
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
@@ -204,46 +221,51 @@ const PolticalandGovrnform =(props)=>{
                                     placeholder="00"/>
                     </Grid>
                 </Grid>
-                {saveProfile && (
+                {otherPartyDetails.length > 0 && (
                     <div className="data-table">
                         <table className="w-100 table-responsive ">
                             <thead>
                             <tr>
                                 <th>Party</th>
                                 <th>Position</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>Start Year</th>
+                                <th>End Year</th>
                             </tr>
                             </thead>
                             <tbody>
+                            {otherPartyDetails.map((data, index) => (
                             <tr>
-                                <td>{saveProfile.party}</td>
-                                <td>{saveProfile.position}</td>
-                                <td></td>
-                                <td></td>
-                                <td>
+                                <td>{data.party}</td>
+                                <td>{data.position}</td>
+                                <td>{data.start_year}</td>
+                                <td className='end-date-td'>{data.end_year}
                                     <PopupState variant="popper" popupId="demo-popup-popper">
                                         {(popupState) => (
-                                            <>
-                                                <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
+                                            <div className='edit-button-logo'>
+                                                <Button
+                                                    variant="contained" {...bindToggle(popupState)}
+                                                    className="bg-transparent text-black display-contents">
                                                     <MoreVertIcon/>
                                                 </Button>
                                                 <Popper {...bindPopper(popupState)} transition>
-                                                    {({ TransitionProps }) => (
-                                                        <Fade {...TransitionProps} timeout={350}>
+                                                    {({TransitionProps}) => (
+                                                        <Fade {...TransitionProps}
+                                                              timeout={350}>
                                                             <Paper>
-                                                                <Typography sx={{ p: 2 }}><Edit/></Typography>
-                                                                <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
+                                                                <Typography sx={{p: 2}}
+                                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
+                                                                <Typography
+                                                                    sx={{p: 2}}><DeleteIcon/></Typography>
                                                             </Paper>
                                                         </Fade>
                                                     )}
                                                 </Popper>
-                                            </>
+                                            </div>
                                         )}
                                     </PopupState>
                                 </td>
                             </tr>
+                        ))}
                             </tbody>
                         </table>
                     </div>
@@ -254,55 +276,8 @@ const PolticalandGovrnform =(props)=>{
                             <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
                         </Typography>
                     </Grid>
-                    <Grid container className="educationforms">
-                        <Grid item xs={4}>
-                            <FormLabel>Party</FormLabel>
-                            <Inputfield type="text"
-                                        name="party"
-                                        placeholder="Enter Party"/>
 
-                        </Grid>
-                        <Grid item xs={4}>
-                            <FormLabel>Position</FormLabel>
-                            <Inputfield type="text"
-                                        name="position"
-                                        placeholder="Enter Position"/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Field name="start_year">
-                                    {({ field, form }) => (
-                                        <DatePicker
-                                            {...field}
-                                            value={field.value} // Use field.value to get the current value
-                                            onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
-                                            views={['year']}
-                                        />
-                                    )}
-                                </Field>
-                            </LocalizationProvider>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <FormLabel>End Year</FormLabel><br/>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Field name="end_year">
-                                    {({ field, form }) => (
-                                        <DatePicker
-                                            {...field}
-                                            value={field.value} // Use field.value to get the current value
-                                            onChange={(year) => form.setFieldValue("end_year", year)} // Update the value
-                                            views={['year']}
-                                        />
-                                    )}
-                                </Field>
-                            </LocalizationProvider>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                            <Primarybutton addclass="nextbtn" handleclick={handleSaveProfile} buttonlabel="Save"/>
-                        </Grid>
-                    </Grid>
+                    <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave} isEditable={editableOtherPartyField}/>
                 </Grid>
                 <Grid container className="grid-wrap">
                     <Grid item sx={{mb:2}} xs={12}>
@@ -487,25 +462,10 @@ PolticalandGovrnform.initialValues = {
     pc:'',
     ac:'',
     ad_name:'',
-    political_profile: [
-        {
-            party_level: '',
-            unit: '',
-            designation: '',
-            start_year: '',
-            end_year: '',
-        },
-    ],
+    political_profile: [],
     rss_years: '',
     bjp_years: '',
-    other_parties: [
-        {
-            party: '',
-            position: '',
-            start_year: '',
-            end_year: '',
-        },
-    ],
+    other_parties: [],
     social_profiles: [
         {
             organization: '',

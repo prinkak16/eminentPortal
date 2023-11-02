@@ -51,7 +51,7 @@ export const educationDetailsJson = {
     ]
 }
 
-export const educationProfessionJson = {
+export const ProfessionJson = {
     title: 'Profession Profile',
     fields: [
         {
@@ -87,6 +87,83 @@ export const educationProfessionJson = {
             na_button: true,
             na_type:'end_date',
             na_massage: "Current Working",
+            name: "End Year",
+            placeholder: 'Select Start Year',
+            type: 'date',
+        },
+    ]
+}
+export const politicalProfileJson = {
+    title: 'Political Profile',
+    fields: [
+        {
+            key: 'level',
+            na_button: false,
+            name: "Party Level",
+            placeholder: 'Select party level',
+            type: 'dropdown',
+            list: ['data'],
+        },
+        {
+            key: 'unit',
+            na_button: false,
+            name: "Unit",
+            placeholder: 'Select unit',
+            type: 'dropdown',
+            list: ['data'],
+        },
+        {
+            key: 'designation',
+            na_button: false,
+            name: "Designation",
+            placeholder: 'Select designation',
+            type: 'dropdown',
+            list: ['data'],
+        },
+        {
+            key: 'start_year',
+            na_button: false,
+            name: "Start Year",
+            placeholder: 'Select Start Year',
+            type: 'date',
+        },
+        {
+            key: 'end_year',
+            na_button: false,
+            name: "End Year",
+            placeholder: 'Select Start Year',
+            type: 'date',
+        },
+    ]
+}
+export const otherPartyJson = {
+    title: 'Other Party Profile',
+    fields: [
+        {
+            key: 'party',
+            na_button: false,
+            name: "Party",
+            placeholder: 'Enter party',
+            type: 'textField',
+
+        },
+        {
+            key: 'position',
+            na_button: false,
+            name: "Position (Senior Most)",
+            placeholder: 'Enter Position',
+            type: 'textField',
+        },
+        {
+            key: 'start_year',
+            na_button: false,
+            name: "Start Year",
+            placeholder: 'Select Start Year',
+            type: 'date',
+        },
+        {
+            key: 'end_year',
+            na_button: false,
             name: "End Year",
             placeholder: 'Select Start Year',
             type: 'date',
