@@ -51,7 +51,7 @@ const Educationform = (props) => {
 
     const getEducation = () => {
         getEducationData.then((response) => {
-            setEducationDetails(response.data.data)
+            setEducationData(response.data.data)
         })
     }
 
@@ -146,6 +146,7 @@ const Educationform = (props) => {
 
     };
 
+    console.log(educationDetails)
 
 
     return (
