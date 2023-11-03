@@ -148,15 +148,6 @@ class Api::V1::Ministry::Department::OrganizationController < BaseApiController
         'count': organization_count
       }
     }, status: :ok
-
-    # render json: {
-    #   success: true,
-    #   message: 'Success',
-    #   data: {
-    #     'ministries': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).includes(:ministry, :department).order('created_at desc').limit(limit).offset(offset).as_json(include: [:ministry, :department]),
-    #     'count': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).count
-    #   }
-    # }, status: :ok
   rescue StandardError => e
     return render json: {
       success: false,
