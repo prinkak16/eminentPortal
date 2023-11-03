@@ -44,9 +44,12 @@ Rails.application.routes.draw do
         delete '/logout', to: 'eminent#logout'
       end
 
+      namespace :gom, path: 'gom' do
+        get '/minister_list', to: 'gom#minister_list'
+        get '/assigned_ministries', to: 'gom#assigned_ministries'
+      end
+
       namespace :user, path: 'user' do
-        get '/minister_list', to: 'user#minister_list'
-        get '/assigned_ministries', to: 'user#user_assigned_ministries'
         post '/manual_upload/minister_assistant_mapping', to: 'user#upload_minister_assistant_mapping'
       end
       namespace :user, path: 'user/:user_id' do

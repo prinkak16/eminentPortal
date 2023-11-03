@@ -43,6 +43,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
     t.datetime "updated_at", null: false
     t.string "phone_number"
     t.integer "assist_to_id"
+    t.datetime "deleted_at"
+    t.index ["name"], name: "index_user_name_search", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "custom_member_forms", force: :cascade do |t|
