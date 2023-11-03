@@ -44,6 +44,7 @@ const PolticalandGovrnform =(props)=>{
     const [otherPartyDetails, setOtherPartyDetails] = useState([]);
     const [editableProfileField, setEditableProfileField] = useState({})
     const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
+    const [NAFields, setNAFields] = useState(false)
     const handlesocialfield = () => {
         setFormValues([...formValues, { organization: "", description: "" }])
         setShowFields(true);
@@ -147,6 +148,10 @@ const PolticalandGovrnform =(props)=>{
         );
     }
 
+    const NotApplicableFields = (event) => {
+        setNAFields(event.target.checked)
+    }
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -205,8 +210,15 @@ const PolticalandGovrnform =(props)=>{
                         </table>
                     </div>
                 )}
-
-                <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField}/>
+                <div className='date-na-button date-na-button-out-side'>
+                                        <span className='na-check-box'>
+                                            <input type="checkbox" onClick={NotApplicableFields} />
+                                        </span>
+                    <span className='na-check-msg'>
+                                            Not Applicable
+                                        </span>
+                </div>
+                <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField} notApplicable={NAFields}/>
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>

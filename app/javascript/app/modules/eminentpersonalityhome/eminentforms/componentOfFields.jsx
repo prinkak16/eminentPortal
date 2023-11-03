@@ -10,7 +10,7 @@ import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
 import {isValuePresent} from "../../utils";
-const ComponentOfFields = ({jsonForm, saveData, isEditable}) => {
+const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable}) => {
     const [fieldsData, setFieldsData] = useState({});
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
@@ -23,6 +23,11 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable}) => {
         const initialFieldsData = generateInitialFieldsData(keys, value);
         setFieldsData(initialFieldsData);
     };
+
+    useEffect(() => {
+        const valueToSet = notApplicable ? 'NA' : '';
+        setFieldInitialValue(valueToSet);
+    }, [notApplicable]);
 
     const generateInitialFieldsData = (keys, value) => {
         const initialFieldsData = { id: uuidv4() };
