@@ -76,11 +76,11 @@ group :test do
 end
 
 gem 'aasm'
+gem 'audited'
 gem 'bcrypt'
 gem 'dotenv-rails', :groups => [:development, :test, :production]
 gem 'httparty'
 gem 'google-cloud-storage'
-# gem 'json-schema'
 gem 'json_schemer'
 gem 'jwt'
 gem 'listen'

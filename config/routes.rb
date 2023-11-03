@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
+      get 'custom_member_forms/fetch_by_number', to: 'custom_member_form#fetch_by_number'
 
       get 'stats/home', to: 'stats#home'
 
