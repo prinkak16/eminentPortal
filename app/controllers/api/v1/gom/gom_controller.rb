@@ -56,27 +56,27 @@ class Api::V1::Gom::GomController < BaseApiController
 
       user_ministries = UserMinistry.find_by_sql(sql)
 
-      # # fetch all the user ids
-      # user_ids = user_ministries.map { |row| row['id'] }
-      #
-      # # fetch all the user information
-      # user_information = fetch_user_information(user_ids)
-      # user_information = user_information[:user].index_by(&:user_id)
-      #
-      # user_ministries.each do |user_ministry|
-      #   assigned_ministries << {
-      #     user_id: user_ministry.id.present? ? user_ministry.id : nil,
-      #     name: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]].name : nil,
-      #     allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
-      #     own_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
-      #     assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
-      #   }
-      # end
+      # fetch all the user ids
+      user_ids = user_ministries.map { |row| row['id'] }
+
+      # fetch all the user information
+      user_information = fetch_user_information(user_ids)
+      user_information = user_information[:user].index_by(&:user_id)
+
+      user_ministries.each do |user_ministry|
+        assigned_ministries << {
+          user_id: user_ministry.id.present? ? user_ministry.id : nil,
+          name: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]].name : nil,
+          allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
+          own_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
+          assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
+        }
+      end
 
       render json: {
         success: true,
         message: 'Success',
-        data: user_ministries
+        data: assigned_ministries
       }, status: :ok
     rescue StandardError => e
       return render json: {
