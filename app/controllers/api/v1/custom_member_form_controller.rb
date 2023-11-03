@@ -5,6 +5,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
   include MetadataHelper
 
   def fetch_by_number
+    permission_exist = is_permissible('Eminent', 'View')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     if params[:phone_number].nil? || !params[:phone_number].match?(phone_regex)
       return render json: {
         success: false,
@@ -48,6 +56,15 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
   def add
     begin
+      add_permission_exist = is_permissible('Eminent', 'Add')
+      edit_permission_exist = is_permissible('Eminent', 'Edit')
+      if add_permission_exist.nil? && edit_permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
       # check if the base of the eminent form is valid
       is_form_params_valid = validate_form(@@schema_base, params.as_json)
       unless is_form_params_valid[:is_valid]
@@ -137,6 +154,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
 
       if custom_member.blank?
+        if add_permission_exist.nil?
+          return render json: {
+            success: false,
+            message: 'Access to this is restricted. Please check with the site administrator.'
+          }, status: :unauthorized
+        end
         custom_member = CustomMemberForm.create!(
           data: params[:data],
           form_type: params[:form_type],
@@ -170,6 +193,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
           }, status: :ok
         end
       else
+        if edit_permission_exist.nil?
+          return render json: {
+            success: false,
+            message: 'Access to this is restricted. Please check with the site administrator.'
+          }, status: :unauthorized
+        end
+
         if custom_member.country_state_id != cs
           return render json: {
             success: false,
@@ -210,6 +240,15 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def add_file
+    add_permission_exist = is_permissible('Eminent', 'Add')
+    edit_permission_exist = is_permissible('Eminent', 'Edit')
+    if add_permission_exist.nil? && edit_permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     require 'digest/md5'
     unless params[:file].present?
       render json: { success: false, message: 'Please provide a image file.' }, status: :bad_request
@@ -279,6 +318,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def select_member
     begin
+      permission_exist = is_permissible('Eminent', 'SelectForm')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
       custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
       if custom_member.nil?
         return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
@@ -296,6 +343,15 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def update_aasm_state
     begin
+      approve_permission_exist = is_permissible('Eminent', 'FreezeForm')
+      re_edit_permission_exist = is_permissible('Eminent', 'ReEditForm')
+      if approve_permission_exist.nil? && re_edit_permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
       custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
       if custom_member.nil?
         return render json: { success: true, message: 'Please provide a valid member id' }, status: :bad_request
@@ -306,6 +362,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
 
       if params[:aasm_state] == 'approve'
+        if approve_permission_exist.nil?
+          return render json: {
+            success: false,
+            message: 'Access to this is restricted. Please check with the site administrator.'
+          }, status: :unauthorized
+        end
         if custom_member.may_approve?
           custom_member.approve!
           custom_member.update(approved_by_id: current_auth_user.id)
@@ -313,6 +375,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
           return render json: { success: false, message: 'Transaction not allowed.' }, status: :bad_request
         end
       elsif params[:aasm_state] == 'reject'
+        if re_edit_permission_exist.nil?
+          return render json: {
+            success: false,
+            message: 'Access to this is restricted. Please check with the site administrator.'
+          }, status: :unauthorized
+        end
         if custom_member.may_reject?
           custom_member.reject!
           custom_member.update(
@@ -331,6 +399,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def delete_member
     begin
+      permission_exist = is_permissible('Eminent', 'Delete')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
       custom_member = params[:id].present? ? CustomMemberForm.find_by_id(params[:id].to_i) : nil
       if custom_member.nil?
         return render json: { success: false, message: 'Please provide a valid member id' }, status: :bad_request
@@ -350,6 +425,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def list
+    permission_exist = is_permissible('Eminent', 'ViewAll')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     # compute limit and offset
     limit = params[:limit].present? ? params[:limit] : 10
     offset = params[:offset].present? ? params[:offset] : 0

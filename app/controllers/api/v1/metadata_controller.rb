@@ -73,7 +73,12 @@ class Api::V1::MetadataController < BaseApiController
         get_category_filter
       ]
     }
+
     render json: { success: true, data: result, message: 'User Assigned States' }, status: 200
+  end
+
+  def user_allotted_permissions
+    render json: { success: true, data: user_permissions, message: 'User allotted permissions' }, status: 200
   end
 
   def get_required_locations

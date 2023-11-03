@@ -5,10 +5,21 @@ class Admin::AdminController < ApplicationController
   include MailHelper
 
   def manual_upload
-    render 'admin/manual_upload'
+    permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+    if permission_exist.nil?
+      return render 'home/unauthorized'
+    else
+      return render 'admin/manual_upload'
+    end
   end
   def manual_upload_data
     begin
+      permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+      if permission_exist.nil?
+        redirect_to admin_manual_upload_path, allow_other_host: true
+        return
+      end
+
       phone_regex = '^[1-9][0-9]{9}$'
       eminent_users = []
       failed_eminent_users = []
@@ -33,12 +44,12 @@ class Admin::AdminController < ApplicationController
       begin
         puts 'trying with UTF-8'
         file = open(file.path)
-        file.set_encoding(Encoding.find("UTF-8"))
+        file.set_encoding(Encoding.find('UTF-8'))
         rows = CSV.parse(file.read, header_converters: lambda { |name| name.gsub(/\ufeff/, '') }, headers: true, :quote_char => '"')
       rescue StandardError => e
         puts 'trying with ISO'
         file = open(file.path)
-        file.set_encoding(Encoding.find("ISO-8859-1"))
+        file.set_encoding(Encoding.find('ISO-8859-1'))
         rows = CSV.parse(file.read, header_converters: lambda { |name| name.gsub(/\ufeff/, '') }, headers: true, :quote_char => '"')
       end
 
