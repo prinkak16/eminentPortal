@@ -68,7 +68,7 @@ class Api::V1::Gom::GomController < BaseApiController
           user_id: user_ministry.id.present? ? user_ministry.id : nil,
           name: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]].name : nil,
           allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
-          own_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
+          assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
           assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
         }
       end
