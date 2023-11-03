@@ -12,3 +12,14 @@
 .mastertabs .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected{
     color:#000;
 }
+.mastertabs button{
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.mastertabs .download_btn{
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.6);
+    background: transparent;
+    color: rgba(0,0,0,0.6);
+}

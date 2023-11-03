@@ -30,7 +30,7 @@ const Analytics = (props) => {
                 }
                 case 'completed': {
                     label = 'Total Completed Form';
-                    icon = <CheckList />;
+                    icon = <ChecykList />;
                     break;
                 }
                 case 'overall': {

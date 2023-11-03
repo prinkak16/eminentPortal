@@ -9,28 +9,9 @@ import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
 
 
-const  MinistryTable = ({handleTab}) => {
-    const ministryData = [
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"}
-    ]
-    useEffect(() => {
-        for (let i  = 0; i < ministryData.length; i++) {
-            let dataItem = ministryData[i]
-            console.log(dataItem?.name)
-        }
-
-    }, []);
-    // let navigate=useNavigate();
-    const testing=()=>{
-        console.log('path', )
-
-    }
+const  MinistryTable = ({data, onSwitchTab}) => {
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} className="psutable">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
@@ -42,26 +23,14 @@ const  MinistryTable = ({handleTab}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {ministryData.map((item) => (
-                        <TableRow
-                            key={item.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {item.id}
-                            </TableCell>
-
-                                <TableCell className="mini" onClick={(e)=> {
-                                    handleTab(e, 1);
-                                }}>
-                                   {item.name}
-                                </TableCell>
-
-                            <TableCell>{item.pos}</TableCell>
-                            <TableCell>{item.occu}</TableCell>
-                            <TableCell>{item.vec}</TableCell>
-                        </TableRow>
-                    ))}
+                    {data.map((ministry, index) => <TableRow key={ministry.ministryId}>
+                        <TableCell>{index + 1}</TableCell>
+                        { }
+                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministryId)}>{ministry.ministryName}</TableCell>
+                        <TableCell>{ministry.totalPositions}</TableCell>
+                        <TableCell>{ministry.occupied}</TableCell>
+                        <TableCell>{ministry.vacant}</TableCell>
+                    </TableRow>)}
                 </TableBody>
             </Table>
         </TableContainer>
