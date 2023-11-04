@@ -3,9 +3,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import {TextField} from "@mui/material";
 import './autoCompleteDropdown.css'
 
-const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dropDownType}) => {
+const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dropDownType, formIndex}) => {
     const onChange = (event, value) => {
-        onChangeValue(value, name, dropDownType)
+        onChangeValue(value, name, dropDownType,formIndex)
     }
     return (
         <div>

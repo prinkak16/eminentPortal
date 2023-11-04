@@ -16,7 +16,7 @@ import {
     getLocationsData,
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}) => {
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [locationsArray, setLocationsArray] =useState({})
 
@@ -28,6 +28,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
             }));
         })
         let field = jsonForm.fields.find((item) => item.key === 'State')
+        getLocations(3, field.combo_fields[0])
     }
 
     useEffect(() => {
@@ -95,9 +96,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
         }));
     };
 
-    const handleSave = (id) => {
-        saveData(jsonForm.title,fieldsData, id)
-        resetFieldsToBlank()
+    const handleSave = () => {
+        saveData(fieldsData,formIndex)
     }
 
     const contestedElection = (value, fieldKey) => {
@@ -128,6 +128,9 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
         return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
     }
 
+    useEffect(() => {
+        handleSave()
+    }, [fieldsData]);
 
     return (
         <div>

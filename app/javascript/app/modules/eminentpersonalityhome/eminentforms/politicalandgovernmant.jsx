@@ -44,10 +44,15 @@ const PolticalandGovrnform =(props)=>{
     const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
     const [NAFields, setNAFields] = useState(false)
     const [electionType, setElectionType] = useState('')
+    const [electoralData, setElectoralData] = useState([{election_type: '', election_details:[]}])
     const addSocialFields = () => {
         setSocialFields([...socialFields, { organization: "", description: "" }])
         setShowFields(true);
         setcount(count+1);
+    }
+
+    const addFieldElectoralElection = () => {
+        setElectoralData([...socialFields,  {election_contested: '', election_type: '', election_details:[]}])
     }
 
     const deleteSocialFields = () => {
@@ -185,13 +190,13 @@ const PolticalandGovrnform =(props)=>{
 
 
     const contestedElection = (value) => {
-        if (value === 'Yes') {
-            handleaddField()
-        }
+        setElectfield(value === 'Yes')
     }
 
-    const changeElectionType = (value) => {
-        setElectionType(value)
+    const changeElectionType = (value,name ,type, formIndex) => {
+        const updatedElectoralData = [...electoralData];
+        updatedElectoralData[0].election_type = value;
+        setElectoralData(updatedElectoralData);
     }
 
     function toSnakeCase(inputString) {
@@ -199,8 +204,22 @@ const PolticalandGovrnform =(props)=>{
         return cleanedString.replace(/\s+/g, '_').toLowerCase();
     }
 
+    const saveElectoralData = (data,index) => {
+        setElectoralData((preElectoral) => {
+            return preElectoral.map((form, i) => {
+                if (i === index) {
+                    return {
+                        ...form,
+                        ['election_details']: data,
+                    };
+                }
+                return form;
+            });
+        });
+    }
 
-console.log(electionWiseJson[toSnakeCase(electionType)])
+    console.log(electoralData)
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -394,23 +413,44 @@ console.log(electionWiseJson[toSnakeCase(electionType)])
                         </div>
                         <ErrorMessage name="won" component="div" />
                     </Grid>
-                    <Grid item xs={12} sx={{mb:2}}>
-                        <Grid container spacing={2} className='px-5 py-3'>
-                            <Grid item xs={4}>
-                                {electfiled &&(
-                                    <AutoCompleteDropdown
-                                        name={'Election Type'}
-                                        selectedValue={electionType}
-                                        listArray={electionTypeList}
-                                        onChangeValue={changeElectionType}/>
-                                )}
+                    {electoralData && electoralData.map((field,index) => (
+                        <>
+                            <Grid item xs={12} sx={{mb:2}}>
+                                <Grid container spacing={2} className='px-5 py-3'>
+                                    <Grid item xs={4}>
+                                        {electfiled &&(
+                                            <AutoCompleteDropdown
+                                                name={'Election Type'}
+                                                selectedValue={electoralData[index].election_type}
+                                                listArray={electionTypeList}
+                                                onChangeValue={changeElectionType}
+                                                formIndex={index}
+                                            />
+                                        )}
+                                    </Grid>
+                                    <Grid item xs={9}>
+                                        {isValuePresent(electoralData[index].election_type) &&
+                                            <>
+                                                    <ElectoralGovermentMatrix
+                                                        jsonForm={electionWiseJson[toSnakeCase(electoralData[index].election_type)]}
+                                                        saveData={saveElectoralData}
+                                                        formIndex={index}
+                                                    />
+                                                {electoralData.length === index + 1 &&
+                                                    <Primarybutton
+                                                        addclass="addanotherfieldsbtn me-2"
+                                                        starticon={<AddIcon/>}
+                                                        buttonlabel="Add Another"
+                                                        handleclick={() => addFieldElectoralElection()}
+                                                    />
+                                                }
+                                            </>
+                                        }
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={9}>
-                                {electionType &&
-                                    <ElectoralGovermentMatrix  jsonForm={electionWiseJson[toSnakeCase(electionType)]} />
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                        </>
+                    ))}
                 </Grid>
             </Box>
         </>
