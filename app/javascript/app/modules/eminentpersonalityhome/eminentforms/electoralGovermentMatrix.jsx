@@ -11,19 +11,23 @@ import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
 import {isValuePresent} from "../../utils";
 import RadioButton from "./radioButton";
-import {getAssemblyData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {
+    getAssemblyData,
+    getLocationsData,
+    getStateData
+} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [locationsArray, setLocationsArray] =useState({})
 
     const getStates = () => {
-        debugger
         getStateData.then((res) => {
             setLocationsArray((prevFieldsData) => ({
                 ...prevFieldsData,
-                ['State']: res.data.data,
+                ['State']: res.data.data.map(item => item.name),
             }));
         })
+        let field = jsonForm.fields.find((item) => item.key === 'State')
     }
 
     useEffect(() => {
@@ -83,9 +87,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
             let field = jsonForm.find((item) => item.key === 'State')
-            getLocations(value,field)
+            getLocations(value, field.combo_fields[0])
         }
-
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
@@ -111,10 +114,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
    const getLocations = (stateId,field) => {
        if (stateId) {
            let dataAssembly = `?location_type=State&location_id=${stateId}&required_location_type=${field.key}`;
-           getAssemblyData(dataAssembly).then((res) => {
+           getLocationsData(dataAssembly).then((res) => {
                setLocationsArray((prevFieldsData) => ({
                    ...prevFieldsData,
-                   [field.key]: res.data.data,
+                   [field.key]: res.data.data.locations.map(item => item.name),
                }));
            })
        }
@@ -124,6 +127,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
     const getList = (key) => {
         return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
     }
+
 
     return (
         <div>
@@ -173,7 +177,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable}
                                             <AutoCompleteDropdown
                                                 name={fi.name}
                                                 selectedValue={fieldsData[fi.key] || null}
-                                                listArray={[]}
+                                                listArray={getList(fi.key)}
                                                 onChangeValue={handleFieldChange}
                                                 dropDownType={fi.key}/>
                                             <ErrorMessage name="qualification" component="div"/>

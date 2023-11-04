@@ -374,8 +374,7 @@ console.log(electionWiseJson[toSnakeCase(electionType)])
                     </Grid>
                     <Grid item  xs={12}>
                         <Primarybutton addclass="addanotherfieldsbtn me-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={()=>addSocialFields()}/>
-
-                        {socialFields.length>=1 ?(
+                        {socialFields.length > 1 ?(
                             <Primarybutton addclass="deletebtn mt-3" starticon={<DeleteIcon/>} handleclick={()=>deleteSocialFields(socialFields.length-1)}/>
                         ):null}
                     </Grid>
@@ -409,16 +408,6 @@ console.log(electionWiseJson[toSnakeCase(electionType)])
                             <Grid item xs={9}>
                                 {electionType &&
                                     <ElectoralGovermentMatrix  jsonForm={electionWiseJson[toSnakeCase(electionType)]} />
-                                }
-                                {/*<div>*/}
-                                {/*    {electionType === 'Lok sabha' && <Stepfouraddmore values={props.formValues}/>}*/}
-                                {/*    {electionType === 'Rajya sabha' && <Rajyasabhaform/>}*/}
-                                {/*    {electionType === 'Legislative Assembly (vidhan sabha)' &&*/}
-                                {/*        <Vidhansabhaform values={props.formValues}/>}*/}
-                                {/*    {electionType === 'Legislative Council (vidhan sabha)' && <Vidhanparishadform/>}*/}
-                                {/*    {electionType === 'Urban Local body' && <Urbanlocalfrom/>}*/}
-                                {/*    {electionType === 'Rural Local body' && <Urbanlocalfrom/>}*/}
-                                {/*</div>*/}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -439,11 +428,7 @@ PolticalandGovrnform.initialValues = {
     bjp_years: '',
     other_parties: [],
     social_profiles: [],
-    election_fought:[
-        {
-        election_contested:'',
-        }
-    ]
+    election_fought:[]
 
 };
 

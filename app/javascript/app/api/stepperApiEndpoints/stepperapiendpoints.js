@@ -88,3 +88,7 @@ const params = {
 export const getAssemblyData = (assembly) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + assembly)
 }
+
+export const getLocationsData = (params) => {
+    return axios.get(apiBaseUrl + 'metadata/get_required_locations' + params)
+}

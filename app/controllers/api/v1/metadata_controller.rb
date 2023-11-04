@@ -45,7 +45,7 @@ class Api::V1::MetadataController < BaseApiController
 
   def states
     result = State.select(:id, :name).order(id: :asc)
-    render json: { success: true, data: result, message: 'Profession List' }, status: 200
+    render json: { success: true, data: result, message: 'State List' }, status: 200
   end
 
   def state_party_list
