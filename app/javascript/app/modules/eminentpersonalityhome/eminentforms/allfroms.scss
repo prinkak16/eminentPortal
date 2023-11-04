@@ -470,3 +470,50 @@ button.cancelbtn{
   gap: 2rem;
   margin-top: 1rem;
 }
+
+.websites {
+  display: flex;
+  width: 240%;
+  gap: 4rem;
+}
+
+.pdf-upload-div {
+  border: 2px dashed #FF9559;
+  border-radius: 12px;
+  height: 100px;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.material-icons {
+  width: 24px;
+}
+
+.upload-button {
+  background: #61BE7A;
+  border-radius: 12px;
+  font-family: 'Quicksand', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 150%;
+  color: #FFFFFF;
+  height: 35px;
+}
+
+.material-icons {
+  width: 24px;
+}
+
+.upload-resume-button .css-sghohy-MuiButtonBase-root-MuiButton-root {
+  background: #61BE7A !important;
+}
+
+.pdf-icon-name {
+  display: flex;
+  gap: 1rem;
+}
+
+.pdf-file-name {
+  cursor: pointer;
+}
