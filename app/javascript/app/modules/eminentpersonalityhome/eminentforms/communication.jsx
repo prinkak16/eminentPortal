@@ -406,7 +406,7 @@ const Communicationform =(props)=>{
                                                 value={props.formValues.home_flat}
                                                 placeholder="Enter your address"
                                             />
-
+                                            <ErrorMessage name="home_flat" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <mark>*</mark></FormLabel>
@@ -420,6 +420,7 @@ const Communicationform =(props)=>{
 
                                                 }}
                                             />
+                                            <ErrorMessage name="home_pincode" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
@@ -428,7 +429,7 @@ const Communicationform =(props)=>{
                                                         placeholder="Enter Area, Street, Etc.s"
                                                         value={props.formValues.home_street}
                                             />
-
+                                            <ErrorMessage name="home_street" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <mark>*</mark></FormLabel>
@@ -438,6 +439,7 @@ const Communicationform =(props)=>{
                                                 listArray={homePinData.district}
                                                 onChangeValue={changeDistrictState}
                                                 dropDownType={'home_address'} />
+                                            <ErrorMessage name="home_district" component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>State <mark>*</mark></FormLabel>
@@ -447,6 +449,7 @@ const Communicationform =(props)=>{
                                                 listArray={homePinData.state}
                                                 onChangeValue={changeDistrictState}
                                                 dropDownType={'home_address'} />
+                                            <ErrorMessage name="home_state" component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -594,17 +597,22 @@ Communicationform.initialValues = {
     other_pincode:"",
 };
 Communicationform.validationSchema = Yup.object().shape({
-    // email:Yup.string()
-    //     .required('Email is required')
-    //     .matches(
-    //         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    //         'Invalid email format'
-    //     ),
-    // flat: Yup.string().required('Please enter your Address'),
-    // street: Yup.string().required('Please enter your Street'),
-    // district: Yup.string().required('Please enter your District'),
-    // state: Yup.string().required('Please enter your State'),
-    // pincode: Yup.string().required('Please enter your Pincode')
+    email:Yup.string()
+        .required('Email is required')
+        .matches(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            'Invalid email format'
+        ),
+    flat: Yup.string().required('Please enter your Address'),
+    street: Yup.string().required('Please enter your Street'),
+    district: Yup.string().required('Please enter your District'),
+    state: Yup.string().required('Please enter your State'),
+    pincode: Yup.string().required('Please enter your Pincode'),
+    home_flat: Yup.string().required('Please enter your Address'),
+    home_street: Yup.string().required('Please enter your Street'),
+    home_district: Yup.string().required('Please enter your District'),
+    home_state: Yup.string().required('Please enter your State'),
+    home_pincode: Yup.string().required('Please enter your Pincode')
 
 });
 export default Communicationform

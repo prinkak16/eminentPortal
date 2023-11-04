@@ -35,6 +35,20 @@ const Educationform = (props) => {
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
 
+    useEffect(() => {
+        let educations = props.formValues.educations
+        if (isValuePresent(educations)) {
+            const educationObjects = []
+            for (let i = 0; i < educations.length; i++) {
+                educationObjects.push({
+                    profession: educations.profession, position: educations.position, organization: educations.organization,
+                    start_year: educations.start_year, end_year: educations.end_year,
+                })
+            }
+            setEducationDetails(educationObjects)
+        }
+    }, []);
+
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -82,7 +96,6 @@ const Educationform = (props) => {
     }
 
     const professionSave = (formData, id) => {
-        debugger
         const newFormData = {
             id: uuidv4(),
             profession: formData.profession,
