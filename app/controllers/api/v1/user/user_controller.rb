@@ -51,16 +51,9 @@ class Api::V1::User::UserController < BaseApiController
         }, status: :bad_request
       end
 
-      input_ministry_count = params['ministry_ids'].length
-      ministry = Ministry.where(id: params['ministry_ids'])
-      if input_ministry_count != ministry.count
-        return render json: {
-          success: false,
-          message: 'Some of the ministry is not associated with our system.'
-        }, status: :conflict
-      end
-
-      auth_user = AuthUser.find_by(id: params['user_id'])
+      auth_user = AuthUser.find_by(
+        id: params['user_id']
+      )
       if auth_user.nil?
         return render json: {
           success: false,
@@ -68,12 +61,49 @@ class Api::V1::User::UserController < BaseApiController
         }, status: :unauthorized
       end
 
-      params['ministry_ids'].each do |ministry_id_v|
-        UserMinistry.where(
+
+      user_assigned_ministry = UserMinistry.where(
+        user_id: params['user_id'],
+        is_minister: false
+      ).pluck(:ministry_id)
+
+      ministry_available = user_assigned_ministry & params['ministry_ids']
+      ministry_new = params['ministry_ids'] - user_assigned_ministry
+      ministry_removed = user_assigned_ministry - params['ministry_ids']
+
+      # remove if there is ministry added
+      if ministry_new.length.positive?
+        ministry_new_db = Ministry.where(id: ministry_new)
+        if ministry_new.length != ministry_new_db.count
+          return render json: {
+            success: false,
+            message: 'Some of the ministry is not associated with our system.'
+          }, status: :conflict
+        end
+
+        ministry_new.each do |ministry_id_v|
+          UserMinistry.where(
+            user_id: params['user_id'],
+            ministry_id: ministry_id_v,
+            is_minister: false
+          ).first_or_create!
+        end
+      end
+
+      # remove if there is ministry removed
+      if ministry_removed.length.positive?
+        ministry_removed_db = UserMinistry.where(
           user_id: params['user_id'],
-          ministry_id: ministry_id_v,
+          ministry_id: ministry_removed,
           is_minister: false
-        ).first_or_create!
+        )
+        if ministry_removed.length != ministry_removed_db.count
+          return render json: {
+            success: false,
+            message: 'Some of the ministry is not associated with our system.'
+          }, status: :conflict
+        end
+        ministry_removed_db.destroy_all
       end
 
       return render json: {
@@ -160,58 +190,85 @@ class Api::V1::User::UserController < BaseApiController
   end
 
   def allocate_ministries
-    # check validations
-    params['user_id'] = params['user_id'].to_i
-    is_param_data_is_valid = validate_form(
-      user_ministry_validator,
-      params.as_json
-    )
-    unless is_param_data_is_valid[:is_valid]
+    begin
+      # check validations
+      params['user_id'] = params['user_id'].to_i
+      is_param_data_is_valid = validate_form(
+        user_ministry_validator,
+        params.as_json
+      )
+      unless is_param_data_is_valid[:is_valid]
+        return render json: {
+          success: false,
+          message: 'Invalid request',
+          error: is_param_data_is_valid[:error]
+        }, status: :bad_request
+      end
+
+      auth_user = AuthUser.find_by(
+        id: params['user_id']
+      )
+      if auth_user.nil?
+        return render json: {
+          success: false,
+          message: 'Minister/PA/Assistant is not associated with our system.'
+        }, status: :unauthorized
+      end
+
+      user_allocated_ministry = UserMinistry.where(
+        user_id: params['user_id'],
+        is_minister: true
+      ).pluck(:ministry_id)
+
+      ministry_available = user_allocated_ministry & params['ministry_ids']
+      ministry_new = params['ministry_ids'] - user_allocated_ministry
+      ministry_removed = user_allocated_ministry - params['ministry_ids']
+
+      # remove if there is ministry added
+      if ministry_new.length.positive?
+        ministry_new_db = Ministry.where(id: ministry_new)
+        if ministry_new.length != ministry_new_db.count
+          return render json: {
+            success: false,
+            message: 'Some of the ministry is not associated with our system.'
+          }, status: :conflict
+        end
+
+        ministry_new.each do |ministry_id_v|
+          UserMinistry.where(
+            user_id: params['user_id'],
+            ministry_id: ministry_id_v,
+            is_minister: true
+          ).first_or_create!
+        end
+      end
+
+      # remove if there is ministry removed
+      if ministry_removed.length.positive?
+        ministry_removed_db = UserMinistry.where(
+          user_id: params['user_id'],
+          ministry_id: ministry_removed,
+          is_minister: true
+        )
+        if ministry_removed.length != ministry_removed_db.count
+          return render json: {
+            success: false,
+            message: 'Some of the ministry is not associated with our system.'
+          }, status: :conflict
+        end
+        ministry_removed_db.destroy_all
+      end
+
+      return render json: {
+        success: true,
+        message: 'Success'
+      }, status: :ok
+    rescue StandardError => e
       return render json: {
         success: false,
-        message: 'Invalid request',
-        error: is_param_data_is_valid[:error]
+        message: e.message
       }, status: :bad_request
     end
-    input_ministry_count = params['ministry_ids'].length
-    ministry = Ministry.where(
-      id: params['ministry_ids']
-    )
-    if input_ministry_count != ministry.count
-      return render json: {
-        success: false,
-        message: 'Some of the ministry is not associated with our system.'
-      }, status: :conflict
-    end
-
-    auth_user = AuthUser.find_by(
-      id: params['user_id'],
-      assist_to_id: nil
-    )
-    if auth_user.nil?
-      return render json: {
-        success: false,
-        message: 'Minister/PA/Assistant is not associated with our system.'
-      }, status: :unauthorized
-    end
-
-    params['ministry_ids'].each do |ministry_id_v|
-      UserMinistry.where(
-        user_id: params['user_id'],
-        ministry_id: ministry_id_v,
-        is_minister: true
-      ).first_or_create!
-    end
-
-    return render json: {
-      success: true,
-      message: 'Success'
-    }, status: :ok
-  rescue StandardError => e
-    return render json: {
-      success: false,
-      message: e.message
-    }, status: :bad_request
   end
 
   def deallocate_ministries
