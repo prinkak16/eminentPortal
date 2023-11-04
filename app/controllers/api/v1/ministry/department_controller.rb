@@ -55,12 +55,43 @@ class Api::V1::Ministry::DepartmentController < BaseApiController
       limit = params[:limit].present? ? params[:limit] : 50
       offset = params[:offset].present? ? params[:offset] : 0
 
+
+      departments = []
+      department_count = 0
+      if params[:name].present? && params[:name].length > 2
+        departments = Department
+                      .name_similar(params[:name])
+                      .where(ministry_id: params['ministry_id'])
+                      .includes(:ministry)
+                      .order('created_at desc')
+                      .limit(limit)
+                      .offset(offset)
+                      .as_json(include: [:ministry])
+
+        department_count = Department
+                           .name_similar(params[:name])
+                           .where(ministry_id: params['ministry_id'])
+                           .count(:id)
+      else
+        departments = Department
+                      .where(ministry_id: params['ministry_id'])
+                      .includes(:ministry)
+                      .order('created_at desc')
+                      .limit(limit)
+                      .offset(offset)
+                      .as_json(include: [:ministry])
+
+        department_count = Department
+                           .where(ministry_id: params['ministry_id'])
+                           .count(:id)
+      end
+
       render json: {
         success: true,
         message: 'Success',
         data: {
-          'ministries': Department.where(ministry_id: params['ministry_id']).includes(:ministry).order('created_at desc').limit(limit).offset(offset).as_json(include: [:ministry]),
-          'count': Department.where(ministry_id: params['ministry_id']).count
+          'department': departments,
+          'count': department_count
         }
       }, status: :ok
     rescue StandardError => e
