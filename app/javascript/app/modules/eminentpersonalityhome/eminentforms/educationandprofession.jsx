@@ -36,33 +36,9 @@ const Educationform = (props) => {
     const [educationDetails, setEducationDetails] = useState([]);
 
     useEffect(() => {
-        let educations = props.formValues.educations
-        if (isValuePresent(educations)) {
-            const educationObjects = []
-            for (let i = 0; i < educations.length; i++) {
-                educationObjects.push({
-                    qualification: educations[i].qualification, course: educations[i].course, university: educations[i].university, organization: educations[i].college,
-                    start_year: educations[i].start_year, end_year: educations[i].end_year,
-                })
-            }
-            setEducationDetails(educationObjects)
-        }
+        isValuePresent(props.formValues.educations) ? setEducationDetails(props.formValues.educations) : null
+        isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
-
-    useEffect(() => {
-        let profession = props.formValues.professions
-        if (isValuePresent(profession)) {
-            const educationObjects = []
-            for (let i = 0; i < profession.length; i++) {
-                educationObjects.push({
-                    profession: profession[i].profession, position: profession[i].position, organization: profession[i].organization,
-                    start_year: profession[i].start_year, end_year: profession[i].end_year,
-                })
-            }
-            setEducationDetails(educationObjects)
-        }
-    }, []);
-
 
     const selectChange = (e) => {
         setSelectedOption(e.target.value);

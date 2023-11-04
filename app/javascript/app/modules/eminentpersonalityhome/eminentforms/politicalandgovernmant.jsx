@@ -43,8 +43,24 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState({})
     const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
     const [NAFields, setNAFields] = useState(false)
-    const [electionType, setElectionType] = useState('')
-    const [electoralData, setElectoralData] = useState([{election_type: '', election_details:[]}])
+    const [electoralDetails, setElectoralDetails] = useState([{election_type: '', election_details:[]}])
+    const [electFiled, setElectField] = useState(false)
+
+    useEffect(() => {
+        isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
+        isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
+        isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
+    }, []);
+
+    useEffect(() => {
+        props.formValues.political_profile =  politicalProfileDetails
+    }, [politicalProfileDetails]);
+
+    useEffect(() => {
+        props.formValues.other_parties =  otherPartyDetails
+    }, [politicalProfileDetails]);
+
+
     const addSocialFields = () => {
         setSocialFields([...socialFields, { organization: "", description: "" }])
         setShowFields(true);
@@ -52,7 +68,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralData([...socialFields,  {election_contested: '', election_type: '', election_details:[]}])
+        setElectoralDetails([...socialFields,  {election_contested: '', election_type: '', election_details:[]}])
     }
 
     const deleteSocialFields = () => {
@@ -61,35 +77,11 @@ const PolticalandGovrnform =(props)=>{
         setSocialFields(newFormValues);
         setcount(count-1);
     }
-    const [electfiled, setElectfield]=useState(false)
-    const [selectedOption, setSelectedOption] = useState('');
-    const handleaddField = () => {
-        setElectfield(true)
-    }
-    function handlremoveField(){
-        setElectfield(false)
-    }
-    const selectChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
-    const [assemblyData, setAssemblyData]=useState()
-    // const getAssembly=()=>{
-    //     getAssemblyData.then((res)=>{
-    //         setAssemblyData(res.data.data)
-    //     })
-    // }
+
+
     useEffect(() => {
         // getAssembly()
     }, []);
-
-    const [saveParty, setSaveParty]=useState(null);
-    const handleSaveParty=()=>{
-        setSaveParty(props.formValues)
-    }
-    const [saveProfile, setSaveProfile]=useState(null)
-    const  handleSaveProfile=()=>{
-        setSaveProfile(props.formValues)
-    }
 
     const handleSave = ( title, formData, id) => {
         if (title === 'Political Profile') {
@@ -117,6 +109,7 @@ const PolticalandGovrnform =(props)=>{
         }
 
     };
+
 
     const politicalProfileSave = (formData, id) => {
         const newFormData = {
@@ -190,13 +183,14 @@ const PolticalandGovrnform =(props)=>{
 
 
     const contestedElection = (value) => {
-        setElectfield(value === 'Yes')
+        setElectField(value === 'Yes')
+        props.formValues.election_fought = value
     }
 
     const changeElectionType = (value,name ,type, formIndex) => {
-        const updatedElectoralData = [...electoralData];
+        const updatedElectoralData = [...electoralDetails];
         updatedElectoralData[0].election_type = value;
-        setElectoralData(updatedElectoralData);
+        setElectoralDetails(updatedElectoralData);
     }
 
     function toSnakeCase(inputString) {
@@ -205,7 +199,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const saveElectoralData = (data,index) => {
-        setElectoralData((preElectoral) => {
+        setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
                 if (i === index) {
                     return {
@@ -219,9 +213,10 @@ const PolticalandGovrnform =(props)=>{
     }
 
     useEffect(() => {
-        props.formValues.election_fought = electoralData
-    }, [electoralData]);
+        props.formValues.fought_details = electoralDetails
+    }, [electoralDetails]);
 
+    console.log(electFiled)
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -280,13 +275,16 @@ const PolticalandGovrnform =(props)=>{
                         </table>
                     </div>
                 )}
+
                 <div className='date-na-button date-na-button-out-side'>
-                                        <span className='na-check-box'>
-                                            <input type="checkbox" onClick={NotApplicableFields}/>
-                                        </span>
+                     <span className='na-check-box'>
+                        <input type="checkbox" onClick={NotApplicableFields} />
+                     </span>
                     <span className='na-check-msg'>Not Applicable</span>
                 </div>
+                {!NAFields &&
                 <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField} notApplicable={NAFields}/>
+                }
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
@@ -415,30 +413,30 @@ const PolticalandGovrnform =(props)=>{
                         </div>
                         <ErrorMessage name="won" component="div" />
                     </Grid>
-                    {electoralData && electoralData.map((field,index) => (
+                    {electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
-                                        {electfiled &&(
+                                        {electFiled &&
                                             <AutoCompleteDropdown
                                                 name={'Election Type'}
-                                                selectedValue={electoralData[index].election_type}
+                                                selectedValue={field.election_type}
                                                 listArray={electionTypeList}
                                                 onChangeValue={changeElectionType}
                                                 formIndex={index}
                                             />
-                                        )}
+                                        }
                                     </Grid>
                                     <Grid item xs={9}>
-                                        {isValuePresent(electoralData[index].election_type) &&
+                                        {isValuePresent(field.election_type) &&
                                             <>
                                                     <ElectoralGovermentMatrix
-                                                        jsonForm={electionWiseJson[toSnakeCase(electoralData[index].election_type)]}
+                                                        jsonForm={electionWiseJson[toSnakeCase(field.election_type)]}
                                                         saveData={saveElectoralData}
                                                         formIndex={index}
                                                     />
-                                                {electoralData.length === index + 1 &&
+                                                {electoralDetails.length === index + 1 &&
                                                     <Primarybutton
                                                         addclass="addanotherfieldsbtn me-2"
                                                         starticon={<AddIcon/>}
@@ -470,7 +468,8 @@ PolticalandGovrnform.initialValues = {
     bjp_years: '',
     other_parties: [],
     social_profiles: [],
-    election_fought:[]
+    election_fought: false,
+    fought_details: []
 
 };
 

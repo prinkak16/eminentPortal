@@ -597,22 +597,22 @@ Communicationform.initialValues = {
     other_pincode:"",
 };
 Communicationform.validationSchema = Yup.object().shape({
-    email:Yup.string()
-        .required('Email is required')
-        .matches(
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            'Invalid email format'
-        ),
-    flat: Yup.string().required('Please enter your Address'),
-    street: Yup.string().required('Please enter your Street'),
-    district: Yup.string().required('Please enter your District'),
-    state: Yup.string().required('Please enter your State'),
-    pincode: Yup.string().required('Please enter your Pincode'),
-    home_flat: Yup.string().required('Please enter your Address'),
-    home_street: Yup.string().required('Please enter your Street'),
-    home_district: Yup.string().required('Please enter your District'),
-    home_state: Yup.string().required('Please enter your State'),
-    home_pincode: Yup.string().required('Please enter your Pincode')
+    // email:Yup.string()
+    //     .required('Email is required')
+    //     .matches(
+    //         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    //         'Invalid email format'
+    //     ),
+    // flat: Yup.string().required('Please enter your Address'),
+    // street: Yup.string().required('Please enter your Street'),
+    // district: Yup.string().required('Please enter your District'),
+    // state: Yup.string().required('Please enter your State'),
+    // pincode: Yup.string().required('Please enter your Pincode'),
+    // home_flat: Yup.string().required('Please enter your Address'),
+    // home_street: Yup.string().required('Please enter your Street'),
+    // home_district: Yup.string().required('Please enter your District'),
+    // home_state: Yup.string().required('Please enter your State'),
+    // home_pincode: Yup.string().required('Please enter your Pincode')
 
 });
 export default Communicationform
