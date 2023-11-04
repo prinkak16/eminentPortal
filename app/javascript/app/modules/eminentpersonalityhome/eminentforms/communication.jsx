@@ -37,25 +37,7 @@ const Communicationform =(props)=>{
     const [curPinData, setCurPinData] = useState({district: [], state: []})
     const [homePinData, setHomePinData] = useState({district: [], state: []})
     const [otherPinData, setOtherPinData] = useState([{id: '', district: [], state: []}])
-
-
-
     const [mobileFields, setMobileFields] =useState([])
-    // const [mobileFieldsNumbers, setMobileFieldsNumbers] = useState([]);
-    // let mobileFields = []
-    let mobileFieldsNumbers = []
-    const handleAddField = () => {
-        if(fields.length<2){
-            setFields([...fields, ""]);
-            setShowFields(true)
-            console.log(fields.length)
-        }
-    };
-    const handledelete=()=>{
-        const allfields = [...fields];
-        allfields.splice(-1, 1);
-        setFields(allfields)
-    }
     const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
     let addFormFields = () => {
         setFormValues([...formValues, {
@@ -119,7 +101,18 @@ const Communicationform =(props)=>{
         setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
     }
 
+    useEffect(() => {
+        props.formValues.mobiles = mobileFields.map(item => item.number);
+    }, [mobileFields]);
+
     const enterMobileNumber = (id) => (event) => {
+        const phoneNumber = event.target.value.replace(/[^\d०१२३४५६७८९]/g, '');
+        if (/^[5-9५६७८९]/.test(phoneNumber)) {
+            event.target.value = phoneNumber;
+        } else {
+            event.target.value = ''; // Clear the input value if it doesn't start with 5-9 or a Hindi digit
+        }
+
         setMobileFields((preMobileFields) => {
             return preMobileFields.map((form) => {
                 if (form.id === id) {
@@ -257,7 +250,7 @@ const Communicationform =(props)=>{
                             <div className='mobiles-container'>
                                 <div className='mobile-number-field'>
                                     <FormLabel className="mobile-label">1. Mobile Number <mark>*</mark></FormLabel>
-                                    <input value={userMobileNumber}  className="primary-number mobile-fields" disabled={true}/>
+                                    <input value={userMobileNumber} maxLength={10} className="primary-number mobile-fields" disabled={true}/>
                                     <div className='add-delete-btns'>
                                         {mobileFields.length === 0 &&
                                             <span className='add-btn' onClick={() => addMobileField()}>
@@ -274,17 +267,20 @@ const Communicationform =(props)=>{
                                     <div className='mobile-number-field'>
                                         <FormLabel className="mobile-label">{i+2}. Mobile Number <mark>*</mark></FormLabel>
                                         <input
+                                            maxLength={10}
                                             placeholder='Enter Mobile Number'
                                             value={field.number}
                                             onChange={enterMobileNumber(field.id)}
                                             className="mobile-fields" />
                                         <div className='add-delete-btns'>
-                                        <span className='add-btn' onClick={() => addMobileField()}>
-                                            <span>
-                                                <FontAwesomeIcon icon={faPlus} />
-                                            </span>
-                                            Add Another
-                                        </span>
+                                            {mobileFields.length < 2 &&
+                                                <span className='add-btn' onClick={() => addMobileField()}>
+                                                      <span>
+                                                         <FontAwesomeIcon icon={faPlus}/>
+                                                     </span>
+                                                     Add Another
+                                                </span>
+                                            }
                                             <span className='delete-button' onClick={() => deleteMobileNumber(field.id)}>
                                                 <FontAwesomeIcon icon={faTrash}/>
                                             </span>
@@ -569,7 +565,7 @@ const Communicationform =(props)=>{
 }
 Communicationform.label = 'Communication Details'
 Communicationform.initialValues = {
-    mobiles: "",
+    mobiles: [],
     std_code: "",
     landline: "",
     email:"",
