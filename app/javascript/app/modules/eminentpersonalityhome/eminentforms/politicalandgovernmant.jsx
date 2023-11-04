@@ -218,7 +218,9 @@ const PolticalandGovrnform =(props)=>{
         });
     }
 
-    console.log(electoralData)
+    useEffect(() => {
+        props.formValues.election_fought = setElectoralData()
+    }, [electoralData]);
 
     return(
         <>
