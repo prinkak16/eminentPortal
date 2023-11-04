@@ -29,6 +29,7 @@ import { useDeviceInfo } from '../context/deviceinfocontext';
 import use from "use";
 import {string} from "yup";
 import Startdatepicker from "../component/startdatepicker/startdatepicker";
+import {isValuePresent} from "../../utils";
 const PersonalDetails = (props) => {
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -41,7 +42,7 @@ const PersonalDetails = (props) => {
     const [dropDownDataCategory, setDropDownDataCategory] = useState([]);
     const [ReligionData, setReligionData] = useState([]);
     const[GenderData, setGenderData]= useState([]);
-    const[selectedLanguages, setSelectedLanguages]= useState([]);
+    const[selectedLanguages, setSelectedLanguages]= useState(isValuePresent(props.formValues.languages) ? props.formValues.languages : []);
     const[customSelectedLanguages, setCustomSelectedLanguages]= useState([]);
     const[langDrawer, setLangDrawer]= useState(false);
     const selectChange = (e) => {
@@ -96,18 +97,29 @@ const saveProgress=()=>{
     });
 }
     const languagesName = [
-        'Hindi1',
-        'English1',
-        'French1',
-        'Punjabi1',
-        'Hindi2',
-        'English2',
-        'French2',
-        'Punjabi2',
-        'Hindi3',
-        'English3',
-        'Frenc3',
-        'Punjabi3',
+        'Hindi',
+        'Bengali',
+        'Telugu',
+        'Marathi',
+        'Tamil',
+        'Urdu',
+        'Gujarati',
+        'Kannada',
+        'Odia',
+        'Punjabi',
+        'Malayalam',
+        'Assamese',
+        'Maithili',
+        'Santali',
+        'Kashmiri',
+        'Nepali',
+        'Konkani',
+        'Sindhi',
+        'Dogri',
+        'Manipuri',
+        'Bodo',
+        'Sanskrit',
+        'Other Indian languages'
     ];
     const handleLanguageChanges = (lang) => {
         let languages = []
@@ -250,7 +262,7 @@ const saveProgress=()=>{
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
                             <Grid item xs={12}>
                                 <FormLabel>Name  <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Enter Name" onKeyPress={(e) => {
+                                <Inputfield type="text" name="name" placeholder="Enter Name" value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
                                     if(!/^[A-Za-z\s]+$/.test(key)) {
                                         e.preventDefault();
@@ -261,6 +273,7 @@ const saveProgress=()=>{
                             <Grid item xs={6}>
                                 <FormLabel>Religion  <mark>*</mark></FormLabel>
                                 <SelectField name="religion" selectedvalues={selectedOption}
+                                             value={props.formValues.religion}
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
                                              optionList={ReligionData}
@@ -270,6 +283,7 @@ const saveProgress=()=>{
                             <Grid item xs={6}>
                                 <FormLabel>Gender  <mark>*</mark></FormLabel>
                                 <SelectField name="gender" selectedvalues={selectedOption}
+                                             value={props.formValues.gender}
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
                                              optionList={GenderData}/>
@@ -278,6 +292,7 @@ const saveProgress=()=>{
                             <Grid item xs={6}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
                                 <SelectField name="category" selectedvalues={selectedOption}
+                                             value={props.formValues.category}
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
                                              optionList={dropDownDataCategory}/>
@@ -285,7 +300,7 @@ const saveProgress=()=>{
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Caste  <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="caste" placeholder="Enter Caste" onKeyPress={(e) => {
+                                <Inputfield type="text" name="caste" value={props.formValues.caste}Z placeholder="Enter Caste"     onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z]+$/.test(key)) {
                                         e.preventDefault();
@@ -306,7 +321,7 @@ const saveProgress=()=>{
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Date of birth  <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <Field name="dob">
+                                    <Field name="dob"   value={props.formValues.dob}>
                                         {({ field, form }) => (
                                             <DatePicker
                                                 {...field} // Pass the field's props to the DatePicker
@@ -361,6 +376,7 @@ const saveProgress=()=>{
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     name="aadhaar"
+                                    value={props.formValues.aadhaar}
                                     placeholder='Enter Aadhaar number'
                                     onInput={(event) => {
                                         event.target.value = event.target.value.replace(/\D/g, '').slice(0, 12);
@@ -373,6 +389,7 @@ const saveProgress=()=>{
                             <Grid item xs={6}>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
+                                    value={props.formValues.voter_id}
                                     type="text"
                                     id="voter_id"
                                     name="voter_id"
@@ -404,7 +421,7 @@ const saveProgress=()=>{
 PersonalDetails.label="Personal Details"
 PersonalDetails.initialValues = {
     name: "",
-    mobiles: [9876543210],
+    mobiles: [],
     religion: "",
     gender: "",
     category: "",
@@ -420,15 +437,15 @@ PersonalDetails.initialValues = {
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    // name: Yup.string().required('Please enter your first name'),
-    // religion: Yup.string().required('Please select your Religion'),
-    // gender: Yup.string().required('Please select your Gender'),
-    // category: Yup.string().required('Please select your Category'),
-    // caste: Yup.string().required('Please select your Caste'),
-    // dob: Yup.string().required('Please select your Caste'),
-    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    // photo:Yup.string().required('Please select your Photo'),
+    name: Yup.string().required('Please enter your first name'),
+    religion: Yup.string().required('Please select your Religion'),
+    gender: Yup.string().required('Please select your Gender'),
+    category: Yup.string().required('Please select your Category'),
+    caste: Yup.string().required('Please select your Caste'),
+    dob: Yup.string().required('Please select your Caste'),
+    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;
