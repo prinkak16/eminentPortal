@@ -13,6 +13,7 @@ class Api::V1::Gom::GomController < BaseApiController
       limit = params[:limit].present? ? params[:limit] : 50
       offset = params[:offset].present? ? params[:offset] : 0
       minister_name = params[:minister_name].present? ? params[:minister_name] : ''
+      ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
 
       sql = "SELECT
         au.id,
@@ -35,7 +36,10 @@ class Api::V1::Gom::GomController < BaseApiController
          ) AS allocated_ministries,
          MAX(um.created_at) as latest_created_at "
       if minister_name.length > 2
-        sql += ", word_similarity(au.name, '#{minister_name}') AS ms "
+        sql += ", word_similarity(au.name, '#{minister_name}') AS ms_minister "
+      end
+      if ministry_name.length > 2
+        sql += ", word_similarity(mi.name, '#{ministry_name}') AS ms_ministry "
       end
       sql += "FROM public.auth_users AS au
       LEFT JOIN public.user_ministries AS um
@@ -46,15 +50,25 @@ class Api::V1::Gom::GomController < BaseApiController
       if minister_name.length > 2
         sql += " AND au.name % '#{minister_name}' "
       end
-      sql += "GROUP BY au.id, au.name
-      ORDER BY "
-      if minister_name.length > 2
-        sql += " ms DESC, "
+      if ministry_name.length > 2
+        sql += " AND mi.name % '#{ministry_name}' "
       end
-      sql += "MAX(um.created_at) IS null, MAX(um.created_at) DESC
-      LIMIT #{limit} OFFSET #{offset};"
+      sql += 'GROUP BY au.id, au.name'
+      if ministry_name.length > 2
+        sql += ' ,mi.name'
+      end
+      sql += ' ORDER BY '
+      if minister_name.length > 2
+        sql += ' ms_minister DESC, '
+      end
+      if ministry_name.length > 2
+        sql += ' ms_ministry DESC, '
+      end
+      sql += 'MAX(um.created_at) IS null, MAX(um.created_at) DESC'
 
-      user_ministries = UserMinistry.find_by_sql(sql)
+      # puts sql
+
+      user_ministries = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
       # fetch all the user ids
       user_ids = user_ministries.map { |row| row['id'] }
@@ -76,7 +90,10 @@ class Api::V1::Gom::GomController < BaseApiController
       render json: {
         success: true,
         message: 'Success',
-        data: assigned_ministries
+        data: {
+          data: assigned_ministries,
+          count: UserMinistry.find_by_sql(sql).count
+        }
       }, status: :ok
     rescue StandardError => e
       return render json: {
