@@ -356,8 +356,8 @@ button.cancelbtn{
 .add-btn {
   gap: 1rem;
   display: flex;
-  border: 1px solid #FF9559;
-  color: #FF9559;
+  border: 1px solid ($basicColor);
+  color: ($basicColor);
   padding: 8px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -415,4 +415,58 @@ button.cancelbtn{
   display: flex;
 }
 
+.social-affiliation-grid {
+  margin-top: 1rem;
+}
 
+.organization-grid {
+  margin-top: 1.5rem !important;
+}
+
+.organization-grid label{
+  margin-bottom: 0.5rem;
+}
+
+.organization-description-grid {
+  margin-top: 1rem;
+  display: grid
+}
+
+.organization-description-grid label{
+  margin-bottom: 0.5rem;
+}
+
+.organization-description-grid div {
+  width: 45rem;
+  height: 8rem;
+}
+
+.organization-description-grid textarea {
+  height: 100px;
+}
+
+.election-contesting-container input[type='radio'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  outline: 1px solid black;
+}
+
+.election-contesting-container input[type='radio']:checked {
+  background-color: ($basicColor); /* Change the background color when checked */
+}
+
+.electoral-matrix-form {
+  padding: 22px;
+  display: grid !important;
+}
+
+.electoral-form-fields {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}

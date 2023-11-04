@@ -50,7 +50,6 @@ export const educationDetailsJson = {
         },
     ]
 }
-
 export const ProfessionJson = {
     title: 'Profession Profile',
     fields: [
@@ -170,3 +169,165 @@ export const otherPartyJson = {
         },
     ]
 }
+
+export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (vidhan sabha)", "Legislative Council (vidhan sabha)", "Urban Local body", "Rural Local body", "Other"]
+
+const electionWin =  {
+    type: 'radio',
+    name: 'Did You Win?',
+    key: 'election_win',
+    list:['Yes', 'No']
+}
+
+const ministerPortfolio = {
+    is_conditional: true,
+        condition_key: 'election_win',
+    condition_value:'Yes',
+    type: 'radio',
+    name: 'Do you have any portfilio as Minister',
+    key: 'minister_portfolio',
+    list:['Yes', 'No']
+}
+const ministryName = {
+    is_conditional: true,
+        condition_key: 'minister_portfolio',
+    condition_value:'Yes',
+    type: 'textField',
+    name: 'Name Of Ministry',
+    key: 'ministry_name',
+    placeholder: 'Enter Name of Ministry',
+    combo_fields: [
+    {
+        type: 'dropdown',
+        name: 'Designation',
+        key: 'designation',
+        placeholder: 'Designation'
+    }
+]
+}
+const ministryDuration = {
+    is_conditional: true,
+        condition_key: 'minister_portfolio',
+    condition_value:'Yes',
+    type: 'textField',
+    name: 'Duration',
+    key: 'ministry_duration',
+    placeholder: 'Enter Duration (in Months)'
+}
+
+const afterElectionFields = [electionWin, ministerPortfolio, ministryName, ministryDuration];
+
+export const electionWiseJson =
+    {
+        lok_sabha: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                    combo_fields:[{
+                        type: 'dropdown',
+                        name: 'Pc',
+                        key: 'ParliamentaryConstituency',
+                        placeholder: 'Pc'
+                    }],
+                },
+                ...afterElectionFields
+            ]
+        },
+        rajya_sabha: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                },
+                ...afterElectionFields
+            ]
+        },
+        legislative_assembly_vidhan_sabha: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                    combo_fields:[{
+                            type: 'dropdown',
+                            name: 'Ac',
+                            key: 'AssemblyConstituency',
+                            placeholder: 'Ac'
+                    }]
+                },
+                ...afterElectionFields,
+            ]
+        },
+        legislative_council_vidhan_sabha: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                    combo_fields:[
+                        {
+                            type: 'dropdown',
+                            name: 'Type of constituency',
+                            key: 'AssemblyConstituency',
+                            placeholder: 'Constituency'
+                        }
+                    ]
+                },
+                ...afterElectionFields,
+            ]
+        },
+        urban_local_body: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                    combo_fields:[{
+                        type: 'dropdown',
+                        name: 'Ad',
+                        key: 'AdministrativeDistrict',
+                        placeholder: 'Ad'
+                    }]
+                },
+                {
+                    type: 'textField',
+                    name: 'Name of body',
+                    key: 'urban_local_body',
+                    placeholder: 'Enter Body'
+                },
+                ...afterElectionFields,
+            ]
+        },
+        rural_local_body: {
+            fields: [
+                {
+                    type: 'dropdown',
+                    name: 'State',
+                    key: 'State',
+                    placeholder: 'State',
+                    combo_fields:[{
+                        type: 'dropdown',
+                        name: 'Ad',
+                        key: 'AdministrativeDistrict',
+                        placeholder: 'Ad'
+                    },]
+                },
+                {
+                    type: 'textField',
+                    name: 'Name of body',
+                    key: 'rural_local_body',
+                    placeholder: 'Enter Body'
+                },
+                ...afterElectionFields,
+            ]
+        },
+        other: {}
+    }
