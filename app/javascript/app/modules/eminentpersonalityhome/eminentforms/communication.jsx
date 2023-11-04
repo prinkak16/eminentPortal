@@ -29,16 +29,32 @@ const Communicationform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [fields, setFields] = useState([]);
-    const [count, setcount]=useState(2)
-    const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
-    const [StateData, setStateData]= useState([])
     const [curPinData, setCurPinData] = useState({district: [], state: []})
     const [homePinData, setHomePinData] = useState({district: [], state: []})
     const [otherPinData, setOtherPinData] = useState([{id: '', district: [], state: []}])
     const [mobileFields, setMobileFields] =useState([])
-    const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
+
+    useEffect(() => {
+        const mobiles = props.formValues.mobiles
+        if (mobiles.length > 0) {
+            let mobileObjects = []
+            for (let i = 0; i < mobiles.length; i++) {
+                mobileObjects.push({id: uuidv4(),number: mobiles[i]})
+            }
+            setMobileFields(mobileObjects)
+        }
+    }, [])
+
+        useEffect(() => {
+        const otherAddress = props.formValues.other_address
+        if (isValuePresent(otherAddress)) {
+            setFormValues(otherAddress)
+        }
+    }, [])
+
+
+
     let addFormFields = () => {
         setFormValues([...formValues, {
             id: uuidv4(),
@@ -49,16 +65,12 @@ const Communicationform =(props)=>{
             other_district: "",
             other_state: ""
         }])
-        setShowFields(true)
     }
     let removeFormFields = (id) => {
         const newFormValues =  formValues.filter((field) => field.id !== id)
         setFormValues(newFormValues);
     }
-    const [selectedOption, setSelectedOption] = useState('');
-    const selectChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
+
 
     const handlePinCodeChange = (pinCode, type, id) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
@@ -85,15 +97,6 @@ const Communicationform =(props)=>{
     };
 
 
-    const getState =()=>{
-        getStateData.then((res)=>{
-            setStateData(res.data.data)
-        })
-
-    }
-    useEffect(() => {
-        getState()
-    }, []);
 
     const userMobileNumber = 9999223772
 
@@ -126,12 +129,6 @@ const Communicationform =(props)=>{
         });
     }
 
-    const phoneNumber = (index) => {
-    const field  = mobileFields.find((f) => f.index === index)
-        if (field) {
-            return  field.number
-        }
-    }
     const deleteMobileNumber = (id) => {
         const updatedMobileFields = mobileFields.filter((field) => field.id !== id)
         setMobileFields(updatedMobileFields)
@@ -234,6 +231,10 @@ const Communicationform =(props)=>{
        }
     }
 
+    useEffect(() => {
+        props.formValues.other_address = formValues
+    },[formValues])
+
 
     return(
         <>
@@ -295,6 +296,7 @@ const Communicationform =(props)=>{
                                         <Grid item xs={3}>
                                             <NumberField
                                                 className='std-code-input'
+                                                value={props.formValues.std_code}
                                                 name="std_code"
                                                 placeholder='STD Code'
                                                 onInput={(event) => {
@@ -307,6 +309,7 @@ const Communicationform =(props)=>{
                                         <Grid item xs={6}>
                                             <NumberField
                                                 name="landline"
+                                                value={props.formValues.landline}
                                                 placeholder='Landline Number'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 8);
@@ -322,6 +325,7 @@ const Communicationform =(props)=>{
                                     <FormLabel className='mobile-label'>Email Id  <mark>*</mark></FormLabel>
                                     <Inputfield type="text"
                                                 name="email"
+                                                value={props.formValues.email}
                                                 placeholder="XYZ@gmail.com"/>
                                     <ErrorMessage name="email" component="div" />
                                 </Grid>
@@ -338,6 +342,7 @@ const Communicationform =(props)=>{
                                         <Grid item xs={12}>
                                             <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                             <Inputfield type="text"
+                                                        value={props.formValues.flat}
                                                         name="flat"
                                                         placeholder="Enter your address"/>
                                             <ErrorMessage name="flat" component="div" />
@@ -346,6 +351,7 @@ const Communicationform =(props)=>{
                                             <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                             <NumberField
                                                 className=''
+                                                value={props.formValues.pincode}
                                                 name="pincode"
                                                 placeholder='Enter Pin Code'
                                                 onInput={(event) => {
@@ -397,8 +403,8 @@ const Communicationform =(props)=>{
                                             <Inputfield
                                                 type="text"
                                                 name="home_flat"
+                                                value={props.formValues.home_flat}
                                                 placeholder="Enter your address"
-                                                value={props.formValues.check ? props.formValues.flat: props.formValues.home_flat}
                                             />
 
                                         </Grid>
@@ -407,6 +413,7 @@ const Communicationform =(props)=>{
                                             <NumberField
                                                 className=''
                                                 name="home_pincode"
+                                                value={props.formValues.pincode}
                                                 placeholder='Enter Pin Code'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
@@ -419,7 +426,7 @@ const Communicationform =(props)=>{
                                             <Inputfield type="text"
                                                         name="home_street"
                                                         placeholder="Enter Area, Street, Etc.s"
-                                                        value={props.formValues.check ? props.formValues.street: props.formValues.home_street}
+                                                        value={props.formValues.home_street}
                                             />
 
                                         </Grid>
@@ -445,7 +452,7 @@ const Communicationform =(props)=>{
                                 </Grid>
                                 <Grid item xs={12} className="pt-0">
                                     <Grid className="addressfields" sx={{pb:5}}>
-                                        {showFields && formValues.map((element, index) => (
+                                        {formValues && formValues.map((element, index) => (
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
                                                     <Grid item xs={12}>
@@ -540,7 +547,7 @@ const Communicationform =(props)=>{
 
                                         ))}
 
-                                        {!showFields &&
+                                        {!isValuePresent(formValues) &&
                                             <Grid item xs={12} className="d-flex align-items-center">
                                                 <div>
                                                     <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"

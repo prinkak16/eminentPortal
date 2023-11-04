@@ -203,7 +203,6 @@ const saveProgress=()=>{
     }
     const calculateAge = (dob) => {
         if (!dob) return '';
-
         const today = new Date();
         const birthDate = new Date(dob);
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -212,7 +211,6 @@ const saveProgress=()=>{
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-
         return age;
     };
 
@@ -244,10 +242,6 @@ const saveProgress=()=>{
         setSelectedLanguages(languages)
         props.formValues.languages = languages
     }
-
-    useEffect(() => {
-        props.formValues.mobiles = [9876543210]
-    }, []);
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -437,15 +431,15 @@ PersonalDetails.initialValues = {
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    name: Yup.string().required('Please enter your first name'),
-    religion: Yup.string().required('Please select your Religion'),
-    gender: Yup.string().required('Please select your Gender'),
-    category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
-    dob: Yup.string().required('Please select your Caste'),
-    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    photo:Yup.string().required('Please select your Photo'),
+    // name: Yup.string().required('Please enter your first name'),
+    // religion: Yup.string().required('Please select your Religion'),
+    // gender: Yup.string().required('Please select your Gender'),
+    // category: Yup.string().required('Please select your Category'),
+    // caste: Yup.string().required('Please select your Caste'),
+    // dob: Yup.string().required('Please select your Caste'),
+    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    // photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;
