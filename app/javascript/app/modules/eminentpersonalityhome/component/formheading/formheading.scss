@@ -1,0 +1,19 @@
+$blacklight:rgba(0,0,0,0.8);
+$reqcolor: #BB0E0F;
+@mixin texttypography{
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+}
+label{
+  @include texttypography;
+  color: ($blacklight);
+  margin-bottom: 5px;
+  sup{
+    color: ($reqcolor);
+  }
+}
+h5{
+  font-weight: 600;
+  font-size: 24px;
+}

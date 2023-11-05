@@ -1,0 +1,19 @@
+$border: rgba(0, 0, 0, 0.40);
+div.MuiOutlinedInput-root{
+  border: 1px solid ($border);
+  border-radius: 8px;
+}
+input.MuiInputBase-input{
+  font-size: 16px;
+  padding: 14px 10px;
+  width: 100%;
+  margin-top: 0px;
+  font-weight: 400;
+  background: transparent;
+}
+
+input[type="number"], input[type="number"]:hover{
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
