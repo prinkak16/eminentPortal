@@ -31,7 +31,7 @@ COPY . .
 
 #RUN yarn install
 RUN bundle install
-RUN jsbundling-rails install
+RUN npm install -g jsbundling-rails
 #RUN bundle update saral-locatable
 
 
