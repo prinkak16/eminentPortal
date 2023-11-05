@@ -3,7 +3,17 @@ import Header from "./header/header"
 import {Grid, Typography} from '@mui/material';
 import './eminentpersonalityhome.scss'
 import FormWrap from "./formWrap/formwrap";
+import {createSearchParams, useLocation, useSearchParams} from 'react-router-dom';
+import {isValuePresent} from "../utils";
 const EminentPersonality=()=> {
+    let location = useLocation();
+
+    const fetchUserData = () => {
+        return isValuePresent(location.state?.user_data) ?
+            location.state.user_data :
+            JSON.parse(localStorage.getItem('user_data'))
+    }
+
     return(
         <>
             <Header/>
@@ -31,7 +41,7 @@ const EminentPersonality=()=> {
                         </g>
                     </svg>
                 </Grid>
-            <FormWrap/>
+            <FormWrap userData={fetchUserData()}/>
         </>
     )
 }

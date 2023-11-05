@@ -331,3 +331,41 @@ export const electionWiseJson =
         },
         other: {}
     }
+
+export  const enterPhoneNumber = (event) => {
+        const phoneNumber = event.target.value.replace(/[^\d०१२३४५६७८९]/g, '');
+        if (/^[5-9५६७८९]/.test(phoneNumber)) {
+            event.target.value = phoneNumber;
+        } else {
+            event.target.value = ''; // Clear the input value if it doesn't start with 5-9 or a Hindi digit
+        }
+
+        return event.target.value
+    }
+
+
+export const languagesName = [
+        'Hindi',
+        'Bengali',
+        'Telugu',
+        'Marathi',
+        'Tamil',
+        'Urdu',
+        'Gujarati',
+        'Kannada',
+        'Odia',
+        'Punjabi',
+        'Malayalam',
+        'Assamese',
+        'Maithili',
+        'Santali',
+        'Kashmiri',
+        'Nepali',
+        'Konkani',
+        'Sindhi',
+        'Dogri',
+        'Manipuri',
+        'Bodo',
+        'Sanskrit',
+        'Other Indian languages'
+    ];

@@ -28,7 +28,6 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
             }));
         })
         let field = jsonForm.fields.find((item) => item.key === 'State')
-        getLocations(3, field.combo_fields[0])
     }
 
     useEffect(() => {

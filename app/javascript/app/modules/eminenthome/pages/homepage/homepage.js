@@ -65,6 +65,7 @@ export default function PersistentDrawerLeft() {
     const [errorNumber, setErrorNumber] = useState('');
     const [inputNumber, setInputNumber] = useState('');
     const [submitDisabled, setSubmitDisabled] = useState(true);
+    const [userData, setUserData] = useState(true);
 
     const navigate = useNavigate();
 
@@ -78,7 +79,7 @@ export default function PersistentDrawerLeft() {
         if (number && number.length === 10 && isValidNumber(number)) {
             let numberString = `${number}`;
             fetchMobile(numberString).then(res => {
-                console.log('new data',res);
+                setUserData(res.data.data.data,'userData')
                 setExistingData(res);
                 setSubmitDisabled(false);
             }).catch(err => {
@@ -104,6 +105,14 @@ export default function PersistentDrawerLeft() {
     const updateToggle = (id) => {
         setToggle(id);
     }
+
+    const  navigateForm = () => {
+        localStorage.setItem('user_data', JSON.stringify(userData));
+        navigate({
+            pathname: '/EminentPersonality'
+        });
+    }
+
 
     return (<>
             <Header/>
@@ -207,7 +216,6 @@ export default function PersistentDrawerLeft() {
                            placeholder="Enter mobile number"
                            onChange={(e) => changeInputNumber(e.target.value)}/>
                     <span>{existingData?.data?.message}</span>
-                    {/*{(existingData && existingData.length > 0) && <span>Number Already Exist</span>}*/}
                     {(errorNumber && errorNumber.length > 0) && <span>{errorNumber}</span>}
 
                 </Modal.Body>
@@ -219,7 +227,7 @@ export default function PersistentDrawerLeft() {
                     </button>
                     <button
                         className="btn addNewSubmit"
-                        onClick={() => navigate('/EminentPersonality')}
+                        onClick={() => navigateForm()}
                         disabled={submitDisabled}>
                         Submit
                     </button>
