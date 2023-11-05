@@ -21,6 +21,7 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
 
@@ -49,7 +50,6 @@ const FormWrap=({userData})=>{
         }, {});
     }
 
-    console.log(stepValues, 'stepValues')
     const onSubmit = (values, formikBag) => {
         const { setSubmitting } = formikBag;
         const newStepValues = [...stepValues];

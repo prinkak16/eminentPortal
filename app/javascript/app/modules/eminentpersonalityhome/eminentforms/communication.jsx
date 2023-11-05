@@ -11,11 +11,11 @@ import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
-import {getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
-import {isValuePresent} from "../../utils";
+import {isValuePresent, saveProgress} from "../../utils";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
@@ -236,55 +236,50 @@ const Communicationform =(props)=>{
     },[formValues])
 
 
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
-                        <Savebtn/>
+                        <Savebtn onClick={progressSave}/>
                     </Item>
                 </Stack>
                 <div className="detailFrom">
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
                             <div className='mobiles-container'>
-                                <div className='mobile-number-field'>
-                                    <FormLabel className="mobile-label">1. Mobile Number <mark>*</mark></FormLabel>
-                                    <input value={userMobileNumber} maxLength={10} className="primary-number mobile-fields" disabled={true}/>
-                                    <div className='add-delete-btns'>
-                                        {mobileFields.length === 0 &&
-                                            <span className='add-btn' onClick={() => addMobileField()}>
-                                                <span>
-                                                     <FontAwesomeIcon icon={faPlus}/>
-                                                 </span>
-                                                 Add Another
-                                            </span>
-                                        }
-                                    </div>
-                                </div>
-
                                 {mobileFields && mobileFields.map((field, i) =>(
                                     <div className='mobile-number-field'>
                                         <FormLabel className="mobile-label">{i+2}. Mobile Number <mark>*</mark></FormLabel>
                                         <input
                                             maxLength={10}
+                                            disabled={i === 0}
                                             placeholder='Enter Mobile Number'
                                             value={field.number}
                                             onChange={enterMobileNumber(field.id)}
-                                            className="mobile-fields" />
+                                            className={`mobile-fields ${i === 0 &&
+                                                                        mobileFields.length > 1 ?
+                                                                        'mt--14rem' : ''}`} />
                                         <div className='add-delete-btns'>
-                                            {mobileFields.length < 2 &&
+                                            {mobileFields.length < 3 && mobileFields.length === i+1 ?
                                                 <span className='add-btn' onClick={() => addMobileField()}>
                                                       <span>
                                                          <FontAwesomeIcon icon={faPlus}/>
                                                      </span>
                                                      Add Another
-                                                </span>
+                                                </span> : null
                                             }
-                                            <span className='delete-button' onClick={() => deleteMobileNumber(field.id)}>
-                                                <FontAwesomeIcon icon={faTrash}/>
-                                            </span>
+                                            {i > 0 &&
+                                                <span className='delete-button'
+                                                      onClick={() => deleteMobileNumber(field.id)}>
+                                                     <FontAwesomeIcon icon={faTrash}/>
+                                                 </span>
+                                            }
                                         </div>
                                     </div>
                                 ))}
@@ -413,7 +408,7 @@ const Communicationform =(props)=>{
                                             <NumberField
                                                 className=''
                                                 name="home_pincode"
-                                                value={props.formValues.pincode}
+                                                value={props.formValues.home_pincode}
                                                 placeholder='Enter Pin Code'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);

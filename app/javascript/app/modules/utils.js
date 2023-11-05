@@ -1,3 +1,5 @@
+import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
+
 export const isValuePresent = (value) => {
     return value !== null && value !== undefined && value !== '' && value.length !== 0;
 }
@@ -369,3 +371,22 @@ export const languagesName = [
         'Sanskrit',
         'Other Indian languages'
     ];
+
+
+export const saveProgress = (formValues, activeStep) => {
+    const fieldsWithValues = {};
+    for (const fieldName of Object.keys(formValues)) {
+        const fieldValue = formValues[fieldName];
+        if (fieldValue) {
+            if (formValues[fieldName] === 'mobile') {
+                fieldsWithValues[fieldName] = [fieldValue];
+            } else {
+                fieldsWithValues[fieldName] = fieldValue;
+            }
+        }
+    }
+    getFormData(fieldsWithValues, activeStep).then(response => {
+        console.log('API response:', response.data);
+
+    });
+}

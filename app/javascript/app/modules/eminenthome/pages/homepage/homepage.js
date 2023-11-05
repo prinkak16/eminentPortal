@@ -79,7 +79,8 @@ export default function PersistentDrawerLeft() {
         if (number && number.length === 10 && isValidNumber(number)) {
             let numberString = `${number}`;
             fetchMobile(numberString).then(res => {
-                setUserData(res.data.data.data,'userData')
+                setUserData(res.data.data)
+                console.log(res.data.data)
                 setExistingData(res);
                 setSubmitDisabled(false);
             }).catch(err => {
@@ -107,9 +108,13 @@ export default function PersistentDrawerLeft() {
     }
 
     const  navigateForm = () => {
-        localStorage.setItem('user_data', JSON.stringify(userData));
+        localStorage.setItem('eminent_number', userData.phone);
         navigate({
-            pathname: '/EminentPersonality'
+            pathname: '/eminent_personality'
+        }, {
+            state: {
+                eminent_number: userData.phone,
+            }
         });
     }
 

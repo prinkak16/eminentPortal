@@ -25,7 +25,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, ProfessionJson, isValuePresent} from "../../utils";
+import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress} from "../../utils";
 
 const Educationform = (props) => {
     const [selectedOption, setSelectedOption] = useState('');
@@ -130,14 +130,18 @@ const Educationform = (props) => {
 
     };
 
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
 
     return (
         <>
-
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <Savebtn onClick={progressSave} />
+                    </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
                     <Grid item xs={6} className='education-field pb-3'>

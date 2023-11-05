@@ -22,7 +22,7 @@ const AfterLoginRoutes = () => {
     return (
         <Routes>
             <Route path='/' element={<HomePage/>}/>
-            <Route path='/EminentPersonality' element={<EminentPersonality/>}/>
+            <Route path='/eminent_personality' element={<EminentPersonality/>}/>
             <Route path='/*' element={<Navigate to="/"/>}/>
         </Routes>
     )

@@ -3,6 +3,7 @@ import './loginpage.scss'
 import {getLocationsData, sendOtp, validateOtp} from "../../api/stepperApiEndpoints/stepperapiendpoints";
 import {enterPhoneNumber} from "../utils";
 import {useNavigate} from "react-router-dom";
+import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -36,9 +37,10 @@ const LoginPage = () => {
     const submitOtp = () => {
         validateOtp(phoneNumber, inputNumber).then((res) => {
             localStorage.setItem('auth_token', res.data.auth_token)
-            navigate('/homePage')
-            console.log(res.data)
-
+            localStorage.setItem('eminent_number', phoneNumber)
+            navigate({
+                pathname: '/eminent_personality'
+            });
         })
     }
 
@@ -46,19 +48,19 @@ const LoginPage = () => {
         <div className="container h-100">
             <div className="row h-100 justify-content-center align-items-center">
                 <div className="col-3">
-                        <div className="justify-content-start">
+                    <div className="justify-content-start">
                         <label>{otpSent ? 'Otp':'Phone Number'}<span className="text-danger">*</span></label>
                         <input className="inputNumber ps-2"
                                type="tel"
                                maxLength={otpSent ? 6 : 10}
                                value={inputNumber}
                                placeholder={otpSent ? "Enter Otp" : "Enter Phone number"}
-                        onChange={(e)=> inputMobileNumber(e, !otpSent)}/>
-                        </div>
-                    <div className="row h-100 justify-content-center align-items-center pt-2">
-                          <button className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit Otp' : 'Send Otp'}</button>
-                        </div>
+                               onChange={(e)=> inputMobileNumber(e, !otpSent)}/>
                     </div>
+                    <div className="row h-100 justify-content-center align-items-center pt-2">
+                        <button className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit Otp' : 'Send Otp'}</button>
+                    </div>
+                </div>
             </div>
         </div>
     )

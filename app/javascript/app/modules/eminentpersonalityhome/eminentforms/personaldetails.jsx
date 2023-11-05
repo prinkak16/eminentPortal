@@ -56,6 +56,10 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
 
+    useEffect(() => {
+        setSelectedLanguages(props.formValues.languages)
+    }, [props.formValues.languages]);
+
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -89,7 +93,7 @@ const PersonalDetails = (props) => {
         })
     }
 
-    const saveProgress = () => {
+    const saveProgress = (formValues, activeStep) => {
         const fieldsWithValues = {};
         for (const fieldName of Object.keys(props.formValues)) {
             const fieldValue = props.formValues[fieldName];
