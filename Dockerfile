@@ -13,6 +13,7 @@ RUN apt autoremove -y
 RUN apt-get update
 RUN apt  install -y imagemagick libmagickwand-dev ghostscript
 RUN apt install -y ffmpeg
+RUN yarn install
 COPY policy.xml /etc/ImageMagick-6/policy.xml
 ENV REDIS_URL=redis://localhost:6379
 ENV RAILS_ENV=production
