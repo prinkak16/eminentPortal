@@ -1,6 +1,6 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
-export const getFormData = async (data, activeStep) => {
+export const getFormData = async (data, activeStep,config) => {
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
@@ -12,7 +12,7 @@ export const getFormData = async (data, activeStep) => {
         "channel": "Link"
     }
     try {
-        const response = await axios.post(apiBaseUrl + allSteps, formData);
+        const response = await axios.post(apiBaseUrl + allSteps, formData, config);
         console.log('API response:', response.data);
     } catch (error) {
         console.error('API error:', error);
@@ -32,12 +32,34 @@ export const getFileUpload = async (file, pdfUrl) => {
     return url
 }
 
-export const getStepCtgry = axios.get(apiBaseUrl + 'metadata/categories');
-export const getReligionData = axios.get(apiBaseUrl + 'metadata/religions');
-export const getGenderData = axios.get(apiBaseUrl + 'metadata/genders');
+export const getStepCtgry = (config) => {
+    return axios.get(apiBaseUrl + 'metadata/categories',{
+        params: {
+        },
+        headers: config?.headers
+    })
+}
+
+export const getReligionData = (config,) => {
+    return axios.get(apiBaseUrl + 'metadata/religions',{
+        params: {
+        },
+        headers: config?.headers
+    })
+}
+
+export const getGenderData = (config,) => {
+    return axios.get(apiBaseUrl + 'metadata/genders',{
+        params: {
+        },
+        headers: config?.headers
+    })
+}
 export const getStateData = axios.get(apiBaseUrl + 'metadata/states');
 export const getEducationData = axios.get(apiBaseUrl + 'metadata/educations');
 export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');;
+
+
 
 
 const params = {
@@ -65,7 +87,7 @@ export const sendOtp = async (phoneNumber) => {
     formData.append("form_type", 'eminent_personality');
     formData.append("phone", phoneNumber);
     try {
-        url = await axios.post(apiBaseUrl + 'custom_member_forms/send_otp', formData);
+        url = await axios.post(apiBaseUrl + 'eminent_auth/send_otp', formData);
     } catch (error) {
         alert(`Error: ${error.response.data.message}`);
     }
@@ -79,7 +101,7 @@ export const validateOtp = async (phoneNumber, otp) => {
     formData.append("phone", phoneNumber);
     formData.append("otp", otp);
     try {
-        url = await axios.post(apiBaseUrl + 'custom_member_forms/validate_otp', formData);
+        url = await axios.post(apiBaseUrl + 'eminent_auth/validate_otp', formData);
     } catch (error) {
         alert(`Error: ${error.response.data.message}`);
     }

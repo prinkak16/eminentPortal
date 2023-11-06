@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {apiBaseUrl} from "../api_endpoints";
 
+
 export const getFilters = ()  => {
     return axios.get(apiBaseUrl + 'metadata/config/home');
 }
@@ -21,6 +22,19 @@ export const updateState = (updatedState) => {
     return axios.post(apiBaseUrl + 'custom_member_forms/update_aasm_state', updatedState);
 }
 
-export const fetchMobile = (number) => {
-    return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number?phone_number=' + number);
+export const fetchMobile = (config,number) => {
+    return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number',{
+        params: {
+            phone_number: number
+        },
+        headers: config?.headers
+    });
+}
+
+export const fetchUser = (config) => {
+    return axios.get(apiBaseUrl + 'eminent/fetch',{
+        params: {
+        },
+        headers: config?.headers
+    });
 }

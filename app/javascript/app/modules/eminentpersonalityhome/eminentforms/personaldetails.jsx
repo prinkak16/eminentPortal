@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import {
     Stack,
     Typography,
@@ -32,8 +32,10 @@ import {
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {isValuePresent, languagesName} from "../../utils";
+import {ApiContext} from "../../ApiContext";
 
 const PersonalDetails = (props) => {
+    const {config} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
             if (props.formValues.hasOwnProperty(key)) {
@@ -75,7 +77,7 @@ const PersonalDetails = (props) => {
         }
     }, [props.stepDataFlag]);
     const getCategory = () => {
-        getStepCtgry.then(
+        getStepCtgry(config).then(
             (res) => {
                 setDropDownDataCategory(res.data.data)
             }
@@ -83,12 +85,12 @@ const PersonalDetails = (props) => {
     }
 
     const getReligion = () => {
-        getReligionData.then((response) => {
+        getReligionData(config).then((response) => {
             setReligionData(response.data.data)
         })
     }
     const getGenders = () => {
-        getGenderData.then((response) => {
+        getGenderData(config    ).then((response) => {
             setGenderData(response.data.data)
         })
     }
@@ -425,15 +427,15 @@ PersonalDetails.initialValues = {
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
-    name: Yup.string().required('Please enter your first name'),
-    religion: Yup.string().required('Please select your Religion'),
-    gender: Yup.string().required('Please select your Gender'),
-    category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
-    // dob: Yup.string().required('Please select your Date Of Birth'),
-    aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
-    voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
-    languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    photo:Yup.string().required('Please select your Photo'),
+    // name: Yup.string().required('Please enter your first name'),
+    // religion: Yup.string().required('Please select your Religion'),
+    // gender: Yup.string().required('Please select your Gender'),
+    // category: Yup.string().required('Please select your Category'),
+    // caste: Yup.string().required('Please select your Caste'),
+    // // dob: Yup.string().required('Please select your Date Of Birth'),
+    // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
+    // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
+    // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    // photo:Yup.string().required('Please select your Photo'),
 });
 export default PersonalDetails;

@@ -1,5 +1,5 @@
 class Admin::AdminController < ApplicationController
-  # before_action :authenticate_user
+  before_action :authenticate_user_rails
   require 'csv'
   include CustomMemberFormHelper
   include MailHelper

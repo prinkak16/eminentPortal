@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   get 'auth/callback', to: 'auth#callback'
 
+  get "candidate_login", to: "home#candidate_login"
+  get "eminent_personality", to: "home#candidate_login"
   namespace :admin do
     get 'manual_upload', to: 'admin#manual_upload'
     post 'manual_upload', to: 'admin#manual_upload_data'
@@ -14,6 +16,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
+      post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
+
       get 'metadata/user_permissions', to: 'metadata#user_allotted_permissions'
       get 'metadata/user_allotted_states', to: 'metadata#user_allotted_states'
       get 'metadata/genders', to: 'metadata#genders'
@@ -28,8 +33,6 @@ Rails.application.routes.draw do
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
-      post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
-      post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       delete 'custom_member_forms/logout' => 'custom_member_form#destroy_session'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
@@ -47,7 +50,8 @@ Rails.application.routes.draw do
 
       namespace :gom, path: 'gom' do
         get '/minister_list', to: 'gom#minister_list'
-        get '/assigned_ministries', to: 'gom#assigned_ministries'
+        get '/assigned_ministries', to: 'gom#search_assigned_ministries'
+        get '/assigned_ministries_by_filters', to: 'gom#assigned_ministries_by_filters'
       end
 
       namespace :user, path: 'user' do
