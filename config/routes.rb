@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
+      post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
+
       get 'metadata/user_permissions', to: 'metadata#user_allotted_permissions'
       get 'metadata/user_allotted_states', to: 'metadata#user_allotted_states'
       get 'metadata/genders', to: 'metadata#genders'
@@ -28,8 +31,6 @@ Rails.application.routes.draw do
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
-      post 'custom_member_forms/send_otp', to: 'custom_member_form#send_otp'
-      post 'custom_member_forms/validate_otp', to: 'custom_member_form#validate_otp'
       delete 'custom_member_forms/logout' => 'custom_member_form#destroy_session'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
