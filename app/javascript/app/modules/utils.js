@@ -225,11 +225,13 @@ export const electionWiseJson =
                     name: 'State',
                     key: 'State',
                     placeholder: 'State',
+                    list: ['data','data1'],
                     combo_fields:[{
                         type: 'dropdown',
                         name: 'Pc',
                         key: 'ParliamentaryConstituency',
-                        placeholder: 'Pc'
+                        placeholder: 'Pc',
+                        list: ['data','data1'],
                     }],
                 },
                 ...afterElectionFields

@@ -167,7 +167,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                 f.type === "radio" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} <sup>*</sup></FormLabel>
-                                    <RadioButton radioList={f.list} onClicked={contestedElection}  fieldKey={f.key}/>
+                                    <RadioButton radioList={f.list} selectedValue={fieldsData[f.key] || null} onClicked={contestedElection}  fieldKey={f.key}/>
                                 </Grid>
                             }
                             {isValuePresent(f.combo_fields) && f.combo_fields.map((fi, index) => (
@@ -201,7 +201,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                         fi.type === "radio" &&
                                         <Grid item xs={4}>
                                             <FormLabel>{fi.name} <sup>*</sup></FormLabel>
-                                            <RadioButton radioList={fi.list} onClicked={contestedElection} fieldKey={f.key} />
+                                            <RadioButton radioList={fi.list}  selectedValue={fieldsData[fi.key] || null} onClicked={contestedElection} fieldKey={f.key} />
                                         </Grid>
                                     }
                                 </>

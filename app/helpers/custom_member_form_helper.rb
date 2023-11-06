@@ -259,7 +259,7 @@ module CustomMemberFormHelper
               'PhD and Above'
             ]
           },
-          # 'school': {
+          # 'schoxol': {
           #   'type': [nil,'string'],
           #   'maxLength': 200 # Max length of 200 characters
           # },
