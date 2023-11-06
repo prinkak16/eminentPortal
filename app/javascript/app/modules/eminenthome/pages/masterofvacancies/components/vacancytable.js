@@ -8,10 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
 import  './movtable.css'
+import ReactPaginate from "react-paginate";
 
 
 const  VacancyTable = ({data, onSwitchTab}) => {
     return (
+        <>
         <TableContainer component={Paper} className="psutable">
             <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                 <TableHead>
@@ -58,23 +60,29 @@ const  VacancyTable = ({data, onSwitchTab}) => {
                 </TableBody>
             </Table>
         </TableContainer>
+            <div>
+                {/*<p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>*/}
+                <ReactPaginate
+                    previousLabel={"<Previous"}
+                    nextLabel={"Next"}
+                    breakLabel={"...."}
+                    // pageCount={Math.ceil(tableData?.data?.data.length / limit)}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={5}
+                    // onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                    containerClassName={'pagination justify-content-end'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-link'}
+                    breakLinkClassName={'page-item'}
+                    activeClassName={'active'}/>
+
+            </div>
+    </>
     );
 }
 export  default VacancyTable;
-
-const ministry = {
-    ministryName: 'Ministry One',
-    departments: [
-        { departmentId: 'm1_d1', departmentName: 'Ministry Two - Department One', psus: [
-                {psu_id: 'm1_d1_p1', psuName: 'Ministry Two - Department One - PSU/PSB One', psuListed: 'yes', totalPosition: 27, occupied: 20, vacant: 10, designation: 'Designation One', status: 'Occupied', applicantName: 'Name one', saralId: 'xyz', tenureStart: '12-02-2018', tenureEnd: ''},
-                {psu_id: 'm1_d1_p2', psuName: 'Ministry Two - Department One - PSU/PSB two', psuListed: 'yes', totalPosition: 27, occupied: 20, vacant: 10, designation: 'Designation Two', status: 'Occupied', applicantName: 'Name one', saralId: 'xyz', tenureStart: '12-02-2018', tenureEnd: ''}
-            ]},
-        { departmentId: 'm1_d2', departmentName: 'Ministry Two - Department two', psus: [
-                {psu_id: 'm1_d2_p1', psuName: 'Ministry Two - Department two - PSU/PSB One', psuListed: 'yes', totalPosition: 27, occupied: 20, vacant: 10, designation: 'Designation One', status: 'Occupied', applicantName: 'Name one', saralId: 'xyz', tenureStart: '12-02-2018', tenureEnd: ''},
-                {psu_id: 'm1_d2_p2', psuName: 'Ministry Two - Department two - PSU/PSB two', psuListed: 'yes', totalPosition: 27, occupied: 20, vacant: 10, designation: 'Designation two', status: 'Occupied', applicantName: 'Name one', saralId: 'xyz', tenureStart: '12-02-2018', tenureEnd: ''}
-            ]},
-    ],
-    totalPositions: 20,
-    occupied: 17,
-    vacant: 3
-}

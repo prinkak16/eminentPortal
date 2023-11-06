@@ -8,10 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
 import  './movtable.css'
+import ReactPaginate from "react-paginate";
 
 
 const  PSUTable = ({data, onSwitchTab}) => {
     return (
+        <>
         <TableContainer component={Paper} className="psutable">
             <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                 <TableHead>
@@ -56,6 +58,29 @@ const  PSUTable = ({data, onSwitchTab}) => {
                 </TableBody>
             </Table>
         </TableContainer>
+            <div>
+                {/*<p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>*/}
+                <ReactPaginate
+                    previousLabel={"<Previous"}
+                    nextLabel={"Next"}
+                    breakLabel={"...."}
+                    // pageCount={Math.ceil(tableData?.data?.data.length / limit)}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={5}
+                    // onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                    containerClassName={'pagination justify-content-end'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-link'}
+                    breakLinkClassName={'page-item'}
+                    activeClassName={'active'}/>
+
+            </div>
+    </>
     );
 }
 export  default PSUTable;

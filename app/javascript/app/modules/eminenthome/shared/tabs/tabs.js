@@ -91,10 +91,10 @@ export default function BasicTabs() {
                     {buttonContent}
                 </Box>
                 <TabPanel value="1">
-                    <HomeTable filterString={filterString}/>
+                    <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="2">
-                    <MasterVacancies/>
+                    <MasterVacancies  tabId={value}/>
                 </TabPanel>
                 <TabPanel value="3">
                     Item Three

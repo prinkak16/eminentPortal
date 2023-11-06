@@ -17,7 +17,7 @@ import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const DUMMY_DATA = []
-const MasterVacancies=()=> {
+const MasterVacancies=({tabId})=> {
     const [value, setValue] = React.useState('1');
     const [tabData, setTabData] = useState([]);
 
@@ -63,8 +63,9 @@ const MasterVacancies=()=> {
     return (
         <>
             {/*<h5>Position Analytics</h5>*/}
-        <Analytics/>
-        <Box sx={{ width: '100%', typography: 'body1' }}>
+
+        <Analytics tabId={tabId}/>
+        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="mastertabs d-flex justify-content-between align-items-center">
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
