@@ -47,7 +47,8 @@ Rails.application.routes.draw do
 
       namespace :gom, path: 'gom' do
         get '/minister_list', to: 'gom#minister_list'
-        get '/assigned_ministries', to: 'gom#assigned_ministries'
+        get '/assigned_ministries', to: 'gom#search_assigned_ministries'
+        get '/assigned_ministries_by_filters', to: 'gom#assigned_ministries_by_filters'
       end
 
       namespace :user, path: 'user' do
