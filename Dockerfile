@@ -1,11 +1,11 @@
-FROM ruby:3.2.0
+FROM ruby:3.2.1
 
 RUN apt-get install -y libxml2-dev libxslt1-dev
 RUN apt-get install -y zlib1g-dev liblzma-dev patch
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update -qq && apt-get install -y yarn
+RUN apt-get update -qq && apt-get install -y yarn && apt-get install -y ghostscript && apt-get upgrade -y
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt install nodejs -y
 RUN apt autoremove -y
@@ -13,7 +13,6 @@ RUN apt autoremove -y
 RUN apt-get update
 RUN apt  install -y imagemagick libmagickwand-dev ghostscript
 RUN apt install -y ffmpeg
-RUN yarn install
 COPY policy.xml /etc/ImageMagick-6/policy.xml
 ENV REDIS_URL=redis://localhost:6379
 ENV RAILS_ENV=production
