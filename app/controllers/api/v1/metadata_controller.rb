@@ -1,5 +1,5 @@
 class Api::V1::MetadataController < BaseApiController
-  # before_action :authenticate_user
+  before_action :authenticate_user
   include MetadataHelper
   include Validators::Metadata::Validator
   include UtilHelper
