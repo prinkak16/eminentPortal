@@ -29,9 +29,7 @@ COPY Gemfile Gemfile
 RUN bundle config github.com $ACCESS_TOKEN
 COPY . .
 
-#RUN yarn install
 RUN bundle install
-RUN npm install -g jsbundling-rails
 #RUN bundle update saral-locatable
 
 
