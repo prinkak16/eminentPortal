@@ -486,14 +486,14 @@ module CustomMemberFormHelper
         'required': %w[organization description]
       }
     },
+    'election_contested': {
+      'type': 'boolean'
+    },
     'election_fought': {
       'type': 'array',
       'items': {
         'type': 'object',
         'properties': {
-          'election_contested': {
-            'type': 'boolean'
-          },
           'contesting_year': {
             'type': [nil,'integer'],
             'minimum': 1900,
@@ -583,6 +583,7 @@ module CustomMemberFormHelper
       bjp_years
       other_parties
       social_profiles
+      election_contested
       election_fought
     ]
   )
