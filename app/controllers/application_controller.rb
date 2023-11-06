@@ -36,6 +36,26 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def authenticate_user_rails
+    unless current_user.present?
+      token = (request.env['HTTP_AUTHORIZATION'] || '').split(' ').last
+      if token&.present?
+        user = handle_api_auth(api_token: token)
+        if user.present?
+          session[:user_id] = user
+        else
+          redirect_to ENV['SIGN_IN_URL'], allow_other_host: true
+        end
+      else
+        if session[:user_id].present?
+          current_user
+        else
+          redirect_to ENV['SIGN_IN_URL'], allow_other_host: true
+        end
+      end
+    end
+  end
+
   def upload_file_on_gcloud(file, filename)
     require 'google/cloud/storage'
     storage = Google::Cloud::Storage.new(project_id: ENV['G_CLOUD_PROJECT_ID'], credentials: ENV['G_CLOUD_KEYFILE'])
