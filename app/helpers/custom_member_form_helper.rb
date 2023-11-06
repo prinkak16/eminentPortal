@@ -259,27 +259,27 @@ module CustomMemberFormHelper
               'PhD and Above'
             ]
           },
-          'school': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'board': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'year': {
-            'type': [nil,'integer'],
-            'minimum': 1900,
-            'maximum': 3000
-          },
-          'subject': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'stream': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
+          # 'school': {
+          #   'type': [nil,'string'],
+          #   'maxLength': 200 # Max length of 200 characters
+          # },
+          # 'board': {
+          #   'type': [nil,'string'],
+          #   'maxLength': 200 # Max length of 200 characters
+          # },
+          # 'year': {
+          #   'type': [nil,'integer'],
+          #   'minimum': 1900,
+          #   'maximum': 3000
+          # },
+          # 'subject': {
+          #   'type': [nil,'string'],
+          #   'maxLength': 200 # Max length of 200 characters
+          # },
+          # 'stream': {
+          #   'type': [nil,'string'],
+          #   'maxLength': 200 # Max length of 200 characters
+          # },
           'course': {
             'type': [nil,'string'],
             'maxLength': 200 # Max length of 200 characters
@@ -292,10 +292,10 @@ module CustomMemberFormHelper
             'type': [nil,'string'],
             'maxLength': 200 # Max length of 200 characters
           },
-          'department': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
+          # 'department': {
+          #   'type': [nil,'string'],
+          #   'maxLength': 200 # Max length of 200 characters
+          # },
           'start_year': {
             'type': [nil,'integer'],
             'minimum': 1900,
@@ -307,7 +307,9 @@ module CustomMemberFormHelper
             'maximum': 3000
           }
         },
-        'required': %w[qualification school board year subject stream course university college department start_year end_year]
+        # remove by vijay suggestion
+        # 'required': %w[qualification school board year subject stream course university college department start_year end_year],
+        'required': %w[qualification course university college start_year end_year]
       }
     },
     'education_level': {
