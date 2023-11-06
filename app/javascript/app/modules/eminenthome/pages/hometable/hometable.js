@@ -34,7 +34,7 @@ const HomeTable = (props) => {
     const [open, setOpen] = useState(true);
     const navigate = useNavigate();
     const offset = 0;
-    const limit = 2;
+    const limit = 10;
     const displayPhoneNumbers = (member) => {
         const displayingNumbers = member.data.mobiles.splice(0, 2);
         return displayingNumbers.map((number, index) => (
@@ -146,7 +146,7 @@ const HomeTable = (props) => {
 
     return (
         <>
-            <Analytics/>
+            <Analytics tabId={props.tabId}/>
             <div className=" hometable mt-4 mb-4">
                 <div className="mt-4 d-flex justify-content-between ">
                     <div className="d-flex">
@@ -302,7 +302,7 @@ const HomeTable = (props) => {
             <div>
                 <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>
                 <ReactPaginate
-                    previousLabel={"<Previous"}
+                    previousLabel={"Previous"}
                     nextLabel={"Next"}
                     breakLabel={"...."}
                     pageCount={Math.ceil(tableData?.data?.data.length / limit)}

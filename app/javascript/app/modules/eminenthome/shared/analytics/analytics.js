@@ -24,17 +24,38 @@ const Analytics = (props) => {
             let icon = null;
             switch (value) {
                 case 'incomplete': {
-                    label = 'Total ';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total Eminent Personality';
+                            break;
+                        case '2':
+                            label = 'Total Position';
+                            break;
+                    }
                     icon = <IncompleteFile />;
                     break;
                 }
                 case 'completed': {
-                    label = 'Total Completed Form';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total Completed Form';
+                            break;
+                        case '2':
+                            label = 'Occupied';
+                            break;
+                    }
                     icon = <CheckList />;
                     break;
                 }
                 case 'overall': {
-                    label = 'Total Eminent Personality';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total incompleted Form';
+                            break;
+                        case '2':
+                            label = 'Vacant';
+                            break;
+                    }
                     icon = <Usergroup />;
                     break;
                 }

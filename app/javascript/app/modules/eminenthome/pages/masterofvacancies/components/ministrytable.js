@@ -7,30 +7,26 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
+import ReactPaginate from "react-paginate";
 
 
-const  MinistryTable = ({handleTab}) => {
-    const ministryData = [
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"},
-        {id:"1", name:"ministri name1", pos: "positon1", occu: "Occupied1", vec:"Vecant1"}
-    ]
-    useEffect(() => {
-        for (let i  = 0; i < ministryData.length; i++) {
-            let dataItem = ministryData[i]
-            console.log(dataItem?.name)
-        }
-
-    }, []);
-    // let navigate=useNavigate();
-    const testing=()=>{
-        console.log('path', )
-
+const  MinistryTable = ({data, onSwitchTab}) => {
+    const [tableData, setTableData] = useState(null);
+    const [currentPage, setCurrentPage] = useState('');
+    const prepareToGetDisplayData = () => {
+        // let pageString = '';
+        // let offset = currentPage * limit;
+        // pageString = `&offset=${offset}&limit=${limit}`;
+        // tableDataDisplay(searched + pageString);
+        setCurrentPage(currentPage)
     }
+    useEffect(() => {
+        prepareToGetDisplayData();
+    }, [currentPage]);
+
     return (
-        <TableContainer component={Paper}>
+        <>
+        <TableContainer component={Paper} className="psutable">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
@@ -42,29 +38,40 @@ const  MinistryTable = ({handleTab}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {ministryData.map((item) => (
-                        <TableRow
-                            key={item.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {item.id}
-                            </TableCell>
-
-                                <TableCell className="mini" onClick={(e)=> {
-                                    handleTab(e, 1);
-                                }}>
-                                   {item.name}
-                                </TableCell>
-
-                            <TableCell>{item.pos}</TableCell>
-                            <TableCell>{item.occu}</TableCell>
-                            <TableCell>{item.vec}</TableCell>
-                        </TableRow>
-                    ))}
+                    {data.map((ministry, index) => <TableRow key={ministry.ministryId}>
+                        <TableCell>{index + 1}</TableCell>
+                        { }
+                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministryId)}>{ministry.ministryName}</TableCell>
+                        <TableCell>{ministry.totalPositions}</TableCell>
+                        <TableCell>{ministry.occupied}</TableCell>
+                        <TableCell>{ministry.vacant}</TableCell>
+                    </TableRow>)}
                 </TableBody>
             </Table>
         </TableContainer>
+    <div className="mt-3">
+        <p className="d-flex justify-content-center">{currentPage + 1}</p>
+        <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"...."}
+            // pageCount={ limit}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={5}
+            onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+            containerClassName={'pagination justify-content-end'}
+            pageClassName={'page-item'}
+            pageLinkClassName={'page-link'}
+            previousClassName={'page-item'}
+            previousLinkClassName={'page-link'}
+            nextClassName={'page-item'}
+            nextLinkClassName={'page-link'}
+            breakClassName={'page-link'}
+            breakLinkClassName={'page-item'}
+            activeClassName={'active'}/>
+
+    </div>
+</>
     );
 }
 export  default MinistryTable;
