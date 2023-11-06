@@ -185,4 +185,46 @@ module MetadataHelper
       ]
     }
   end
+
+  def get_minister_filters(search)
+    result = {
+      'key': 'minister',
+      'display_name': 'Minister',
+      'type': 'array',
+      'values': []
+    }
+    ministry_details = AuthUser.where(assist_to_id: nil)
+    if search.length > 2
+      ministry_details = AuthUser.name_similar(search).where(assist_to_id: nil)
+    end
+
+    ministry_details.each do |minister_info|
+      result[:values] << {
+        'value': minister_info[:id],
+        'display_name': minister_info[:name]
+      }
+    end
+    result
+  end
+
+  def get_ministry_filters(search)
+    result = {
+      'key': 'ministry',
+      'display_name': 'Ministry',
+      'type': 'array',
+      'values': []
+    }
+    ministry_details = Ministry.all()
+    if search.length > 2
+      ministry_details = Ministry.name_similar(search)
+    end
+
+    ministry_details.each do |ministry_info|
+      result[:values] << {
+        'value': ministry_info[:id],
+        'display_name': ministry_info[:name]
+      }
+    end
+    result
+  end
 end

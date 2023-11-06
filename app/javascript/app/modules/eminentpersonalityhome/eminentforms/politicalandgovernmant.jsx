@@ -18,7 +18,14 @@ import * as Yup from "yup";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PopupState, {bindPopper, bindToggle} from 'material-ui-popup-state';
 import {Edit} from "@mui/icons-material";
-import {electionTypeList, electionWiseJson, isValuePresent, otherPartyJson, politicalProfileJson} from "../../utils";
+import {
+    electionTypeList,
+    electionWiseJson,
+    isValuePresent,
+    otherPartyJson,
+    politicalProfileJson,
+    saveProgress
+} from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
 import OtherInputField from "../component/otherFormFields/otherInputField";
@@ -50,6 +57,8 @@ const PolticalandGovrnform =(props)=>{
         isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
         isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
         isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
+        isValuePresent(props.formValues.social_profiles) ? setSocialFields(props.formValues.social_profiles) : null
+
     }, []);
 
     useEffect(() => {
@@ -58,7 +67,7 @@ const PolticalandGovrnform =(props)=>{
 
     useEffect(() => {
         props.formValues.other_parties =  otherPartyDetails
-    }, [politicalProfileDetails]);
+    }, [otherPartyDetails]);
 
 
     const addSocialFields = () => {
@@ -84,6 +93,7 @@ const PolticalandGovrnform =(props)=>{
     }, []);
 
     const handleSave = ( title, formData, id) => {
+        console.log(formData)
         if (title === 'Political Profile') {
             politicalProfileSave(formData, id)
         }
@@ -114,7 +124,7 @@ const PolticalandGovrnform =(props)=>{
     const politicalProfileSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
-            level: formData.level,
+            party_level: formData.party_level,
             unit: formData.unit,
             designation: formData.designation,
             start_year: formData.start_year,
@@ -216,13 +226,16 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.fought_details = electoralDetails
     }, [electoralDetails]);
 
-    console.log(electFiled)
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn/></Item>
+                    <Item sx={{textAlign:'right'}}><Savebtn onClick={progressSave} /></Item>
                 </Stack>
                 {politicalProfileDetails.length > 0 && (
                     <div className="data-table">
@@ -239,7 +252,7 @@ const PolticalandGovrnform =(props)=>{
                             <tbody>
                             {politicalProfileDetails.map((data, index) => (
                             <tr>
-                                <td>{data.level}</td>
+                                <td>{data.party_level}</td>
                                 <td>{data.unit}</td>
                                 <td>{data.designation}</td>
                                 <td>{data.start_year}</td>
@@ -370,9 +383,9 @@ const PolticalandGovrnform =(props)=>{
                                     <FormLabel>Organization </FormLabel>
                                     <OtherInputField
                                         type="text"
-                                        value={socialFields[index]?.organization || null}
+                                        value={field?.organization || null}
                                         onChange={handleFieldChange}
-                                        fieldIndex={0}
+                                        fieldIndex={index}
                                         textType="organization"
                                         placeholder="Enter Organization "/>
                                 </Grid>
@@ -381,6 +394,7 @@ const PolticalandGovrnform =(props)=>{
                                     <TextField
                                         className='p-0'
                                         fullWidth
+                                        value={field.description}
                                         onChange={enterSocialFields( 'description' ,index)}
                                         multiline
                                         minRows={5}
