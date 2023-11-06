@@ -188,7 +188,7 @@ module MetadataHelper
 
   def get_minister_filters(search)
     result = {
-      'key': 'minister',
+      'key': 'minister_ids',
       'display_name': 'Minister',
       'type': 'array',
       'values': []
@@ -209,7 +209,7 @@ module MetadataHelper
 
   def get_ministry_filters(search)
     result = {
-      'key': 'ministry',
+      'key': 'ministry_ids',
       'display_name': 'Ministry',
       'type': 'array',
       'values': []
