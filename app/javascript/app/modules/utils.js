@@ -98,28 +98,25 @@ export const politicalProfileJson = {
     title: 'Political Profile',
     fields: [
         {
-            key: 'level',
+            key: 'party_level',
             na_button: false,
             name: "Party Level",
             placeholder: 'Select party level',
-            type: 'dropdown',
-            list: ['data'],
+            type: 'textField',
         },
         {
             key: 'unit',
             na_button: false,
             name: "Unit",
             placeholder: 'Select unit',
-            type: 'dropdown',
-            list: ['data'],
+            type: 'textField',
         },
         {
             key: 'designation',
             na_button: false,
             name: "Designation",
             placeholder: 'Select designation',
-            type: 'dropdown',
-            list: ['data'],
+            type: 'textField',
         },
         {
             key: 'start_year',

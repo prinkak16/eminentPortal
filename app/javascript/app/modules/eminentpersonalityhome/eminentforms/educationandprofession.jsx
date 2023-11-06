@@ -36,6 +36,18 @@ const Educationform = (props) => {
     const [educationDetails, setEducationDetails] = useState([]);
 
     useEffect(() => {
+        const educations = props.formValues.educations
+        if (educations.length > 0) {
+            let Objects = []
+            for (let i = 0; i < educations.length; i++) {
+                Objects.push({id: uuidv4(),number: educations[i]})
+            }
+            setEducationDetails(Objects)
+        }
+    }, [])
+
+
+    useEffect(() => {
         isValuePresent(props.formValues.educations) ? setEducationDetails(props.formValues.educations) : null
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
