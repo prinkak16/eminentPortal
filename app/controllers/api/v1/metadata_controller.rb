@@ -74,7 +74,7 @@ class Api::V1::MetadataController < BaseApiController
       ]
     }
 
-    render json: { success: true, data: result, message: 'User Assigned States' }, status: 200
+    render json: { success: true, data: result, message: 'Home filters.' }, status: 200
   end
 
   def user_allotted_permissions
@@ -119,5 +119,19 @@ class Api::V1::MetadataController < BaseApiController
       message: 'Required locations',
       data: data
     }, status: :ok
+  end
+
+  def config_gom_management
+    minister_name = params[:minister_name].present? ? params[:minister_name] : ''
+    ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
+
+    result = {
+      'filters': [
+        get_minister_filters(minister_name),
+        get_ministry_filters(ministry_name)
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'GOM filters.' }, status: 200
   end
 end
