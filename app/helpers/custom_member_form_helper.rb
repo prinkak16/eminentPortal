@@ -259,27 +259,6 @@ module CustomMemberFormHelper
               'PhD and Above'
             ]
           },
-          'school': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'board': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'year': {
-            'type': [nil,'integer'],
-            'minimum': 1900,
-            'maximum': 3000
-          },
-          'subject': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
-          'stream': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
           'course': {
             'type': [nil,'string'],
             'maxLength': 200 # Max length of 200 characters
@@ -292,10 +271,6 @@ module CustomMemberFormHelper
             'type': [nil,'string'],
             'maxLength': 200 # Max length of 200 characters
           },
-          'department': {
-            'type': [nil,'string'],
-            'maxLength': 200 # Max length of 200 characters
-          },
           'start_year': {
             'type': [nil,'integer'],
             'minimum': 1900,
@@ -305,9 +280,12 @@ module CustomMemberFormHelper
             'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
+          },
+          'highest_qualification': {
+            'type': 'boolean'
           }
         },
-        'required': %w[qualification school board year subject stream course university college department start_year end_year]
+        'required': %w[qualification course university college start_year end_year highest_qualification]
       }
     },
     'education_level': {
@@ -355,9 +333,12 @@ module CustomMemberFormHelper
             'type': [nil,'integer'],
             'minimum': 1900,
             'maximum': 3000
+          },
+          'current_organization': {
+            'type': 'boolean'
           }
         },
-        'required': %w[profession organisation position start_year end_year]
+        'required': %w[profession organisation position start_year end_year current_organization]
       }
     },
     'description': {
@@ -484,14 +465,14 @@ module CustomMemberFormHelper
         'required': %w[organization description]
       }
     },
+    'election_contested': {
+      'type': 'boolean'
+    },
     'election_fought': {
       'type': 'array',
       'items': {
         'type': 'object',
         'properties': {
-          'election_contested': {
-            'type': 'boolean'
-          },
           'contesting_year': {
             'type': [nil,'integer'],
             'minimum': 1900,
@@ -581,6 +562,7 @@ module CustomMemberFormHelper
       bjp_years
       other_parties
       social_profiles
+      election_contested
       election_fought
     ]
   )
@@ -827,8 +809,8 @@ module CustomMemberFormHelper
 
   def fetch_member(phone, form_type)
     CustomMemberForm.where(phone:, form_type:)
-      .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone)
-      .where(form_type:))&.first
+                    .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone)
+                                        .where(form_type:))&.first
   end
 
   def send_sms(message, phone_number, ct_id = '1007440753033109730')

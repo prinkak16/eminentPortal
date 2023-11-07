@@ -110,12 +110,42 @@ class Api::V1::Ministry::Department::OrganizationController < BaseApiController
     limit = params[:limit].present? ? params[:limit] : 50
     offset = params[:offset].present? ? params[:offset] : 0
 
+    organizations = []
+    organization_count = 0
+    if params[:name].present? && params[:name].length > 2
+      organizations = Organization
+                        .name_similar(params[:name])
+                        .where(ministry_id: params['ministry_id'], department_id: params['department_id'])
+                        .includes(:ministry, :department)
+                        .order('created_at desc')
+                        .limit(limit)
+                        .offset(offset)
+                        .as_json(include: [:ministry, :department])
+
+      organization_count = Organization
+                             .name_similar(params[:name])
+                             .where(ministry_id: params['ministry_id'], department_id: params['department_id'])
+                             .count(:id)
+    else
+      organizations = Organization
+                        .where(ministry_id: params['ministry_id'], department_id: params['department_id'])
+                        .includes(:ministry, :department)
+                        .order('created_at desc')
+                        .limit(limit)
+                        .offset(offset)
+                        .as_json(include: [:ministry, :department])
+
+      organization_count = Organization
+                             .where(ministry_id: params['ministry_id'], department_id: params['department_id'])
+                             .count(:id)
+    end
+
     render json: {
       success: true,
       message: 'Success',
       data: {
-        'ministries': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).includes(:ministry, :department).order('created_at desc').limit(limit).offset(offset).as_json(include: [:ministry, :department]),
-        'count': Organization.where(ministry_id: params['ministry_id'], department_id: params['department_id']).count
+        'department': organizations,
+        'count': organization_count
       }
     }, status: :ok
   rescue StandardError => e

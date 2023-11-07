@@ -41,14 +41,13 @@ class Api::V1::MinistryController < BaseApiController
       offset = params[:offset].present? ? params[:offset] : 0
 
       ministries = Ministry
-      ministries = (params[:name].present? && params[:name].length > 3) ? ministries.name_similar(params[:name]) : ministries.select(:id, :name).order(order_id: :desc)
-
+      ministries = params[:name].present? && params[:name].length > 2 ? ministries.name_similar(params[:name]) : ministries.select(:id, :name).order(order_id: :desc)
       render json: {
         success: true,
         message: 'Success',
         data: {
           'ministries': ministries.limit(limit).offset(offset),
-          'count': ministries
+          'count': ministries.count(:id)
         }
       }, status: :ok
     rescue StandardError => e

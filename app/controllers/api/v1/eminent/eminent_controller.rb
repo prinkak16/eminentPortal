@@ -15,11 +15,11 @@ class Api::V1::Eminent::EminentController < BaseApiController
       }, status: :bad_request
     else
       return render json: {
-        success: false,
+        success: true,
         message: 'Success.',
         data: eminent_user,
         is_view: eminent_user.aasm_state == 'approved'
-      }, status: :bad_request
+      }, status: :ok
     end
   end
 

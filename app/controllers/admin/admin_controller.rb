@@ -1,14 +1,25 @@
 class Admin::AdminController < ApplicationController
-  # before_action :authenticate_user
+  before_action :authenticate_user_rails
   require 'csv'
   include CustomMemberFormHelper
   include MailHelper
 
   def manual_upload
-    render 'admin/manual_upload'
+    permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+    if permission_exist.nil?
+      return render 'home/unauthorized'
+    else
+      return render 'admin/manual_upload'
+    end
   end
   def manual_upload_data
     begin
+      permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+      if permission_exist.nil?
+        redirect_to admin_manual_upload_path, allow_other_host: true
+        return
+      end
+
       phone_regex = '^[1-9][0-9]{9}$'
       eminent_users = []
       failed_eminent_users = []
@@ -33,12 +44,12 @@ class Admin::AdminController < ApplicationController
       begin
         puts 'trying with UTF-8'
         file = open(file.path)
-        file.set_encoding(Encoding.find("UTF-8"))
+        file.set_encoding(Encoding.find('UTF-8'))
         rows = CSV.parse(file.read, header_converters: lambda { |name| name.gsub(/\ufeff/, '') }, headers: true, :quote_char => '"')
       rescue StandardError => e
         puts 'trying with ISO'
         file = open(file.path)
-        file.set_encoding(Encoding.find("ISO-8859-1"))
+        file.set_encoding(Encoding.find('ISO-8859-1'))
         rows = CSV.parse(file.read, header_converters: lambda { |name| name.gsub(/\ufeff/, '') }, headers: true, :quote_char => '"')
       end
 
@@ -147,7 +158,7 @@ class Admin::AdminController < ApplicationController
           end
         else
           custom_member_form = CustomMemberForm.where(phone: phone_number, form_type: form_type)
-            .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone_number).where(form_type: form_type))
+                                               .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone_number).where(form_type: form_type))
           custom_member_form = custom_member_form.first
           if person_id_detail.blank?
             if custom_member_form.blank?

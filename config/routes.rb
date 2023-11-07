@@ -45,6 +45,8 @@ Rails.application.routes.draw do
       get 'stats/home', to: 'stats#home'
 
       namespace :eminent, path: 'eminent' do
+        post '/auth/send_otp', to: 'eminent_auth#send_otp'
+        post '/auth/validate_otp', to: 'eminent_auth#validate_otp'
         get '/fetch', to: 'eminent#fetch_eminent'
         post '/update', to: 'eminent#update_eminent'
         delete '/logout', to: 'eminent#logout'
