@@ -4,15 +4,14 @@ import './GomPage.scss'
 import {SearchOffOutlined, Upload} from "@mui/icons-material";
 import MultipleSelectCheckmarks from "../MultipleSelectCheckmarks/MultipleSelectCheckmarks";
 import RadioSelect from "../RadioSelect/RadioSelect";
-
-import Header from "../../eminentpersonalityhome/header/header";
-import UploadIcon from '../../../../../../../public/images/upload.svg'
-import UploadFile from  '../../../../../../../public/images/upload_file.svg'
+import Header from "../eminentpersonalityhome/header/header";
+import UploadIcon from '../../../../../public/images/upload.svg'
+import UploadFile from  '../../../../../public/images/upload_file.svg'
 import Modal from "react-bootstrap/Modal";
-import EditIcon from "../../../../../../../public/images/Edit.svg"
-import CloseIcon from "../../../../../../../public/images/CloseIcon.svg"
+import EditIcon from "../../../../../public/images/Edit.svg"
+import CloseIcon from "../../../../../public/images/CloseIcon.svg"
 import axios from "axios";
-import {assignMinistriesAndMinister, getGOMTableData} from "../../../../api/eminentapis/endpoints";
+import {assignMinistriesAndMinister, getGOMTableData} from "../../api/eminentapis/endpoints";
 function GomPage() {
     const [gomTableData, setGomTableData] = useState([]);
     const hiddenFileInput = useRef(null);

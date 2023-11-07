@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import './MultipleSelectCheckmarks.scss'
-import {getMinistry} from "../../../../api/eminentapis/endpoints";
+import {getMinistry} from "../../api/eminentapis/endpoints";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
