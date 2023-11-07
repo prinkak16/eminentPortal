@@ -3,7 +3,7 @@ import {apiBaseUrl} from "../api_endpoints";
 
 
 export const getFilters = ()  => {
-    return axios.get(apiBaseUrl + 'metadata/config/home');
+    return axios.get(apiBaseUrl + 'filters/home');
 }
 
 export const getData = (filters = '') => {

@@ -1,14 +1,5 @@
 import React, {useContext, useEffect, useState} from "react"
-import {
-    Stack,
-    Typography,
-    Box,
-    Paper,
-    Grid,
-    FormLabel,
-    TextField,
-    Button,
-} from '@mui/material';
+import {Box, Button, FormLabel, Grid, Paper, Stack, TextField, Typography,} from '@mui/material';
 import {ErrorMessage, Field, useFormikContext} from 'formik';
 import {styled} from '@mui/material/styles';
 import ImageUpload from '../component/imageupload/imageupload';
@@ -21,8 +12,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronDown} from '@fortawesome/free-solid-svg-icons';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faChevronDown, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
     getFormData,
     getGenderData,
@@ -38,8 +28,10 @@ const PersonalDetails = (props) => {
     const {config} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
-            if (props.formValues.hasOwnProperty(key)) {
-                props.formValues[key] = props.userData[key]
+            if (key !== 'other_address') {
+                if (props.formValues.hasOwnProperty(key)) {
+                    props.formValues[key] = props.userData[key]
+                }
             }
         }
     }, []);
@@ -229,6 +221,33 @@ const PersonalDetails = (props) => {
         setSelectedLanguages(languages)
         props.formValues.languages = languages
     }
+
+
+    const onDateChange = (event) => {
+        props.formValues.dob = event.$d
+        console.log(props.formValues.dob)
+    }
+
+    const  formatDateToDDMMYYYY = (inputDateString) => {
+        const date = new Date(inputDateString);
+        const day = date.getUTCDate();
+        const month = date.getUTCMonth() + 1;
+        const year = date.getUTCFullYear();
+        const formattedDate = (day < 10 ? '0' : '') + day + '/' +
+            (month < 10 ? '0' : '') + month + '/' +
+            year;
+        return formattedDate;
+    }
+
+    const convertToISO8601 = (dateString)=> {
+        const dateComponents = dateString.split('/');
+        const day = parseInt(dateComponents[0], 10);
+        const month = parseInt(dateComponents[1], 10);
+        const year = parseInt(dateComponents[2], 10);
+        const date = new Date(year, month - 1, day);
+        return date.toISOString();
+    }
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>

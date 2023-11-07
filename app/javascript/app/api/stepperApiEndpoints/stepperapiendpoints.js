@@ -12,7 +12,7 @@ export const getFormData = async (data, activeStep,config) => {
         "channel": "Link"
     }
     try {
-        const response = await axios.post(apiBaseUrl + allSteps, formData, config);
+        const response = await axios.post(apiBaseUrl + 'eminent/update', formData, config);
         console.log('API response:', response.data);
     } catch (error) {
         console.error('API error:', error);
@@ -87,7 +87,7 @@ export const sendOtp = async (phoneNumber) => {
     formData.append("form_type", 'eminent_personality');
     formData.append("phone", phoneNumber);
     try {
-        url = await axios.post(apiBaseUrl + 'eminent_auth/send_otp', formData);
+        url = await axios.post(apiBaseUrl + 'eminent/auth/send_otp', formData);
     } catch (error) {
         alert(`Error: ${error.response.data.message}`);
     }
@@ -101,7 +101,7 @@ export const validateOtp = async (phoneNumber, otp) => {
     formData.append("phone", phoneNumber);
     formData.append("otp", otp);
     try {
-        url = await axios.post(apiBaseUrl + 'eminent_auth/validate_otp', formData);
+        url = await axios.post(apiBaseUrl + 'eminent/auth/validate_otp', formData);
     } catch (error) {
         alert(`Error: ${error.response.data.message}`);
     }
