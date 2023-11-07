@@ -1,20 +1,19 @@
-import React, {useEffect, useState} from "react"
-import {FormControl, Stack, Typography, Box, Paper, Grid, FormLabel, TextField, Select, Button, MenuItem, Checkbox, ListItemText} from '@mui/material';
+import React, {useContext, useEffect, useState} from "react"
+import {Box, Button, FormLabel, Grid, Paper, Stack, TextField, Typography,} from '@mui/material';
 import {ErrorMessage, Field, useFormikContext} from 'formik';
 import {styled} from '@mui/material/styles';
 import ImageUpload from '../component/imageupload/imageupload';
 import './allfroms.scss'
 import Age from '../../../../../../public/images/age.svg'
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import SelectField from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
-import { Formik, useFormik } from 'formik';
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChevronDown, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
-    getFileUpload,
     getFormData,
     getGenderData,
     getReligionData,
@@ -22,11 +21,20 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import { useDeviceInfo } from '../context/deviceinfocontext';
-import use from "use";
-import {string} from "yup";
-import Startdatepicker from "../component/startdatepicker/startdatepicker";
+import {isValuePresent, languagesName} from "../../utils";
+import {ApiContext} from "../../ApiContext";
+
 const PersonalDetails = (props) => {
+    const {config} = useContext(ApiContext)
+    useEffect(() => {
+        for (const key in props.userData) {
+            if (key !== 'other_address') {
+                if (props.formValues.hasOwnProperty(key)) {
+                    props.formValues[key] = props.userData[key]
+                }
+            }
+        }
+    }, []);
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -37,13 +45,20 @@ const PersonalDetails = (props) => {
     const [selectedOption, setSelectedOption] = useState('');
     const [dropDownDataCategory, setDropDownDataCategory] = useState([]);
     const [ReligionData, setReligionData] = useState([]);
-    const[GenderData, setGenderData]= useState([]);
-    const[selectedLanguages, setSelectedLanguages]= useState([]);
+    const [GenderData, setGenderData] = useState([]);
+    const [selectedLanguages, setSelectedLanguages] = useState(isValuePresent(props.formValues.languages) ? props.formValues.languages : []);
+    const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
+    const [langDrawer, setLangDrawer] = useState(false);
+
+    useEffect(() => {
+        setSelectedLanguages(props.formValues.languages)
+    }, [props.formValues.languages]);
+
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
     useEffect(() => {
-        getcatgry()
+        getCategory()
         getReligion()
         getGenders()
     }, [])
@@ -53,62 +68,56 @@ const PersonalDetails = (props) => {
             props.setStepData(props.formValues);
         }
     }, [props.stepDataFlag]);
-    const getcatgry = () => {
-        getStepCtgry.then(
+    const getCategory = () => {
+        getStepCtgry(config).then(
             (res) => {
                 setDropDownDataCategory(res.data.data)
             }
         )
     }
 
-    const getReligion=()=>{
-        getReligionData.then((response) => {
+    const getReligion = () => {
+        getReligionData(config).then((response) => {
             setReligionData(response.data.data)
         })
     }
-    const getGenders=()=>{
-        getGenderData.then((response)=>{
-            setGenderData(response.data.data)})
+    const getGenders = () => {
+        getGenderData(config    ).then((response) => {
+            setGenderData(response.data.data)
+        })
     }
-    const handleViewPdf = () => {
-        window.open(pdfUrl, "_blank");
-    };
-const saveProgress=()=>{
-    const fieldsWithValues = {};
-    for (const fieldName of Object.keys(props.formValues)) {
-        const fieldValue = props.formValues[fieldName];
-        if (fieldValue) {
-            if (props.formValues[fieldName] === 'mobile') {
-                fieldsWithValues[fieldName] = [fieldValue];
-            }  else {
-                fieldsWithValues[fieldName] = fieldValue;
+
+    const saveProgress = (formValues, activeStep) => {
+        const fieldsWithValues = {};
+        for (const fieldName of Object.keys(props.formValues)) {
+            const fieldValue = props.formValues[fieldName];
+            if (fieldValue) {
+                if (props.formValues[fieldName] === 'mobile') {
+                    fieldsWithValues[fieldName] = [fieldValue];
+                } else {
+                    fieldsWithValues[fieldName] = fieldValue;
+                }
             }
         }
-    }
-    getFormData(fieldsWithValues).then(response => {
-        console.log('API response:', response.data);
+        getFormData(fieldsWithValues, props.activeStep + 1).then(response => {
+            console.log('API response:', response.data);
 
-    });
-}
-    const names = [
-        'Hindi',
-        'English',
-        'French',
-        'Punjabi',
-    ];
-    const handleLanguageChanges = (event) => {
-        let selectedLang = []
-        selectedLang = selectedLanguages
-        const selcLang = event.target.textContent
-        if (selectedLang.includes(selcLang)) {
-            selectedLang = selectedLang.filter(item => item !== selcLang);
+        });
+    }
+
+
+    const handleLanguageChanges = (lang) => {
+        let languages = []
+        if (customSelectedLanguages.includes(lang)) {
+            languages = selectedLanguages.filter(item => item !== lang)
+            setCustomSelectedLanguages(languages)
         } else {
-            selectedLang.push(selcLang)
+            setCustomSelectedLanguages([...customSelectedLanguages, lang])
         }
-        setSelectedLanguages(selectedLang)
     }
 
-    const selectedLangSubmission = (type) => ()=>  {
+
+    const selectedLangSubmission = (type) => () => {
         if (type === 'submit') {
             props.languages.value = selectedLanguages
         }
@@ -117,54 +126,48 @@ const saveProgress=()=>{
             setSelectedLanguages([])
         }
     }
-    const [customDD, setCustomDD]=useState('')
-    const [customMM, setCustomMM]=useState('')
-    const [customYear, setCustomYear]=useState('')
+    const [customDD, setCustomDD] = useState('')
+    const [customMM, setCustomMM] = useState('')
+    const [customYear, setCustomYear] = useState('')
     const dobCheck = (type) => (event) => {
         if (type === 'DD') {
-            if(event.target.value.length === 1){
-                if (event.target.value <= 3 ) {
+            if (event.target.value.length === 1) {
+                if (event.target.value <= 3) {
                     setCustomDD(event.target.value)
                 }
-            }
-            else if (event.target.value.length === 2 && event.target.value === '00') {
-            }
-            else{
-                if (event.target.value <= 31 ) {
+            } else if (event.target.value.length === 2 && event.target.value === '00') {
+            } else {
+                if (event.target.value <= 31) {
                     setCustomDD(event.target.value)
                 }
             }
         }
-        if(type==='MM'){
-            if (event.target.value.length === 2 && event.target.value === '00' ) {
+        if (type === 'MM') {
+            if (event.target.value.length === 2 && event.target.value === '00') {
 
-            } else if(event.target.value<=12){
+            } else if (event.target.value <= 12) {
                 setCustomMM(event.target.value)
             }
         }
-        if(type==='YYYY'){
-            if (event.target.value.length === 2 && event.target.value === '00' ) {
+        if (type === 'YYYY') {
+            if (event.target.value.length === 2 && event.target.value === '00') {
 
-            }else if (event.target.value.length === 0) {
+            } else if (event.target.value.length === 0) {
                 setCustomYear(event.target.value)
-            }
-            else if (event.target.value.length === 1 ) {
-                if(event.target.value === '1' || event.target.value === '2'){
+            } else if (event.target.value.length === 1) {
+                if (event.target.value === '1' || event.target.value === '2') {
                     setCustomYear(event.target.value)
                 }
-            }
-            else if (event.target.value.length === 2 ) {
-                if(event.target.value === '19' || event.target.value === '20'){
+            } else if (event.target.value.length === 2) {
+                if (event.target.value === '19' || event.target.value === '20') {
                     setCustomYear(event.target.value)
                 }
-            }
-            else if (event.target.value.length === 3 ) {
-                if(parseInt(event.target.value) >= 199 && parseInt(event.target.value) <= 202){
+            } else if (event.target.value.length === 3) {
+                if (parseInt(event.target.value) >= 199 && parseInt(event.target.value) <= 202) {
                     setCustomYear(event.target.value)
                 }
-            }
-            else if (event.target.value.length === 4 ) {
-                if(parseInt(event.target.value) >= 1990 && parseInt(event.target.value) <= 2023){
+            } else if (event.target.value.length === 4) {
+                if (parseInt(event.target.value) >= 1990 && parseInt(event.target.value) <= 2023) {
                     setCustomYear(event.target.value)
                 }
             }
@@ -173,13 +176,12 @@ const saveProgress=()=>{
     }
 
     const updatePhotoUrl = (url) => {
-        if(url && url.length > 0){
+        if (url && url.length > 0) {
             props.formValues.photo = url;
         }
     }
     const calculateAge = (dob) => {
         if (!dob) return '';
-
         const today = new Date();
         const birthDate = new Date(dob);
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -188,7 +190,6 @@ const saveProgress=()=>{
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-
         return age;
     };
 
@@ -203,6 +204,49 @@ const saveProgress=()=>{
         setFieldValue('age', newAge);
     }, [customYear, values.dob, setFieldValue]);
 
+    const openLangDrawer = () => {
+        setLangDrawer(!langDrawer)
+        setCustomSelectedLanguages(selectedLanguages)
+    }
+
+    const saveLanguages = () => {
+        setLangDrawer(false)
+        setSelectedLanguages(customSelectedLanguages)
+        props.formValues.languages = customSelectedLanguages
+    }
+
+    const removeLanguage = (selLang) => {
+        let languages = selectedLanguages.filter(item => item !== selLang)
+        setCustomSelectedLanguages(languages)
+        setSelectedLanguages(languages)
+        props.formValues.languages = languages
+    }
+
+
+    const onDateChange = (event) => {
+        props.formValues.dob = event.$d
+        console.log(props.formValues.dob)
+    }
+
+    const  formatDateToDDMMYYYY = (inputDateString) => {
+        const date = new Date(inputDateString);
+        const day = date.getUTCDate();
+        const month = date.getUTCMonth() + 1;
+        const year = date.getUTCFullYear();
+        const formattedDate = (day < 10 ? '0' : '') + day + '/' +
+            (month < 10 ? '0' : '') + month + '/' +
+            year;
+        return formattedDate;
+    }
+
+    const convertToISO8601 = (dateString)=> {
+        const dateComponents = dateString.split('/');
+        const day = parseInt(dateComponents[0], 10);
+        const month = parseInt(dateComponents[1], 10);
+        const year = parseInt(dateComponents[2], 10);
+        const date = new Date(year, month - 1, day);
+        return date.toISOString();
+    }
 
     return (
         <>
@@ -216,48 +260,21 @@ const saveProgress=()=>{
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={8}>
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
-                            <Grid item xs={6}>
-                                <FormLabel>Fullname <sup>*</sup></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Enter Fullname" onKeyPress={(e) => {
+                            <Grid item xs={12}>
+                                <FormLabel>Name <mark>*</mark></FormLabel>
+                                <Inputfield type="text" name="name" placeholder="Enter Name"
+                                            value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
-                                    if (!/^[A-Za-z]+$/.test(key)) {
+                                    if (!/^[A-Za-z\s]+$/.test(key)) {
                                         e.preventDefault();
                                     }
                                 }}/>
                                 <ErrorMessage name="name" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>State ID</FormLabel>
-                                <NumberField
-                                    placeholder='Enter ID'
-                                    fullWidth
-                                    name="id"
-                                    disabled
-                                />
-                                <ErrorMessage name="id" component="div"/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormLabel>Mobile Number <sup>*</sup></FormLabel>
-                                <Field
-                                    placeholder='Please Seach by Phone no.'
-                                    inputProps={{
-                                        maxLength: 10,
-                                    }}
-                                    type="text"
-                                    as={TextField}
-                                    fullWidth
-                                    onInput={(event) => {
-                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-
-                                    }}
-                                    name="mobiles.0"
-                                />
-
-                                <ErrorMessage name="mobiles" component="div" />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormLabel>Religion <sup>*</sup></FormLabel>
+                                <FormLabel>Religion <mark>*</mark></FormLabel>
                                 <SelectField name="religion" selectedvalues={selectedOption}
+                                             value={props.formValues.religion}
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
                                              optionList={ReligionData}
@@ -265,24 +282,27 @@ const saveProgress=()=>{
                                 <ErrorMessage name="religion" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Gender <sup>*</sup></FormLabel>
+                                <FormLabel>Gender <mark>*</mark></FormLabel>
                                 <SelectField name="gender" selectedvalues={selectedOption}
+                                             value={props.formValues.gender}
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
                                              optionList={GenderData}/>
                                 <ErrorMessage name="gender" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Category <sup>*</sup></FormLabel>
+                                <FormLabel>Category <mark>*</mark></FormLabel>
                                 <SelectField name="category" selectedvalues={selectedOption}
+                                             value={props.formValues.category}
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
                                              optionList={dropDownDataCategory}/>
                                 <ErrorMessage name="category" component="div"/>
                             </Grid>
                             <Grid item xs={6}>
-                                <FormLabel>Caste <sup>*</sup></FormLabel>
-                                <Inputfield type="text" name="caste" placeholder="Enter Caste" onKeyPress={(e) => {
+                                <FormLabel>Caste <mark>*</mark></FormLabel>
+                                <Inputfield type="text" name="caste" value={props.formValues.caste} Z
+                                            placeholder="Enter Caste" onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z]+$/.test(key)) {
                                         e.preventDefault();
@@ -292,19 +312,20 @@ const saveProgress=()=>{
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
-                                <Inputfield type="text" name="sub_caste" placeholder="Enter Sub Caste" onKeyPress={(e) => {
-                                    const key = e.key;
-                                    if (!/^[A-Za-z]+$/.test(key)) {
-                                        e.preventDefault();
-                                    }
-                                }}/>
+                                <Inputfield type="text" name="sub_caste" value={props.formValues.sub_caste} placeholder="Enter Sub Caste"
+                                            onKeyPress={(e) => {
+                                                const key = e.key;
+                                                if (!/^[A-Za-z]+$/.test(key)) {
+                                                    e.preventDefault();
+                                                }
+                                            }}/>
                                 <ErrorMessage name="sub_caste" component="div"/>
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
-                                <FormLabel>Date of birth <sup>*</sup></FormLabel>
+                                <FormLabel>Date of birth <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <Field name="dob">
-                                        {({ field, form }) => (
+                                    <Field name="dob" value={props.formValues.dob}>
+                                        {({field, form}) => (
                                             <DatePicker
                                                 {...field} // Pass the field's props to the DatePicker
                                                 value={field.value} // Set the value explicitly if needed
@@ -312,35 +333,48 @@ const saveProgress=()=>{
                                             />
                                         )}
                                     </Field>
+                                    <ErrorMessage name="dob" component="div"/>
                                 </LocalizationProvider>
                                 <Typography><Age alt='age'/> {age} Years</Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
-                                <FormControl className="custom-select">
-                                    <Field
-                                        as={Select}
-                                        name="languages"
-                                        multiple
-                                        value={props.formValues.languages}
-                                        onClick={handleLanguageChanges}
-                                        displayEmpty
-                                        setFieldValue={props.setFieldValue}
-                                    >
-                                        <MenuItem value="">Select Language</MenuItem>
-                                        {names.map((name) => (
-                                            <MenuItem key={name} value={name}>
-                                                <Checkbox checked={selectedLanguages.includes(name)} />
-                                                <ListItemText primary={name} />
-                                            </MenuItem>
+                                <div className="language-container" onClick={() => openLangDrawer()}>
+                                    <span>Select Languages</span>
+                                    <span
+                                        className={`arrow-down-icon ${langDrawer ? 'rotate-180' : ''}`}><FontAwesomeIcon
+                                        icon={faChevronDown}/></span>
+                                </div>
+                                {!langDrawer && selectedLanguages.length > 0 ?
+                                    <div className='selected-languages'>
+                                        {selectedLanguages.map((selLang) => (
+                                            <div className='selected-lang'>
+                                                <span>{selLang}</span>
+                                                <span onClick={() => removeLanguage(selLang)}><FontAwesomeIcon
+                                                    icon={faTimes}/>
+                                            </span>
+                                            </div>
                                         ))}
-                                        <div className="text-end me-2">
-                                            <Button onClick={selectedLangSubmission('cancel')} className="">cancel</Button>
-                                            <Button onClick={selectedLangSubmission('submit')}  className="save">Save</Button>
+                                    </div> : ''
+                                }
+
+                                {langDrawer &&
+                                    <div className='language-selection-container'>
+                                        <div className='languages-list'>
+                                            {languagesName && languagesName.map((lang) => (
+                                                <div className='language' onClick={() => handleLanguageChanges(lang)}>
+                                                    <span>{lang}</span> <span><input className='lang-input-box'
+                                                                                     type='checkbox'
+                                                                                     checked={customSelectedLanguages.includes(lang)}/></span>
+                                                </div>
+                                            ))}
                                         </div>
-                                    </Field>
-                                    <ErrorMessage name="languages" component="div" />
-                                </FormControl>
+                                        <div className='language-selected-buttons'>
+                                            <span className='lang-btn' onClick={openLangDrawer}>Cancel</span>
+                                            <span className='lang-btn save-btn' onClick={saveLanguages}>Save</span>
+                                        </div>
+                                    </div>
+                                }
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} sx={{mb: 5}}>
@@ -351,22 +385,24 @@ const saveProgress=()=>{
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     name="aadhaar"
+                                    value={props.formValues.aadhaar}
                                     placeholder='Enter Aadhaar number'
                                     onInput={(event) => {
                                         event.target.value = event.target.value.replace(/\D/g, '').slice(0, 12);
 
                                     }}
                                 />
-                                <ErrorMessage name="aadhaar" component="div" />
+                                <ErrorMessage name="aadhaar" component="div"/>
 
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
+                                    value={props.formValues.voter_id}
                                     type="text"
                                     id="voter_id"
                                     name="voter_id"
-                                    placeholder="Enter Voter ID"
+                                    placeholder="XXYYZZ1234"
                                     as={TextField}
                                 />
                                 <ErrorMessage name="voter_id" component="div" className="error"/>
@@ -391,7 +427,7 @@ const saveProgress=()=>{
 
     );
 }
-PersonalDetails.label="Personal Details"
+PersonalDetails.label = "Personal Details"
 PersonalDetails.initialValues = {
     name: "",
     mobiles: [],
@@ -411,27 +447,11 @@ PersonalDetails.initialValues = {
 };
 PersonalDetails.validationSchema = Yup.object().shape({
     // name: Yup.string().required('Please enter your first name'),
-    // mobiles: Yup.array().of(Yup.string().required('Mobile Number is required'))
-    //     .of(Yup.string().min(1))
-    //     .required('Field is required')
-    //     .test('first-digit-greater-than-4', 'First digit must be greater or equal to 5', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => {
-    //             const firstDigit = parseInt(number.charAt(0));
-    //             return !isNaN(firstDigit) && firstDigit >= 5;
-    //         });
-    //     })
-    //     .test('at-least-10-digits', 'Mobile numbers must be at least 10 digits long', (value) => {
-    //         if (!value) return true; // No validation if the field is empty
-    //         const mobileNumbers = value.map((number) => number.trim());
-    //         return mobileNumbers.every((number) => number.length === 10);
-    //     }),
     // religion: Yup.string().required('Please select your Religion'),
     // gender: Yup.string().required('Please select your Gender'),
     // category: Yup.string().required('Please select your Category'),
     // caste: Yup.string().required('Please select your Caste'),
-    // dob: Yup.string().required('Please select your Caste'),
+    // // dob: Yup.string().required('Please select your Date Of Birth'),
     // aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     // voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
     // languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),

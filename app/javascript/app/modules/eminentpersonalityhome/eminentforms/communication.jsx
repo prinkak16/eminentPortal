@@ -1,26 +1,27 @@
-import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
+import {Box, FormLabel, Grid, Paper, Stack, TextField, Typography} from '@mui/material';
 import React, {useEffect, useState} from 'react';
-import {Field, ErrorMessage } from 'formik';
-import { styled } from '@mui/material/styles';
+import {ErrorMessage, Field} from 'formik';
+import {styled} from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Checkbox from '@mui/material/Checkbox';
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
-import {
-    getFormData,
-    // getPinCodeData,
-    getReligionData,
-    getStateData
-} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
+import {isValuePresent, saveProgress} from "../../utils";
+import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
+import { v4 as uuidv4 } from 'uuid';
+import OtherInputField from "../component/otherFormFields/otherInputField";
+import OtherNumberField from "../component/otherFormFields/otherNumberInput";
+
 const Communicationform =(props)=>{
-    console.log(props.formValues)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -28,176 +29,236 @@ const Communicationform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [fields, setFields] = useState([]);
-    const [count, setcount]=useState(2)
-    const [showFields, setShowFields] = useState(false);
     const [formValues, setFormValues] = useState([])
-    const [StateData, setStateData]= useState([])
-    const [PinCodeData, setPinCodeData] = useState(null);
-    // const saveProgress=()=>{
-    //     const fieldsWithValues = {};
-    //     for (const fieldName of Object.keys(props.formValues)) {
-    //         const fieldValue = props.formValues[fieldName];
-    //         if (fieldValue) {
-    //             if (props.formValues[fieldName] === 'mobile') {
-    //                 fieldsWithValues[fieldName] = [fieldValue];
-    //             }  else {
-    //                 fieldsWithValues[fieldName] = fieldValue;
-    //             }
-    //         }
-    //     }
-    //     getFormData(fieldsWithValues).then(response => {
-    //         console.log('API response:', response.data);
-    //
-    //     });
-    // }
-    const handleAddField = () => {
-        if(fields.length<2){
-            setFields([...fields, ""]);
-            setShowFields(true)
-            console.log(fields.length)
-        }
-    };
-    const handledelete=()=>{
-        const allfields = [...fields];
-        allfields.splice(-1, 1);
-        setFields(allfields)
-    }
-    const label = { inputProps: { 'aria-label': 'Home town address is same as current? Yes' } };
-    let addFormFields = () => {
-        setFormValues([...formValues, { house: "", street: "", pincode:"", city:"", state:"" }])
-        setShowFields(true)
+    const [curPinData, setCurPinData] = useState({district: [], state: []})
+    const [homePinData, setHomePinData] = useState({district: [], state: []})
+    const [otherPinData, setOtherPinData] = useState([{id: '', district: [], state: []}])
+    const [mobileFields, setMobileFields] =useState([])
 
+    useEffect(() => {
+        const mobiles = props.formValues.mobiles
+        if (mobiles.length > 0) {
+            let mobileObjects = []
+            for (let i = 0; i < mobiles.length; i++) {
+                mobileObjects.push({id: uuidv4(),number: mobiles[i]})
+            }
+            setMobileFields(mobileObjects)
+        }
+    }, [])
+
+        useEffect(() => {
+        const otherAddress = props.formValues.other_address
+        if (isValuePresent(otherAddress)) {
+            setFormValues(otherAddress)
+        }
+    }, [])
+
+
+
+    let addFormFields = () => {
+        setFormValues([...formValues, {
+            id: uuidv4(),
+            other_type: "",
+            other_flat: "",
+            other_street: "",
+            other_pincode: "",
+            other_district: "",
+            other_state: ""
+        }])
     }
-    let removeFormFields = () => {
-        const newFormValues = [...formValues];
-        newFormValues.splice(-1, 1);
+    let removeFormFields = (id) => {
+        const newFormValues =  formValues.filter((field) => field.id !== id)
         setFormValues(newFormValues);
     }
-    const [selectedOption, setSelectedOption] = useState('');
-    const selectChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
-    const [pincodeData, setPincodeData] = useState({ district: '', state: '' });
 
-    const handlePincodeChange = (e) => {
-        debugger
-        const userEnteredPincode = e.target.value;
-        const  pinApi= `https://api.postalpincode.in/pincode/${userEnteredPincode}`
 
-        if (userEnteredPincode) {
+    const handlePinCodeChange = (pinCode, type, id) => {
+        const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
+        if (pinCode.length > 5) {
             axios.get(pinApi)
                 .then((response) => {
-                    const responseData = response.data[''];
-                    if (responseData) {
-                        const district = responseData.PostOffice[''].District;
-                        const state = responseData.PostOffice[''].State;
-                        setPincodeData({ district, state });
-                        console.log('res', responseData)
-                    } else {
-                        setPincodeData({ district: '', state: '' });
+                    const responseData = response.data[0];
+                    if (responseData.Status === 'Success') {
+                        const district = [...new Set(responseData.PostOffice.map(item => item.District))];
+                        const state = [...new Set(responseData.PostOffice.map(item => item.State))];
+                        if (type === 'pincode') {
+                           setCurPinData({district: district, state: state})
+                        } else if (type === 'home_pincode') {
+                            setHomePinData({district: district, state: state})
+                        } else if (type === 'other_pincode') {
+                            setOtherPinData([...otherPinData, {id: id, district: district, state: state}])
+                        }
                     }
                 })
                 .catch((error) => {
                     console.error('Error fetching data:', error);
                 });
-        } else {
-            setPincodeData({ district: '', state: '' });
         }
-        console.log('test', pinApi)
+    };
+
+    const addMobileField = () => {
+        setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
+    }
+
+    useEffect(() => {
+        props.formValues.mobiles = mobileFields.map(item => item.number);
+    }, [mobileFields]);
+
+    const enterMobileNumber = (id) => (event) => {
+        const phoneNumber = event.target.value.replace(/[^\d०१२३४५६७८९]/g, '');
+        if (/^[5-9५६७८९]/.test(phoneNumber)) {
+            event.target.value = phoneNumber;
+        } else {
+            event.target.value = ''; // Clear the input value if it doesn't start with 5-9 or a Hindi digit
+        }
+
+        setMobileFields((preMobileFields) => {
+            return preMobileFields.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['number']: event.target.value,
+                    };
+                }
+                return form;
+            });
+        });
+    }
+
+    const deleteMobileNumber = (id) => {
+        const updatedMobileFields = mobileFields.filter((field) => field.id !== id)
+        setMobileFields(updatedMobileFields)
+    }
+
+
+    useEffect(() => {
+        if (props.formValues.current_address[0].pincode.length > 5) {
+            handlePinCodeChange(props.formValues.current_address[0].pincode, 'pincode')
+        }
+    }, [props.formValues.current_address[0].pincode]);
+
+    useEffect(() => {
+        if (props.formValues.home_address[0].pincode.length > 5) {
+            handlePinCodeChange(props.formValues.home_address[0].pincode, 'home_pincode')
+        }
+
+    }, [props.formValues.home_address[0].pincode]);
+
+    const changeDistrictState = (value, name, type) => {
+            if (name === 'District') {
+                props.formValues[type][0].district = value
+            } else {
+                props.formValues[type][0].state = value
+            }
+    }
+
+    const sameAddress = (event) => {
+        if (event.target.checked) {
+            setHomePinData(curPinData)
+            props.formValues.home_flat = props.formValues.flat
+            props.formValues.home_pincode = props.formValues.pincode
+            props.formValues.home_street = props.formValues.street
+            props.formValues.home_district = props.formValues.district
+            props.formValues.home_state = props.formValues.state
+        }
+        if (!event.target.checked) {
+            setHomePinData({district: [], state: []})
+            props.formValues.home_flat = ''
+            props.formValues.home_pincode = ''
+            props.formValues.home_street = ''
+            props.formValues.home_district = ''
+            props.formValues.home_state = ''
+        }
+    }
+
+    const otherAddressChange = (name, index) => (value) => {
+        props.formValues.other_address[index][name] = value
+        if (name === 'other_pincode') {
+            handlePinCodeChange(value, 'other_pincode', index)
+        }
     };
 
 
-    const getState =()=>{
-        getStateData.then((res)=>{
-            setStateData(res.data.data)
-        })
+    const fieldValue = (id, name) => {
+        const form = formValues.find((field) => field.id === id)
+        if (form) {
+            return form[name]
+        } else {
+            ''
+        }
 
     }
+
+
+    const otherDistrictStateArray = (type, id) => {
+        const form = otherPinData.find((field) => field.id === id)
+       if (form) {
+           return form[type]
+       } else {
+           return  []
+       }
+    }
+
     useEffect(() => {
-        getState()
-    }, []);
+    },[formValues])
+
+
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
 
     return(
         <>
-
-
             <Box sx={{ flexGrow: 1 }}>
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
-                        <Savebtn/>
+                        <Savebtn onClick={progressSave}/>
                     </Item>
                 </Stack>
                 <div className="detailFrom">
-                    <Grid  container spacing={2} sx={{mb:3}}>
-                        <Grid item xs={12}>
-                            <Grid  container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Grid  container spacing={2}>
-                                        <Grid item xs={4}>
-                                            <FormLabel>Mobile Number <sup>*</sup></FormLabel>
-                                            <Field
-                                                placeholder='Please Seach by Phone no.'
-                                                inputProps={{
-                                                    maxLength: 10,
-                                                }}
-                                                type="text"
-                                                as={TextField}
-                                                fullWidth
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-
-                                                }}
-                                                name="mobiles.0"
-                                            />
-                                            <ErrorMessage name="mobiles" component="div" />
-                                        </Grid>
-
-                                        {showFields && fields.map((field, index) => (
-                                            <Grid item xs={4}>
-                                                <div key={index}>
-                                                    <FormLabel>Another number</FormLabel>
-
-                                                    <Field
-                                                        placeholder='Please Seach by Phone no.'
-                                                        inputProps={{
-                                                            maxLength: 10,
-                                                        }}
-                                                        type="text"
-                                                        as={TextField}
-                                                        fullWidth
-                                                        onInput={(event) => {
-                                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
-
-                                                        }}
-                                                        name="mobiles"
-                                                    />
-                                                    <div className="text-end">
-                                                        {fields.length>=1 ?(
-                                                            <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>} handleclick={handledelete}/>
-                                                        ):null}
-                                                    </div>
-                                                </div>
-                                            </Grid>
-                                        ))}
-
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    {fields.length>=2 ? (null):<Primarybutton addclass="addanotherfieldsbtn me-2 mb-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={handleAddField}/>}
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
-                            <Grid container spacing={2} className="grid-wrap">
+                            <div className='mobiles-container'>
+                                {mobileFields && mobileFields.map((field, i) =>(
+                                    <div className='mobile-number-field'>
+                                        <FormLabel className="mobile-label">{i+2}. Mobile Number <mark>*</mark></FormLabel>
+                                        <input
+                                            maxLength={10}
+                                            disabled={i === 0}
+                                            placeholder='Enter Mobile Number'
+                                            value={field.number}
+                                            onChange={enterMobileNumber(field.id)}
+                                            className={`mobile-fields ${i === 0 &&
+                                                                        mobileFields.length > 1 ?
+                                                                        'mt--14rem' : ''}`} />
+                                        <div className='add-delete-btns'>
+                                            {mobileFields.length < 3 && mobileFields.length === i+1 ?
+                                                <span className='add-btn' onClick={() => addMobileField()}>
+                                                      <span>
+                                                         <FontAwesomeIcon icon={faPlus}/>
+                                                     </span>
+                                                     Add Another
+                                                </span> : null
+                                            }
+                                            {i > 0 &&
+                                                <span className='delete-button'
+                                                      onClick={() => deleteMobileNumber(field.id)}>
+                                                     <FontAwesomeIcon icon={faTrash}/>
+                                                 </span>
+                                            }
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <Grid container spacing={2} className="grid-wrap mt-3">
                                 <Grid item xs={6}>
-                                    <FormLabel>Landline</FormLabel>
+                                    <FormLabel className='mobile-label'>Landline</FormLabel>
                                     <Grid className='detailFrom' container spacing={2}>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={3}>
                                             <NumberField
+                                                className='std-code-input'
+                                                value={props.formValues.std_code}
                                                 name="std_code"
                                                 placeholder='STD Code'
                                                 onInput={(event) => {
@@ -210,6 +271,7 @@ const Communicationform =(props)=>{
                                         <Grid item xs={6}>
                                             <NumberField
                                                 name="landline"
+                                                value={props.formValues.landline}
                                                 placeholder='Landline Number'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 8);
@@ -222,9 +284,10 @@ const Communicationform =(props)=>{
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <FormLabel>Email Id  <sup>*</sup></FormLabel>
+                                    <FormLabel className='mobile-label'>Email Id  <mark>*</mark></FormLabel>
                                     <Inputfield type="text"
                                                 name="email"
+                                                value={props.formValues.email}
                                                 placeholder="XYZ@gmail.com"/>
                                     <ErrorMessage name="email" component="div" />
                                 </Grid>
@@ -236,63 +299,58 @@ const Communicationform =(props)=>{
                                             <Formheading number="2" heading="Address" />
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>{count}</Box> Current Address</FormLabel>
+                                            <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>{1}</Box> Current Address</FormLabel>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
+                                            <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                             <Inputfield type="text"
-                                                        name="flat"
+                                                        value={props.formValues.current_address[0].flat}
+                                                        name={`current_address.${0}.flat`}
                                                         placeholder="Enter your address"/>
-                                            <ErrorMessage name="flat" component="div" />
+                                            <ErrorMessage name={`current_address.${0}.flat`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>PIN Code <sup>*</sup></FormLabel>
-                                            <Field
-                                                type="text"
-                                                name="pincode"
-                                            />
-                                            {/*<Field*/}
-                                            {/*    placeholder='Enter pin code'*/}
-                                            {/*    inputProps={{*/}
-                                            {/*        maxLength: 6,*/}
-                                            {/*    }}*/}
-                                            {/*    type="text"*/}
-                                            {/*    as={TextField}*/}
-                                            {/*    fullWidth*/}
-                                            {/*    onInput={(event) => {*/}
-                                            {/*        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);*/}
+                                            <FormLabel>PIN Code <mark>*</mark></FormLabel>
+                                            <NumberField
+                                                className=''
+                                                value={props.formValues.current_address[0].pincode}
+                                                name={`current_address.${0}.pincode`}
+                                                placeholder='Enter Pin Code'
+                                                onInput={(event) => {
+                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
-                                            {/*    }}*/}
-                                            {/*    name="pincode"*/}
-                                            {/*/>*/}
-                                            <ErrorMessage name="pincode" component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
-                                            {/*<Inputfield type="text"*/}
-                                            {/*            name="street"*/}
-                                            {/*            placeholder="Enter Area, Street, Etc.s" readOnly/>*/}
-                                            <Field type="text" id="street"  as={TextField} name="street" />
-                                            <ErrorMessage name="street" component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                            {/*<Inputfield type="text"*/}
-                                            {/*            name="district"*/}
-                                            {/*            placeholder="Enter Area, Street, Etc."*/}
-                                            {/*/>*/}
-                                            <Field
-                                                type="text"
-                                                name="district"
-                                                value={pincodeData.district}
-                                                readOnly
+                                                }}
                                             />
-                                            <ErrorMessage name="district" component="div" />
+                                            <ErrorMessage name={`current_address.${0}.pincode`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>State <sup>*</sup></FormLabel>
-                                            <SelectField name="state" defaultOption="Select State" optionList={StateData}/>
-                                            <ErrorMessage name="state" component="div" />
+                                            <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
+                                            <Field type="text"
+                                                   id="street"
+                                                   selectedValue={props.formValues.current_address[0].street}
+                                                   name={`current_address.${0}.street`}
+                                                   as={TextField} />
+                                            <ErrorMessage name={`current_address.${0}.street`} component="div" />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <FormLabel>Town/City <mark>*</mark></FormLabel>
+                                            <AutoCompleteDropdown
+                                                name={'District'}
+                                                selectedValue={props.formValues.current_address[0].district}
+                                                listArray={curPinData.district}
+                                                onChangeValue={changeDistrictState}
+                                                dropDownType={'current_address'} />
+                                            <ErrorMessage name={`current_address.${0}.district`} component="div" />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <FormLabel>State <mark>*</mark></FormLabel>
+                                            <AutoCompleteDropdown
+                                                name={'State'}
+                                                selectedValue={props.formValues.current_address[0].state}
+                                                listArray={curPinData.state}
+                                                onChangeValue={changeDistrictState}
+                                                dropDownType={'current_address'} />
+                                            <ErrorMessage name={`current_address.${0}.state`} component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -302,130 +360,174 @@ const Communicationform =(props)=>{
                                             <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>2</Box> Home Town Address</FormLabel>
                                         </Grid>
                                         <Grid className='testright' item xs={7}>
-                                            {/*<FormLabel >Home town address is same as current?  Yes <Checkbox name="currentAddress" {...label} /></FormLabel>*/}
-                                            <FormLabel>Home town address is same as current?  Yes<sup>*</sup></FormLabel>
-                                            <Field type="checkbox" name="check" />
+                                            <FormLabel>Home town address is same as current?  Yes<mark>*</mark></FormLabel>
+                                            <Field onClick={ sameAddress} type="checkbox" name="check" />
                                         </Grid>
 
                                         <Grid item xs={12}>
-                                            <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
+                                            <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                             <Inputfield
                                                 type="text"
-                                                name="home_flat"
+                                                name={`home_address.${0}.flat`}
+                                                value={props.formValues.home_address[0].flat}
                                                 placeholder="Enter your address"
-                                                value={props.formValues.check ? props.formValues.flat: props.formValues.home_flat}
                                             />
-
+                                            <ErrorMessage name={`home_address.${0}.flat`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>PIN Code <sup>*</sup></FormLabel>
-                                            <Field
-                                                placeholder='Enter pin code'
-                                                inputProps={{
-                                                    maxLength: 6,
-                                                }}
-                                                type="text"
-                                                as={TextField}
-                                                fullWidth
+                                            <FormLabel>PIN Code <mark>*</mark></FormLabel>
+                                            <NumberField
+                                                className=''
+                                                name={`home_address.${0}.pincode`}
+                                                value={props.formValues.home_address[0].pincode}
+                                                placeholder='Enter Pin Code'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
                                                 }}
-                                                value={props.formValues.check ? props.formValues.pincode: props.formValues.home_pincode}
-                                                name="home_pincode"
                                             />
-
+                                            <ErrorMessage name={`home_address.${0}.pincode`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
+                                            <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                             <Inputfield type="text"
-                                                        name="home_street"
+                                                        name={`home_address.${0}.street`}
+                                                        value={props.formValues.home_address[0].street}
                                                         placeholder="Enter Area, Street, Etc.s"
-                                                        value={props.formValues.check ? props.formValues.street: props.formValues.home_street}
                                             />
-
+                                            <ErrorMessage name={`home_address.${0}.pincode`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="home_district"
-                                                        placeholder="Enter Area, Street, Etc."
-                                                        value={props.formValues.check ? props.formValues.district: props.formValues.home_district}
-                                            />
+                                            <FormLabel>Town/City <mark>*</mark></FormLabel>
+                                            <AutoCompleteDropdown
+                                                name={'District'}
+                                                selectedValue={props.formValues.home_address[0].district}
+                                                listArray={homePinData.district}
+                                                onChangeValue={changeDistrictState}
+                                                dropDownType={'home_address'} />
+                                            <ErrorMessage name={`home_address.${0}.district`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>State <sup>*</sup></FormLabel>
-                                            <SelectField name="home_state" defaultOption="Select State" optionList={StateData}
-                                                         value={props.formValues.check ? props.formValues.state: props.formValues.home_state}
-                                            />
+                                            <FormLabel>State <mark>*</mark></FormLabel>
+                                            <AutoCompleteDropdown
+                                                name={'State'}
+                                                selectedValue={props.formValues.home_address[0].state}
+                                                listArray={homePinData.state}
+                                                onChangeValue={changeDistrictState}
+                                                dropDownType={'home_address'} />
+                                            <ErrorMessage name={`home_address.${0}.district`} component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12} className="pt-0">
                                     <Grid className="addressfields" sx={{pb:5}}>
-                                        {showFields && formValues.map((element, index) => (
+                                        {formValues && formValues.map((element, index) => (
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
                                                     <Grid item xs={12}>
-                                                        <FormLabel> Other</FormLabel>
-                                                    </Grid>
-                                                    <Grid item xs={12}>
-                                                        <FormLabel>Flat, House no., Building, Company, Apartment <sup>*</sup></FormLabel>
-                                                        <Inputfield type="text"
-                                                                    name="other_flat"
-                                                                    // value={element.other_flat || ""}
-                                                                    placeholder="Enter Area, Street, Etc.s"/>
+                                                        <FormLabel className="light-circle">
+                                                            <Box
+                                                                className="addnumber"
+                                                                component="div" sx={{ display: 'inline-block' }}
+                                                            >
+                                                                {index +3}
+                                                            </Box>
+                                                            Other
+                                                        </FormLabel>
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <FormLabel>PIN Code <sup>*</sup></FormLabel>
-                                                        <Field
-                                                            placeholder='Enter pin code'
-                                                            inputProps={{
-                                                                maxLength: 6,
-                                                            }}
-                                                            type="text"
-                                                            as={TextField}
-                                                            fullWidth
+                                                        <FormLabel>Type of Address<mark>*</mark></FormLabel>
+                                                        <Inputfield type="text"
+                                                                    name={`other_address.${index}.address_type`}
+                                                                    value={props.formValues?.other_address[index]?.address_type}
+                                                                    placeholder="Enter Area, Street, Etc.s"
+                                                        />
+                                                        <ErrorMessage name={`other_address.${0}.address_type`} component="div" />
+                                                    </Grid>
+
+                                                    <Grid item xs={12}>
+                                                        <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
+                                                        <Inputfield type="text"
+                                                                    name={`other_address.${index}.flat`}
+                                                                    value={props.formValues?.other_address[index]?.flat}
+                                                                    placeholder="Enter Area, Street, Etc.s"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <FormLabel>PIN Code <mark>*</mark></FormLabel>
+                                                        <OtherNumberField
+                                                            className=''
+                                                            name="other_pincode"
+                                                            value={props.formValues?.other_address[index].pincode}
+                                                            onChange={otherAddressChange('other_pincode', index)}
+                                                            placeholder='Enter Pin Code'
                                                             onInput={(event) => {
                                                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
                                                             }}
-                                                            value={element.other_pincode || ""}
-                                                            name="other_pincode"
                                                         />
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <FormLabel>Area, Street, Sector, Village <sup>*</sup></FormLabel>
+                                                        <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                                         <Inputfield type="text"
-                                                                    name="other_street"
-                                                                    value={element.other_street || ""}
-                                                                    placeholder="Enter Area, Street, Etc.s"/>
+                                                                    name={`other_address.${index}.street`}
+                                                                    value={props.formValues?.other_address[index]?.street}
+                                                                    placeholder="Enter Area, Street, Etc.s"
+                                                        />
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <FormLabel>Town/City <sup>*</sup></FormLabel>
-                                                        <SelectField name="other_district"  defaultOption="Select District" optionList={StateData}/>
+                                                        <FormLabel>Town/City <mark>*</mark></FormLabel>
+                                                        <AutoCompleteDropdown
+                                                            name={'District'}
+                                                            selectedValue={props.formValues?.other_address[index].district}
+                                                            listArray={otherDistrictStateArray('district', index)}
+                                                            onChangeValue={otherAddressChange('district', index)}
+                                                        />
+                                                        {/*<SelectField name="other_district"  defaultOption="Select District" optionList={StateData}/>*/}
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <FormLabel>State <sup>*</sup></FormLabel>
-                                                        <SelectField name="other_state"  defaultOption="Select State" optionList={StateData}/>
+                                                        <FormLabel>State <mark>*</mark></FormLabel>
+                                                        <AutoCompleteDropdown
+                                                            name={'State'}
+                                                            selectedValue={fieldValue(element.id,'other_state')}
+                                                            listArray={otherDistrictStateArray('state', index)}
+                                                            onChangeValue={otherAddressChange('other_state', index)}
+                                                        />
                                                     </Grid>
                                                 </Grid>
+                                                    <Grid item xs={12} className="d-flex align-items-center">
+                                                        {formValues.length === index + 1 &&
+                                                            <div>
+                                                                <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                                                               starticon={<AddIcon/>}
+                                                                               buttonlabel="Add another Address"
+                                                                               handleclick={() => addFormFields()}/>
+                                                                <Typography>( As Delhi Address, Office Address
+                                                                    etc.)</Typography>
+                                                            </div>
+                                                        }
+                                                        {formValues.length >= 1 ? (
+                                                            <Primarybutton addclass="deletebtn"
+                                                                           buttonlabel={<DeleteIcon/>}
+                                                                           handleclick={() => removeFormFields(element.id)}/>
 
+                                                        ) : null}
+                                                    </Grid>
                                             </div>
 
                                         ))}
 
-                                        <Grid item xs={12} className="d-flex align-items-center">
-                                            <div>
-                                                <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1" starticon={<AddIcon/>} buttonlabel="Add another Address" handleclick={()=> addFormFields()}/>
-                                                <Typography>( As Delhi Address, Office Address etc.)</Typography>
-                                            </div>
-                                            {formValues.length>=1 ? (
-                                                <Primarybutton addclass="deletebtn" buttonlabel={<DeleteIcon/>} handleclick={()=>removeFormFields(formValues.length-1)}/>
-
-                                            ) : null}
-                                        </Grid>
-
+                                        {!isValuePresent(formValues) &&
+                                            <Grid item xs={12} className="d-flex align-items-center">
+                                                <div>
+                                                    <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                                                   starticon={<AddIcon/>}
+                                                                   buttonlabel="Add another Address"
+                                                                   handleclick={() => addFormFields()}/>
+                                                    <Typography>( As Delhi Address, Office Address etc.)</Typography>
+                                                </div>
+                                            </Grid>
+                                        }
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -440,38 +542,58 @@ const Communicationform =(props)=>{
 }
 Communicationform.label = 'Communication Details'
 Communicationform.initialValues = {
-    mobiles: "",
+    mobiles: [],
     std_code: "",
     landline: "",
     email:"",
-    flat:"",
-    pincode:"",
-    street:"",
-    district:"",
-    state:"",
-    home_flat:"",
-    home_pincode:"",
-    home_street:"",
-    home_district:"",
-    home_state:"",
-    other_flat:"",
     check:false,
-    other_district:"",
-    other_state:"",
-    other_pincode:"",
+    current_address:[{
+        flat:"",
+        pincode:"",
+        street:"",
+        district:"",
+        state:"",
+    }],
+    home_address:[{
+        flat:"",
+        pincode:"",
+        street:"",
+        district:"",
+        state:"",
+    }],
+    other_address:[{
+        address_type:"",
+        flat:"",
+        pincode:"",
+        street:"",
+        district:"",
+        state:"",
+    }],
 };
 Communicationform.validationSchema = Yup.object().shape({
-    // email:Yup.string()
-    //     .required('Email is required')
-    //     .matches(
-    //         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    //         'Invalid email format'
-    //     ),
-    // flat: Yup.string().required('Please enter your Address'),
-    // street: Yup.string().required('Please enter your Street'),
-    // district: Yup.string().required('Please enter your District'),
-    // state: Yup.string().required('Please enter your State'),
-    // pincode: Yup.string().required('Please enter your Pincode')
+    email:Yup.string()
+        .required('Email is required')
+        .matches(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            'Invalid email format'
+        ),
+
+    current_address: Yup.array().of(
+        Yup.object().shape({
+            flat: Yup.string().required('Please enter your Address'),
+            street: Yup.string().required('Please enter your Street'),
+            district: Yup.string().required('Please enter your District'),
+            state: Yup.string().required('Please enter your State'),
+            pincode: Yup.string().required('Please enter your Pincode'),
+        })
+    ),
+
+
+    // home_flat: Yup.string().required('Please enter your Address'),
+    // home_street: Yup.string().required('Please enter your Street'),
+    // home_district: Yup.string().required('Please enter your District'),
+    // home_state: Yup.string().required('Please enter your State'),
+    // home_pincode: Yup.string().required('Please enter your Pincode')
 
 });
 export default Communicationform

@@ -8,6 +8,9 @@
 
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <% if defined?(candidate_login_var) %>
+      <div id="my-element" data-ruby-variable="<%= candidate_login_var %>"></div>
+    <% end %>
   </head>
 
   <body>

@@ -1,9 +1,28 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Header from "./header/header"
 import {Grid, Typography} from '@mui/material';
 import './eminentpersonalityhome.scss'
 import FormWrap from "./formWrap/formwrap";
+import {createSearchParams, useLocation, useSearchParams} from 'react-router-dom';
+import {isValuePresent} from "../utils";
+import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
+import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
+    const {config} = useContext(ApiContext)
+    let location = useLocation();
+    const [userData, setUserData] = useState()
+    const changeInputNumber = () => {
+        fetchUser(config).then(res => {
+            console.log(res.data)
+            setUserData(res.data.data.data)
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+    useEffect(() => {
+        changeInputNumber()
+    }, []);
+
     return(
         <>
             <Header/>
@@ -31,7 +50,9 @@ const EminentPersonality=()=> {
                         </g>
                     </svg>
                 </Grid>
-            <FormWrap/>
+            {userData &&
+            <FormWrap userData={userData}/>
+            }
         </>
     )
 }
