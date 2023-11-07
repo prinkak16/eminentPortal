@@ -28,8 +28,8 @@ Rails.application.routes.draw do
       get 'metadata/professions', to: 'metadata#professions'
       get 'metadata/states', to: 'metadata#states'
       get 'metadata/state_party_list', to: 'metadata#state_party_list'
-      get 'metadata/config/home', to: 'metadata#config_home'
-      get 'metadata/get_required_locations', to: 'metadata#get_required_locations'
+      get 'metadata/get_required_locations', to: 'metadata#required_locations'
+
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
@@ -38,14 +38,27 @@ Rails.application.routes.draw do
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
       get 'custom_member_forms/fetch_by_number', to: 'custom_member_form#fetch_by_number'
-      get 'metadata/config/gom_management', to: 'metadata#config_gom_management'
+
+      get 'filters/home', to: 'filter#home'
+      get 'filters/gom_management', to: 'filter#gom_management'
 
       get 'stats/home', to: 'stats#home'
 
       namespace :eminent, path: 'eminent' do
+        post '/auth/send_otp', to: 'eminent_auth#send_otp'
+        post '/auth/validate_otp', to: 'eminent_auth#validate_otp'
         get '/fetch', to: 'eminent#fetch_eminent'
         post '/update', to: 'eminent#update_eminent'
         delete '/logout', to: 'eminent#logout'
+
+        get '/metadata/genders', to: 'metadata#genders'
+        get '/metadata/categories', to: 'metadata#categories'
+        get '/metadata/religions', to: 'metadata#religions'
+        get '/metadata/educations', to: 'metadata#educations'
+        get '/metadata/professions', to: 'metadata#professions'
+        get '/metadata/states', to: 'metadata#states'
+        get '/metadata/state_party_list', to: 'metadata#state_party_list'
+        get '/metadata/get_required_locations', to: 'metadata#required_locations'
       end
 
       namespace :gom, path: 'gom' do
