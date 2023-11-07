@@ -11,40 +11,36 @@ import {isValuePresent} from "./modules/utils";
 import {ApiContext} from "./modules/ApiContext";
 
 const BeforeLoginRoutes = () => {
+    let candidate_login = document.getElementById('app').getAttribute('data-candidate-login');
+   const candidateLoginRoutes =  <Routes>
+                                            <Route path={'/'} element={<LoginPage/>}/>
+                                            <Route path='/*' element={<Navigate to="/"/>}/>
+                                         </Routes>
+
+    const AdminLogin =   <Routes>
+                                    <Route path='/' element={<HomePage/>}/>
+                                   <Route path='/*' element={<Navigate to="/"/>}/>
+                                  </Routes>
     return (
-        <Routes>
-            <Route path={'/'} element={<LoginPage/>}/>
-            <Route path='/*' element={<Navigate to="/"/>}/>
-        </Routes>
+
+        candidate_login ? candidateLoginRoutes : AdminLogin
     )
+
+
 }
 
 const AfterLoginRoutes = () => {
-    return (
-        <>
-            <Routes>
-                <Route path='/' element={<HomePage/>}/>
-                <Route path='/*' element={<Navigate to="/"/>}/>
-                <Route path='/masterofvacancies' element={<MasterVacancies/>}/>
-                {/*<Route path='/' element={<HomeComponent/>}/>*/}
-                <Route path='/EminentPersonality' element={<EminentPersonality/>}/>
-                <Route path={'/Login'} element={<LoginPage/>}/>
-            </Routes>
-        </>
-    )
     let candidate_login = document.getElementById('app').getAttribute('data-candidate-login');
-
     const candidateLoginRoutes = <Routes>
-        <Route path='/eminent_personality' element={<EminentPersonality/>}/>
-        <Route path='/*' element={<Navigate to="/eminent_personality"/>}/>
-    </Routes>
-
+                                             <Route path='/eminent_personality' element={<EminentPersonality/>}/>
+                                             <Route path='/*' element={<Navigate to="/eminent_personality"/>}/>
+                                          </Routes>
     const AdminLogin = <Routes>
-        <Route path='/' element={<HomePage/>}/>
-        <Route path='/eminent_personality' element={<EminentPersonality/>}/>
-        <Route path='/*' element={<Navigate to="/"/>}/>
-    </Routes>
-
+                                  <Route path='/' element={<HomePage/>}/>
+                                  <Route path='/eminent_personality' element={<EminentPersonality/>}/>
+                                  <Route path='/masterofvacancies' element={<MasterVacancies/>}/>
+                                  <Route path='/*' element={<Navigate to="/"/>}/>
+                                </Routes>
     return (
         candidate_login ? candidateLoginRoutes : AdminLogin
         )
@@ -60,15 +56,11 @@ function App() {
     }
     return (
         <>
-            {
-                isValuePresent(authToken) ?
-                    <AfterLoginRoutes /> :
-                    <AfterLoginRoutes />
-            }
             <ApiContext.Provider  value={{config, setAuthToken}}>
                 {isValuePresent(authToken) ?
                     <AfterLoginRoutes/> :
-                    <BeforeLoginRoutes/>}
+                    <BeforeLoginRoutes/>
+                }
             </ApiContext.Provider>
 
         </>
