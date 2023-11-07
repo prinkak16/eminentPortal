@@ -1,4 +1,5 @@
 class CustomMemberForm < ApplicationRecord
+  audited
   self.table_name = 'custom_member_forms'
   TYPE_EMINENT = "eminent_personality".freeze
 
