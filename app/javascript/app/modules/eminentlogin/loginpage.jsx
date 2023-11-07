@@ -51,12 +51,12 @@ const LoginPage = () => {
             <div className="row h-100 justify-content-center align-items-center">
                 <div className="col-3">
                     <div className="justify-content-start">
-                        <label>{otpSent ? 'Otp':'Phone Number'}<span className="text-danger">*</span></label>
+                        <label>{otpSent ? 'OTP':'Phone Number'}<span className="text-danger">*</span></label>
                         <input className="inputNumber ps-2"
                                type="tel"
                                maxLength={otpSent ? 6 : 10}
                                value={inputNumber}
-                               placeholder={otpSent ? "Enter Otp" : "Enter Phone number"}
+                               placeholder={otpSent ? "Enter OTP" : "Enter Phone number"}
                                onChange={(e)=> inputMobileNumber(e, !otpSent)}/>
                     </div>
                     <div className="row h-100 justify-content-center align-items-center pt-2">

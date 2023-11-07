@@ -60,30 +60,30 @@ class Api::V1::Ministry::DepartmentController < BaseApiController
       department_count = 0
       if params[:name].present? && params[:name].length > 2
         departments = Department
-                      .name_similar(params[:name])
-                      .where(ministry_id: params['ministry_id'])
-                      .includes(:ministry)
-                      .order('created_at desc')
-                      .limit(limit)
-                      .offset(offset)
-                      .as_json(include: [:ministry])
+                        .name_similar(params[:name])
+                        .where(ministry_id: params['ministry_id'])
+                        .includes(:ministry)
+                        .order('created_at desc')
+                        .limit(limit)
+                        .offset(offset)
+                        .as_json(include: [:ministry])
 
         department_count = Department
-                           .name_similar(params[:name])
-                           .where(ministry_id: params['ministry_id'])
-                           .count(:id)
+                             .name_similar(params[:name])
+                             .where(ministry_id: params['ministry_id'])
+                             .count(:id)
       else
         departments = Department
-                      .where(ministry_id: params['ministry_id'])
-                      .includes(:ministry)
-                      .order('created_at desc')
-                      .limit(limit)
-                      .offset(offset)
-                      .as_json(include: [:ministry])
+                        .where(ministry_id: params['ministry_id'])
+                        .includes(:ministry)
+                        .order('created_at desc')
+                        .limit(limit)
+                        .offset(offset)
+                        .as_json(include: [:ministry])
 
         department_count = Department
-                           .where(ministry_id: params['ministry_id'])
-                           .count(:id)
+                             .where(ministry_id: params['ministry_id'])
+                             .count(:id)
       end
 
       render json: {

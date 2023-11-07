@@ -56,14 +56,22 @@ const Communicationform =(props)=>{
 
 
     let addFormFields = () => {
+        const obj = {
+            address_type:"",
+            flat:"",
+            pincode:"",
+            street:"",
+            district:"",
+            state:"",
+        }
+        props.formValues.other_address.push(obj)
         setFormValues([...formValues, {
-            id: uuidv4(),
-            other_type: "",
-            other_flat: "",
-            other_street: "",
-            other_pincode: "",
-            other_district: "",
-            other_state: ""
+            address_type:"",
+            flat:"",
+            pincode:"",
+            street:"",
+            district:"",
+            state:"",
         }])
     }
     let removeFormFields = (id) => {
@@ -83,10 +91,14 @@ const Communicationform =(props)=>{
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
                         if (type === 'pincode') {
                            setCurPinData({district: district, state: state})
+                            console.log(id)
+                            props.formValues.current_address[0].state = state[0]
                         } else if (type === 'home_pincode') {
                             setHomePinData({district: district, state: state})
+                            props.formValues.home_address[0].state = state[0]
                         } else if (type === 'other_pincode') {
                             setOtherPinData([...otherPinData, {id: id, district: district, state: state}])
+                            props.formValues.other_address[id].state = state[0]
                         }
                     }
                 })
@@ -172,13 +184,14 @@ const Communicationform =(props)=>{
     }
 
     const otherAddressChange = (name, index) => (value) => {
+        console.log(name)
         props.formValues.other_address[index][name] = value
-        if (name === 'other_pincode') {
+        if (name === 'pincode') {
             handlePinCodeChange(value, 'other_pincode', index)
         }
     };
 
-
+console.log(props.formValues?.other_address[0]?.pincode)
     const fieldValue = (id, name) => {
         const form = formValues.find((field) => field.id === id)
         if (form) {
@@ -415,7 +428,7 @@ const Communicationform =(props)=>{
                                                 listArray={homePinData.state}
                                                 onChangeValue={changeDistrictState}
                                                 dropDownType={'home_address'} />
-                                            <ErrorMessage name={`home_address.${0}.district`} component="div" />
+                                            <ErrorMessage name={`home_address.${0}.state`} component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -457,9 +470,9 @@ const Communicationform =(props)=>{
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
                                                             className=''
-                                                            name="other_pincode"
+                                                            name={`other_address.${index}.pincode`}
                                                             value={props.formValues?.other_address[index].pincode}
-                                                            onChange={otherAddressChange('other_pincode', index)}
+                                                            onChange={otherAddressChange('pincode', index)}
                                                             placeholder='Enter Pin Code'
                                                             onInput={(event) => {
                                                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
@@ -489,9 +502,9 @@ const Communicationform =(props)=>{
                                                         <FormLabel>State <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
                                                             name={'State'}
-                                                            selectedValue={fieldValue(element.id,'other_state')}
+                                                            selectedValue={props.formValues?.other_address[index].state}
                                                             listArray={otherDistrictStateArray('state', index)}
-                                                            onChangeValue={otherAddressChange('other_state', index)}
+                                                            onChangeValue={otherAddressChange('state', index)}
                                                         />
                                                     </Grid>
                                                 </Grid>
@@ -561,14 +574,7 @@ Communicationform.initialValues = {
         district:"",
         state:"",
     }],
-    other_address:[{
-        address_type:"",
-        flat:"",
-        pincode:"",
-        street:"",
-        district:"",
-        state:"",
-    }],
+    other_address:[],
 };
 Communicationform.validationSchema = Yup.object().shape({
     email:Yup.string()
@@ -579,6 +585,16 @@ Communicationform.validationSchema = Yup.object().shape({
         ),
 
     current_address: Yup.array().of(
+        Yup.object().shape({
+            flat: Yup.string().required('Please enter your Address'),
+            street: Yup.string().required('Please enter your Street'),
+            district: Yup.string().required('Please enter your District'),
+            state: Yup.string().required('Please enter your State'),
+            pincode: Yup.string().required('Please enter your Pincode'),
+        })
+    ),
+
+    home_address: Yup.array().of(
         Yup.object().shape({
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),

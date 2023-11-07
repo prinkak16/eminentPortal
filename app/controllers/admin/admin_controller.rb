@@ -158,7 +158,7 @@ class Admin::AdminController < ApplicationController
           end
         else
           custom_member_form = CustomMemberForm.where(phone: phone_number, form_type: form_type)
-            .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone_number).where(form_type: form_type))
+                                               .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone_number).where(form_type: form_type))
           custom_member_form = custom_member_form.first
           if person_id_detail.blank?
             if custom_member_form.blank?
