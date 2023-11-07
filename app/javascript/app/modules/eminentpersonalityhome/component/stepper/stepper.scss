@@ -58,3 +58,23 @@ button.deletebtn {
     color: ($blackcolor);
   }
 }
+
+.notification-container {
+  background: #FEE;
+  width: 20rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 3rem;
+}
+
+mark {
+  color: red;
+  background: none !important;
+}
+
+.close-icon {
+  cursor: pointer;
+}

@@ -195,7 +195,7 @@ const Resumeform = (props) => {
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
                                         name="father"
-
+                                  
                                         placeholder="Enter name"
                             />
                         </Grid>
