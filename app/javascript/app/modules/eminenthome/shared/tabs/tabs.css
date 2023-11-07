@@ -23,3 +23,33 @@
 .hometabs .css-1aquho2-MuiTabs-indicator{
     background-color: transparent
 }
+button.downloadBtn,button.downloadBtn:hover {
+    display: flex;
+    padding: 10px 13px 11px 21px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    border-radius: 8px;
+    background: #61BE7A;
+    color: #FFF;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+.upload-resume-button .css-sghohy-MuiButtonBase-root-MuiButton-root {
+    background: transparent !important;
+    box-shadow: none;
+    text-align: center;
+    color: #000;
+}
+.pdf-upload-div {
+    border: 2px dashed #fbfdfe00;
+    border-radius: 12px;
+    height: auto;
+    justify-content: space-between;
+    padding: 10px;
+    text-align: center;
+    background: #fbfdfe00;
+}
