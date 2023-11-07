@@ -7,7 +7,7 @@ import Incompletefile from './../../../../../../../public/images/incomplete.svg'
 import iconUrl from './../../../../../../../public/images/plus.svg';
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
-
+    const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
 
@@ -17,7 +17,6 @@ const Analytics = (props) => {
         statsData().then(res=> {
             setHomeStats(res.data.data);
         })
-
     },[])
 
     const createAnalyticCard = () => {
@@ -26,20 +25,43 @@ const Analytics = (props) => {
             let icon = null;
             switch (value) {
                 case 'incomplete': {
-                    label = 'Total Incomplete Form';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total Eminent Personality';
+                            break;
+                        case '2':
+                            label = 'Total Position';
+                            break;
+                    }
                     icon = <Incompletefile />;
                     break;
                 }
                 case 'completed': {
-                    label = 'Total Completed Form';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total Completed Form';
+                            break;
+                        case '2':
+                            label = 'Occupied';
+                            break;
+                    }
                     icon = <Checklist />;
                     break;
                 }
                 case 'overall': {
-                    label = 'Total Eminent Personality';
+                    switch (props.tabId) {
+                        case '1':
+                            label = 'Total incompleted Form';
+                            break;
+                        case '2':
+                            label = 'Vacant';
+                            break;
+                    }
                     icon = <Usergroup />;
                     break;
                 }
+
+
             }
             return <div className="col" key={value}>
                <div className="card">
@@ -69,7 +91,7 @@ const Analytics = (props) => {
 
                     <div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>
                         <p className="seemorebutton">See More</p>
-                    <ExpandMoreIcon className='expandicon'/>
+                        <ExpandMoreIcon className='expandicon'/>
                     </div>
 
                     { showSeeMore &&

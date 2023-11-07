@@ -24,6 +24,7 @@ const Vidhansabhaform = (props) => {
             }
             console.log('state', selectedState)
         })
+
     }
     useEffect(() => {
         getState()

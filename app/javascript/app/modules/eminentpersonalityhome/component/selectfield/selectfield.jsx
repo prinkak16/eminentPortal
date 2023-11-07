@@ -3,16 +3,18 @@ import { Formik, Field, ErrorMessage } from 'formik';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import './selectfield.scss';
 const Selectfield=(props)=>{
-    const {name, optionList, defaultOption, heading, handleSelectChange, placeholder, value} = props;
+    const {name, optionList, defaultOption, heading, handleSelectChange} = props;
+
+    const capitalizeFirstLetter = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     return(
         <>
             <FormControl>
                 <Field
-                    placeholde={placeholder}
                     as={Select}
                     name={name}
-                    value={value}
                     labelId={`${name}-label`}
                     className="custom-select"
                     fullWidth

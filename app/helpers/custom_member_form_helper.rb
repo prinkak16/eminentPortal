@@ -809,8 +809,8 @@ module CustomMemberFormHelper
 
   def fetch_member(phone, form_type)
     CustomMemberForm.where(phone:, form_type:)
-      .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone)
-      .where(form_type:))&.first
+                    .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone)
+                                        .where(form_type:))&.first
   end
 
   def send_sms(message, phone_number, ct_id = '1007440753033109730')

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import './stepper.scss';
 import {
     Typography,
@@ -11,11 +11,7 @@ import {
     StepButton,
 } from '@mui/material';
 import DeviceInfo from "../../eminentforms/deviceinfo";
-import {faTimes} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 const FormStepper = ({
-                        userData,
                          activeStep,
                          handlePrev,
                          handleNext,
@@ -36,8 +32,6 @@ const FormStepper = ({
                      }) => {
     const [cumulativeData, setCumulativeData] = useState({});
     const [completed, setCompleted] = React.useState({});
-    const [notification, setNotification] = React.useState(true);
-
 
     // Function to update cumulative data
     const updateCumulativeData = (data) => {
@@ -45,9 +39,6 @@ const FormStepper = ({
     };
     const ActiveStep = steps[activeStep];
 
-    const closeNotiocation = () => {
-        setNotification(false)
-    }
     return (
         <>
             <div className="stepperwrap">
@@ -88,18 +79,14 @@ const FormStepper = ({
                     ))}
                 </Stepper>
                 <div className="stepouter px-md-5 mt-5">
-                    {notification &&
-                        <div className="notification-container">
-                     <span>
-                         Note:  <mark>*</mark>Marked field are mandatory.
-                     </span>
-                            <span className='close-icon' onClick={closeNotiocation}>
-                            <FontAwesomeIcon icon={faTimes}/>
-                        </span>
-                        </div>
-                    }
+                    <Grid className="notes my-5">
+                        <Typography sx={{ padding: '1rem' }} variant="p" component="p">
+                            Note: All Fields Marked with * (star) are compulsory without filling them you won't be
+                            able to submit the form. Click Save and continue to save your progress.
+                        </Typography>
+                    </Grid>
                     <DeviceInfo/>
-                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData} activeStep={activeStep} userData={userData} formValues={values} onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
+                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData} formValues={values} onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
                     <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between">
                         <Button
                             disabled={activeStep === 0 || isSubmitting}

@@ -13,7 +13,7 @@ import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
 steps=[PersonalDetails, Communicationform, Educationform,PolticalandGovrnform, Resumeform, Refferedform]
 // newSteps=[PersonalDetails]
-const FormWrap=({userData})=>{
+const FormWrap=(props)=>{
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -21,10 +21,8 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
-
     const isLastStep = () => {
         return activeStep === steps.length - 1;
     };
@@ -35,11 +33,15 @@ const FormWrap=({userData})=>{
             setActiveStep(Math.min(activeStep + 1, steps.length - 1));
 
     };
-
     const handleStep = useCallback((step) => {
         setActiveStep(step);
     }, []);
+    // const stepData = steps.map((item,index)=> ({
+    //     console.log(item)
+    // }));
+    const stepData = steps.map((item)=> {
 
+    })
     function mergeObjectsUpToIndex(arr, index) {
         if (index < 0 || index >= arr.length) {
             return
@@ -49,7 +51,6 @@ const FormWrap=({userData})=>{
             return { ...acc, ...obj };
         }, {});
     }
-
     const onSubmit = (values, formikBag) => {
         const { setSubmitting } = formikBag;
         const newStepValues = [...stepValues];
@@ -100,7 +101,6 @@ const FormWrap=({userData})=>{
                             {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
                                 <Form>
                                     <FormStepper
-                                        userData={userData}
                                         activeStep={activeStep}
                                         handlePrev={handlePrev}
                                         handleNext={handleNext}

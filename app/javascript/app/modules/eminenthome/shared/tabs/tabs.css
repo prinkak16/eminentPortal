@@ -1,42 +1,25 @@
-
-.tabsDiv{
-    border-radius: var(--Candidate-count, 0px);
+.hometabs{
+    border-bottom: transparent !important;
 }
-.heading{
-
-    color: #343434;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-}
-
-.navBar ul{
-    list-style: none;
-    display: inline-flex;
-    padding: var(--Candidate-count, 0px);
-    align-items: flex-start;
-    gap: 20px;
-    border-radius: var(--Candidate-count, 0px);
-}
-
-.navBar ul li{
-    display: flex;
-    padding: 10px 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.hometabs .MuiTab-root{
     border-radius: 20px;
-    cursor: pointer;
+    background: #F8F7F7;
+    color: #494949;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    margin: 0 1rem 1rem 0;
 }
 
-.opentab{
-    color: #FFF;
-    background-color: #383737 !important;
-
+.hometabs .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected{
+    background: #383737;
+    color:#fff;
 }
 
-.closedtab{
-    background-color: rgba(0,0,0,0.02) !important;
+.hometabs .css-1gsv261{
+    border-bottom: 1px solid transparent;
+}
 
+.hometabs .css-1aquho2-MuiTabs-indicator{
+    background-color: transparent
 }
