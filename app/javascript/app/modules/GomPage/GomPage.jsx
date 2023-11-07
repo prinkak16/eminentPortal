@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactPaginate from 'react-paginate';
 import './GomPage.scss'
-import {SearchOffOutlined, Upload} from "@mui/icons-material";
+// import {SearchOffOutlined, Upload} from "@mui/icons-material";
 import MultipleSelectCheckmarks from "../MultipleSelectCheckmarks/MultipleSelectCheckmarks";
 import RadioSelect from "../RadioSelect/RadioSelect";
 import Header from "../eminentpersonalityhome/header/header";
