@@ -1,16 +1,22 @@
 import {Field} from "formik";
 import {TextField} from "@mui/material";
 import React from "react";
+import {validate} from "uuid";
 
-const NumberField =({id,name,placeholder,onInput,inputProps, value})=>{
+const OtherNumberField =({id,name,placeholder,onInput,inputProps, onChange, value})=>{
+
+    const onFieldChange = (event) => {
+        onChange(event.target.value)
+    }
     return(
         <>
             <Field
                 id={id}
                 type="text"
-                name={name}
                 value={value}
+                name={name}
                 as={TextField}
+                onChange={onFieldChange}
                 className="call-log-textfield"
                 placeholder={placeholder}
                 onInput={onInput}
@@ -22,4 +28,4 @@ const NumberField =({id,name,placeholder,onInput,inputProps, value})=>{
         </>
     )
 }
-export default NumberField;
+export default OtherNumberField;

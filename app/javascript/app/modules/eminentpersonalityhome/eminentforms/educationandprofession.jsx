@@ -1,7 +1,7 @@
 import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Popper, Fade} from '@mui/material';
 import React, {useEffect, useState} from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { styled } from '@mui/material/styles';
+import {Formik, Form, Field, ErrorMessage} from 'formik';
+import {styled} from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Formheading from "../component/formheading/formheading";
@@ -9,6 +9,8 @@ import Savebtn from "../component/saveprogressbutton/button";
 import SelectField from "../component/selectfield/selectfield";
 import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
+import {v4 as uuidv4} from 'uuid';
+import ComponentOfFields from './componentOfFields'
 import {
     getEducationData,
     getFormData,
@@ -23,362 +25,283 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-const Educationform =(props)=>{
+import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress} from "../../utils";
+
+const Educationform = (props) => {
     const [selectedOption, setSelectedOption] = useState('');
+    const [educationEditField, setEducationEditField] = useState({})
+    const [professionEditField, setProfessionEditField] = useState({})
+    const [EducationData, setEducationData] = useState([])
+    const [professionDetails, setProfessionDetails] = useState([]);
+    const [educationDetails, setEducationDetails] = useState([]);
+
+    useEffect(() => {
+        const educations = props.formValues.educations
+        if (educations.length > 0) {
+            let Objects = []
+            for (let i = 0; i < educations.length; i++) {
+                Objects.push({id: uuidv4(),number: educations[i]})
+            }
+            setEducationDetails(Objects)
+        }
+    }, [])
+
+
+    useEffect(() => {
+        isValuePresent(props.formValues.educations) ? setEducationDetails(props.formValues.educations) : null
+        isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
+    }, []);
+
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor:'transparent',
-        boxShadow:'none',
+    const Item = styled(Paper)(({theme}) => ({
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
         ...theme.typography.body2,
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [EducationData, setEducationData]= useState([])
-    const getEducation=()=>{
+
+    const getEducation = () => {
         getEducationData.then((response) => {
             setEducationData(response.data.data)
         })
     }
+
     useEffect(() => {
-        getEducation();
-    }, []);
+        getEducation()
+    },[])
 
-    const [savedData, setSavedData] = useState(null);
+    const handleSave = ( title, formData, id) => {
+       if (title === 'Education Details') {
+           educationSave(formData, id)
+       }
 
-    const handleSave = () => {
-        // const savedValues = { ...props.formValues };
-        //
-        // // Convert start_year and end_year to Date objects if they exist
-        // if (savedValues.education_start_year) {
-        //     savedValues.start_year = new Date(savedValues.start_year);
-        // }
-        // if (savedValues.end_year) {
-        //     savedValues.end_year = new Date(savedValues.end_year);
-        // }
-        setSavedData(props.formValues);
+        if (title === 'Profession Profile') {
+            professionSave(formData, id)
+        }
+
     };
-    const [saveParty, setSaveParty]=useState(null)
-    const [tableData, setTableData] = useState([]);
-    const  handlepartysave=()=>{
-        const newRow = {
-            profession: saveParty.profession,
-            subject: saveParty.subject,
-            position: saveParty.position,
-            organization: saveParty.organization,
-            start_year: saveParty.start_year,
-            end_year: isCurrentlyWorking ? 'Currently Working' : saveParty.end_year,
+
+    const educationSave = (formData, id) => {
+        const newFormData = {
+            id: uuidv4(),
+            qualification: formData.qualification,
+            college: formData.college,
+            course: formData.course,
+            university: formData.university,
+            start_year: formData.start_year,
+            end_year: formData.end_year,
         };
-        setTableData([...tableData, newRow]);
-        setSaveParty(props.formValues)
-        console.log('test', tableData)
+
+        setEducationDetails((prevData) =>
+            isValuePresent(id)
+                ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
+                : [...prevData, newFormData]
+        );
     }
-    const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
-    return(
+
+    const professionSave = (formData, id) => {
+        const newFormData = {
+            id: uuidv4(),
+            profession: formData.profession,
+            position: formData.position,
+            organization: formData.organization,
+            start_year: formData.start_year,
+            end_year: formData.end_year,
+        };
+
+        setProfessionDetails((prevData) =>
+            isValuePresent(id)
+                ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
+                : [...prevData, newFormData]
+        );
+    }
+
+    useEffect(() => {
+        props.formValues.educations = educationDetails;
+    }, [educationDetails]);
+
+    useEffect(() => {
+        props.formValues.professions = professionDetails;
+    }, [professionDetails]);
+
+    const editEducationForm = (type,id) => {
+        if (type === 'education') {
+            const form = educationDetails.find((item) => item.id === id);
+            if (form) {
+                setEducationEditField(form)
+            }
+        } else {
+            const form = professionDetails.find((item) => item.id === id);
+            if (form) {
+                setProfessionEditField(form)
+            }
+        }
+
+    };
+
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
+
+    return (
         <>
+            <Box sx={{flexGrow: 1}}>
+                <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
+                    <Item><Formheading number="1" heading="Education Details"/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <Savebtn onClick={progressSave} />
+                    </Item>
+                </Stack>
+                <Grid container sx={{mb: 5}}>
+                    <Grid item xs={6} className='education-field pb-3'>
+                        <Grid item xs={7}>
+                            <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
+                            <SelectField name="education_level" selectedvalues={selectedOption}
+                                         defaultOption="Select Highest Education"
+                                         handleSelectChange={selectChange}
+                                         optionList={EducationData}/>
 
-                                <Box sx={{ flexGrow: 1 }}>
-                                    <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                                        <Item><Formheading number="1" heading="Education Details" /></Item>
-                                        <Item sx={{textAlign:'right'}}><Savebtn/></Item>
-                                    </Stack>
-                                    <Grid container sx={{mb:5}} >
-                                        <Grid item xs={6} className='education-field pb-3'>
-                                            <Grid item xs={7}>
-                                                <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                                                <SelectField name="education_level" selectedvalues={selectedOption}
-                                                             defaultOption="Select Highest Education"
-                                                             handleSelectChange={selectChange}
-                                                             optionList={EducationData}/>
-
-                                                <ErrorMessage name="education_level" component="div" />
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                    {savedData && (
-                                                <div className="data-table">
-                                                    <table className="w-100 table-responsive ">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Qualification</th>
-                                                            <th>Course/Branch/Subject</th>
-                                                            <th>University/Board Name</th>
-                                                            <th>College/ School Name</th>
-                                                            <th>Start Year</th>
-                                                            <th>End Year</th>
-                                                            <th></th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {savedData.map((data, index) => (
-                                                        <tr>
-                                                            <td>{data.qualification}</td>
-                                                            <td>{data.subject}</td>
-                                                            <td>{data.university}</td>
-                                                            <td>{data.college}</td>
-                                                            <td>{data.start_year}</td>
-                                                            <td></td>
-                                                            <td>
-                                                                <PopupState variant="popper" popupId="demo-popup-popper">
-                                                                    {(popupState) => (
-                                                                        <>
-                                                                            <Button
-                                                                                variant="contained" {...bindToggle(popupState)}
-                                                                                className="bg-transparent text-black">
-                                                                                <MoreVertIcon/>
-                                                                            </Button>
-                                                                            <Popper {...bindPopper(popupState)} transition>
-                                                                                {({TransitionProps}) => (
-                                                                                    <Fade {...TransitionProps}
-                                                                                          timeout={350}>
-                                                                                        <Paper>
-                                                                                            <Typography sx={{p: 2}}><Edit/></Typography>
-                                                                                            <Typography
-                                                                                                sx={{p: 2}}><DeleteIcon/></Typography>
-                                                                                        </Paper>
-                                                                                    </Fade>
-                                                                                )}
-                                                                            </Popper>
-                                                                        </>
-                                                                    )}
-                                                                </PopupState>
-                                                            </td>
-                                                        </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
+                            <ErrorMessage name="education_level" component="div"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                {educationDetails.length > 0 && (
+                    <div className="data-table">
+                        <table className="w-100 table-responsive text-center">
+                            <thead>
+                            <tr>
+                                <th>Qualification</th>
+                                <th>Course/Branch/Subject</th>
+                                <th>University/Board Name</th>
+                                <th>College/ School Name</th>
+                                <th>Start Year</th>
+                                <th>End Year</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {educationDetails.map((data, index) => (
+                                <tr>
+                                    <td>{data.qualification}</td>
+                                    <td>{data.course}</td>
+                                    <td>{data.university}</td>
+                                    <td>{data.college}</td>
+                                    <td>{data.start_year}</td>
+                                    <td className='end-date-td'>{data.end_year}
+                                        <PopupState variant="popper" popupId="demo-popup-popper">
+                                            {(popupState) => (
+                                                <div className='edit-button-logo'>
+                                                    <Button
+                                                        variant="contained" {...bindToggle(popupState)}
+                                                        className="bg-transparent text-black display-contents">
+                                                        <MoreVertIcon/>
+                                                    </Button>
+                                                    <Popper {...bindPopper(popupState)} transition>
+                                                        {({TransitionProps}) => (
+                                                            <Fade {...TransitionProps}
+                                                                  timeout={350}>
+                                                                <Paper>
+                                                                    <Typography sx={{p: 2}}
+                                                                                onClick={() => editEducationForm('education',data.id)}><Edit/></Typography>
+                                                                    <Typography
+                                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                </Paper>
+                                                            </Fade>
+                                                        )}
+                                                    </Popper>
                                                 </div>
-                                    )}
-                                    <Grid container className="educationforms grid-wrap" >
-                                        <Grid item xs={12}>
-                                            <Typography variant="h5" content="h5">
-                                                Enter your educational detail ( All )
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel>Qualification <sup>*</sup></FormLabel>
-                                            <SelectField
-                                                name="qualification"
-                                                defaultOption="Select Highest Qualification"
-                                                optionList={EducationData}
-                                            />
-                                            <ErrorMessage name="qualification" component="div" />
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel>Course / Branch / Subject</FormLabel>
-                                            <Inputfield type="text"
-                                                        name="subject"
-                                                        placeholder="Enter Course / Branch / Subject"/>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel>University / Board <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="board"
-                                                        placeholder="Enter University / Board"/>
-                                            <ErrorMessage name="board" component="div" />
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel>College / School <sup>*</sup></FormLabel>
-                                            <Inputfield type="text"
-                                                        name="college"
-                                                        placeholder="Enter College / School"/>
-                                            <ErrorMessage name="college" component="div" />
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel fullwidth>Start Year</FormLabel>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <Field name="start_year">
-                                                    {({ field, form }) => (
-                                                        <DatePicker
-                                                            {...field}
-                                                            value={field.value} // Use field.value to get the current value
-                                                            onChange={(year) => form.setFieldValue("start_year", year)} // Update the value
-                                                            views={['year']}
-                                                        />
-                                                        )}
-                                                </Field>
-                                            </LocalizationProvider>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <FormLabel>End / Passing Year</FormLabel>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <Field name="education_end_year">
-                                                    {({ field, form }) => (
-                                                        <DatePicker
-                                                            {...field}
-                                                            value={field.value} // Use field.value to get the current value
-                                                            onChange={(year) => form.setFieldValue("education_end_year", year)} // Update the value
-                                                            views={['year']}
-                                                        />
-                                                    )}
-                                                </Field>
-                                            </LocalizationProvider>
-                                        </Grid>
+                                            )}
+                                        </PopupState>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField}/>
 
-
-                                        <Grid item xs={12}>
-                                            <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                                            <Primarybutton addclass="nextbtn" handleclick={handleSave} buttonlabel="Save"/>
-                                        </Grid>
-                                    </Grid>
-                                    {tableData.length > 0 && (
-                                        <div className="data-table">
-                                            <table className="w-100 table-responsive">
-                                                <thead>
-                                                <tr>
-                                                    <th>Profession</th>
-                                                    <th>Course/Branch/Subject</th>
-                                                    <th>Position</th>
-                                                    <th>Organization Name</th>
-                                                    <th>Start Year</th>
-                                                    <th>End Year</th>
-                                                    <th></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {tableData.map((row, index) => (
-                                                    <tr key={index}>
-                                                        <td>{row.profession}</td>
-                                                        <td>{row.subject}</td>
-                                                        <td>{row.position}</td>
-                                                        <td>{row.organization}</td>
-                                                        <td>{row.start_year}</td>
-                                                        <td>{row.end_year}</td>
-                                                        <td>
-                                                            <PopupState variant="popper" popupId="demo-popup-popper">
-                                                                {(popupState) => (
-                                                                    <>
-                                                                        <Button variant="contained" {...bindToggle(popupState)} className="bg-transparent text-black">
-                                                                            <MoreVertIcon/>
-                                                                        </Button>
-                                                                        <Popper {...bindPopper(popupState)} transition>
-                                                                            {({ TransitionProps }) => (
-                                                                                <Fade {...TransitionProps} timeout={350}>
-                                                                                    <Paper>
-                                                                                        <Typography sx={{ p: 2 }}><Edit/></Typography>
-                                                                                        <Typography sx={{ p: 2 }}><DeleteIcon/></Typography>
-                                                                                    </Paper>
-                                                                                </Fade>
-                                                                            )}
-                                                                        </Popper>
-                                                                    </>
-                                                                )}
-                                                            </PopupState>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
-                                    <Grid container sx={{my:5}} className="grid-wrap">
-                                        <Grid item sx={{mb:2}} xs={12}>
-                                            <Typography variant="h5" content="h5">
-                                                <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Professional Profile
-                                            </Typography>
-                                        </Grid>
-                                        <Grid container className="educationforms">
-                                            <Grid item xs={4}>
-                                                <FormLabel>Profession <sup>*</sup></FormLabel>
-                                                <Inputfield type="text"
-                                                            name="profession"
-                                                            placeholder="Enter profession"/>
-                                                <ErrorMessage name="profession" component="div" />
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <FormLabel>Course / Branch / Subject</FormLabel>
-                                                <Inputfield type="text"
-                                                            name="subject"
-                                                            placeholder="Enter Course / Branch / Subject"/>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <FormLabel>Position</FormLabel>
-                                                <Inputfield type="text"
-                                                            name="position"
-                                                            placeholder="Enter Position"/>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <FormLabel>Organization Name</FormLabel>
-                                                <Inputfield type="text"
-                                                            name="organization"
-                                                            placeholder="Enter Organization Name"/>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <FormLabel  fullwidth>Start Year</FormLabel><br/>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <Field name="start_year1">
-                                                        {({ field, form }) => (
-                                                            <DatePicker
-                                                                {...field} // Pass the field's props to the DatePicker
-                                                                value={field.value} // Set the value explicitly if needed
-                                                                onChange={(year) => form.setFieldValue("start_year1", year)} // Handle date changes
-                                                                views={['year']}
-                                                            />
+                {professionDetails.length > 0 && (
+                    <div className="data-table mt-5">
+                        <table className="w-100 table-responsive text-center">
+                            <thead>
+                            <tr>
+                                <th>Profession</th>
+                                <th>Position</th>
+                                <th>Organization Name</th>
+                                <th>Start Year</th>
+                                <th>End Year</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {professionDetails.map((data, index) => (
+                                <tr key={index}>
+                                    <td>{data.profession}</td>
+                                    <td>{data.position}</td>
+                                    <td>{data.organization}</td>
+                                    <td>{data.start_year}</td>
+                                    <td className='end-date-td'>{data.end_year}
+                                        <PopupState variant="popper" popupId="demo-popup-popper">
+                                            {(popupState) => (
+                                                <div className='edit-button-logo'>
+                                                    <Button
+                                                        variant="contained" {...bindToggle(popupState)}
+                                                        className="bg-transparent text-black display-contents">
+                                                        <MoreVertIcon/>
+                                                    </Button>
+                                                    <Popper {...bindPopper(popupState)} transition>
+                                                        {({TransitionProps}) => (
+                                                            <Fade {...TransitionProps}
+                                                                  timeout={350}>
+                                                                <Paper>
+                                                                    <Typography sx={{p: 2}}
+                                                                                onClick={() => editEducationForm('profession',data.id)}><Edit/></Typography>
+                                                                    <Typography
+                                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                </Paper>
+                                                            </Fade>
                                                         )}
-                                                    </Field>
-                                                </LocalizationProvider>
-                                            </Grid>
-                                            <Grid item xs={4} textend>
-                                                <FormLabel>End / Passing Year</FormLabel><br/>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <Field name="end_year1">
-                                                        {({ field, form }) => (
-                                                            <DatePicker
-                                                                {...field} // Pass the field's props to the DatePicker
-                                                                value={field.value} // Set the value explicitly if needed
-                                                                onChange={(year) => {
-                                                                    if (!isCurrentlyWorking) {
-                                                                        formikProps.setFieldValue('end_year1', year);
-                                                                    }
-                                                                }}
-                                                                views={['year']}
-                                                                disabled={isCurrentlyWorking}
-                                                            />
-                                                        )}
-                                                    </Field>
-                                                </LocalizationProvider>
-                                                <label>
-                                                    <Field type="checkbox" name="checked" value="One"  onChange={() => {
-                                                        setIsCurrentlyWorking(!isCurrentlyWorking);
-                                                        props.setFieldValue(
-                                                            'end_year1',
-                                                            isCurrentlyWorking ? '' : 'Currently Working'
-                                                        );
-                                                    }}/>
-                                                    Currently Working
-                                                </label>
-                                                {/*<FormLabel className="checkbox align-items-center d-flex">*/}
-                                                {/*    <Field type="checkbox" name="checked" value="One" onChange={() => {*/}
-                                                {/*        setIsCurrentlyWorking(!isCurrentlyWorking);*/}
-                                                {/*        props.setFieldValue(*/}
-                                                {/*            'end_year1',*/}
-                                                {/*            isCurrentlyWorking ? '' : 'Currently Working'*/}
-                                                {/*        );*/}
-                                                {/*    }}/>Currently Working </FormLabel>*/}
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel"/>
-                                                <Primarybutton addclass="nextbtn" handleclick={handlepartysave} buttonlabel="Save"/>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container sx={{spacing:0}}>
-                                        <Grid item xs={8}>
-                                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
-                                            <TextField
-                                                className='p-0'
-                                                fullWidth
-                                                name="desc"
-                                                multiline
-                                                minRows={3}
-                                                maxRows={4}
-                                                placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
-                                            />
-                                        </Grid>
-                                    </Grid>
+                                                    </Popper>
+                                                </div>
+                                            )}
+                                        </PopupState>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+                <Grid container sx={{my: 5}} className="grid-wrap">
+                    <Grid item sx={{mb: 2}} xs={12}>
+                        <Typography variant="h5" content="h5">
+                            <Box className="detailnumbers" component="div"
+                                 sx={{display: 'inline-block'}}>2</Box> Professional Profile
+                        </Typography>
+                    </Grid>
+                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave} isEditable={professionEditField}/>
+                </Grid>
+                <Grid container sx={{spacing: 0}}>
+                    <Grid item xs={8}>
+                        <div>
+                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                            <TextField
+                                className="profession-description"
+                                fullWidth
+                                name="profession_description"
+                                multiline
+                                minRows={2}
+                                maxRows={2}
+                                placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
+                            />
+                        </div>
 
-                                </Box>
+                    </Grid>
+                </Grid>
+
+            </Box>
 
 
         </>
@@ -387,38 +310,19 @@ const Educationform =(props)=>{
 }
 Educationform.label = 'Education and Profession'
 Educationform.initialValues = {
-    education_level:"",
-    // profession: "",
-    qualification: "",
-    subject: "",
-    college: "",
-    board: "",
-    school: "",
-    qualification2:"",
-    department:"",
-    year:"",
-    stream:"",
-    course:"",
-    university:"",
-    educations:[{
-            start_year:"",
-            end_year:"",
-    }],
-        // profession: "",
-        organisation:"",
-        position:"",
-    profession:[{
-        start_year:"",
-        end_year:""
-    }],
+    education_level: "",
+    profession_description:"",
+    educations: [],
+    professions: [],
 
 
 };
 Educationform.validationSchema = Yup.object().shape({
-    // education_level: Yup.string().required('Please select your education'),
-    // qualification: Yup.string().required('Please enter your qualification'),
-    // board: Yup.string().required('Please enter your board'),
-    // profession: Yup.string().required('Please enter your profession'),
-    // college:Yup.string().required('Please enter your college')
+    // educations: Yup.array()
+    //     .of(Yup.string()) // Assuming elements in the array are strings
+    //     .required('Please select at least one education'),
+    // profession: Yup.array()
+    //     .of(Yup.string()) // Assuming elements in the array are strings
+    //     .required('Please select at least one Profession')
 });
 export default Educationform
