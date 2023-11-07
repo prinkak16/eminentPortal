@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import "./analytics.css"
-import Usergroup from "../../../../../../../public/images/usergroup.svg"
-import CheckList from "./../../../../../../../public/images/checklist.svg"
+import Usergroup from "../../../../../../../public/images/usergroup.svg";
+import Checklist from "./../../../../../../../public/images/checklist.svg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import IncompleteFile from './../../../../../../../public/images/incomplete.svg'
+import Incompletefile from './../../../../../../../public/images/incomplete.svg';
+import iconUrl from './../../../../../../../public/images/plus.svg';
 import {statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
     const {analyticsHeading, icon, label} = props
@@ -32,7 +33,7 @@ const Analytics = (props) => {
                             label = 'Total Position';
                             break;
                     }
-                    icon = <IncompleteFile />;
+                    icon = <Incompletefile />;
                     break;
                 }
                 case 'completed': {
@@ -44,7 +45,7 @@ const Analytics = (props) => {
                             label = 'Occupied';
                             break;
                     }
-                    icon = <CheckList />;
+                    icon = <Checklist />;
                     break;
                 }
                 case 'overall': {
@@ -62,7 +63,7 @@ const Analytics = (props) => {
 
 
             }
-           return <div className="col">
+            return <div className="col" key={value}>
                <div className="card">
                    <div className="card-body d-flex p-0">
                        <div><p className="align-middle">{icon}</p></div>
@@ -80,7 +81,7 @@ const Analytics = (props) => {
         <>
             <div className="analyticsDiv">
                 <div className="headdiv">
-                    <p className="analyticsHeading">{analyticsHeading}</p>
+                    <p className="analyticsHeading">Eminent Analytics</p>
                 </div>
 
                 <div className="d-flex grid gap-0 column-gap-4 row me-5">

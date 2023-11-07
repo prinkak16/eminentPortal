@@ -19,9 +19,10 @@ import {Button, Pagination} from "@mui/material";
 import SideBarIcon from "./../../../../../../../public/images/sidebaricon.svg"
 import {useNavigate} from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
-import {getData} from "../../../../api/eminentapis/endpoints";
+import {fetchMobile, getData} from "../../../../api/eminentapis/endpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
 import BasicTabs from "../../shared/tabs/tabs";
+import PlusIcon from './../../../../../../../public/images/plus.svg'
 
 
 const drawerWidth = 240;
@@ -60,7 +61,41 @@ export default function PersistentDrawerLeft() {
     const [open, setOpen] = React.useState(false);
     const [toggle, setToggle] = useState(1);
     const [filterString, setFilterString] = useState('');
+    const [wantToAddNew, setWantToAddNew] = useState(false);
+    const [existingData, setExistingData] = useState(null);
+    const [errorNumber, setErrorNumber] = useState('');
+    const [inputNumber, setInputNumber] = useState('');
+    const [submitDisabled, setSubmitDisabled] = useState(true);
+    const [userData, setUserData] = useState(true);
+
     const navigate = useNavigate();
+
+    const isValidNumber = (number) => {
+        const regex = /^[5-9]\d{9}$/;
+        return regex.test(number);
+
+    }
+    const changeInputNumber = (number) => {
+        setInputNumber(number.replace(/[^0-9]/g, ''));
+        if (number && number.length === 10 && isValidNumber(number)) {
+            let numberString = `${number}`;
+            fetchMobile(numberString).then(res => {
+                setUserData(res.data.data)
+                console.log(res.data.data)
+                setExistingData(res);
+                setSubmitDisabled(false);
+            }).catch(err => {
+                console.log(err);
+            });
+            setSubmitDisabled(true);
+        } else if (number && number.length === 10 && !isValidNumber(number)) {
+            setErrorNumber('Please enter a valid number');
+        } else {
+            setErrorNumber('');
+        }
+        setExistingData(null);
+        setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number) || !existingData);
+    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -72,6 +107,18 @@ export default function PersistentDrawerLeft() {
     const updateToggle = (id) => {
         setToggle(id);
     }
+
+    const  navigateForm = () => {
+        localStorage.setItem('eminent_number', userData.phone);
+        navigate({
+            pathname: '/eminent_personality'
+        }, {
+            state: {
+                eminent_number: userData.phone,
+            }
+        });
+    }
+
 
     return (<>
             <Header/>

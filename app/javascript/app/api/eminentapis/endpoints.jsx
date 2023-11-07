@@ -20,3 +20,7 @@ export const deleteMember = (deleteId) => {
 export const updateState = (updatedState) => {
     return axios.post(apiBaseUrl + 'custom_member_forms/update_aasm_state', updatedState);
 }
+
+export const fetchMobile = (number) => {
+    return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number?phone_number=' + number);
+}
