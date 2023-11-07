@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import './radioButton.css'
 
-const RadioButton = ({radioList, onClicked, fieldKey}) => {
+const RadioButton = ({radioList, onClicked, fieldKey, selectedValue}) => {
     const [value, setValue] = useState('')
     const clicked = (newValue) => {
         if (typeof onClicked === 'function') {
             onClicked(newValue, fieldKey)
         }
-
         setValue(newValue)
     }
+    useEffect(() => {
+        setValue(selectedValue)
+    }, [selectedValue]);
 
     return (
         <div className='buttons-container'>

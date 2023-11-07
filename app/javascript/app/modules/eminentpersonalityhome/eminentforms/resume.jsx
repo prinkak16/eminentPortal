@@ -27,6 +27,7 @@ import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepp
 import * as Yup from "yup";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
+import {saveProgress} from "../../utils";
 
 const Resumeform = (props) => {
     const Item = styled(Paper)(({theme}) => ({
@@ -119,18 +120,23 @@ const Resumeform = (props) => {
         }
     };
 
+    const progressSave = () => {
+        saveProgress(props.formValues, props.activeStep + 1)
+    }
+
     return (
         <>
 
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn/></Item>
+                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={progressSave}/></Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
                     <Grid item xs={6}>
                         <FormLabel>Name</FormLabel>
                         <Inputfield type="text"
+                                    value={props.formValues.political_legacy_name}
                                     name="political_legacy_name"
                                     placeholder="Enter full name"/>
                     </Grid>
@@ -189,6 +195,7 @@ const Resumeform = (props) => {
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
                                         name="father"
+                                  
                                         placeholder="Enter name"
                             />
                         </Grid>

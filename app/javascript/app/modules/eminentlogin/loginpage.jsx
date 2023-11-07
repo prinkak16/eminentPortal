@@ -1,11 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import './loginpage.scss'
 import {getLocationsData, sendOtp, validateOtp} from "../../api/stepperApiEndpoints/stepperapiendpoints";
 import {enterPhoneNumber} from "../utils";
 import {useNavigate} from "react-router-dom";
 import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
+import {ApiContext} from "../ApiContext";
 
 const LoginPage = () => {
+    const {setAuthToken} = useContext(ApiContext)
     const navigate = useNavigate();
     const [inputNumber, setInputNumber] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -37,7 +39,7 @@ const LoginPage = () => {
     const submitOtp = () => {
         validateOtp(phoneNumber, inputNumber).then((res) => {
             localStorage.setItem('auth_token', res.data.auth_token)
-            localStorage.setItem('eminent_number', phoneNumber)
+            setAuthToken(res.data.auth_token)
             navigate({
                 pathname: '/eminent_personality'
             });

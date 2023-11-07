@@ -1,24 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Header from "./header/header"
 import {Grid, Typography} from '@mui/material';
 import './eminentpersonalityhome.scss'
 import FormWrap from "./formWrap/formwrap";
 import {createSearchParams, useLocation, useSearchParams} from 'react-router-dom';
 import {isValuePresent} from "../utils";
-import {fetchMobile} from "../../api/eminentapis/endpoints";
+import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
+import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
+    const {config} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()
     const changeInputNumber = () => {
-        let phoneNumber = isValuePresent(location.state?.user_data) ? location.state.user_data : localStorage.getItem('eminent_number')
-        if (phoneNumber) {
-            let numberString = `${phoneNumber}`;
-            fetchMobile(numberString).then(res => {
-                setUserData(res.data.data.data)
-            }).catch(err => {
-                console.log(err);
-            });
-        }
+        fetchUser(config).then(res => {
+            console.log(res.data)
+            setUserData(res.data.data.data)
+        }).catch(err => {
+            console.log(err);
+        });
     }
     useEffect(() => {
         changeInputNumber()

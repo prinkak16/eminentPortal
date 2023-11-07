@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   get 'auth/callback', to: 'auth#callback'
 
+  get "candidate_login", to: "home#candidate_login"
+  get "eminent_personality", to: "home#candidate_login"
   namespace :admin do
     get 'manual_upload', to: 'admin#manual_upload'
     post 'manual_upload', to: 'admin#manual_upload_data'
@@ -14,6 +16,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
+      post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
+
       get 'metadata/user_permissions', to: 'metadata#user_allotted_permissions'
       get 'metadata/user_allotted_states', to: 'metadata#user_allotted_states'
       get 'metadata/genders', to: 'metadata#genders'

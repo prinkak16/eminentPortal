@@ -1,5 +1,5 @@
-import React from "react";
-import {Route, Routes, redirect} from "react-router-dom";
+import React, {useState} from "react";
+import {Route, Routes, redirect, useNavigate} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.scss';
 import {Navigate} from "react-router";
@@ -7,6 +7,7 @@ import HomePage from "./modules/eminenthome/pages/homepage/homepage";
 import EminentPersonality from "./modules/eminentpersonalityhome/EminentPersonalityhome";
 import LoginPage from "./modules/./eminentlogin/loginpage";
 import {isValuePresent} from "./modules/utils";
+import {ApiContext} from "./modules/ApiContext";
 
 
 const BeforeLoginRoutes = () => {
@@ -19,26 +20,40 @@ const BeforeLoginRoutes = () => {
 }
 
 const AfterLoginRoutes = () => {
+    let candidate_login = document.getElementById('app').getAttribute('data-candidate-login');
+
+    const candidateLoginRoutes = <Routes>
+        <Route path='/eminent_personality' element={<EminentPersonality/>}/>
+        <Route path='/*' element={<Navigate to="/eminent_personality"/>}/>
+    </Routes>
+
+    const AdminLogin = <Routes>
+        <Route path='/' element={<HomePage/>}/>
+        <Route path='/eminent_personality' element={<EminentPersonality/>}/>
+        <Route path='/*' element={<Navigate to="/"/>}/>
+    </Routes>
+
     return (
-        <Routes>
-            <Route path='/' element={<HomePage/>}/>
-            <Route path='/eminent_personality' element={<EminentPersonality/>}/>
-            <Route path='/*' element={<Navigate to="/"/>}/>
-        </Routes>
-    )
+        candidate_login ? candidateLoginRoutes : AdminLogin
+        )
 }
 
 function App() {
-    const authToken = localStorage.getItem('auth_token')
-
-
+    const [login ,setLogin] = useState(false)
+    const [authToken, setAuthToken ] = useState(localStorage.getItem('auth_token'))
+    const config = {
+        headers: {
+            'Authorization': authToken,
+        }
+    }
     return (
         <>
-            {
-                isValuePresent(authToken) ?
-                    <AfterLoginRoutes /> :
-                    <BeforeLoginRoutes />
-            }
+            <ApiContext.Provider  value={{config, setAuthToken}}>
+                {isValuePresent(authToken) ?
+                    <AfterLoginRoutes/> :
+                    <BeforeLoginRoutes/>}
+            </ApiContext.Provider>
+
         </>
     );
 }

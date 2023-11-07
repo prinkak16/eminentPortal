@@ -51,15 +51,17 @@ const PolticalandGovrnform =(props)=>{
     const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
     const [NAFields, setNAFields] = useState(false)
     const [electoralDetails, setElectoralDetails] = useState([{election_type: '', election_details:[]}])
-    const [electFiled, setElectField] = useState(false)
+    const [electionContested, setElectionContested] = useState(false)
 
     useEffect(() => {
         isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
         isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
         isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
         isValuePresent(props.formValues.social_profiles) ? setSocialFields(props.formValues.social_profiles) : null
-
+        isValuePresent(props.formValues.election_contested) ? setElectionContested(props.formValues.election_contested) : null
     }, []);
+
+
 
     useEffect(() => {
         props.formValues.political_profile =  politicalProfileDetails
@@ -77,7 +79,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralDetails([...socialFields,  {election_contested: '', election_type: '', election_details:[]}])
+        setElectoralDetails([...socialFields,  {election_type: '', election_details:[]}])
     }
 
     const deleteSocialFields = () => {
@@ -93,7 +95,6 @@ const PolticalandGovrnform =(props)=>{
     }, []);
 
     const handleSave = ( title, formData, id) => {
-        console.log(formData)
         if (title === 'Political Profile') {
             politicalProfileSave(formData, id)
         }
@@ -193,7 +194,7 @@ const PolticalandGovrnform =(props)=>{
 
 
     const contestedElection = (value) => {
-        setElectField(value === 'Yes')
+        setElectionContested(value === 'Yes')
         props.formValues.election_fought = value
     }
 
@@ -223,8 +224,13 @@ const PolticalandGovrnform =(props)=>{
     }
 
     useEffect(() => {
-        props.formValues.fought_details = electoralDetails
+        props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
+
+    useEffect(() => {
+        props.formValues.election_contested = electionContested
+    }, [electoralDetails]);
+
 
     const progressSave = () => {
         saveProgress(props.formValues, props.activeStep + 1)
@@ -423,16 +429,16 @@ const PolticalandGovrnform =(props)=>{
                     <Grid item xs={4} sx={{mt:2, ml:3}}>
                         <FormLabel fullwidth>Have you contested any election?</FormLabel>
                         <div className='d-flex mt-2'>
-                            <RadioButton radioList={['Yes', 'No']} onClicked={contestedElection} />
+                            <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
                         <ErrorMessage name="won" component="div" />
                     </Grid>
-                    {electoralDetails && electoralDetails.map((field,index) => (
+                    {electionContested && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
-                                        {electFiled &&
+                                        {electionContested &&
                                             <AutoCompleteDropdown
                                                 name={'Election Type'}
                                                 selectedValue={field.election_type}
@@ -448,6 +454,7 @@ const PolticalandGovrnform =(props)=>{
                                                     <ElectoralGovermentMatrix
                                                         jsonForm={electionWiseJson[toSnakeCase(field.election_type)]}
                                                         saveData={saveElectoralData}
+                                                        isEditable={field.election_details}
                                                         formIndex={index}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
@@ -482,8 +489,8 @@ PolticalandGovrnform.initialValues = {
     bjp_years: '',
     other_parties: [],
     social_profiles: [],
-    election_fought: false,
-    fought_details: []
+    election_contested: false,
+    election_fought: [],
 
 };
 
