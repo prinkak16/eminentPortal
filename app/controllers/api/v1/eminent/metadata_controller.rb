@@ -1,10 +1,8 @@
-class Api::V1::MetadataController < BaseApiController
-  before_action :authenticate_user
-  include MetadataHelper
-  include FilterHelper
+class Api::V1::Eminent::MetadataController < BaseApiController
+  before_action :authenticate_eminent
   include Validators::Metadata::Validator
+  include MetadataHelper
   include UtilHelper
-
   def genders
     render json: {
       success: true,
@@ -59,22 +57,6 @@ class Api::V1::MetadataController < BaseApiController
       success: true,
       data: fetch_state_party_list(cs),
       message: 'Profession List'
-    }, status: 200
-  end
-
-  def user_allotted_states
-    render json: {
-      success: true,
-      data: fetch_user_assigned_country_states,
-      message: 'User Assigned States'
-    }, status: 200
-  end
-
-  def user_allotted_permissions
-    render json: {
-      success: true,
-      data: user_permissions,
-      message: 'User allotted permissions'
     }, status: 200
   end
 

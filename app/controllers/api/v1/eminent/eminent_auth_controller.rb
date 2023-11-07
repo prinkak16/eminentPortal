@@ -1,7 +1,7 @@
-class Api::V1::EminentAuthController < BaseApiController
+class Api::V1::Eminent::EminentAuthController < BaseApiController
   include CustomMemberFormHelper
   include UtilHelper
-  include MetadataHelper
+  include FilterHelper
 
   def send_otp
     if params[:phone].blank? || !params[:phone].match?('^[1-9][0-9]{9}$')
