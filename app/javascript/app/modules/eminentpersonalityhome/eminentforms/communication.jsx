@@ -184,13 +184,14 @@ const Communicationform =(props)=>{
     }
 
     const otherAddressChange = (name, index) => (value) => {
+        console.log(name)
         props.formValues.other_address[index][name] = value
-        if (name === 'other_pincode') {
+        if (name === 'pincode') {
             handlePinCodeChange(value, 'other_pincode', index)
         }
     };
 
-
+console.log(props.formValues?.other_address[0]?.pincode)
     const fieldValue = (id, name) => {
         const form = formValues.find((field) => field.id === id)
         if (form) {
@@ -471,7 +472,7 @@ const Communicationform =(props)=>{
                                                             className=''
                                                             name={`other_address.${index}.pincode`}
                                                             value={props.formValues?.other_address[index].pincode}
-                                                            onChange={otherAddressChange('other_pincode', index)}
+                                                            onChange={otherAddressChange('pincode', index)}
                                                             placeholder='Enter Pin Code'
                                                             onInput={(event) => {
                                                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
