@@ -36,8 +36,8 @@ Rails.application.routes.draw do
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
       get 'custom_member_forms/fetch_by_number', to: 'custom_member_form#fetch_by_number'
 
-      get 'metadata/filters/home', to: 'filter#home'
-      get 'metadata/filters/gom_management', to: 'filter#gom_management'
+      get 'filters/home', to: 'filter#home'
+      get 'filters/gom_management', to: 'filter#gom_management'
 
       get 'stats/home', to: 'stats#home'
 
