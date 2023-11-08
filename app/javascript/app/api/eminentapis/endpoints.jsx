@@ -46,9 +46,9 @@ export const getMinistry = () => {
 export const getMinisters = () => {
     return axios.get(apiBaseUrl + 'gom/minister_list');
 }
-export const getGOMTableData = () => {
-    return axios.get(apiBaseUrl + 'gom/assigned_ministries');
-}
+// export const getGOMTableData = () => {
+//     return axios.get(apiBaseUrl + 'gom/assigned_ministries');
+// }
 export const assignMinistriesAndMinister = (ministryIds, ministerId) => {
     return axios.post(apiBaseUrl + `user/${ministerId}/assign_ministries`, {
         ministry_ids: ministryIds
