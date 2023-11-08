@@ -38,18 +38,18 @@ button.downloadBtn,button.downloadBtn:hover {
     font-weight: 500;
     line-height: normal;
 }
-.upload-resume-button .css-sghohy-MuiButtonBase-root-MuiButton-root {
-    background: transparent !important;
+
+.excel-upload {
+    border: 2px dashed rgba(0,0,0,0.5) !important;
+    border-radius: 12px;
+    height: 100% !important;
+    padding: 10px;
+    text-align: center;
+}
+.upload-excel-button .css-sghohy-MuiButtonBase-root-MuiButton-root, .upload-excel-button .css-sghohy-MuiButtonBase-root-MuiButton-root:hover  {
+    background: #fbfdfe00 !important;
+    padding-top: 0;
     box-shadow: none;
     text-align: center;
     color: #000;
-}
-.pdf-upload-div {
-    border: 2px dashed #fbfdfe00;
-    border-radius: 12px;
-    height: auto;
-    justify-content: space-between;
-    padding: 10px;
-    text-align: center;
-    background: #fbfdfe00;
 }
