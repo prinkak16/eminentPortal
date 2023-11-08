@@ -8,8 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import './MultipleSelectCheckmarks.scss'
-import {getMinistry} from "../../api/eminentapis/endpoints";
-
+import {getMinistry} from "../../../../../api/eminentapis/endpoints"
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -44,6 +43,14 @@ export default function MultipleSelectCheckmarks({style, onSelectMinistries}) {
         }
         setMinistryIds(temp);
     };
+    const selectHandler = (identifier) => {
+        if (identifier === 'DONE') {
+            onSelectMinistries(ministryIds)
+            console.log('Done button clicked');
+        } else if (identifier === 'CANCEL') {
+            console.log('cancel button clicked');
+        }
+    }
 
     return (
         <FormControl sx={!style? {m:1,width: 400} :style} >
@@ -83,13 +90,16 @@ export default function MultipleSelectCheckmarks({style, onSelectMinistries}) {
                         <ListItemText primary={ministry.name} />
                     </MenuItem>
                 ))}
-                {/*<div>*/}
-                {/*    <button id="btn-1" onClick={() => {*/}
-                {/*        onSelectMinistries(ministryIds);*/}
-                {/*    }}>Done</button>*/}
-                {/*    <button id="btn-2"*/}
-                {/*            style={{cursor: "pointer"}}>Cancel</button>*/}
-                {/*</div>*/}
+                <div>
+                    <button id="btn-1" onClick={() => {
+                        selectHandler('DONE')
+                    }}>Done</button>
+                    <button id="btn-2" style={{cursor: "pointer"}}
+                            onClick={() => {
+                                setSelectOpen(false)
+                        selectHandler('CANCEL')
+                    }}>Cancel</button>
+                </div>
             </Select>
         </FormControl>
     );

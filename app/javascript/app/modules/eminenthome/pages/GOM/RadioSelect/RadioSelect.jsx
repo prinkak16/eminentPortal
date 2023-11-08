@@ -6,8 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Radio from '@mui/material/Radio';
-import  {getMinisters} from "../../api/eminentapis/endpoints";
-
+import  {getMinisters} from "../../../../../api/eminentapis/endpoints"
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {

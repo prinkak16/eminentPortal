@@ -10,6 +10,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import GomPage from "../../pages/GOM/GomPage/GomPage";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -22,7 +23,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs() {
+export default function BasicTabs({ onSwitchTab }) {
     const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -84,6 +85,7 @@ export default function BasicTabs() {
     }
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        onSwitchTab(newValue);
     };
 
     let buttonContent;
@@ -164,6 +166,7 @@ export default function BasicTabs() {
                         <Tab label="Home" value="1" />
                         <Tab label="Master of Vacancies" value="2" />
                         <Tab label="File Stauts" value="3" />
+                        <Tab label="GOM Management" value="4" />
                     </TabList>
                     {buttonContent}
                 </Box>
@@ -176,6 +179,10 @@ export default function BasicTabs() {
                 <TabPanel value="3">
                     Item Three
                 </TabPanel>
+                <TabPanel value="4">
+                    <GomPage tabId={value}/>
+                </TabPanel>
+
             </TabContext>
 
             <Modal

@@ -1,11 +1,10 @@
-.main{
-  display: flex;
-  //justify-content: center;
-  gap: 50px;
-  //box-shadow : 0 0 10px black;
-  //width: 90%;
-  height: 120px;
-  background-color: #F8F8F8;
+
+.mainDiv{
+  width: 100%;
+}
+
+.gomtable{
+  width: 100%;
 }
 .Assign{
   border-radius: 8px;
@@ -95,11 +94,11 @@ input{
 //  margin-top: 0%;
 //}
 
-.mainDiv{
-  margin-top: 5%;
-  margin-left: 1.5%;
-  margin-right: 1.5%;
-}
+//.mainDiv{
+//  margin-top: 5%;
+//  margin-left: 1.5%;
+//  margin-right: 1.5%;
+//}
 
 .uploadBox{
   border: 1px dashed #CED5DE;

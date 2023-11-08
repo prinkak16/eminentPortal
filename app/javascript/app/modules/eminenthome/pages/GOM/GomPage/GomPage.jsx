@@ -4,15 +4,14 @@ import './GomPage.scss'
 // import {SearchOffOutlined, Upload} from "@mui/icons-material";
 import MultipleSelectCheckmarks from "../MultipleSelectCheckmarks/MultipleSelectCheckmarks";
 import RadioSelect from "../RadioSelect/RadioSelect";
-import Header from "../eminentpersonalityhome/header/header";
-import UploadIcon from '../../../../../public/images/upload.svg'
-import UploadFile from  '../../../../../public/images/upload_file.svg'
+import UploadIcon from '../../../../../../../../public/images/upload.svg'
+import UploadFile from '../../../../../../../../public/images/upload_file.svg'
 import Modal from "react-bootstrap/Modal";
-import EditIcon from "../../../../../public/images/Edit.svg"
-import CloseIcon from "../../../../../public/images/CloseIcon.svg"
-import axios from "axios";
-import {assignMinistriesAndMinister, getGOMTableData} from "../../api/eminentapis/endpoints";
-function GomPage() {
+import EditIcon from "../../../../../../../../public/images/Edit.svg"
+import CloseIcon from "../../../../../../../../public/images/CloseIcon.svg"
+// import axios from "axios";
+import {assignMinistriesAndMinister, getGOMTableData} from "../../../../../api/eminentapis/endpoints"
+function GomPage({tabId}) {
     const [gomTableData, setGomTableData] = useState([]);
     const hiddenFileInput = useRef(null);
     const [currentPage, setCurrentPage] = useState('');
@@ -22,6 +21,8 @@ function GomPage() {
     const [ministryIds, setMinistryIds] = useState([]);
     const [ministerId, setMinisterId] = useState(null);
     const [AssignId, setAssignId] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+
     const handleDownload = (url) => {
         const link = document.createElement('a');
         link.href = 'url';
@@ -30,10 +31,14 @@ function GomPage() {
         link.click();
         document.body.removeChild(link);
     };
-    useEffect(() => {
+    const test=()=>{
         getGOMTableData().then((response) => {
-            setGomTableData(response.data.data);
+            setGomTableData(response.data.value);
+            console.log('test', gomTableData)
         })
+    }
+    useEffect(() => {
+        test()
     }, []);
 
     const handleClick = event => {
@@ -60,13 +65,9 @@ function GomPage() {
     console.log(gomTableData);
     return (
         <>
-            <Header/>
             <div className="mainDiv">
-                {/*<div>*/}
-                {/*    <Filterssidebar/>*/}
-                {/*</div>*/}
-                <div style={{display:"flex",paddingTop:"10px",paddingLeft:"10px",gap:"40px"}}>
-                    {/*<div className="main pt-2">*/}
+                <div className="gomtable">
+                <div style={{display:"flex",paddingLeft:"10px",gap:"40px",backgroundColor:"#F8F8F8"}} >
                     <div>
                         <p className="mb-0" style={{marginLeft:"15px"}}>Ministry<span style={{color: "#BB0E0F", fontSize: "10px"}}>★</span></p>
                         <MultipleSelectCheckmarks onSelectMinistries={handleMinistryIds} />
@@ -108,7 +109,7 @@ function GomPage() {
                                 gap: "10px",
                                 border: '1px solid black',
                                 borderRadius: '10px',
-                                padding: '5px 15px',
+                                 padding: '5px 15px',
                                 marginLeft: '20px'
                             }}>
                                 <img src="SearchOutline.svg" alt="" width={'30px'} height={'30px'}/>
@@ -125,7 +126,7 @@ function GomPage() {
                                 border: '1px solid black',
                                 borderRadius: '10px',
                                 padding: '5px 15px',
-                                marginTop: ''
+                                // marginTop: ''
                             }}>
                                 <img src="SearchOutline.svg" alt="" width={'30px'} height={'30px'}/>
                                 <input
@@ -183,7 +184,9 @@ function GomPage() {
                         previousLabel="< previous"
                     />
                 </div>
+                </div>
             </div>
+
             <Modal
                 // contentClassName="deleteModal"
                 aria-labelledby="contained-modal-title-vcenter"
