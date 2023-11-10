@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react"
+import React, {useCallback, useContext, useEffect, useState} from "react"
 import {Box, Paper, Grid, FormLabel} from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -11,9 +11,12 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
+import {formFilledValues} from "../../utils";
+import {ApiContext} from "../../ApiContext";
 steps=[PersonalDetails, Communicationform, Educationform,PolticalandGovrnform, Resumeform, Refferedform]
 // newSteps=[PersonalDetails]
 const FormWrap=({userData})=>{
+    const {config} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -50,7 +53,9 @@ const FormWrap=({userData})=>{
         }, {});
     }
 
+
     const onSubmit = (values, formikBag) => {
+        debugger
         const { setSubmitting } = formikBag;
         const newStepValues = [...stepValues];
         newStepValues[activeStep] = values;
@@ -59,13 +64,12 @@ const FormWrap=({userData})=>{
         if (!isLastStep()) {
             setSubmitting(false);
             handleNext();
-            getFormData({...activeStepData, dob:"2023-10-21"}).then(response => {
-                console.log('API response:', response);
-
+            const fieldsWithValues = formFilledValues(activeStepData);
+            getFormData(fieldsWithValues, activeStep + 1, config).then(response => {
+                console.log('API response:', response.data);
             });
             return;
         }
-        // console.log(values);
         setTimeout(() => {
             setSubmitting(false);
         }, 1000);

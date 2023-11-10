@@ -60,7 +60,7 @@ const Educationform = (props) => {
     };
 
     useEffect(() => {
-        const filteredItems = EducationData.filter((item) => item.name === e.target.value);
+        const filteredItems = EducationData.filter((item) => item.name === props.formValues.education_level);
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
         let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
         filteredArray = filteredArray.map(item => item.name);
@@ -177,6 +177,7 @@ const Educationform = (props) => {
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
                             <SelectField name="education_level" selectedvalues={selectedOption}
+                                         placeholder={"Select Highest Education"}
                                          defaultOption="Select Highest Education"
                                          handleSelectChange={selectChange}
                                          optionList={EducationData}/>

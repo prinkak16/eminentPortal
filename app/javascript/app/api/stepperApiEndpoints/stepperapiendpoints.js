@@ -1,11 +1,11 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
-export const getFormData = async (data, activeStep,config) => {
+export const getFormData = async (data, activeStep, config, isDraft = true) => {
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
         "device_info": userDeviceInfo(),
-        "is_draft": true,
+        "is_draft": isDraft,
         "version": 3,
         "form_step": activeStep,
         "state_id": 30,

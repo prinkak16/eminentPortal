@@ -62,6 +62,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         });
     };
     const handleFieldChange = (value, name, valueType) => {
+
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
@@ -107,7 +108,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }
 
     const notApplicableFields = (naType, key) => (event) => {
-        const valueToSet = event.target.checked ? 'NA' : '';
+        const valueToSet = event.target.checked ? naType === 'all' ? 'NA' : 'Current Working' : '';
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
@@ -117,8 +118,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             }));
         }
     };
-    console.log(fieldsData)
-
     return (
         <div>
             <Grid container className="educationforms grid-wrap">

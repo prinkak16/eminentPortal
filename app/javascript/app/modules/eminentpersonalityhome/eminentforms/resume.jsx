@@ -135,7 +135,7 @@ const Resumeform = (props) => {
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={progressSave}/></Item>
+                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
                     <Grid item xs={6}>

@@ -44,39 +44,17 @@ const PolticalandGovrnform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [socialFields, setSocialFields] = useState([{ organization: "", description: "" }])
+    const [socialFields, setSocialFields] = useState(props?.formValues?.social_profiles)
     const [count, setcount]=useState(2)
-    const [politicalProfileDetails, setPoliticalProfileDetails] = useState([]);
-    const [otherPartyDetails, setOtherPartyDetails] = useState([]);
+    const [politicalProfileDetails, setPoliticalProfileDetails] = useState(props?.formValues?.political_profile);
+    const [otherPartyDetails, setOtherPartyDetails] = useState(props?.formValues?.other_parties);
     const [editableProfileField, setEditableProfileField] = useState({})
     const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
     const [NAFields, setNAFields] = useState(false)
-    const [electoralDetails, setElectoralDetails] = useState([{election_type: '', election_details:[]}])
-    const [electionContested, setElectionContested] = useState(false)
+    const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
+    const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested)
 
-
-    useEffect(() => {
-        isValuePresent(props.formValues.election_contested) ? setElectionContested(props.formValues.election_contested) : null
-    }, []);
-
-    useEffect(() => {
-        isValuePresent(props.formValues.social_profiles) ? setSocialFields(props.formValues.social_profiles) : null
-    }, []);
-
-    useEffect(() => {
-        isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
-    }, []);
-
-    useEffect(() => {
-        isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
-    }, []);
-
-
-    useEffect(() => {
-        isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
-    }, []);
-
-
+    console.log(electoralDetails,'electoralDetails')
 
     useEffect(() => {
         props.formValues.political_profile =  politicalProfileDetails
@@ -88,13 +66,13 @@ const PolticalandGovrnform =(props)=>{
 
 
     const addSocialFields = () => {
-        setSocialFields([...socialFields, { organization: "", description: "" }])
+        setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
         setShowFields(true);
         setcount(count+1);
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralDetails([...socialFields,  {election_type: '', election_details:[]}])
+        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:[]}])
     }
 
     const deleteSocialFields = () => {
@@ -104,10 +82,6 @@ const PolticalandGovrnform =(props)=>{
         setcount(count-1);
     }
 
-
-    useEffect(() => {
-        // getAssembly()
-    }, []);
 
     const handleSave = ( title, formData, id) => {
         if (title === 'Political Profile') {
@@ -204,13 +178,12 @@ const PolticalandGovrnform =(props)=>{
     };
 
     useEffect(() => {
-        props.formValues.social_profiles = socialFields
-    },[socialFields])
-
+        props.formValues.social_profiles = socialFields;
+    }, [socialFields, props.formValues]);
 
     const contestedElection = (value) => {
         setElectionContested(value === 'Yes')
-        props.formValues.election_fought = value
+        props.formValues.election_contested =value
     }
 
     console.log(electionContested,'electionContested')
@@ -244,14 +217,11 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
 
-    useEffect(() => {
-        props.formValues.election_contested = electionContested
-    }, [electoralDetails]);
 
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true).then(response => {
             console.log('API response:', response.data);
         });
     }
