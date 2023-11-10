@@ -39,7 +39,6 @@ const MasterVacancies=({tabId})=> {
             const ministryData= DUMMY_DATA.find(data=>data.ministryId===ministryId);
             const departmentData = ministryData.departments.filter(department=>department.departmentId === departmentId)
             const data = [{...ministryData, departments: departmentData}]
-            console.log(data);
             setTabData(data)
         }
 

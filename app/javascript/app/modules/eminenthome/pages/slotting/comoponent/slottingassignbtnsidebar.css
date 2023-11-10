@@ -1,0 +1,13 @@
+
+.slotting-sidebar .css-18sg6k4-MuiPaper-root-MuiDrawer-paper{
+    padding:2rem;
+}
+.slottingassigntable {
+    box-shadow: none !important;
+    background: transparent;
+    border-bottom: 1px dashed #8C8989;
+}
+.slottingassigntable th, .slottingassigntable td {
+    border: 1px solid transparent !important;
+    padding: 5px;
+}

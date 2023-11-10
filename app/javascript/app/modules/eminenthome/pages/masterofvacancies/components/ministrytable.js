@@ -69,7 +69,6 @@ const  MinistryTable = ({data, onSwitchTab}) => {
             breakClassName={'page-link'}
             breakLinkClassName={'page-item'}
             activeClassName={'active'}/>
-
     </div>
 </>
     );

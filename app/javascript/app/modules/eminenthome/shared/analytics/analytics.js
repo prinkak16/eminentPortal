@@ -11,8 +11,6 @@ const Analytics = (props) => {
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
 
-
-
     useEffect(()=>{
         statsData().then(res=> {
             setHomeStats(res.data.data);
@@ -32,6 +30,9 @@ const Analytics = (props) => {
                         case '2':
                             label = 'Total Position';
                             break;
+                        case '3':
+                            label = 'Total Position';
+                            break;
                     }
                     icon = <Incompletefile />;
                     break;
@@ -44,6 +45,9 @@ const Analytics = (props) => {
                         case '2':
                             label = 'Occupied';
                             break;
+                        case '3':
+                            label = 'Slotted';
+                            break;
                     }
                     icon = <Checklist />;
                     break;
@@ -55,6 +59,9 @@ const Analytics = (props) => {
                             break;
                         case '2':
                             label = 'Vacant';
+                            break;
+                        case '3':
+                            label = 'Unslotted';
                             break;
                     }
                     icon = <Usergroup />;
