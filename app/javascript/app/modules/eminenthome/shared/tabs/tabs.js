@@ -11,6 +11,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
+import {useNavigate} from "react-router-dom";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -32,12 +33,15 @@ export default function BasicTabs() {
     const [errorNumber, setErrorNumber] = useState('');
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [show, setShow] = useState(false);
+    const [userData, setUserData] = useState();
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
     const [email, setEmail] = useState('');
     const [isValidEmail, setIsValidEmail] = useState(true);
+    const [eminentMsg, setEminentMsg] = useState('');
+    const navigate = useNavigate();
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
     };
@@ -102,20 +106,21 @@ export default function BasicTabs() {
     }
     const changeInputNumber = (number) => {
         setInputNumber(number.replace(/[^0-9]/g, ''));
+        setEminentMsg('')
         if (number && number.length === 10 && isValidNumber(number)) {
             let numberString = `&query=${number}`;
             getData(numberString).then(res => {
-                console.log(res);
+                setEminentMsg('Number Already Exist')
+                setUserData(res?.data?.data.members[0])
                 setExistingData(res?.data?.data)
                 setSubmitDisabled(false);
             }).catch(err => {
+                setEminentMsg('No member found.')
                 console.log(err);
             });
             setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
-            setErrorNumber('Please enter a valid number');
-        } else {
-            setErrorNumber('');
+            setEminentMsg('Please enter a valid number');
         }
         setExistingData(null);
         setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
@@ -123,6 +128,17 @@ export default function BasicTabs() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const  navigateForm = () => {
+        localStorage.setItem('eminent_number', userData.phone);
+        navigate({
+            pathname: '/eminent_form'
+        }, {
+            state: {
+                eminent_number: userData.phone,
+            }
+        });
+    }
 
     let buttonContent;
     if (value === '1') {
@@ -237,7 +253,7 @@ export default function BasicTabs() {
                            value={inputNumber}
                            placeholder="Enter mobile number"
                            onChange={(e) => changeInputNumber(e.target.value)}/>
-                    {(existingData && existingData.length > 0) && <span>Number Already Exist</span>}
+                    {eminentMsg && <span>{eminentMsg}</span>}
                     {(errorNumber && errorNumber.length > 0) && <span>{errorNumber}</span>}
                 </Modal.Body>
                 <Modal.Footer>
@@ -248,7 +264,7 @@ export default function BasicTabs() {
                     </button>
                     <button
                         className="btn addNewSubmit"
-                        onClick={() => navigate('/EminentPersonality')}
+                        onClick={navigateForm}
                         disabled={submitDisabled}>
                         Submit
                     </button>

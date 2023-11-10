@@ -1,8 +1,14 @@
 import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
-
+import { toast } from 'react-toastify';
 export const isValuePresent = (value) => {
-    return value !== null && value !== undefined && value !== '' && value.length !== 0;
-}
+    return (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0) &&
+        !(typeof value === 'object' && Object.keys(value).length === 0)
+    );
+};
 
 export const educationDetailsJson = {
     title: 'Education Details',
@@ -403,4 +409,28 @@ export const formFilledValues = (formValues) => {
         }
     }
     return fieldsWithValues
+}
+
+export const showSuccessToast = (massage) => {
+    toast.success(massage, {
+        position: 'top-right',
+        autoClose: 3000, // milliseconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
+
+}
+
+export const showErrorToast = (massage) => {
+    toast.error(massage, {
+        position: 'top-right',
+        autoClose: 3000, // milliseconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
+
 }

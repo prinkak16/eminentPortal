@@ -48,8 +48,8 @@ const PolticalandGovrnform =(props)=>{
     const [count, setcount]=useState(2)
     const [politicalProfileDetails, setPoliticalProfileDetails] = useState(props?.formValues?.political_profile);
     const [otherPartyDetails, setOtherPartyDetails] = useState(props?.formValues?.other_parties);
-    const [editableProfileField, setEditableProfileField] = useState({})
-    const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
+    const [editableProfileField, setEditableProfileField] = useState()
+    const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(false)
     const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested)

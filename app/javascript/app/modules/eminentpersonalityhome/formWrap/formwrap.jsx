@@ -11,12 +11,12 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-import {formFilledValues} from "../../utils";
+import {formFilledValues, isValuePresent} from "../../utils";
 import {ApiContext} from "../../ApiContext";
-steps=[PersonalDetails, Communicationform, Educationform,PolticalandGovrnform, Resumeform, Refferedform]
+
 // newSteps=[PersonalDetails]
 const FormWrap=({userData})=>{
-    const {config} = useContext(ApiContext)
+    const {config, isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -24,6 +24,13 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+    const steps= [PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform]
+
+    useEffect(() => {
+        if (!isValuePresent(isCandidateLogin)) {
+            steps.push(Refferedform)
+        }
+    }, []);
 
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
@@ -55,7 +62,6 @@ const FormWrap=({userData})=>{
 
 
     const onSubmit = (values, formikBag) => {
-        debugger
         const { setSubmitting } = formikBag;
         const newStepValues = [...stepValues];
         newStepValues[activeStep] = values;
@@ -63,10 +69,11 @@ const FormWrap=({userData})=>{
         const activeStepData=mergeObjectsUpToIndex(newStepValues, activeStep);
         if (!isLastStep()) {
             setSubmitting(false);
-            handleNext();
             const fieldsWithValues = formFilledValues(activeStepData);
             getFormData(fieldsWithValues, activeStep + 1, config).then(response => {
-                console.log('API response:', response.data);
+                if (response) {
+                    handleNext();
+                }
             });
             return;
         }
