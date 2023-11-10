@@ -34,6 +34,7 @@ const Educationform = (props) => {
     const [EducationData, setEducationData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
+    const [educationsList, setEducationsList] = useState([]);
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -55,6 +56,16 @@ const Educationform = (props) => {
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
+
+    useEffect(() => {
+        const filteredItems = EducationData.filter((item) => item.name === e.target.value);
+        const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
+        let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
+        filteredArray = filteredArray.map(item => item.name);
+        setEducationsList(filteredArray)
+    },[props.formValues.education_level])
+
+
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -94,7 +105,6 @@ const Educationform = (props) => {
             start_year: formData.start_year,
             end_year: formData.end_year,
         };
-
         setEducationDetails((prevData) =>
             isValuePresent(id)
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
@@ -146,6 +156,8 @@ const Educationform = (props) => {
         saveProgress(props.formValues, props.activeStep + 1)
     }
 
+    console.log(professionDetails)
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -163,7 +175,6 @@ const Educationform = (props) => {
                                          defaultOption="Select Highest Education"
                                          handleSelectChange={selectChange}
                                          optionList={EducationData}/>
-
                             <ErrorMessage name="education_level" component="div"/>
                         </Grid>
                     </Grid>
@@ -221,8 +232,7 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField}/>
-
+                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField} educationsList={educationsList}/>
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
