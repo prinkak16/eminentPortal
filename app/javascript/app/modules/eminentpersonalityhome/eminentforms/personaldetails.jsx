@@ -28,14 +28,11 @@ const PersonalDetails = (props) => {
     const {config} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
-            if (key !== 'other_address') {
                 if (props.formValues.hasOwnProperty(key)) {
                     props.formValues[key] = props.userData[key]
                 }
-            }
         }
     }, []);
-    console.log(config)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
