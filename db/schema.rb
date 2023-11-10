@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "audits", force: :cascade do |t|
@@ -94,6 +95,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ministry_id"], name: "index_departments_on_ministry_id"
+    t.index ["name"], name: "index_department_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "index_departments_on_name"
     t.index ["slug"], name: "index_departments_on_slug"
   end
@@ -106,6 +108,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_ministries_on_name"
+    t.index ["name"], name: "index_ministry_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["slug"], name: "index_ministries_on_slug"
   end
 
@@ -128,6 +131,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
     t.index ["country_state_id"], name: "index_organizations_on_country_state_id"
     t.index ["department_id"], name: "index_organizations_on_department_id"
     t.index ["ministry_id"], name: "index_organizations_on_ministry_id"
+    t.index ["name"], name: "index_organization_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "index_organizations_on_name"
     t.index ["slug"], name: "index_organizations_on_slug"
   end
@@ -147,6 +151,25 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_01_120652) do
     t.datetime "updated_at", null: false
     t.index ["ministry_id"], name: "index_user_ministries_on_ministry_id"
     t.index ["user_id"], name: "index_user_ministries_on_user_id"
+  end
+
+  create_table "vacancy", force: :cascade do |t|
+    t.integer "ministry_id"
+    t.integer "department_id"
+    t.integer "organization_id"
+    t.integer "country_state_id"
+    t.string "designation", default: "", null: false
+    t.boolean "is_selected", default: false, null: false
+    t.datetime "tenure_started_at"
+    t.datetime "tenure_ended_at"
+    t.string "status", default: "VACANT", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["country_state_id"], name: "index_vacancy_on_country_state_id"
+    t.index ["department_id"], name: "index_vacancy_on_department_id"
+    t.index ["ministry_id"], name: "index_vacancy_on_ministry_id"
+    t.index ["organization_id"], name: "index_vacancy_on_organization_id"
   end
 
 end

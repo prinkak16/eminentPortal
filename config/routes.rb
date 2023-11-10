@@ -67,6 +67,10 @@ Rails.application.routes.draw do
         get '/assigned_ministries_by_filters', to: 'gom#assigned_ministries_by_filters'
       end
 
+      namespace :vacancy, path: 'vacancy' do
+        post '/manual_upload', to: 'upload#manual_upload'
+      end
+
       namespace :user, path: 'user' do
         post '/manual_upload/minister_assistant_mapping', to: 'user#upload_minister_assistant_mapping'
       end
