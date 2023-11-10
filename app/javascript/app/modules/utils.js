@@ -101,21 +101,21 @@ export const politicalProfileJson = {
             key: 'party_level',
             na_button: false,
             name: "Party Level",
-            placeholder: 'Select party level',
+            placeholder: 'Enter party level',
             type: 'textField',
         },
         {
             key: 'unit',
             na_button: false,
             name: "Unit",
-            placeholder: 'Select unit',
+            placeholder: 'Enter unit',
             type: 'textField',
         },
         {
             key: 'designation',
             na_button: false,
             name: "Designation",
-            placeholder: 'Select designation',
+            placeholder: 'Enter designation',
             type: 'textField',
         },
         {
@@ -228,7 +228,7 @@ export const electionWiseJson =
                     list: ['data','data1'],
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Pc',
+                        name: 'Parliamentary Constituency',
                         key: 'ParliamentaryConstituency',
                         placeholder: 'Pc',
                         list: ['data','data1'],
@@ -257,7 +257,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                             type: 'dropdown',
-                            name: 'Ac',
+                            name: 'Assembly Constituency',
                             key: 'AssemblyConstituency',
                             placeholder: 'Ac'
                     }]
@@ -293,7 +293,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Ad',
+                        name: 'Administrative District',
                         key: 'AdministrativeDistrict',
                         placeholder: 'Ad'
                     }]
@@ -316,7 +316,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Ad',
+                        name: 'Administrative District',
                         key: 'AdministrativeDistrict',
                         placeholder: 'Ad'
                     },]
@@ -388,4 +388,19 @@ export const saveProgress = (formValues, activeStep) => {
         console.log('API response:', response.data);
 
     });
+}
+
+export const formFilledValues = (formValues) => {
+    const fieldsWithValues = {};
+    for (const fieldName of Object.keys(formValues)) {
+        const fieldValue = formValues[fieldName];
+        if (fieldValue) {
+            if (formValues[fieldName] === 'mobile') {
+                fieldsWithValues[fieldName] = [fieldValue];
+            } else {
+                fieldsWithValues[fieldName] = fieldValue;
+            }
+        }
+    }
+    return fieldsWithValues
 }

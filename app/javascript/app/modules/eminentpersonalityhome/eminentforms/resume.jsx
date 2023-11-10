@@ -11,7 +11,7 @@ import {
     Button, Select, MenuItem, FormControl
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -27,9 +27,11 @@ import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepp
 import * as Yup from "yup";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {saveProgress} from "../../utils";
+import {formFilledValues, saveProgress} from "../../utils";
+import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
+    const {config} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -120,8 +122,11 @@ const Resumeform = (props) => {
         }
     };
 
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+            console.log('API response:', response.data);
+        });
     }
 
     return (

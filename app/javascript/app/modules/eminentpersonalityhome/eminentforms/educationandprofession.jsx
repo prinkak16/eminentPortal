@@ -1,5 +1,5 @@
 import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Popper, Fade} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
@@ -25,9 +25,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress} from "../../utils";
+import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, formFilledValues} from "../../utils";
+import {ApiContext} from "../../ApiContext";
 
 const Educationform = (props) => {
+    const {config} = useContext(ApiContext)
     const [selectedOption, setSelectedOption] = useState('');
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
@@ -152,11 +154,14 @@ const Educationform = (props) => {
 
     };
 
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+            console.log('API response:', response.data);
+        });
     }
 
-    console.log(professionDetails)
+
 
     return (
         <>
@@ -164,7 +169,7 @@ const Educationform = (props) => {
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={progressSave} />
+                        <Savebtn onClick={saveProgress} />
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
