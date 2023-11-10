@@ -1,5 +1,5 @@
 import {Box, FormLabel, Grid, Paper, Stack, TextField, Typography} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ErrorMessage, Field} from 'formik';
 import {styled} from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,13 +15,15 @@ import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/steppe
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
-import {isValuePresent, saveProgress} from "../../utils";
+import {formFilledValues, isValuePresent, saveProgress} from "../../utils";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import OtherNumberField from "../component/otherFormFields/otherNumberInput";
+import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
+    const {config} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -219,8 +221,11 @@ const Communicationform =(props)=>{
     },[formValues])
 
 
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+            console.log('API response:', response.data);
+        });
     }
 
     const otherAddressError = (key, formIndex) => {
@@ -233,7 +238,7 @@ const Communicationform =(props)=>{
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
-                        <Savebtn onClick={progressSave}/>
+                        <Savebtn onClick={saveProgress}/>
                     </Item>
                 </Stack>
                 <div className="detailFrom">

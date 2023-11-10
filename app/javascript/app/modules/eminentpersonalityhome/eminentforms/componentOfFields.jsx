@@ -10,8 +10,10 @@ import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
 import {isValuePresent} from "../../utils";
-const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable}) => {
+const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
     const [fieldsData, setFieldsData] = useState({});
+
+
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
             setFieldInitialValue('')
@@ -104,17 +106,18 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable}) => {
         resetFieldsToBlank()
     }
 
-    const notApplicableFields = (naType) => (event) => {
+    const notApplicableFields = (naType, key) => (event) => {
         const valueToSet = event.target.checked ? 'NA' : '';
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
             setFieldsData((prevFieldsData) => ({
                 ...prevFieldsData,
-                [naType]: valueToSet,
+                [key]: valueToSet,
             }));
         }
     };
+    console.log(fieldsData)
 
     return (
         <div>
@@ -135,10 +138,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable}) => {
                                     <AutoCompleteDropdown
                                         name={f.name}
                                         selectedValue={fieldsData[f.key] || null}
-                                        listArray={f.list}
+                                        listArray={jsonForm.title === 'Education Details' ? educationsList : f.list}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
-                                    <ErrorMessage name="qualification" component="div"/>
                                 </Grid>
                         }
                         {
@@ -174,7 +176,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable}) => {
                                 {f.na_button &&
                                     <div className='date-na-button'>
                                         <span className='na-check-box'>
-                                            <input type="checkbox" onClick={notApplicableFields(f.na_type)} />
+                                            <input type="checkbox" onClick={notApplicableFields(f.na_type,f.key)} />
                                         </span>
                                         <span className='na-check-msg'>
                                             {f.na_massage}

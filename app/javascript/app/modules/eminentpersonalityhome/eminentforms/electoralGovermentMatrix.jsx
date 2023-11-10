@@ -141,7 +141,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                             {
                                 f.type === 'dropdown' &&
                                 <Grid item xs={4}>
-                                    <FormLabel>{f.name} <sup>*</sup></FormLabel>
+                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
                                     <AutoCompleteDropdown
                                         name={f.name}
                                         selectedValue={fieldsData[f.key] || null}
@@ -154,7 +154,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                             {
                                 f.type === "textField" &&
                                 <Grid item xs={4}>
-                                    <FormLabel>{f.name} <sup>*</sup></FormLabel>
+                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
                                     <OtherInputField
                                         type="text"
                                         value={fieldsData[f.key] || null}
@@ -166,7 +166,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                             {
                                 f.type === "radio" &&
                                 <Grid item xs={4}>
-                                    <FormLabel>{f.name} <sup>*</sup></FormLabel>
+                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
                                     <RadioButton radioList={f.list} selectedValue={fieldsData[f.key] || null} onClicked={contestedElection}  fieldKey={f.key}/>
                                 </Grid>
                             }
@@ -175,7 +175,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                     {
                                         fi.type === 'dropdown' &&
                                         <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <sup>*</sup></FormLabel>
+                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
                                             <AutoCompleteDropdown
                                                 name={fi.name}
                                                 selectedValue={fieldsData[fi.key] || null}
@@ -188,7 +188,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                     {
                                         fi.type === "textField" &&
                                         <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <sup>*</sup></FormLabel>
+                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
                                             <OtherInputField
                                                 type="text"
                                                 value={fieldsData[fi.key] || null}
@@ -200,7 +200,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                     {
                                         fi.type === "radio" &&
                                         <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <sup>*</sup></FormLabel>
+                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
                                             <RadioButton radioList={fi.list}  selectedValue={fieldsData[fi.key] || null} onClicked={contestedElection} fieldKey={f.key} />
                                         </Grid>
                                     }

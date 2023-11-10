@@ -21,7 +21,7 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {isValuePresent, languagesName} from "../../utils";
+import {formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const PersonalDetails = (props) => {
@@ -35,6 +35,7 @@ const PersonalDetails = (props) => {
             }
         }
     }, []);
+    console.log(config)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -87,21 +88,10 @@ const PersonalDetails = (props) => {
         })
     }
 
-    const saveProgress = (formValues, activeStep) => {
-        const fieldsWithValues = {};
-        for (const fieldName of Object.keys(props.formValues)) {
-            const fieldValue = props.formValues[fieldName];
-            if (fieldValue) {
-                if (props.formValues[fieldName] === 'mobile') {
-                    fieldsWithValues[fieldName] = [fieldValue];
-                } else {
-                    fieldsWithValues[fieldName] = fieldValue;
-                }
-            }
-        }
-        getFormData(fieldsWithValues, props.activeStep + 1).then(response => {
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
             console.log('API response:', response.data);
-
         });
     }
 
