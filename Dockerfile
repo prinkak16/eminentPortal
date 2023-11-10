@@ -8,7 +8,6 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt-get update -qq && apt-get install -y yarn && apt-get install -y ghostscript && apt-get upgrade -y
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
 RUN apt install nodejs -y
-RUN apt install redis-server -y
 RUN apt autoremove -y
 
 RUN apt-get update
