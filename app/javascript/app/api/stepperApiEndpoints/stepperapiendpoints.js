@@ -1,11 +1,12 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
-export const getFormData = async (data, activeStep,config) => {
+import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
+export const getFormData = async (data, activeStep, config, isDraft = true) => {
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
         "device_info": userDeviceInfo(),
-        "is_draft": true,
+        "is_draft": isDraft,
         "version": 3,
         "form_step": activeStep,
         "state_id": 30,
@@ -13,9 +14,12 @@ export const getFormData = async (data, activeStep,config) => {
     }
     try {
         const response = await axios.post(apiBaseUrl + 'eminent/update', formData, config);
-        console.log('API response:', response.data);
+        showSuccessToast(response.data.message);
+        return true
     } catch (error) {
-        console.error('API error:', error);
+        const errors = error.response.data.error
+        showErrorToast(errors[0].message)
+        return false
     }
 }
 
@@ -57,16 +61,7 @@ export const getGenderData = (config,) => {
 }
 export const getStateData = axios.get(apiBaseUrl + 'metadata/states');
 export const getEducationData = axios.get(apiBaseUrl + 'metadata/educations');
-export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');;
-
-
-
-
-const params = {
-    location_type: 'State',
-    location_id: 1,
-    required_location_type: 'AssemblyConstituency',
-};
+export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');
 
 export const getAssemblyData = (assembly) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + assembly)
@@ -76,11 +71,6 @@ export const getLocationsData = (params) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + params)
 }
 
-// export const sendOtp = (phoneNumber) => {
-//     return axios.post(apiBaseUrl + 'custom_member_forms/send_otp?form_type=eminent_personality&phone=' + phoneNumber)
-// }
-
-
 export const sendOtp = async (phoneNumber) => {
     let url = ''
     const formData = new FormData();
@@ -89,7 +79,7 @@ export const sendOtp = async (phoneNumber) => {
     try {
         url = await axios.post(apiBaseUrl + 'eminent/auth/send_otp', formData);
     } catch (error) {
-        alert(`Error: ${error.response.data.message}`);
+        showErrorToast(error.response.data.message);
     }
     return url
 }
@@ -103,7 +93,7 @@ export const validateOtp = async (phoneNumber, otp) => {
     try {
         url = await axios.post(apiBaseUrl + 'eminent/auth/validate_otp', formData);
     } catch (error) {
-        alert(`Error: ${error.response.data.message}`);
+        showErrorToast(error.response.data.message);
     }
     return url
 }

@@ -27,7 +27,7 @@ import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepp
 import * as Yup from "yup";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress} from "../../utils";
+import {formFilledValues, saveProgress, showErrorToast} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
@@ -106,7 +106,7 @@ const Resumeform = (props) => {
             setFileName(file.name)
             setPdfFile(file)
         } else {
-            alert('Please upload PDF file only.');
+            showErrorToast(`Please upload PDF file only.`)
         }
     }
 
@@ -117,7 +117,7 @@ const Resumeform = (props) => {
             if (newWindow) {
                 newWindow.focus();
             } else {
-                alert('Your browser blocked the new tab. Please check your browser settings.');
+                showErrorToast('Your browser blocked the new tab. Please check your browser settings.');
             }
         }
     };
@@ -135,7 +135,7 @@ const Resumeform = (props) => {
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={progressSave}/></Item>
+                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
                     <Grid item xs={6}>

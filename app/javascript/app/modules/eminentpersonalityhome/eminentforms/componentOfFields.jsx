@@ -9,7 +9,7 @@ import React, {useEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
-import {isValuePresent} from "../../utils";
+import {isValuePresent, showErrorToast, showSuccessToast} from "../../utils";
 const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
     const [fieldsData, setFieldsData] = useState({});
 
@@ -25,6 +25,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         const initialFieldsData = generateInitialFieldsData(keys, value);
         setFieldsData(initialFieldsData);
     };
+
+    console.log(fieldsData)
 
     useEffect(() => {
         const valueToSet = notApplicable ? 'NA' : '';
@@ -47,6 +49,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     updatedFieldsData[key] = isEditable[key];
                 }
             }
+            console.log('okay')
             setFieldsData(updatedFieldsData);
         }
     }, [isEditable]);
@@ -82,6 +85,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     disabledFields.push('12th Pass')
                 }
                 value = disabledFields.includes(fieldsData.qualification)
+                if (value) {
+                    fieldsData[field] = 'NA'
+                }
             }
         }
 
@@ -102,12 +108,17 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }
 
     const handleSave = (id) => {
+        for (let key in fieldsData) {
+            if (!isValuePresent(fieldsData[key])) {
+                return showErrorToast(`Please enter ${key}`)
+            }
+        }
         saveData(jsonForm.title,fieldsData, id)
         resetFieldsToBlank()
     }
 
     const notApplicableFields = (naType, key) => (event) => {
-        const valueToSet = event.target.checked ? 'NA' : '';
+        const valueToSet = event.target.checked ? naType === 'all' ? 'NA' : 'Current Working' : '';
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
@@ -117,8 +128,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             }));
         }
     };
-    console.log(fieldsData)
-
     return (
         <div>
             <Grid container className="educationforms grid-wrap">

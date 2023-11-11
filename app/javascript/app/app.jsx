@@ -9,6 +9,9 @@ import LoginPage from "./modules/./eminentlogin/loginpage";
 import MasterVacancies from "./modules/eminenthome/pages/masterofvacancies/masterofvacancies";
 import {isValuePresent} from "./modules/utils";
 import {ApiContext} from "./modules/ApiContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const beforeLoginRoutes =  <Routes>
                                         <Route path={'/'} element={<LoginPage/>}/>
                                         <Route path='/*' element={<Navigate to="/"/>}/>
@@ -20,7 +23,7 @@ const afterLoginRoutes = <Routes>
 
 const adminRoutes = <Routes>
                                 <Route path='/' element={<HomePage/>}/>
-                                <Route path='/eminent_personality' element={<EminentPersonality/>}/>
+                                <Route path='/eminent_form' element={<EminentPersonality/>}/>
                                 <Route path='/masterofvacancies' element={<MasterVacancies/>}/>
                                 <Route path='/*' element={<Navigate to="/"/>}/>
                             </Routes>
@@ -42,7 +45,8 @@ function App() {
 
     return (
         <>
-            <ApiContext.Provider  value={{config, setAuthToken}}>
+            <ToastContainer />
+            <ApiContext.Provider  value={{config, setAuthToken, isCandidateLogin}}>
                 {routesOfProjects()}
             </ApiContext.Provider>
 

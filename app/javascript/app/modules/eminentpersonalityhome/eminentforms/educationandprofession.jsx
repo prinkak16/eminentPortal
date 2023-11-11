@@ -60,7 +60,7 @@ const Educationform = (props) => {
     };
 
     useEffect(() => {
-        const filteredItems = EducationData.filter((item) => item.name === e.target.value);
+        const filteredItems = EducationData.filter((item) => item.name === props.formValues.education_level);
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
         let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
         filteredArray = filteredArray.map(item => item.name);
@@ -162,6 +162,19 @@ const Educationform = (props) => {
     }
 
 
+    const deleteFields = (type, id) => {
+        if (type === 'education') {
+            const form = educationDetails.filter((item) => item.id !== id);
+            if (form) {
+                setEducationDetails(form)
+            }
+        } else {
+            const form = professionDetails.filter((item) => item.id !== id);
+            if (form) {
+                setProfessionDetails(form)
+            }
+        }
+    }
 
     return (
         <>
@@ -177,6 +190,7 @@ const Educationform = (props) => {
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
                             <SelectField name="education_level" selectedvalues={selectedOption}
+                                         placeholder={"Select Highest Education"}
                                          defaultOption="Select Highest Education"
                                          handleSelectChange={selectChange}
                                          optionList={EducationData}/>
@@ -221,7 +235,7 @@ const Educationform = (props) => {
                                                                 <Paper>
                                                                     <Typography sx={{p: 2}}
                                                                                 onClick={() => editEducationForm('education',data.id)}><Edit/></Typography>
-                                                                    <Typography
+                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
                                                                         sx={{p: 2}}><DeleteIcon/></Typography>
                                                                 </Paper>
                                                             </Fade>
@@ -273,8 +287,8 @@ const Educationform = (props) => {
                                                                 <Paper>
                                                                     <Typography sx={{p: 2}}
                                                                                 onClick={() => editEducationForm('profession',data.id)}><Edit/></Typography>
-                                                                    <Typography
-                                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
+                                                                        sx={{p: 2}}><DeleteIcon /></Typography>
                                                                 </Paper>
                                                             </Fade>
                                                         )}

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react"
+import React, {useCallback, useContext, useEffect, useState} from "react"
 import {Box, Paper, Grid, FormLabel} from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -11,9 +11,12 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-steps=[PersonalDetails, Communicationform, Educationform,PolticalandGovrnform, Resumeform, Refferedform]
+import {formFilledValues, isValuePresent} from "../../utils";
+import {ApiContext} from "../../ApiContext";
+
 // newSteps=[PersonalDetails]
 const FormWrap=({userData})=>{
+    const {config, isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -21,6 +24,13 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
+    const steps= [PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform]
+
+    useEffect(() => {
+        if (!isValuePresent(isCandidateLogin)) {
+            steps.push(Refferedform)
+        }
+    }, []);
 
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
@@ -50,6 +60,7 @@ const FormWrap=({userData})=>{
         }, {});
     }
 
+
     const onSubmit = (values, formikBag) => {
         const { setSubmitting } = formikBag;
         const newStepValues = [...stepValues];
@@ -58,14 +69,14 @@ const FormWrap=({userData})=>{
         const activeStepData=mergeObjectsUpToIndex(newStepValues, activeStep);
         if (!isLastStep()) {
             setSubmitting(false);
-            handleNext();
-            getFormData({...activeStepData, dob:"2023-10-21"}).then(response => {
-                console.log('API response:', response);
-
+            const fieldsWithValues = formFilledValues(activeStepData);
+            getFormData(fieldsWithValues, activeStep + 1, config).then(response => {
+                if (response) {
+                    handleNext();
+                }
             });
             return;
         }
-        // console.log(values);
         setTimeout(() => {
             setSubmitting(false);
         }, 1000);
