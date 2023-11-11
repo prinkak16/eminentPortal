@@ -52,42 +52,6 @@ const Resumeform = (props) => {
     }
     const [pdfUrl, setPdfUrl] = useState('');
 
-    const handlePdfUpload = (event) => {
-        const uploadedFile = event.currentTarget.files[0];
-        if (uploadedFile) {
-            getFileUpload(uploadedFile)
-                .then((pdfUrl) => {
-                    if (pdfUrl) {
-                        setPdfUrl(pdfUrl); // Set the PDF URL in the state
-                    } else {
-                        console.error('File upload failed or URL not found');
-                    }
-                })
-                .catch((error) => {
-                    console.error('File upload failed', error);
-                });
-        }
-    };
-
-    const handleViewPdf = () => {
-        window.open(pdfUrl, "_blank");
-        console.log(pdfUrl);
-    };
-
-    const enterChildName = (value, index) => {
-        setChildren((prevChildren) => {
-            return prevChildren.map((form, i) => {
-                if (i === index) {
-                    return {
-                        ...form,
-                        ['name']: value,
-                    };
-                }
-                return form;
-            });
-        });
-    };
-
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -131,7 +95,6 @@ const Resumeform = (props) => {
     }
 
 
-
     return (
         <>
 
@@ -147,6 +110,7 @@ const Resumeform = (props) => {
                                     value={props.formValues.political_legacy_name}
                                     name="political_legacy_name"
                                     placeholder="Enter full name"/>
+                        <ErrorMessage name="political_legacy_name" component="div"/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>Relationship </FormLabel>
@@ -177,6 +141,7 @@ const Resumeform = (props) => {
                                 </MenuItem>
                             </Field>
                         </FormControl>
+                        <ErrorMessage name="political_legacy_relationship" component="div"/>
                     </Grid>
                     <Grid item xs={12}>
                         <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
@@ -189,6 +154,7 @@ const Resumeform = (props) => {
                             maxRows={4}
                             placeholder="Tell me about your profile..."
                         />
+                        <ErrorMessage name="political_legacy_profile" component="div"/>
                     </Grid>
                 </Grid>
                 <Grid container sx={{my: 3}} className="grid-wrap">
@@ -205,6 +171,7 @@ const Resumeform = (props) => {
                                         name="father"
                                         placeholder="Enter name"
                             />
+                            <ErrorMessage name="father" component="div"/>
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Mother's Name</FormLabel>
@@ -212,6 +179,7 @@ const Resumeform = (props) => {
                                         name="mother"
                                         placeholder="Enter name"
                             />
+                            <ErrorMessage name="mother" component="div"/>
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Spouse Name</FormLabel>
@@ -219,6 +187,7 @@ const Resumeform = (props) => {
                                         name="spouse"
                                         placeholder="Enter name"
                             />
+                            <ErrorMessage name="spouse" component="div"/>
                         </Grid>
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
@@ -227,6 +196,7 @@ const Resumeform = (props) => {
                                             name={`children.${index}`}
                                             placeholder="Enter child name"
                                 />
+                                <ErrorMessage name={`child.${index}`} component="div"/>
                             </Grid>
                         ))}
                         <Grid item xs={12}>
@@ -254,6 +224,7 @@ const Resumeform = (props) => {
                                             name="website"
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                <ErrorMessage name="website" component="div"/>
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
@@ -263,6 +234,7 @@ const Resumeform = (props) => {
                                             inputprop={{endAdornment: <InputAdornment position="end">
                                                     <HelpOutlineOutlinedIcon/>
                                                 </InputAdornment>}}/>
+                                <ErrorMessage name="twitter" component="div"/>
                             </Grid>
                         </Grid>
 
@@ -273,6 +245,7 @@ const Resumeform = (props) => {
                                             name="linkedin"
                                             placeholder="Enter your linkedin Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                <ErrorMessage name="linkedin" component="div"/>
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
@@ -280,6 +253,7 @@ const Resumeform = (props) => {
                                             name="facebook"
                                             placeholder="Enter your facebook Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                <ErrorMessage name="facebook" component="div"/>
                             </Grid>
                         </Grid>
 
@@ -290,6 +264,7 @@ const Resumeform = (props) => {
                                             name="instagram"
                                             placeholder="Enter your instagram Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
+                                <ErrorMessage name="instagram" component="div"/>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -300,6 +275,7 @@ const Resumeform = (props) => {
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
                                      sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
+                                <ErrorMessage name="pdf_url" component="div"/>
                             </Typography>
                         </Grid>
 
@@ -338,11 +314,20 @@ Resumeform.initialValues = {
     linkedin:"",
     facebook:"",
     instagram:"",
-    won:"",
-    state:"",
+    resumePdf:""
 };
 Resumeform.validationSchema = Yup.object().shape({
-    // whatsapp_number: Yup.number().required('Please enter your first name'),
-    // std_code: Yup.number().required('Please enter your last name')
+    political_legacy_name: Yup.string().required('Please enter your political_legacy_name'),
+    political_legacy_relationship: Yup.string().required('Please select political_legacy_relationship'),
+    father: Yup.string().required('Please enter father name'),
+    mother: Yup.string().required('Please enter mother name'),
+    spouse: Yup.string().required('Please enter spouse name'),
+    children: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
+    website: Yup.string().required('Please enter website link'),
+    twitter: Yup.string().required('Please enter twitter id'),
+    linkedin: Yup.string().required('Please enter linkedin id'),
+    facebook:Yup.string().required('Please enter facebook id'),
+    instagram:Yup.string().required('Please enter instagram id'),
+    resumePdf:Yup.string().required('Please Upload the resume'),
 });
 export default Resumeform

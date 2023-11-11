@@ -487,10 +487,6 @@ const PolticalandGovrnform =(props)=>{
 }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
-    state_name:'',
-    pc:'',
-    ac:'',
-    ad_name:'',
     political_profile: [],
     rss_years: '',
     bjp_years: '',
@@ -503,7 +499,43 @@ PolticalandGovrnform.initialValues = {
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    // party_level: Yup.string().required('Please enter your party level'),
-    // won:Yup.string().required("A radio option is required")
+    rss_years: Yup.string().required('Please enter rss joined years'),
+    bjp_years: Yup.string().required('Please enter bjp joined year'),
+    election_contested: Yup.string().required('Please Select election contest'),
+
+    political_profile: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                unit: Yup.string().required('Please enter your course'),
+                designation: Yup.string().required('Please enter your college'),
+                end_year: Yup.string().required('Please Select  end year'),
+                start_year: Yup.string().required('Please Select  start year'),
+                party_level: Yup.string().required('Please enter your university'),
+            }),
+        })
+    ),
+
+    other_parties: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                party: Yup.string().required('Please enter your course'),
+                position: Yup.string().required('Please enter your college'),
+                end_year: Yup.string().required('Please Select  end year'),
+                start_year: Yup.string().required('Please Select  start year'),
+            }),
+        })
+    ),
+
+    social_profiles: Yup.array().of(
+        Yup.object().shape({
+            organization: Yup.string().required('Please enter your Address'),
+            description: Yup.string().required('Please enter your Street'),
+        })
+    ),
+
+
+
 });
 export default PolticalandGovrnform
