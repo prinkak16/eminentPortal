@@ -48,6 +48,7 @@ const Resumeform = (props) => {
     };
     const deleteChild = (index) => {
         children.splice(index, 1);
+        props.formValues.children.splice(index, 1)
     }
     const [pdfUrl, setPdfUrl] = useState('');
 
@@ -129,6 +130,8 @@ const Resumeform = (props) => {
         });
     }
 
+
+
     return (
         <>
 
@@ -200,7 +203,6 @@ const Resumeform = (props) => {
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
                                         name="father"
-                                  
                                         placeholder="Enter name"
                             />
                         </Grid>
@@ -221,12 +223,10 @@ const Resumeform = (props) => {
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
                                 <FormLabel>Children Name</FormLabel>
-                                <OtherInputField
-                                    type="text"
-                                    value={field.name}
-                                    onChange={enterChildName}
-                                    fieldIndex={index}
-                                    placeholder={'Enter name'}/>
+                                <Inputfield type="text"
+                                            name={`children.${index}`}
+                                            placeholder="Enter child name"
+                                />
                             </Grid>
                         ))}
                         <Grid item xs={12}>
@@ -329,9 +329,9 @@ Resumeform.initialValues = {
     political_legacy_name: "",
     political_legacy_relationship: "",
     political_legacy_profile:"",
-    father_name:"",
-    mother_name:"",
-    spouse_name:"",
+    father:"",
+    mother:"",
+    spouse:"",
     children:[],
     website:"",
     twitter:"",

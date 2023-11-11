@@ -106,6 +106,7 @@ const Educationform = (props) => {
             university: formData.university,
             start_year: formData.start_year,
             end_year: formData.end_year,
+            highest_qualification: formData.highest_qualification,
         };
         setEducationDetails((prevData) =>
             isValuePresent(id)

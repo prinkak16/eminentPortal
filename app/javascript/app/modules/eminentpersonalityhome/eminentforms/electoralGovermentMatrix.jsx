@@ -19,15 +19,16 @@ import {
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [locationsArray, setLocationsArray] =useState({})
+    const [states, setStates] = useState([])
 
     const getStates = () => {
         getStateData.then((res) => {
+            setStates(res.data.data)
             setLocationsArray((prevFieldsData) => ({
                 ...prevFieldsData,
                 ['State']: res.data.data.map(item => item.name),
             }));
         })
-        let field = jsonForm.fields.find((item) => item.key === 'State')
     }
 
     useEffect(() => {
@@ -84,10 +85,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
             return updatedFieldsData;
         });
     };
+
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
             let field = jsonForm.find((item) => item.key === 'State')
-            getLocations(value, field.combo_fields[0])
+            let state = states.find((item) => item.name === value)
+            getLocations(state[0].id, field.combo_fields[0])
         }
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
