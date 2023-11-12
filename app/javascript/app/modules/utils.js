@@ -1,5 +1,7 @@
 import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
 import { toast } from 'react-toastify';
+const dayjs = require('dayjs');
+
 export const isValuePresent = (value) => {
     return (
         value !== null &&
@@ -9,6 +11,8 @@ export const isValuePresent = (value) => {
         !(typeof value === 'object' && Object.keys(value).length === 0)
     );
 };
+
+
 
 export const educationDetailsJson = {
     title: 'Education Details',
@@ -432,5 +436,18 @@ export const showErrorToast = (massage) => {
         pauseOnHover: true,
         draggable: true,
     });
+}
 
+export const yearToDateConvert = (year) => {
+    const dateObject = new Date(parseInt(year), 0)
+    return dateObject.toLocaleString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+        timeZone: 'Asia/Kolkata', // Use the appropriate time zone for India
+    });
 }

@@ -30,13 +30,14 @@ import {ApiContext} from "../../ApiContext";
 
 const Educationform = (props) => {
     const {config} = useContext(ApiContext)
-    const [selectedOption, setSelectedOption] = useState('');
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
     const [educationsList, setEducationsList] = useState([]);
+    const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
+    const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -55,8 +56,8 @@ const Educationform = (props) => {
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
 
-    const selectChange = (e) => {
-        setSelectedOption(e.target.value);
+    const setHighestQualification = (e) => {
+        setEducationLevel(e.target.value);
     };
 
     useEffect(() => {
@@ -106,6 +107,7 @@ const Educationform = (props) => {
             university: formData.university,
             start_year: formData.start_year,
             end_year: formData.end_year,
+            highest_qualification: formData.highest_qualification,
         };
         setEducationDetails((prevData) =>
             isValuePresent(id)
@@ -176,6 +178,10 @@ const Educationform = (props) => {
         }
     }
 
+    const changeProfessionDescription = (e) => {
+        setProfessionDescription(e.target.value)
+    }
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -189,10 +195,11 @@ const Educationform = (props) => {
                     <Grid item xs={6} className='education-field pb-3'>
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                            <SelectField name="education_level" selectedvalues={selectedOption}
+                            <SelectField name="education_level"
+                                         value={educationLevel}
                                          placeholder={"Select Highest Education"}
                                          defaultOption="Select Highest Education"
-                                         handleSelectChange={selectChange}
+                                         handleSelectChange={setHighestQualification}
                                          optionList={EducationData}/>
                             <ErrorMessage name="education_level" component="div"/>
                         </Grid>
@@ -320,6 +327,8 @@ const Educationform = (props) => {
                                 className="profession-description"
                                 fullWidth
                                 name="profession_description"
+                                onChange={changeProfessionDescription}
+                                value={professionDescription}
                                 multiline
                                 minRows={2}
                                 maxRows={2}
@@ -347,11 +356,35 @@ Educationform.initialValues = {
 
 };
 Educationform.validationSchema = Yup.object().shape({
-    // educations: Yup.array()
-    //     .of(Yup.string()) // Assuming elements in the array are strings
-    //     .required('Please select at least one education'),
-    // profession: Yup.array()
-    //     .of(Yup.string()) // Assuming elements in the array are strings
-    //     .required('Please select at least one Profession')
+    education_level: Yup.string().required('Please select your high qualification'),
+    profession_description: Yup.string().required('Please enter your profession_description'),
+
+    educations: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                course: Yup.string().required('Please enter your course'),
+                college: Yup.string().required('Please enter your college'),
+                end_year: Yup.string().required('Please Select  end year'),
+                start_year: Yup.string().required('Please Select  start year'),
+                university: Yup.string().required('Please enter your university'),
+                qualification: Yup.string().required('Please enter your qualification'),
+                highest_qualification: Yup.string().required('Please enter your Pincode'),
+            }),
+        })
+    ),
+
+    professions: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                Position: Yup.string().required('Please enter your Address'),
+                profession: Yup.string().required('Please enter your Street'),
+                organization: Yup.string().required('Please Select your District'),
+                start_year: Yup.string().required('Please Select your State'),
+                end_year: Yup.string().required('Please enter your Pincode'),
+            }),
+        })
+    ),
 });
 export default Educationform
