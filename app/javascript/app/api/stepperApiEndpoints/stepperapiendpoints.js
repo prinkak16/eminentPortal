@@ -3,6 +3,8 @@ import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
 import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
 export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin) => {
     const updateData = isCandidateLogin ? "eminent/update" : "custom_member_forms/add"
+    console.log(isCandidateLogin,updateData)
+
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
@@ -24,12 +26,13 @@ export const getFormData = async (data, activeStep, config, isDraft = true, isCa
     }
 }
 
-export const getFileUpload = async (file, config) => {
+export const getFileUpload = async (file, config,isCandidateLogin) => {
+    const uploadPath = isCandidateLogin ? 'eminent/add_file' : 'custom_member_forms/add_file'
     let url = ''
     const formData = new FormData();
     formData.append("file", file);
     try {
-        url = await axios.post(apiBaseUrl + fileUpload, formData,config);
+        url = await axios.post(apiBaseUrl + uploadPath, formData,config);
     } catch (error) {
         console.log("Error:", error);
     }

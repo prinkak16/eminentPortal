@@ -14,12 +14,12 @@ let theme = createTheme({
     }
 });
 const ImageUpload=(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const [imageUrl, setImageUrl] = useState()
     const maxNumber = 3;
     const handleImageUpload = (image) => {
         console.log("Uploaded file:", image.file);
-        getFileUpload(image.file,config).then(res => {
+        getFileUpload(image.file,config,isCandidateLogin).then(res => {
             console.log('API response:', res.data.file_path);
             props.setFieldValue('photo', res.data.file_path);
         });

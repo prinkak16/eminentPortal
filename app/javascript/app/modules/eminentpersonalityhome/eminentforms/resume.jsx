@@ -29,7 +29,7 @@ import {formFilledValues, saveProgress, showErrorToast} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -75,7 +75,7 @@ const Resumeform = (props) => {
     }
 
     const handleImageUpload = (file) => {
-        getFileUpload(file,config).then(res => {
+        getFileUpload(file,config,isCandidateLogin).then(res => {
             console.log('res.data.file_path', res.data.file_path)
             setPdfFileName(file.name)
             props.formValues.resumePdfName = file.name
@@ -93,7 +93,6 @@ const Resumeform = (props) => {
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
         getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
         });
     }
 

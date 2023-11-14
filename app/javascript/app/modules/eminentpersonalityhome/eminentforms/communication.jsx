@@ -224,7 +224,6 @@ const Communicationform =(props)=>{
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
         getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
         });
     }
 
