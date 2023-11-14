@@ -92,11 +92,14 @@ const FormWrap=({userData})=>{
 
     const ActiveStep = steps[activeStep];
     const validationSchema = ActiveStep.validationSchema;
+    console.log(validationSchema,'validationSchema')
     const [formData, setFormData] = useState({}); // State to store form data
 
     const handleSave = (data) => {
         setFormData(data);
     };
+
+
 
     return(
         <>

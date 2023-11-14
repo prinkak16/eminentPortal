@@ -23,12 +23,12 @@ export const getFormData = async (data, activeStep, config, isDraft = true) => {
     }
 }
 
-export const getFileUpload = async (file, pdfUrl) => {
+export const getFileUpload = async (file, config) => {
     let url = ''
     const formData = new FormData();
     formData.append("file", file);
     try {
-        url = await axios.post(apiBaseUrl + fileUpload, formData);
+        url = await axios.post(apiBaseUrl + fileUpload, formData,config);
     } catch (error) {
         console.log("Error:", error);
     }
@@ -52,7 +52,7 @@ export const getReligionData = (config,) => {
     })
 }
 
-export const getGenderData = (config,) => {
+export const getGenderData = (config) => {
     return axios.get(apiBaseUrl + 'metadata/genders',{
         params: {
         },

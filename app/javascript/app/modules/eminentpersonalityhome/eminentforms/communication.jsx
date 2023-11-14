@@ -620,18 +620,7 @@ Communicationform.validationSchema = Yup.object().shape({
         })
     ),
 
-    other_address: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                flat: Yup.string().required('Please enter your Address'),
-                street: Yup.string().required('Please enter your Street'),
-                district: Yup.string().required('Please Select your District'),
-                state: Yup.string().required('Please Select your State'),
-                pincode: Yup.string().required('Please enter your Pincode'),
-            }),
-        })
-    ),
+
 
 });
 export default Communicationform
