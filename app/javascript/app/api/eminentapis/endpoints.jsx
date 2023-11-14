@@ -38,3 +38,9 @@ export const fetchUser = (config) => {
         headers: config?.headers
     });
 }
+export  const getSlottingTable =()=>{
+    return axios.get('https://slottingpage-default-rtdb.firebaseio.com/slottingTable.json')
+}
+export const getSlottingPsuData=()=> {
+    return axios.get('https://psudetails-default-rtdb.asia-southeast1.firebasedatabase.app/psudetail.json')
+}

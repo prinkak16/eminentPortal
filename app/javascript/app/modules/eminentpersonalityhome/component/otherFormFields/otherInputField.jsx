@@ -15,7 +15,7 @@ const OtherInputField=({placeholder, value, onChange, textType, disabled, fieldI
                 name={name}
                 value={value}
                 placeholder={placeholder}
-                // onChange={onFieldChange}
+                onChange={onFieldChange}
                 as={TextField}
                 fullWidth
             />

@@ -13,7 +13,6 @@ const EminentPersonality=()=> {
     const [userData, setUserData] = useState()
     const changeInputNumber = () => {
         fetchUser(config).then(res => {
-            console.log(res.data)
             setUserData(res.data.data.data)
         }).catch(err => {
             console.log(err);
@@ -50,9 +49,7 @@ const EminentPersonality=()=> {
                         </g>
                     </svg>
                 </Grid>
-            {userData &&
-            <FormWrap userData={userData}/>
-            }
+            {userData && <FormWrap userData={userData}/>}
         </>
     )
 }

@@ -1,5 +1,5 @@
 import {Box, Button, Fade, FormLabel, Grid, Paper, Popper, Stack, TextField, Typography} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -8,11 +8,6 @@ import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
-import Stepfouraddmore from '../component/stepfouraddmore/selectlokshabha';
-import Rajyasabhaform from '../component/stepfouraddmore/selectrajyasabha';
-import Vidhansabhaform from '../component/stepfouraddmore/lagislativeassemblyform';
-import Vidhanparishadform from "../component/stepfouraddmore/vidhanprishad";
-import Urbanlocalfrom from '../component/stepfouraddmore/urbanlocal';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import * as Yup from "yup";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -20,7 +15,7 @@ import PopupState, {bindPopper, bindToggle} from 'material-ui-popup-state';
 import {Edit} from "@mui/icons-material";
 import {
     electionTypeList,
-    electionWiseJson,
+    electionWiseJson, formFilledValues,
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
@@ -32,8 +27,12 @@ import OtherInputField from "../component/otherFormFields/otherInputField";
 import RadioButton from "./radioButton";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
+import {ApiContext} from "../../ApiContext";
+import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {boolean} from "yup";
 
 const PolticalandGovrnform =(props)=>{
+    const {config} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -41,45 +40,40 @@ const PolticalandGovrnform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [showFields, setShowFields] = useState(false);
-    const [socialFields, setSocialFields] = useState([{ organization: "", description: "" }])
+    const [socialFields, setSocialFields] = useState([])
     const [count, setcount]=useState(2)
-    const [PartyData, setPartyData]=useState([])
     const [politicalProfileDetails, setPoliticalProfileDetails] = useState([]);
     const [otherPartyDetails, setOtherPartyDetails] = useState([]);
-    const [editableProfileField, setEditableProfileField] = useState({})
-    const [editableOtherPartyField, setEditableOtherPartyField] = useState({})
+    const [editableProfileField, setEditableProfileField] = useState()
+    const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(false)
-    const [electoralDetails, setElectoralDetails] = useState([{election_type: '', election_details:[]}])
-    const [electionContested, setElectionContested] = useState(false)
+    const [electoralDetails, setElectoralDetails] = useState([])
+    const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
     useEffect(() => {
         isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
         isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
         isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
         isValuePresent(props.formValues.social_profiles) ? setSocialFields(props.formValues.social_profiles) : null
-        isValuePresent(props.formValues.election_contested) ? setElectionContested(props.formValues.election_contested) : null
+        // isValuePresent(props.formValues.election_contested) ? setElectionContested(props?.formValues?.election_contested ? "Yes" : "No") : null
     }, []);
 
-
-
     useEffect(() => {
-        props.formValues.political_profile =  politicalProfileDetails
-    }, [politicalProfileDetails]);
+        setTimeout(() => {
+            console.log(props?.formValues?.election_contested)
+        }, 1000);
 
-    useEffect(() => {
-        props.formValues.other_parties =  otherPartyDetails
-    }, [otherPartyDetails]);
+    }, [props?.formValues?.election_contested]);
 
+    console.log('okay')
 
     const addSocialFields = () => {
-        setSocialFields([...socialFields, { organization: "", description: "" }])
-        setShowFields(true);
+        setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
         setcount(count+1);
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralDetails([...socialFields,  {election_type: '', election_details:[]}])
+        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:[]}])
     }
 
     const deleteSocialFields = () => {
@@ -89,10 +83,6 @@ const PolticalandGovrnform =(props)=>{
         setcount(count-1);
     }
 
-
-    useEffect(() => {
-        // getAssembly()
-    }, []);
 
     const handleSave = ( title, formData, id) => {
         if (title === 'Political Profile') {
@@ -188,19 +178,17 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
-    useEffect(() => {
-        props.formValues.social_profiles = socialFields
-    },[socialFields])
 
 
     const contestedElection = (value) => {
-        setElectionContested(value === 'Yes')
-        props.formValues.election_fought = value
+        setElectionContested(value)
+        props.formValues.election_contested = value === 'Yes'
     }
+
 
     const changeElectionType = (value,name ,type, formIndex) => {
         const updatedElectoralData = [...electoralDetails];
-        updatedElectoralData[0].election_type = value;
+        updatedElectoralData[formIndex].election_type = value;
         setElectoralDetails(updatedElectoralData);
     }
 
@@ -223,25 +211,43 @@ const PolticalandGovrnform =(props)=>{
         });
     }
 
+
+
+
+
+    const saveProgress = () => {
+        debugger
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+            console.log('API response:', response.data);
+        });
+    }
+
+
+    useEffect(() => {
+        props.formValues.social_profiles = socialFields;
+    }, [socialFields]);
+
     useEffect(() => {
         props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
 
     useEffect(() => {
-        props.formValues.election_contested = electionContested
-    }, [electoralDetails]);
+        props.formValues.political_profile =  politicalProfileDetails
+    }, [politicalProfileDetails]);
 
-
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
-    }
+    useEffect(() => {
+        props.formValues.other_parties =  otherPartyDetails
+    }, [otherPartyDetails]);
 
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
-                    <Item sx={{textAlign:'right'}}><Savebtn onClick={progressSave} /></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <Savebtn onClick={() => saveProgress()} />
+                    </Item>
                 </Stack>
                 {politicalProfileDetails.length > 0 && (
                     <div className="data-table">
@@ -294,13 +300,14 @@ const PolticalandGovrnform =(props)=>{
                         </table>
                     </div>
                 )}
-
-                <div className='date-na-button date-na-button-out-side'>
-                     <span className='na-check-box'>
-                        <input type="checkbox" onClick={NotApplicableFields} />
-                     </span>
-                    <span className='na-check-msg'>Not Applicable</span>
-                </div>
+                {politicalProfileDetails.length === 0 &&
+                    <div className='date-na-button date-na-button-out-side'>
+                         <span className='na-check-box'>
+                           <input type="checkbox" onClick={NotApplicableFields}/>
+                        </span>
+                        <span className='na-check-msg'>Not Applicable</span>
+                    </div>
+                }
                 {!NAFields &&
                 <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField} notApplicable={NAFields}/>
                 }
@@ -480,23 +487,55 @@ const PolticalandGovrnform =(props)=>{
 }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
-    state_name:'',
-    pc:'',
-    ac:'',
-    ad_name:'',
     political_profile: [],
     rss_years: '',
     bjp_years: '',
     other_parties: [],
     social_profiles: [],
-    election_contested: false,
+    election_contested: '',
     election_fought: [],
 
 };
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    // party_level: Yup.string().required('Please enter your party level'),
-    // won:Yup.string().required("A radio option is required")
+    rss_years: Yup.string().required('Please enter rss joined years'),
+    bjp_years: Yup.string().required('Please enter bjp joined year'),
+    election_contested: Yup.string().required('Please Select election contest'),
+
+    political_profile: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                unit: Yup.string().required('Please enter your course'),
+                designation: Yup.string().required('Please enter your college'),
+                end_year: Yup.string().required('Please Select  end year'),
+                start_year: Yup.string().required('Please Select  start year'),
+                party_level: Yup.string().required('Please enter your university'),
+            }),
+        })
+    ),
+
+    other_parties: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                party: Yup.string().required('Please enter your course'),
+                position: Yup.string().required('Please enter your college'),
+                end_year: Yup.string().required('Please Select  end year'),
+                start_year: Yup.string().required('Please Select  start year'),
+            }),
+        })
+    ),
+
+    social_profiles: Yup.array().of(
+        Yup.object().shape({
+            organization: Yup.string().required('Please enter your Address'),
+            description: Yup.string().required('Please enter your Street'),
+        })
+    ),
+
+
+
 });
 export default PolticalandGovrnform

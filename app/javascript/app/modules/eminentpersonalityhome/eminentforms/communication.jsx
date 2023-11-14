@@ -1,5 +1,5 @@
 import {Box, FormLabel, Grid, Paper, Stack, TextField, Typography} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ErrorMessage, Field} from 'formik';
 import {styled} from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,13 +15,15 @@ import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/steppe
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
-import {isValuePresent, saveProgress} from "../../utils";
+import {formFilledValues, isValuePresent, saveProgress} from "../../utils";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import OtherNumberField from "../component/otherFormFields/otherNumberInput";
+import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
+    const {config} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -32,7 +34,7 @@ const Communicationform =(props)=>{
     const [formValues, setFormValues] = useState([])
     const [curPinData, setCurPinData] = useState({district: [], state: []})
     const [homePinData, setHomePinData] = useState({district: [], state: []})
-    const [otherPinData, setOtherPinData] = useState([{id: '', district: [], state: []}])
+    const [otherPinData, setOtherPinData] = useState([])
     const [mobileFields, setMobileFields] =useState([])
 
     useEffect(() => {
@@ -56,31 +58,24 @@ const Communicationform =(props)=>{
 
 
     let addFormFields = () => {
-        const obj = {
-            address_type:"",
-            flat:"",
-            pincode:"",
-            street:"",
-            district:"",
-            state:"",
-        }
-        props.formValues.other_address.push(obj)
         setFormValues([...formValues, {
-            address_type:"",
-            flat:"",
-            pincode:"",
-            street:"",
-            district:"",
-            state:"",
+            id: uuidv4(),
+            address_type: "",
+            flat: "",
+            pincode: "",
+            street: "",
+            district: "",
+            state: ""
         }])
     }
-    let removeFormFields = (id) => {
-        const newFormValues =  formValues.filter((field) => field.id !== id)
+
+    let removeFormFields = (formIndex) => {
+        const newFormValues =  formValues.filter((field, index) => index !== formIndex)
         setFormValues(newFormValues);
     }
 
 
-    const handlePinCodeChange = (pinCode, type, id) => {
+    const handlePinCodeChange = (pinCode, type, otherFromIndex) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             axios.get(pinApi)
@@ -91,14 +86,13 @@ const Communicationform =(props)=>{
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
                         if (type === 'pincode') {
                            setCurPinData({district: district, state: state})
-                            console.log(id)
                             props.formValues.current_address[0].state = state[0]
                         } else if (type === 'home_pincode') {
                             setHomePinData({district: district, state: state})
                             props.formValues.home_address[0].state = state[0]
                         } else if (type === 'other_pincode') {
-                            setOtherPinData([...otherPinData, {id: id, district: district, state: state}])
-                            props.formValues.other_address[id].state = state[0]
+                            setOtherPinData([...otherPinData, {id: otherFromIndex, district: district, state: state}])
+                            formValues[otherFromIndex].state = state[0]
                         }
                     }
                 })
@@ -184,16 +178,26 @@ const Communicationform =(props)=>{
     }
 
     const otherAddressChange = (name, index) => (value) => {
-        console.log(name)
-        props.formValues.other_address[index][name] = value
         if (name === 'pincode') {
             handlePinCodeChange(value, 'other_pincode', index)
         }
+
+        setFormValues((prevFormValues) => {
+            return prevFormValues.map((form, i) => {
+                if (i === index) {
+                    return {
+                        ...form,
+                        [name]: value,
+                    };
+                }
+                return form;
+            });
+        });
     };
 
-console.log(props.formValues?.other_address[0]?.pincode)
-    const fieldValue = (id, name) => {
-        const form = formValues.find((field) => field.id === id)
+
+    const fieldValue = (formIndex, name) => {
+        const form = formValues.find((field, index) => index === formIndex)
         if (form) {
             return form[name]
         } else {
@@ -203,8 +207,8 @@ console.log(props.formValues?.other_address[0]?.pincode)
     }
 
 
-    const otherDistrictStateArray = (type, id) => {
-        const form = otherPinData.find((field) => field.id === id)
+    const otherDistrictStateArray = (type, formIndex) => {
+        const form = otherPinData.find((field, index) => index === formIndex)
        if (form) {
            return form[type]
        } else {
@@ -213,20 +217,28 @@ console.log(props.formValues?.other_address[0]?.pincode)
     }
 
     useEffect(() => {
+        props.formValues.other_address = formValues
     },[formValues])
 
 
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+            console.log('API response:', response.data);
+        });
     }
 
+    const otherAddressError = (key, formIndex) => {
+        const form = formValues.find((field, index) => index === formIndex)
+        return  !isValuePresent(form[key])
+    }
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
-                        <Savebtn onClick={progressSave}/>
+                        <Savebtn onClick={saveProgress}/>
                     </Item>
                 </Stack>
                 <div className="detailFrom">
@@ -447,31 +459,32 @@ console.log(props.formValues?.other_address[0]?.pincode)
                                                             </Box>
                                                             Other
                                                         </FormLabel>
+
+
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Type of Address<mark>*</mark></FormLabel>
-                                                        <Inputfield type="text"
-                                                                    name={`other_address.${index}.address_type`}
-                                                                    value={props.formValues?.other_address[index]?.address_type}
-                                                                    placeholder="Enter Area, Street, Etc.s"
-                                                        />
-                                                        <ErrorMessage name={`other_address.${0}.address_type`} component="div" />
+                                                        <OtherInputField type="text"
+                                                                    value={fieldValue(index,'address_type')}
+                                                                    onChange={otherAddressChange('address_type', index)}
+                                                                    placeholder="Example Offce Address Capital Address...Etc. "/>
+
                                                     </Grid>
 
                                                     <Grid item xs={12}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
-                                                        <Inputfield type="text"
-                                                                    name={`other_address.${index}.flat`}
-                                                                    value={props.formValues?.other_address[index]?.flat}
-                                                                    placeholder="Enter Area, Street, Etc.s"
-                                                        />
+                                                        <OtherInputField type="text"
+                                                                    value={fieldValue(index,'flat')}
+                                                                    onChange={otherAddressChange('flat', index)}
+                                                                    placeholder="Example Offce Address Capital Address...Etc. "/>
+                                                        {otherAddressError('flat', index) && <p>Please enter flat details</p>}
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
                                                             className=''
-                                                            name={`other_address.${index}.pincode`}
-                                                            value={props.formValues?.other_address[index].pincode}
+                                                            name="other_pincode"
+                                                            value={fieldValue(index,'pincode')}
                                                             onChange={otherAddressChange('pincode', index)}
                                                             placeholder='Enter Pin Code'
                                                             onInput={(event) => {
@@ -479,33 +492,36 @@ console.log(props.formValues?.other_address[0]?.pincode)
 
                                                             }}
                                                         />
+                                                        {otherAddressError('pincode', index) && <p>Please enter pincode</p>}
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
-                                                        <Inputfield type="text"
-                                                                    name={`other_address.${index}.street`}
-                                                                    value={props.formValues?.other_address[index]?.street}
-                                                                    placeholder="Enter Area, Street, Etc.s"
+                                                        <OtherInputField type="text"
+                                                                         value={fieldValue(index,'street')}
+                                                                         onChange={otherAddressChange('street', index)}
+                                                                         placeholder="Enter Area, Street, Etc.s"
                                                         />
+                                                        {otherAddressError('street', index) && <p>Please enter street details </p>}
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
                                                             name={'District'}
-                                                            selectedValue={props.formValues?.other_address[index].district}
+                                                            selectedValue={fieldValue(index,'district')}
                                                             listArray={otherDistrictStateArray('district', index)}
                                                             onChangeValue={otherAddressChange('district', index)}
                                                         />
-                                                        {/*<SelectField name="other_district"  defaultOption="Select District" optionList={StateData}/>*/}
+                                                        {otherAddressError('district', index) && <p>Please select district</p>}
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
                                                             name={'State'}
-                                                            selectedValue={props.formValues?.other_address[index].state}
+                                                            selectedValue={fieldValue(index,'state')}
                                                             listArray={otherDistrictStateArray('state', index)}
                                                             onChangeValue={otherAddressChange('state', index)}
                                                         />
+                                                        {otherAddressError('state', index) &&  <p>Please select state</p>}
                                                     </Grid>
                                                 </Grid>
                                                     <Grid item xs={12} className="d-flex align-items-center">
@@ -522,7 +538,7 @@ console.log(props.formValues?.other_address[0]?.pincode)
                                                         {formValues.length >= 1 ? (
                                                             <Primarybutton addclass="deletebtn"
                                                                            buttonlabel={<DeleteIcon/>}
-                                                                           handleclick={() => removeFormFields(element.id)}/>
+                                                                           handleclick={() => removeFormFields(index)}/>
 
                                                         ) : null}
                                                     </Grid>
@@ -588,8 +604,8 @@ Communicationform.validationSchema = Yup.object().shape({
         Yup.object().shape({
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),
-            district: Yup.string().required('Please enter your District'),
-            state: Yup.string().required('Please enter your State'),
+            district: Yup.string().required('Please Select your District'),
+            state: Yup.string().required('Please Select your State'),
             pincode: Yup.string().required('Please enter your Pincode'),
         })
     ),
@@ -598,18 +614,24 @@ Communicationform.validationSchema = Yup.object().shape({
         Yup.object().shape({
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),
-            district: Yup.string().required('Please enter your District'),
-            state: Yup.string().required('Please enter your State'),
+            district: Yup.string().required('Please Select your District'),
+            state: Yup.string().required('Please Select your State'),
             pincode: Yup.string().required('Please enter your Pincode'),
         })
     ),
 
-
-    // home_flat: Yup.string().required('Please enter your Address'),
-    // home_street: Yup.string().required('Please enter your Street'),
-    // home_district: Yup.string().required('Please enter your District'),
-    // home_state: Yup.string().required('Please enter your State'),
-    // home_pincode: Yup.string().required('Please enter your Pincode')
+    other_address: Yup.array().of(
+        Yup.object().when('length', {
+            is: (length) => length > 0,
+            then: Yup.object().shape({
+                flat: Yup.string().required('Please enter your Address'),
+                street: Yup.string().required('Please enter your Street'),
+                district: Yup.string().required('Please Select your District'),
+                state: Yup.string().required('Please Select your State'),
+                pincode: Yup.string().required('Please enter your Pincode'),
+            }),
+        })
+    ),
 
 });
 export default Communicationform

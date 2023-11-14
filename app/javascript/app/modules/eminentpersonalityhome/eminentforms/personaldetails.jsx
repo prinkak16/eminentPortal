@@ -21,18 +21,16 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {isValuePresent, languagesName} from "../../utils";
+import {formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const PersonalDetails = (props) => {
     const {config} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
-            if (key !== 'other_address') {
                 if (props.formValues.hasOwnProperty(key)) {
                     props.formValues[key] = props.userData[key]
                 }
-            }
         }
     }, []);
     const Item = styled(Paper)(({theme}) => ({
@@ -87,21 +85,9 @@ const PersonalDetails = (props) => {
         })
     }
 
-    const saveProgress = (formValues, activeStep) => {
-        const fieldsWithValues = {};
-        for (const fieldName of Object.keys(props.formValues)) {
-            const fieldValue = props.formValues[fieldName];
-            if (fieldValue) {
-                if (props.formValues[fieldName] === 'mobile') {
-                    fieldsWithValues[fieldName] = [fieldValue];
-                } else {
-                    fieldsWithValues[fieldName] = fieldValue;
-                }
-            }
-        }
-        getFormData(fieldsWithValues, props.activeStep + 1).then(response => {
-            console.log('API response:', response.data);
-
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
         });
     }
 
