@@ -51,6 +51,8 @@ Rails.application.routes.draw do
         post '/update', to: 'eminent#update_eminent'
         delete '/logout', to: 'eminent#logout'
 
+        post 'add_file', to: 'eminent#add_file'
+
         get '/metadata/genders', to: 'metadata#genders'
         get '/metadata/categories', to: 'metadata#categories'
         get '/metadata/religions', to: 'metadata#religions'
