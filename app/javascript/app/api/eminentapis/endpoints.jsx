@@ -22,12 +22,11 @@ export const updateState = (updatedState) => {
     return axios.post(apiBaseUrl + 'custom_member_forms/update_aasm_state', updatedState);
 }
 
-export const fetchMobile = (config,number) => {
+export const fetchMobile = (number) => {
     return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number',{
         params: {
             phone_number: number
-        },
-        headers: config?.headers
+        }
     });
 }
 
