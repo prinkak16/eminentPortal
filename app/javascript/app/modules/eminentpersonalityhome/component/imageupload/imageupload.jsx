@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import ImageUploading from "react-images-uploading";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { Button, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import './imageupload.scss'
 import {getFileUpload, getFormData} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {ApiContext} from "../../../ApiContext";
 
 let theme = createTheme({
     shape: {
@@ -13,17 +14,17 @@ let theme = createTheme({
     }
 });
 const ImageUpload=(props)=>{
+    const {config} = useContext(ApiContext)
     const [imageUrl, setImageUrl] = useState()
     const maxNumber = 3;
     const handleImageUpload = (image) => {
-        debugger
         console.log("Uploaded file:", image.file);
-        getFileUpload(image.file).then(res => {
+        getFileUpload(image.file,config).then(res => {
+            console.log('API response:', res.data.file_path);
             props.setFieldValue('photo', res.data.file_path);
         });
     };
 
-    console.log(imageUrl)
     useEffect(() => {
          setImageUrl(props?.values?.photo);
     }, []);
