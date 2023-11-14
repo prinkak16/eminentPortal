@@ -1,6 +1,6 @@
 class CreateVaccancyTable < ActiveRecord::Migration[7.0]
   def change
-    create_table :vacancy do |t|
+    create_table :vacancies do |t|
       t.integer :ministry_id, foreign_key: {to_table: :ministries}, index: true
       t.integer :department_id, null: true, foreign_key: {to_table: :departments}, index: true, default: nil
       t.integer :organization_id, null: true, foreign_key: {to_table: :organizations}, index: true, default: nil

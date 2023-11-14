@@ -153,7 +153,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.index ["user_id"], name: "index_user_ministries_on_user_id"
   end
 
-  create_table "vacancy", force: :cascade do |t|
+  create_table "vacancies", force: :cascade do |t|
     t.integer "ministry_id"
     t.integer "department_id"
     t.integer "organization_id"
@@ -166,10 +166,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.index ["country_state_id"], name: "index_vacancy_on_country_state_id"
-    t.index ["department_id"], name: "index_vacancy_on_department_id"
-    t.index ["ministry_id"], name: "index_vacancy_on_ministry_id"
-    t.index ["organization_id"], name: "index_vacancy_on_organization_id"
+    t.index ["country_state_id"], name: "index_vacancies_on_country_state_id"
+    t.index ["department_id"], name: "index_vacancies_on_department_id"
+    t.index ["ministry_id"], name: "index_vacancies_on_ministry_id"
+    t.index ["organization_id"], name: "index_vacancies_on_organization_id"
   end
 
 end
