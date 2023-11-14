@@ -188,4 +188,19 @@ class Api::V1::Eminent::EminentController < BaseApiController
       render json: { success: false, message: e.message }, status: :bad_request
     end
   end
+
+  def add_file
+    require 'digest/md5'
+    unless params[:file].present?
+      render json: { success: false, message: 'Please provide a file.' }, status: :bad_request
+    end
+
+    uploaded_file = params[:file]
+    # Access the original filename
+    file_name = uploaded_file.original_filename.present? ? uploaded_file.original_filename : nil
+    file_extension = ".#{file_name.delete(' ').partition('.').last}"
+    custom_file_name = Digest::MD5.hexdigest(file_name + SecureRandom.uuid.last(10).to_s) + file_extension
+    url = upload_file_on_gcloud(uploaded_file, custom_file_name)
+    render json: { success: true, message: 'Success', file_path: url }, status: :ok
+  end
 end
