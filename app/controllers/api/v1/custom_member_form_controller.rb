@@ -125,6 +125,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
       custom_member = params[:data][:id].present? ? CustomMemberForm.find_by_id(params[:data][:id]) : nil
       phone_number = params[:data][:mobiles]
+      # Check for duplicate phone number
+      if phone_number.size != phone_number.to_set.size
+        return render json: {
+          success: false,
+          message: 'Phone number has already been added by you, please provide a another phone number.'
+        }, status: :bad_request
+      end
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       existing_custom_users_found = false
