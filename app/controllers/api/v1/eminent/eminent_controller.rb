@@ -94,6 +94,13 @@ class Api::V1::Eminent::EminentController < BaseApiController
       end
 
       phone_number = params[:data][:mobiles]
+      # Check for duplicate phone number
+      if phone_number.size != phone_number.to_set.size
+        return render json: {
+          success: false,
+          message: 'Phone number has already been added by you, please provide a another phone number.'
+        }, status: :bad_request
+      end
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       eminent_channel = params[:channel].present? ? params[:channel] : nil
