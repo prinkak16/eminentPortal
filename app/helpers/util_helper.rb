@@ -100,13 +100,4 @@ module UtilHelper
   def convert_to_snake_case(value)
     value.downcase.underscore.gsub(/\s+/, '_')
   end
-
-  def array_to_sql_search(values)
-    result = ''
-    values.each do |value|
-      result += "'value'"
-    end
-
-
-  end
 end
