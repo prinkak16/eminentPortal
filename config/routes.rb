@@ -41,7 +41,9 @@ Rails.application.routes.draw do
 
       get 'filters/home', to: 'filter#home'
       get 'filters/gom_management', to: 'filter#gom_management'
-      get 'filters/master_of_vacancy', to: 'filter#master_of_vacancy'
+      get 'filters/vacancy_ministry_wise', to: 'filter#vacancy_ministry_wise'
+      get 'filters/vacancy_organization_wise', to: 'filter#vacancy_organization_wise'
+      get 'filters/vacancy_wise', to: 'filter#vacancy_wise'
 
       get 'stats/home', to: 'stats#home'
 
@@ -74,7 +76,7 @@ Rails.application.routes.draw do
         post '/manual_upload', to: 'upload#manual_upload'
         get '/position_analytics', to: 'vacancy#position_analytics'
         get '/vacant_overview/by_state', to: 'vacancy#vacant_overview_by_state'
-        get '/list/by_ministry', to: 'vacancy#list_by_ministry'
+        get '/list', to: 'vacancy#list_ministry_wise'
       end
 
       namespace :user, path: 'user' do

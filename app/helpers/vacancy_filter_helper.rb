@@ -60,6 +60,46 @@ module VacancyFilterHelper
     result
   end
 
+  def fetch_vacancy_organization_filters(name)
+    result = {
+      'key': 'organization',
+      'display_name': 'Organization',
+      'type': 'array',
+      'values': []
+    }
+
+    state_ids = []
+    fetch_user_assigned_country_states.each do |country_state|
+      state_ids << country_state['id']
+    end
+    state_id_search = state_ids.length > 0 ? state_ids.join(',') : nil
+
+    sql = 'SELECT org.id, org.name'
+    sql += ", word_similarity(org.name, '#{name}') AS ms " if name.length > 2
+    sql += "
+      FROM public.user_ministries AS um
+      LEFT JOIN public.ministries AS ministry
+      ON um.ministry_id = ministry.id
+      LEFT JOIN public.departments AS dept
+      ON um.ministry_id = dept.ministry_id
+      LEFT JOIN public.organizations AS org
+      ON (um.ministry_id = org.ministry_id AND dept.id = org.department_id)
+    "
+    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND org.id IS NOT null"
+    sql += state_id_search.nil? ? ' AND org.country_state_id IS null' : " AND org.country_state_id IN (#{state_id_search})"
+    sql += " AND org.name % '#{name}' ORDER BY ms DESC" if name.length > 2
+
+    user_organizations = UserMinistry.find_by_sql(sql)
+
+    user_organizations.each do |user_organization|
+      result[:values] << {
+        'value': user_organization['id'],
+        'display_name': user_organization['name']
+      }
+    end
+    result
+  end
+  
   def fetch_state_filter
     result = {
       'key': 'country_state_id',
