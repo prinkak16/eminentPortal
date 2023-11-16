@@ -31,35 +31,45 @@ const Refferedform=({enableProgressAction })=>{
                                         <Grid item xs={6}>
                                             <FormLabel>Name</FormLabel>
                                             <Inputfield type="text"
-                                                        name="name"
+                                                        name={`reference.name`}
                                                         placeholder="Enter Name"/>
+                                            <ErrorMessage name={`reference.name`} component="div"/>
 
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Phone no.</FormLabel>
                                             <Inputfield type="text"
-                                                        name="mobile"
+                                                        name={`reference.mobile`}
                                                         placeholder="Enter phone no."/>
-
+                                                         <ErrorMessage name={`reference.name`} component="div"/>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>BJP ID</FormLabel>
                                             <Inputfield type="text"
-                                                        name="bjpid"
+                                                        name={`reference.bjp_id`}
                                                         placeholder="BJP ID"/>
+                                            <ErrorMessage name={`reference.bjp_id`} component="div"/>
 
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <FormLabel>Remark</FormLabel>
+                                            <FormLabel>Grade</FormLabel>
+                                            <Inputfield type="text"
+                                                        name={`reference.grade`}
+                                                        placeholder="BJP ID"/>
+                                            <ErrorMessage name={`reference.grade`} component="div"/>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <FormLabel>comments</FormLabel>
                                             <TextField
                                                 className='p-0'
                                                 fullWidth
-                                                name="comments"
+                                                name={`reference.comments`}
                                                 multiline
                                                 minRows={3}
                                                 maxRows={4}
                                                 placeholder="Write something"
                                             />
+                                            <ErrorMessage name={`reference.comments`} component="div"/>
                                         </Grid>
                                     </Grid>
                                     </Box>
@@ -70,16 +80,20 @@ const Refferedform=({enableProgressAction })=>{
 }
 Refferedform.label = 'Referred By'
 Refferedform.initialValues = {
-    // qualification: "",
-    // subject: "",
-    // college: "",
-    // board: "",
-    // school: "",
-    // profession: "",
-    // qualification2:""
+    reference: {name: "", mobile: "",bjp_id: "", grade: "", comments: ""}
+
+
 };
 Refferedform.validationSchema = Yup.object().shape({
-    // whatsapp_number: Yup.number().required('Please enter your first name'),
-    // std_code: Yup.number().required('Please enter your last name')
+    reference: Yup.object().shape({
+        name: Yup.string().required("Name is required"),
+        mobile: Yup.string()
+            .matches(/^[0-9]+$/, "Mobile must be a number")
+            .length(10, "Mobile must be 10 digits")
+            .required("Mobile is required"),
+        bjp_id: Yup.string().required("BJP ID is required"),
+        grade: Yup.string().required("Grade is required"),
+        comments: Yup.string().required("Comments are required"),
+    }),
 });
 export default Refferedform;

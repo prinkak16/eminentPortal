@@ -29,6 +29,7 @@ const FormWrap=({userData})=>{
 
     useEffect(() => {
         if (isValuePresent(isCandidateLogin)) {
+            console.log(isValuePresent(isCandidateLogin),'isValuePresent(isCandidateLogin)',isCandidateLogin)
             const updatedSteps = steps.filter(step => step.label !== 'Referred By');
                   setSteps(updatedSteps)
         }
@@ -71,7 +72,7 @@ const FormWrap=({userData})=>{
         const activeStepData=mergeObjectsUpToIndex(newStepValues, activeStep);
         if (!isLastStep()) {
             setSubmitting(false);
-            const fieldsWithValues = formFilledValues(activeStepData);
+            const fieldsWithValues = activeStepData;
             console.log('isCandidateLogin', isCandidateLogin)
             getFormData(fieldsWithValues, activeStep + 1, config,false, isCandidateLogin).then(response => {
                 if (response) {

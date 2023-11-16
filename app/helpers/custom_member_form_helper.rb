@@ -330,14 +330,11 @@ module CustomMemberFormHelper
             'minimum': 1900,
             'maximum': 3000
           },
-          'current_organization': {
-            'type': 'boolean'
-          }
         },
-        'required': %w[profession organization position start_year end_year current_organization]
+        'required': %w[profession organization position start_year end_year]
       }
     },
-    'description': {
+    'profession_description': {
       'type': 'string'
     }
   )
@@ -368,7 +365,7 @@ module CustomMemberFormHelper
       educations
       education_level
       professions
-      description
+      profession_description
     ]
   )
 
@@ -548,9 +545,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years
@@ -701,9 +697,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years
@@ -722,6 +717,7 @@ module CustomMemberFormHelper
       facebook
       instagram
       attachment
+      attachment_name
     ]
   )
 
@@ -798,6 +794,7 @@ module CustomMemberFormHelper
       facebook
       instagram
       attachment
+      attachment_name
       reference
     ]
   )

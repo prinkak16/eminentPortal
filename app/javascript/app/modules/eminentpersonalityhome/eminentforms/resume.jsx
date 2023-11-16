@@ -38,9 +38,9 @@ const Resumeform = (props) => {
         flexGrow: 1,
     }));
     const [children, setChildren] = useState(props.formValues?.children || [''])
-    const [PdfFileName, setPdfFileName] = useState(props.formValues?.resumePdfName)
-    const [pdfFile, setPdfFile] = useState(props.formValues?.resumePdf);
-    const [politicalLegacyProfile, sePoliticalLegacyProfile] = useState(props?.formValues?.political_legacy_profile)
+    const [PdfFileName, setPdfFileName] = useState(props.formValues?.attachment_name)
+    const [pdfFile, setPdfFile] = useState(props.formValues?.attachment);
+    const [politicalLegacyProfile, sePoliticalLegacyProfile] = useState(props.formValues?.political_legacy[0]?.profile)
     const addChildren = () => {
         setChildren([...children, '']);
     };
@@ -78,9 +78,9 @@ const Resumeform = (props) => {
         getFileUpload(file,config,isCandidateLogin).then(res => {
             console.log('res.data.file_path', res.data.file_path)
             setPdfFileName(file.name)
-            props.formValues.resumePdfName = file.name
+            props.formValues.attachment_name = file.name
             setPdfFile(res.data.file_path)
-            props.formValues.resumePdf = res.data.file_path
+            props.formValues.attachment = res.data.file_path
         });
     };
 
@@ -98,15 +98,8 @@ const Resumeform = (props) => {
 
     const onChangePolLegProfile = (e) => {
         sePoliticalLegacyProfile(e.target.value)
+        props.formValues.political_legacy[0].profile = e.target.value
     }
-
-    useEffect(() => {
-        props.formValues.political_legacy_profile = politicalLegacyProfile
-    }, [politicalLegacyProfile]);
-
-    useEffect(() => {
-        props.formValues.political_legacy_profile = politicalLegacyProfile
-    }, [politicalLegacyProfile]);
 
 
 
@@ -122,17 +115,17 @@ const Resumeform = (props) => {
                     <Grid item xs={6}>
                         <FormLabel>Name</FormLabel>
                         <Inputfield type="text"
-                                    value={props.formValues.political_legacy_name}
-                                    name="political_legacy_name"
+                                    value={props.formValues.political_legacy[0].name}
+                                    name={`political_legacy.${0}.name`}
                                     placeholder="Enter full name"/>
-                        <ErrorMessage name="political_legacy_name" component="div"/>
+                        <ErrorMessage name={`political_legacy.${0}.name`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>Relationship </FormLabel>
                         <FormControl>
                             <Field
                                 as={Select}
-                                name="political_legacy_relationship"
+                                name={`political_legacy.${0}.relationship`}
                                 labelId="relationship"
                                 className="custom-select"
                                 fullWidth
@@ -156,7 +149,7 @@ const Resumeform = (props) => {
                                 </MenuItem>
                             </Field>
                         </FormControl>
-                        <ErrorMessage name="political_legacy_relationship" component="div"/>
+                        <ErrorMessage  name={`political_legacy.${0}.relationship`} component="div"/>
                     </Grid>
                     <Grid item xs={12}>
                         <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
@@ -171,7 +164,7 @@ const Resumeform = (props) => {
                             maxRows={4}
                             placeholder="Tell me about your profile..."
                         />
-                        <ErrorMessage name="political_legacy_profile" component="div"/>
+                        <ErrorMessage  name={`political_legacy.${0}.profile`} component="div"/>
                     </Grid>
                 </Grid>
                 <Grid container sx={{my: 3}} className="grid-wrap">
@@ -328,9 +321,13 @@ const Resumeform = (props) => {
 }
 Resumeform.label = 'Resume'
 Resumeform.initialValues = {
-    political_legacy_name: "",
-    political_legacy_relationship: "",
-    political_legacy_profile:"",
+    political_legacy: [
+        {
+            name: "",
+            relationship: "",
+            profile: ""
+        }
+    ],
     father:"",
     mother:"",
     spouse:"",
@@ -340,12 +337,10 @@ Resumeform.initialValues = {
     linkedin:"",
     facebook:"",
     instagram:"",
-    resumePdf: "",
-    resumePdfName:""
+    attachment: "",
+    attachment_name:"",
 };
 Resumeform.validationSchema = Yup.object().shape({
-    political_legacy_name: Yup.string().required('Please enter your political_legacy_name'),
-    political_legacy_relationship: Yup.string().required('Please select political_legacy_relationship'),
     father: Yup.string().required('Please enter father name'),
     mother: Yup.string().required('Please enter mother name'),
     spouse: Yup.string().required('Please enter spouse name'),
@@ -355,6 +350,5 @@ Resumeform.validationSchema = Yup.object().shape({
     linkedin: Yup.string().required('Please enter linkedin id'),
     facebook:Yup.string().required('Please enter facebook id'),
     instagram:Yup.string().required('Please enter instagram id'),
-    // resumePdf: Yup.mixed().required('Please upload a PDF file'),
 });
 export default Resumeform

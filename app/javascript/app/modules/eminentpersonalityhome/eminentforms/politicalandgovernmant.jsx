@@ -129,6 +129,7 @@ const PolticalandGovrnform =(props)=>{
 
     const NotApplicableFields = (event) => {
         setNAFields(event.target.checked)
+        props.formValues.political_not_applicable = event.target.checked
     }
 
     const enterSocialFields = (field,index) => (event) => {
@@ -470,6 +471,7 @@ const PolticalandGovrnform =(props)=>{
 }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
+    political_not_applicable:false,
     political_profile: [],
     rss_years: '',
     bjp_years: '',
