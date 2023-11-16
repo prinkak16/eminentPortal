@@ -86,7 +86,7 @@ const Communicationform =(props)=>{
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
                         if (type === 'pincode') {
                            setCurPinData({district: district, state: state})
-                            props.formValues.current_address[0].state = state[0]
+                            props.formValues.address[0].state = state[0]
                         } else if (type === 'home_pincode') {
                             setHomePinData({district: district, state: state})
                             props.formValues.home_address[0].state = state[0]
@@ -138,10 +138,10 @@ const Communicationform =(props)=>{
 
 
     useEffect(() => {
-        if (props.formValues.current_address[0].pincode.length > 5) {
-            handlePinCodeChange(props.formValues.current_address[0].pincode, 'pincode')
+        if (props.formValues.address[0].pincode.length > 5) {
+            handlePinCodeChange(props.formValues.address[0].pincode, 'pincode')
         }
-    }, [props.formValues.current_address[0].pincode]);
+    }, [props.formValues.address[0].pincode]);
 
     useEffect(() => {
         if (props.formValues.home_address[0].pincode.length > 5) {
@@ -328,53 +328,53 @@ const Communicationform =(props)=>{
                                         <Grid item xs={12}>
                                             <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                             <Inputfield type="text"
-                                                        value={props.formValues.current_address[0].flat}
-                                                        name={`current_address.${0}.flat`}
+                                                        value={props.formValues.address[0].flat}
+                                                        name={`address.${0}.flat`}
                                                         placeholder="Enter your address"/>
-                                            <ErrorMessage name={`current_address.${0}.flat`} component="div" />
+                                            <ErrorMessage name={`address.${0}.flat`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                             <NumberField
                                                 className=''
-                                                value={props.formValues.current_address[0].pincode}
-                                                name={`current_address.${0}.pincode`}
+                                                value={props.formValues.address[0].pincode}
+                                                name={`address.${0}.pincode`}
                                                 placeholder='Enter Pin Code'
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
 
                                                 }}
                                             />
-                                            <ErrorMessage name={`current_address.${0}.pincode`} component="div" />
+                                            <ErrorMessage name={`address.${0}.pincode`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                             <Field type="text"
                                                    id="street"
-                                                   selectedValue={props.formValues.current_address[0].street}
-                                                   name={`current_address.${0}.street`}
+                                                   selectedValue={props.formValues.address[0].street}
+                                                   name={`address.${0}.street`}
                                                    as={TextField} />
-                                            <ErrorMessage name={`current_address.${0}.street`} component="div" />
+                                            <ErrorMessage name={`address.${0}.street`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>Town/City <mark>*</mark></FormLabel>
                                             <AutoCompleteDropdown
                                                 name={'District'}
-                                                selectedValue={props.formValues.current_address[0].district}
+                                                selectedValue={props.formValues.address[0].district}
                                                 listArray={curPinData.district}
                                                 onChangeValue={changeDistrictState}
-                                                dropDownType={'current_address'} />
-                                            <ErrorMessage name={`current_address.${0}.district`} component="div" />
+                                                dropDownType={'address'} />
+                                            <ErrorMessage name={`address.${0}.district`} component="div" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormLabel>State <mark>*</mark></FormLabel>
                                             <AutoCompleteDropdown
                                                 name={'State'}
-                                                selectedValue={props.formValues.current_address[0].state}
+                                                selectedValue={props.formValues.address[0].state}
                                                 listArray={curPinData.state}
                                                 onChangeValue={changeDistrictState}
-                                                dropDownType={'current_address'} />
-                                            <ErrorMessage name={`current_address.${0}.state`} component="div" />
+                                                dropDownType={'address'} />
+                                            <ErrorMessage name={`address.${0}.state`} component="div" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -575,7 +575,7 @@ Communicationform.initialValues = {
     landline: "",
     email:"",
     check:false,
-    current_address:[{
+    address:[{
         flat:"",
         pincode:"",
         street:"",
@@ -599,7 +599,7 @@ Communicationform.validationSchema = Yup.object().shape({
             'Invalid email format'
         ),
 
-    current_address: Yup.array().of(
+    address: Yup.array().of(
         Yup.object().shape({
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),

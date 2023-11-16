@@ -23,6 +23,10 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
+import dateFormat from "dateformat";
+import dayjs from "dayjs";
+import moment from "moment";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 
 const PersonalDetails = (props) => {
     const {config} = useContext(ApiContext)
@@ -33,6 +37,12 @@ const PersonalDetails = (props) => {
                 }
         }
     }, []);
+
+
+
+    useEffect(() => {
+        console.log(props.formValues.dob)
+    },[props.formValues.dob])
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -102,65 +112,6 @@ const PersonalDetails = (props) => {
         }
     }
 
-
-    const selectedLangSubmission = (type) => () => {
-        if (type === 'submit') {
-            props.languages.value = selectedLanguages
-        }
-        if (type === 'cancel') {
-            props.languages.value = ''
-            setSelectedLanguages([])
-        }
-    }
-    const [customDD, setCustomDD] = useState('')
-    const [customMM, setCustomMM] = useState('')
-    const [customYear, setCustomYear] = useState('')
-    const dobCheck = (type) => (event) => {
-        if (type === 'DD') {
-            if (event.target.value.length === 1) {
-                if (event.target.value <= 3) {
-                    setCustomDD(event.target.value)
-                }
-            } else if (event.target.value.length === 2 && event.target.value === '00') {
-            } else {
-                if (event.target.value <= 31) {
-                    setCustomDD(event.target.value)
-                }
-            }
-        }
-        if (type === 'MM') {
-            if (event.target.value.length === 2 && event.target.value === '00') {
-
-            } else if (event.target.value <= 12) {
-                setCustomMM(event.target.value)
-            }
-        }
-        if (type === 'YYYY') {
-            if (event.target.value.length === 2 && event.target.value === '00') {
-
-            } else if (event.target.value.length === 0) {
-                setCustomYear(event.target.value)
-            } else if (event.target.value.length === 1) {
-                if (event.target.value === '1' || event.target.value === '2') {
-                    setCustomYear(event.target.value)
-                }
-            } else if (event.target.value.length === 2) {
-                if (event.target.value === '19' || event.target.value === '20') {
-                    setCustomYear(event.target.value)
-                }
-            } else if (event.target.value.length === 3) {
-                if (parseInt(event.target.value) >= 199 && parseInt(event.target.value) <= 202) {
-                    setCustomYear(event.target.value)
-                }
-            } else if (event.target.value.length === 4) {
-                if (parseInt(event.target.value) >= 1990 && parseInt(event.target.value) <= 2023) {
-                    setCustomYear(event.target.value)
-                }
-            }
-
-        }
-    }
-
     const updatePhotoUrl = (url) => {
         if (url && url.length > 0) {
             props.formValues.photo = url;
@@ -182,14 +133,6 @@ const PersonalDetails = (props) => {
     const {setFieldValue, values} = useFormikContext();
     const age = calculateAge(values.dob);
 
-    useEffect(() => {
-        if (customYear.length === 4) {
-            props.formValues.dob = `${customYear}-${customMM}-${customDD}`
-        }
-        const newAge = calculateAge(values.dob);
-        setFieldValue('age', newAge);
-    }, [customYear, values.dob, setFieldValue]);
-
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -208,31 +151,13 @@ const PersonalDetails = (props) => {
         props.formValues.languages = languages
     }
 
-
-    const onDateChange = (event) => {
-        props.formValues.dob = event.$d
-        console.log(props.formValues.dob)
+    const handleDateChange = (event)    => {
+        props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
+    }
+    const dobFormat = (date) => {
+      return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
     }
 
-    const  formatDateToDDMMYYYY = (inputDateString) => {
-        const date = new Date(inputDateString);
-        const day = date.getUTCDate();
-        const month = date.getUTCMonth() + 1;
-        const year = date.getUTCFullYear();
-        const formattedDate = (day < 10 ? '0' : '') + day + '/' +
-            (month < 10 ? '0' : '') + month + '/' +
-            year;
-        return formattedDate;
-    }
-
-    const convertToISO8601 = (dateString)=> {
-        const dateComponents = dateString.split('/');
-        const day = parseInt(dateComponents[0], 10);
-        const month = parseInt(dateComponents[1], 10);
-        const year = parseInt(dateComponents[2], 10);
-        const date = new Date(year, month - 1, day);
-        return date.toISOString();
-    }
 
     return (
         <>
@@ -310,18 +235,21 @@ const PersonalDetails = (props) => {
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Date of birth <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <Field name="dob" value={props.formValues.dob}>
-                                        {({field, form}) => (
-                                            <DatePicker
-                                                {...field} // Pass the field's props to the DatePicker
-                                                value={field.value} // Set the value explicitly if needed
-                                                onChange={(date) => form.setFieldValue("dob", date)} // Handle date changes
-                                            />
-                                        )}
-                                    </Field>
-                                    <ErrorMessage name="dob" component="div"/>
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker
+                                            onChange={handleDateChange}
+                                            className='report-date-picker-container'
+                                            value={dobFormat(props.formValues.dob)}
+                                            slotProps={{
+                                                textField: {
+                                                    readOnly: true,
+                                                },
+                                            }}
+                                            format="DD/MM/YYYY"
+                                        />
+                                    </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {age} Years</Typography>
+                                <Typography><Age alt='age'/> {calculateAge(dobFormat(props.formValues.dob))} Years</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>

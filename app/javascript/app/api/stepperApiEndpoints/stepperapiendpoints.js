@@ -3,8 +3,6 @@ import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
 import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
 export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin) => {
     const updateData = isCandidateLogin ? "eminent/update" : "custom_member_forms/add"
-    console.log(isCandidateLogin,updateData)
-
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
