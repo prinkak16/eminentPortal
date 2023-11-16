@@ -18,6 +18,7 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
+    const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
 
@@ -71,20 +72,11 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                     updatedFieldsData[key] = isEditable[key];
                 }
             }
+            setEditField(1)
             setFieldsData(updatedFieldsData);
         }
     }, [isEditable]);
 
-
-    const resetFieldsToBlank = () => {
-        setFieldsData((prevFieldsData) => {
-            const updatedFieldsData = { ...prevFieldsData };
-            for (const key in updatedFieldsData) {
-                updatedFieldsData[key] = '';
-            }
-            return updatedFieldsData;
-        });
-    };
 
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
@@ -131,7 +123,11 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     }
 
     useEffect(() => {
-        handleSave()
+        if (editField === 0) {
+            handleSave()
+        } else {
+            setEditField(0)
+        }
     }, [fieldsData]);
 
     return (

@@ -8,18 +8,31 @@ import {isValuePresent} from "../utils";
 import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
 import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
-    const {config} = useContext(ApiContext)
+    const {config, isCandidateLogin} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()
-    const changeInputNumber = () => {
+    const fetchUserDetails = () => {
         fetchUser(config).then(res => {
             setUserData(res.data.data.data)
         }).catch(err => {
             console.log(err);
         });
     }
+
+    const fetchUserByNumber = () => {
+        let phoneNumber = isValuePresent(location.state?.eminent_number) ? location.state.eminent_number : localStorage.getItem('eminent_number')
+        if (phoneNumber) {
+            let numberString = `${phoneNumber}`;
+            fetchMobile(numberString).then(res => {
+                setUserData(res.data.data.data)
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+    }
+
     useEffect(() => {
-        changeInputNumber()
+        isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
     }, []);
 
     return(

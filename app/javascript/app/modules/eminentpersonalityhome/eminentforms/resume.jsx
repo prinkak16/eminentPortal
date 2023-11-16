@@ -11,7 +11,7 @@ import {
     Button, Select, MenuItem, FormControl
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -20,18 +20,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Formheading from "../component/formheading/formheading";
 import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
-import Selectfield from "../component/selectfield/selectfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import OtherInputField from "../component/otherFormFields/otherInputField";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
 import {formFilledValues, saveProgress, showErrorToast} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -39,18 +37,19 @@ const Resumeform = (props) => {
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [fields, setFields] = useState([""]);
-    const [children, setChildren] = useState([{name:''}])
-    const [fileName, setFileName] = useState('')
-    const [pdfFile, setPdfFile] = useState(null);
+    const [children, setChildren] = useState(props.formValues?.children || [''])
+    const [PdfFileName, setPdfFileName] = useState(props.formValues?.resumePdfName)
+    const [pdfFile, setPdfFile] = useState(props.formValues?.resumePdf);
+    const [politicalLegacyProfile, sePoliticalLegacyProfile] = useState(props?.formValues?.political_legacy_profile)
     const addChildren = () => {
-        setChildren([...children, {name:''}]);
+        setChildren([...children, '']);
     };
     const deleteChild = (index) => {
-        children.splice(index, 1);
-        props.formValues.children.splice(index, 1)
+        const updatedChildren = [...children];
+        updatedChildren.splice(index, 1);
+        setChildren(updatedChildren);
+        props.formValues.children = updatedChildren;
     }
-    const [pdfUrl, setPdfUrl] = useState('');
 
 
     const VisuallyHiddenInput = styled('input')({
@@ -66,33 +65,49 @@ const Resumeform = (props) => {
     });
 
     const uploadResume = (event) => {
+        debugger
         const file = event.target.files[0]
         if (file.type.split('/').pop() === 'pdf') {
-            setFileName(file.name)
-            setPdfFile(file)
+            handleImageUpload(file)
         } else {
             showErrorToast(`Please upload PDF file only.`)
         }
     }
 
+    const handleImageUpload = (file) => {
+        getFileUpload(file,config,isCandidateLogin).then(res => {
+            console.log('res.data.file_path', res.data.file_path)
+            setPdfFileName(file.name)
+            props.formValues.resumePdfName = file.name
+            setPdfFile(res.data.file_path)
+            props.formValues.resumePdf = res.data.file_path
+        });
+    };
+
     const openPdfInBrowser = (file) => {
         if (file) {
-            const pdfData = URL.createObjectURL(file);
-            const newWindow = window.open(pdfData, '_blank');
-            if (newWindow) {
-                newWindow.focus();
-            } else {
-                showErrorToast('Your browser blocked the new tab. Please check your browser settings.');
-            }
+            window.open(file, '_blank');
         }
     };
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
         getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
         });
     }
+
+    const onChangePolLegProfile = (e) => {
+        sePoliticalLegacyProfile(e.target.value)
+    }
+
+    useEffect(() => {
+        props.formValues.political_legacy_profile = politicalLegacyProfile
+    }, [politicalLegacyProfile]);
+
+    useEffect(() => {
+        props.formValues.political_legacy_profile = politicalLegacyProfile
+    }, [politicalLegacyProfile]);
+
 
 
     return (
@@ -149,6 +164,8 @@ const Resumeform = (props) => {
                             className='p-0'
                             fullWidth
                             name="political_legacy_profile"
+                            onChange={onChangePolLegProfile}
+                            value={politicalLegacyProfile}
                             multiline
                             minRows={3}
                             maxRows={4}
@@ -169,6 +186,7 @@ const Resumeform = (props) => {
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
                                         name="father"
+                                        value={props.formValues.father}
                                         placeholder="Enter name"
                             />
                             <ErrorMessage name="father" component="div"/>
@@ -177,6 +195,7 @@ const Resumeform = (props) => {
                             <FormLabel>Mother's Name</FormLabel>
                             <Inputfield type="text"
                                         name="mother"
+                                        value={props.formValues.mother}
                                         placeholder="Enter name"
                             />
                             <ErrorMessage name="mother" component="div"/>
@@ -185,6 +204,7 @@ const Resumeform = (props) => {
                             <FormLabel>Spouse Name</FormLabel>
                             <Inputfield type="text"
                                         name="spouse"
+                                        value={props.formValues.spouse}
                                         placeholder="Enter name"
                             />
                             <ErrorMessage name="spouse" component="div"/>
@@ -194,6 +214,7 @@ const Resumeform = (props) => {
                                 <FormLabel>Children Name</FormLabel>
                                 <Inputfield type="text"
                                             name={`children.${index}`}
+                                            value={props.formValues.children[index]}
                                             placeholder="Enter child name"
                                 />
                                 <ErrorMessage name={`child.${index}`} component="div"/>
@@ -202,9 +223,9 @@ const Resumeform = (props) => {
                         <Grid item xs={12}>
                             <Primarybutton addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>}
                                            buttonlabel="Add another Field" handleclick={addChildren}/>
-                            {fields.length >= 1 ? (
+                            {children.length >= 0 ? (
                                 <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>}
-                                               handleclick={deleteChild}/>
+                                               handleclick={() => deleteChild(children.length - 1)}/>
                             ) : null}
                         </Grid>
                     </Grid>
@@ -222,6 +243,7 @@ const Resumeform = (props) => {
                                 <FormLabel>Website</FormLabel>
                                 <Inputfield type="text"
                                             name="website"
+                                            value={props.formValues.website}
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                                 <ErrorMessage name="website" component="div"/>
@@ -230,6 +252,7 @@ const Resumeform = (props) => {
                                 <FormLabel>Twitter</FormLabel>
                                 <Inputfield type="text"
                                             name="twitter"
+                                            value={props.formValues.twitter}
                                             placeholder="Enter your twitter Url"
                                             inputprop={{endAdornment: <InputAdornment position="end">
                                                     <HelpOutlineOutlinedIcon/>
@@ -243,6 +266,7 @@ const Resumeform = (props) => {
                                 <FormLabel>Linkedin</FormLabel>
                                 <Inputfield type="text"
                                             name="linkedin"
+                                            value={props.formValues.linkedin}
                                             placeholder="Enter your linkedin Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                                 <ErrorMessage name="linkedin" component="div"/>
@@ -251,6 +275,7 @@ const Resumeform = (props) => {
                                 <FormLabel>Facebook</FormLabel>
                                 <Inputfield type="text"
                                             name="facebook"
+                                            value={props.formValues.facebook}
                                             placeholder="Enter your facebook Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                                 <ErrorMessage name="facebook" component="div"/>
@@ -261,6 +286,7 @@ const Resumeform = (props) => {
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Instagram</FormLabel>
                                 <Inputfield type="text"
+                                            value={props.formValues.instagram}
                                             name="instagram"
                                             placeholder="Enter your instagram Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
@@ -283,7 +309,7 @@ const Resumeform = (props) => {
                             <div className="pdf-upload-div d-flex align-items-center w-100">
                                 <div className='pdf-icon-name'>
                                     <span className="material-icons"><PdfIcon/></span>
-                                    <div id="pdf-file-name" onClick={() => openPdfInBrowser(pdfFile)}>{fileName}</div>
+                                    <div id="pdf-file-name" onClick={() => openPdfInBrowser(pdfFile)}>{PdfFileName}</div>
                                 </div>
                                 <div className='upload-resume-button'>
                                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon/>}>
@@ -314,7 +340,8 @@ Resumeform.initialValues = {
     linkedin:"",
     facebook:"",
     instagram:"",
-    resumePdf:""
+    resumePdf: "",
+    resumePdfName:""
 };
 Resumeform.validationSchema = Yup.object().shape({
     political_legacy_name: Yup.string().required('Please enter your political_legacy_name'),
@@ -328,6 +355,6 @@ Resumeform.validationSchema = Yup.object().shape({
     linkedin: Yup.string().required('Please enter linkedin id'),
     facebook:Yup.string().required('Please enter facebook id'),
     instagram:Yup.string().required('Please enter instagram id'),
-    resumePdf:Yup.string().required('Please Upload the resume'),
+    // resumePdf: Yup.mixed().required('Please upload a PDF file'),
 });
 export default Resumeform

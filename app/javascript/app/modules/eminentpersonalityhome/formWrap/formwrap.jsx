@@ -24,11 +24,13 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const steps= [PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform]
+
+    const [steps, setSteps] = useState([PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform, Refferedform])
 
     useEffect(() => {
-        if (!isValuePresent(isCandidateLogin)) {
-            steps.push(Refferedform)
+        if (isValuePresent(isCandidateLogin)) {
+            const updatedSteps = steps.filter(step => step.label !== 'Referred By');
+                  setSteps(updatedSteps)
         }
     }, []);
 
@@ -70,7 +72,8 @@ const FormWrap=({userData})=>{
         if (!isLastStep()) {
             setSubmitting(false);
             const fieldsWithValues = formFilledValues(activeStepData);
-            getFormData(fieldsWithValues, activeStep + 1, config).then(response => {
+            console.log('isCandidateLogin', isCandidateLogin)
+            getFormData(fieldsWithValues, activeStep + 1, config,false, isCandidateLogin).then(response => {
                 if (response) {
                     handleNext();
                 }
@@ -92,11 +95,6 @@ const FormWrap=({userData})=>{
 
     const ActiveStep = steps[activeStep];
     const validationSchema = ActiveStep.validationSchema;
-    const [formData, setFormData] = useState({}); // State to store form data
-
-    const handleSave = (data) => {
-        setFormData(data);
-    };
 
     return(
         <>
