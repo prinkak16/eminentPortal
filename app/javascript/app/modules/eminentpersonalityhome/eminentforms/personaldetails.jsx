@@ -350,8 +350,6 @@ PersonalDetails.initialValues = {
     languages: [],
     aadhaar: '',
     voter_id: "",
-    month: "",
-    year: "",
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({
