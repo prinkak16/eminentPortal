@@ -1,8 +1,18 @@
 import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
+import { toast } from 'react-toastify';
+const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
-    return value !== null && value !== undefined && value !== '' && value.length !== 0;
-}
+    return (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0) &&
+        !(typeof value === 'object' && Object.keys(value).length === 0)
+    );
+};
+
+
 
 export const educationDetailsJson = {
     title: 'Education Details',
@@ -101,21 +111,21 @@ export const politicalProfileJson = {
             key: 'party_level',
             na_button: false,
             name: "Party Level",
-            placeholder: 'Select party level',
+            placeholder: 'Enter party level',
             type: 'textField',
         },
         {
             key: 'unit',
             na_button: false,
             name: "Unit",
-            placeholder: 'Select unit',
+            placeholder: 'Enter unit',
             type: 'textField',
         },
         {
             key: 'designation',
             na_button: false,
             name: "Designation",
-            placeholder: 'Select designation',
+            placeholder: 'Enter designation',
             type: 'textField',
         },
         {
@@ -228,7 +238,7 @@ export const electionWiseJson =
                     list: ['data','data1'],
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Pc',
+                        name: 'Parliamentary Constituency',
                         key: 'ParliamentaryConstituency',
                         placeholder: 'Pc',
                         list: ['data','data1'],
@@ -257,7 +267,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                             type: 'dropdown',
-                            name: 'Ac',
+                            name: 'Assembly Constituency',
                             key: 'AssemblyConstituency',
                             placeholder: 'Ac'
                     }]
@@ -293,7 +303,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Ad',
+                        name: 'Administrative District',
                         key: 'AdministrativeDistrict',
                         placeholder: 'Ad'
                     }]
@@ -316,7 +326,7 @@ export const electionWiseJson =
                     placeholder: 'State',
                     combo_fields:[{
                         type: 'dropdown',
-                        name: 'Ad',
+                        name: 'Administrative District',
                         key: 'AdministrativeDistrict',
                         placeholder: 'Ad'
                     },]
@@ -387,5 +397,57 @@ export const saveProgress = (formValues, activeStep) => {
     getFormData(fieldsWithValues, activeStep).then(response => {
         console.log('API response:', response.data);
 
+    });
+}
+
+export const formFilledValues = (formValues) => {
+    const fieldsWithValues = {};
+    for (const fieldName of Object.keys(formValues)) {
+        const fieldValue = formValues[fieldName];
+        if (fieldValue) {
+            if (formValues[fieldName] === 'mobile') {
+                fieldsWithValues[fieldName] = [fieldValue];
+            } else {
+                fieldsWithValues[fieldName] = fieldValue;
+            }
+        }
+    }
+    return fieldsWithValues
+}
+
+export const showSuccessToast = (massage) => {
+    toast.success(massage, {
+        position: 'top-right',
+        autoClose: 3000, // milliseconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
+
+}
+
+export const showErrorToast = (massage) => {
+    toast.error(massage, {
+        position: 'top-right',
+        autoClose: 3000, // milliseconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
+}
+
+export const yearToDateConvert = (year) => {
+    const dateObject = new Date(parseInt(year), 0)
+    return dateObject.toLocaleString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+        timeZone: 'Asia/Kolkata', // Use the appropriate time zone for India
     });
 }
