@@ -301,11 +301,7 @@ module CustomMemberFormHelper
         'PhD and Above'
       ]
     },
-    'profession': {
-      'type': [nil,'string'],
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'professional_positions': {
+    'professions': {
       'type': 'array',
       'items': {
         'type': 'object',
@@ -314,7 +310,7 @@ module CustomMemberFormHelper
             'type': 'string',
             'maxLength': 200 # Max length of 200 characters
           },
-          'organisation': {
+          'organization': {
             'type': 'string',
             'minLength': 2, # Min length of 200 characters
             'maxLength': 200 # Max length of 200 characters
@@ -338,7 +334,7 @@ module CustomMemberFormHelper
             'type': 'boolean'
           }
         },
-        'required': %w[profession organisation position start_year end_year current_organization]
+        'required': %w[profession organization position start_year end_year current_organization]
       }
     },
     'description': {
@@ -371,8 +367,7 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
+      professions
       description
     ]
   )
