@@ -7,6 +7,7 @@ export const isValuePresent = (value) => {
         value !== null &&
         value !== undefined &&
         value !== '' &&
+        value !== false &&
         !(Array.isArray(value) && value.length === 0) &&
         !(typeof value === 'object' && Object.keys(value).length === 0)
     );
@@ -207,10 +208,11 @@ const ministryName = {
     placeholder: 'Enter Name of Ministry',
     combo_fields: [
     {
-        type: 'dropdown',
+        type: 'textField',
         name: 'Designation',
         key: 'designation',
         placeholder: 'Designation'
+
     }
 ]
 }

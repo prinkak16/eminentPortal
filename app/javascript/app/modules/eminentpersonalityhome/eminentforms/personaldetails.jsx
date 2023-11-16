@@ -32,16 +32,15 @@ const PersonalDetails = (props) => {
     const {config} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
-                if (props.formValues.hasOwnProperty(key)) {
-                    props.formValues[key] = props.userData[key]
-                }
+            if (props.formValues.hasOwnProperty(key)) {
+                props.formValues[key] = props.userData[key]
+            }
         }
     }, []);
 
 
 
     useEffect(() => {
-        console.log(props.formValues.dob)
     },[props.formValues.dob])
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -129,10 +128,6 @@ const PersonalDetails = (props) => {
         }
         return age;
     };
-
-    const {setFieldValue, values} = useFormikContext();
-    const age = calculateAge(values.dob);
-
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -355,8 +350,6 @@ PersonalDetails.initialValues = {
     languages: [],
     aadhaar: '',
     voter_id: "",
-    month: "",
-    year: "",
     id: "",
 };
 PersonalDetails.validationSchema = Yup.object().shape({

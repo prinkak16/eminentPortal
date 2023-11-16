@@ -179,6 +179,7 @@ const Educationform = (props) => {
 
     const changeProfessionDescription = (e) => {
         setProfessionDescription(e.target.value)
+        props.formValues.profession_description = e.target.value
     }
 
 
@@ -192,11 +193,6 @@ const Educationform = (props) => {
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
-
-                    <ErrorMessage name={`professions.${0}`} component="div" />
-                    <ErrorMessage name={`education.${0}`} component="div" />
-                    <ErrorMessage name={`education_level.${0}`} component="div" />
-                    <ErrorMessage name={`profession_description.${0}`} component="div" />
                     <Grid item xs={6} className='education-field pb-3'>
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
@@ -339,6 +335,7 @@ const Educationform = (props) => {
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
+                            <ErrorMessage name={`profession_description`} component="div" />
                         </div>
 
                     </Grid>
@@ -360,7 +357,7 @@ Educationform.initialValues = {
 };
 Educationform.validationSchema = Yup.object().shape({
     education_level: Yup.string().required('Please select your high qualification'),
-    profession_description: Yup.string().required('Please enter your profession_description'),
+    profession_description: Yup.string().required('Please enter your profession description'),
 
 
 
