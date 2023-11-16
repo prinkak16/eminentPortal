@@ -1,6 +1,8 @@
 class HomeController < ApplicationController
   before_action :authenticate_user_permission, except: [:status, :candidate_login]
   def index
+    @candidate_login_var = false
+    render 'home/index'
   end
 
   def status
