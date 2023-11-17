@@ -29,7 +29,7 @@ import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, form
 import {ApiContext} from "../../ApiContext";
 
 const Educationform = (props) => {
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
@@ -158,7 +158,7 @@ const Educationform = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 

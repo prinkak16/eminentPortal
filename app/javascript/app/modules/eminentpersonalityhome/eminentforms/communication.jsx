@@ -23,7 +23,7 @@ import OtherNumberField from "../component/otherFormFields/otherNumberInput";
 import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -195,7 +195,7 @@ const Communicationform =(props)=>{
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -297,7 +297,7 @@ const Communicationform =(props)=>{
                                         {formValues && formValues.map((element, index) => (
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
-                                                    <Grid item xs={12}>
+                                                    <Grid item xs={12} className="d-flex">
                                                         <FormLabel className="light-circle">
                                                             <Box
                                                                 className="addnumber"
@@ -308,7 +308,7 @@ const Communicationform =(props)=>{
                                                             {element.address_type}
                                                         </FormLabel>
                                                         {element.address_type === 'Home Town Address' &&
-                                                            <Grid className='testright' item xs={7}>
+                                                            <Grid className='testright ml-auto-important' item xs={7}>
                                                                 <FormLabel>Home town address is same as current? Yes
                                                                     <mark>*</mark>
                                                                 </FormLabel>

@@ -28,8 +28,8 @@ const Refferedform = (props) => {
     }
 
     const saveProgress = () => {
-        const fieldsWithValues = formFilledValues(props?.formValues);
-        getFormData(fieldsWithValues, props?.activeStep + 1, config).then(response => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
