@@ -54,7 +54,7 @@ class Api::V1::MetadataController < BaseApiController
   end
 
   def state_party_list
-    cs = params[:state_id].present? ? State.find_by(id: params[:state_id]) : State.find_by(name: 'Gujarat')
+    cs = params[:state_id].present? ? CountryState.find_by(id: params[:state_id]) : CountryState.find_by(name: 'Gujarat')
     render json: {
       success: true,
       data: fetch_state_party_list(cs),
