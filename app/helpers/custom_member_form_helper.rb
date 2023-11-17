@@ -774,9 +774,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years

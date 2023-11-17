@@ -46,6 +46,7 @@ const Refferedform = (props) => {
                         <FormLabel>Name</FormLabel>
                         <Inputfield type="text"
                                     name={`reference.name`}
+                                    value={props?.formValues?.reference?.name}
                                     placeholder="Enter Name"/>
                         <ErrorMessage name={`reference.name`} component="div"/>
 
@@ -54,6 +55,7 @@ const Refferedform = (props) => {
                         <FormLabel>Phone no.</FormLabel>
                         <Inputfield type="text"
                                     name={`reference.mobile`}
+                                    value={props?.formValues?.reference?.mobile}
                                     placeholder="Enter phone no."/>
                         <ErrorMessage name={`reference.mobile`} component="div"/>
                     </Grid>
@@ -61,6 +63,7 @@ const Refferedform = (props) => {
                         <FormLabel>BJP ID</FormLabel>
                         <Inputfield type="text"
                                     name={`reference.bjp_id`}
+                                    value={props?.formValues?.reference?.bjp_id}
                                     placeholder="BJP ID"/>
                         <ErrorMessage name={`reference.bjp_id`} component="div"/>
 
@@ -69,6 +72,7 @@ const Refferedform = (props) => {
                         <FormLabel>Grade</FormLabel>
                         <Inputfield type="text"
                                     name={`reference.grade`}
+                                    value={props?.formValues?.reference?.grade}
                                     placeholder="BJP ID"/>
                         <ErrorMessage name={`reference.grade`} component="div"/>
                     </Grid>
