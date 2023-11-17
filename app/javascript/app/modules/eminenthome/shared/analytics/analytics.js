@@ -17,7 +17,12 @@ const Analytics = (props) => {
                     setHomeStats(res.data.data);
                 })
                 break;
-            case '2':
+            case '4':
+                getVacancyAnalytics().then(res=>{
+                    setHomeStats(res.data.data)
+                })
+                break;
+            case '5':
                 getVacancyAnalytics().then(res=>{
                     setHomeStats(res.data.data)
                 })
@@ -40,41 +45,21 @@ const Analytics = (props) => {
                         case
                         'completed'
                         : {
-                            switch (props.tabId) {
-                                case '1':
                                     label = 'Total Completed Form';
-                                    break;
-                                case '2':
-                                    label = 'Occupied';
-                                    break;
-                                case '3':
-                                    label = 'Slotted';
-                                    break;
-                            }
                             icon = <Checklist/>;
                             break;
                         }
                         case
                         'overall'
                         : {
-                            switch (props.tabId) {
-                                case '1':
-                                    label = 'Total incompleted Form';
-                                    break;
-                                case '2':
-                                    label = 'Vacant';
-                                    break;
-                                case '3':
-                                    label = 'Unslotted';
-                                    break;
-                            }
+                            label = 'Total incompleted Form';
                             icon = <Usergroup/>;
                             break;
                         }
 
                     }
                     break;
-                    case '2':
+                    case '4':
                         switch (value) {
                             case'total': {
                                 label = 'Total Position';
@@ -88,6 +73,25 @@ const Analytics = (props) => {
                             }
                             case'vacant': {
                                 label = 'Vacant';
+                                icon = <Usergroup/>;
+                                break;
+                            }
+                        }
+                        break;
+                    case '5':
+                        switch (value) {
+                            case'total': {
+                                label = 'Total Position';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'occupied': {
+                                label = 'Slotted';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'vacant': {
+                                label = 'Unslotted';
                                 icon = <Usergroup/>;
                                 break;
                             }

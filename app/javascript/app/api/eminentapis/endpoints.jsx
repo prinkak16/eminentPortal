@@ -23,9 +23,14 @@ export const deleteMember = (deleteId) => {
 export const updateState = (updatedState) => {
     return axios.post(apiBaseUrl + 'custom_member_forms/update_aasm_state', updatedState);
 }
-export  const  uploadVacancy=(formData, config)=>{
-    return axios.post(apiBaseUrl + 'vacancy/manual_upload', formData);
-}
+
+export const uploadVacancy = (formData) => {
+    return axios.post(apiBaseUrl + 'vacancy/manual_upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
 
 export const fetchMobile = (config,number) => {
     return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number',{

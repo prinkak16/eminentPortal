@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button,Tab, Box, TextField, styled, InputLabel } from '@mui/material';
+import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
@@ -12,6 +12,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -42,7 +43,8 @@ export default function BasicTabs() {
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
-
+    const [alertMessage, setAlertMessage] = useState(false)
+    const notify = () => toast("CSV file Uploaded successfully");
     const handleEmailChange = (e) => {
         const inputValue = e.target.value;
         setEmail(inputValue);
@@ -55,10 +57,6 @@ export default function BasicTabs() {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     };
-
-    // const isValidEmailFormat = (email) => {
-    //     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-    // };
 
     const uploadExcel = (event) => {
         const file = event.target.files[0];
@@ -74,30 +72,18 @@ export default function BasicTabs() {
             }
         }
     };
-    const headers = {
-        'Content-Type': 'text/csv',
-    };
 
-    const config = {
-        headers: headers,
-    };
     const handleSubmit = (event) => {
         event.preventDefault();
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
-            formData.append('csvFile', excelFile);
+            formData.append('file', excelFile);
             formData.append('email', email);
-            console.log('Request Headers:', config.headers);
-            uploadVacancy(formData, config).then((response) => response.json())
-                .then((data) => {
-                    alert('File uploaded successfully', data);
-                })
-                .catch((error) => {
-                    alert('Error uploading file', error);
-                });
+            uploadVacancy(formData).then((response) => response.json())
+            setShow(false)
+            notify()
         } else {
-            alert('No file selected or invalid email format');
             setIsValidEmail(false);
         }
     }
@@ -157,13 +143,14 @@ export default function BasicTabs() {
             </svg>
             Add New
         </button>
-    } else if (value === '2') {
+    } else if (value === '4') {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
                     Upload File
                 </Button>
-                <Modal show={show} onHide={handleClose}
+
+                <Modal  show={show} onHide={handleClose}
                        aria-labelledby="contained-modal-title-vcenter"
                        centered
                 >
@@ -171,6 +158,7 @@ export default function BasicTabs() {
                         <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <ToastContainer />
                         <div className="excel-upload d-flex align-items-center flex-column w-100">
                             <div className='excel-icon-name'>
                                 <span className="material-icons"><PdfIcon/></span>
@@ -187,7 +175,7 @@ export default function BasicTabs() {
                                     value={email}
                                     onChange={handleEmailChange}
                                     error={!isValidEmail}
-                                    helperText={!isValidEmail ? 'Invalid email format' : ''}
+                                    helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
                                 />
                             </div>
                         </div>
@@ -196,7 +184,7 @@ export default function BasicTabs() {
                     <Modal.Footer>
                         <button
                             className="btn"
-                            onClick={() => setWantToAddNew(false)}>
+                            onClick={handleClose}>
                             Cancel
                         </button>
                         <button
@@ -229,19 +217,22 @@ export default function BasicTabs() {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
-                        <Tab label="Master of Vacancies" value="2" />
-                        <Tab label="Slotting" value="3" />
-                        <Tab label="File Stauts" value="4" />
+                        <Tab label="Allotment" value="2" />
+                        <Tab label="File Stauts" value="3" />
+                        <Tab label="Master of Vacancies" value="4" />
+                        <Tab label="Slotting" value="5" />
+                        <Tab label="GOM Management" value="6" />
+
                     </TabList>
                     {buttonContent}
                 </Box>
                 <TabPanel value="1">
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="2">
+                <TabPanel value="4">
                     <MasterVacancies  tabId={value}/>
                 </TabPanel>
-                <TabPanel value="3">
+                <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
             </TabContext>
