@@ -1,7 +1,7 @@
 import React, {useCallback, useContext, useEffect, useState} from "react"
-import {Box, Paper, Grid, FormLabel} from '@mui/material';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { styled } from '@mui/material/styles';
+import {Box, Grid, Paper} from '@mui/material';
+import {Form, Formik} from 'formik';
+import {styled} from '@mui/material/styles';
 import '../eminentforms/allfroms.scss'
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import FormStepper from "../component/stepper/stepper";
@@ -11,7 +11,7 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-import {formFilledValues, isValuePresent} from "../../utils";
+import {isValuePresent, showErrorToast} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 // newSteps=[PersonalDetails]
@@ -64,20 +64,32 @@ const FormWrap=({userData})=>{
 
 
     const onSubmit = (values, formikBag) => {
-        const { setSubmitting } = formikBag;
+        const {setSubmitting} = formikBag;
         const newStepValues = [...stepValues];
         newStepValues[activeStep] = values;
         setStepValues(newStepValues)
-        const activeStepData=mergeObjectsUpToIndex(newStepValues, activeStep);
-            setSubmitting(false);
-            const fieldsWithValues = activeStepData;
-            getFormData(fieldsWithValues, activeStep + 1, config,false, isCandidateLogin).then(response => {
+        const activeStepData = mergeObjectsUpToIndex(newStepValues, activeStep);
+        setSubmitting(false);
+        let isError = false
+        if (activeStep + 1 === 4) {
+            const fieldsToValidate = ['educations', 'professions'];
+            isError = validateFields(activeStepData, fieldsToValidate);
+        }
+
+        if (activeStep + 1 === 4) {
+            if (activeStepData.election_contested) {
+
+            }
+        }
+        if (!isError) {
+            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin).then(response => {
                 if (response) {
                     handleNext();
                 }
             });
-
+        }
     };
+
     const initialValues = steps.reduce(
         (values, { initialValues }) => ({
             ...values,
@@ -89,6 +101,29 @@ const FormWrap=({userData})=>{
 
     const ActiveStep = steps[activeStep];
     const validationSchema = ActiveStep.validationSchema;
+
+    const validateFields = (stepData, fields) => {
+        let isError = false;
+
+        fields.forEach(field => {
+            const data = stepData[field];
+            if (!isError) {
+                if (requiredFieldError(data, field)) {
+                    isError = true;
+                }
+            }
+        });
+
+        return isError;
+    };
+
+    const requiredFieldError = (data, fieldName) => {
+        if (!isValuePresent(data)) {
+            showErrorToast(`Please enter minimum 1 ${fieldName} details`);
+            return true;
+        }
+        return false;
+    };
 
     return(
         <>
