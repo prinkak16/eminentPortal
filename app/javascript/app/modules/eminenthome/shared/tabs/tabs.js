@@ -5,7 +5,7 @@ import {useState, useContext} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
-import {getData} from "../../../../api/eminentapis/endpoints";
+import {getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
@@ -38,66 +38,72 @@ export default function BasicTabs() {
     const handleShow = () => setShow(true);
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState();
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    };
-    const isValidEmailFormat = (email) => {
-        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
-    };
-    const uploadExcel = (event) => {
-        const file = event.target.files[0]
-        const allowedExtensions = ['.xlsx', '.xls'];
-        const fileExtension = file.name.split('.').pop().toLowerCase();
-        if (allowedExtensions.includes('.' + fileExtension)) {
-            setFileName(file.name);
-            setExcelFile(file);
-        } else {
-            alert('Please upload Excel files with .xlsx or .xls extension.');
-        }
-    }
-    const handleSubmit = (event, file) => {
-        event.preventDefault();
-        if(file){
 
-            const apiUrl = 'your_backend_api_url';
-            const formData = new FormData();
-            if (isValidEmailFormat(email)) {
-                setIsValidEmail(true);
-                formData.append('excelFile', file, email);
+    const handleEmailChange = (e) => {
+        const inputValue = e.target.value;
+        setEmail(inputValue);
+        if (inputValue && isValidEmail === false) {
+            setIsValidEmail(true);
+        }
+    };
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    // const isValidEmailFormat = (email) => {
+    //     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+    // };
+
+    const uploadExcel = (event) => {
+        const file = event.target.files[0];
+        const allowedExtensions = ['.csv'];
+
+        if (file) {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (allowedExtensions.includes('.' + fileExtension)) {
+                setFileName(file.name);
+                setExcelFile(file);
             } else {
-                setIsValidEmail(false);
+                alert('Please upload CSV files with .csv extension.');
             }
-            fetch(apiUrl, {
-                method: 'POST',
-                body: formData,
-            })
-                .then((response) => response.json())
+        }
+    };
+    const headers = {
+        'Content-Type': 'text/csv',
+    };
+
+    const config = {
+        headers: headers,
+    };
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (excelFile && validateEmail(email)) {
+            setIsValidEmail(true);
+            const formData = new FormData();
+            formData.append('csvFile', excelFile);
+            formData.append('email', email);
+            console.log('Request Headers:', config.headers);
+            uploadVacancy(formData, config).then((response) => response.json())
                 .then((data) => {
-                    console.log('File uploaded successfully', data);
+                    alert('File uploaded successfully', data);
                 })
                 .catch((error) => {
-                    console.error('Error uploading file', error);
+                    alert('Error uploading file', error);
                 });
         } else {
-            console.error('No file selected');
+            alert('No file selected or invalid email format');
+            setIsValidEmail(false);
         }
-        const handleSubmit = (event) => {
-            event.preventDefault();
-
-            // Use the browser's built-in email validation
-            if (isValidEmailFormat(email)) {
-                // Valid email format
-                setIsValidEmail(true);
-                // Proceed with form submission
-            } else {
-                // Invalid email format
-                setIsValidEmail(false);
-            }
-        };
+    }
+    const fileUrl="https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
+    const downloadSampleVacancy=()=>{
+        window.open(fileUrl,'_blank')
     }
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
@@ -172,13 +178,12 @@ export default function BasicTabs() {
                             </div>
                             <div className='upload-excel-button'>
                                 <Button component="label" variant="contained">
-                                    <VisuallyHiddenInput accept=".xlsx, .xls" onChange={uploadExcel} type="file"/><br/>
+                                    <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
                                     Drag and Drop Excel file here <br/> or <br/> click here to upload
                                 </Button>
                                 <TextField
-                                    className="mt-3"
+                                    variant="outlined"
                                     type="email"
-                                    placeholder="Enter your email"
                                     value={email}
                                     onChange={handleEmailChange}
                                     error={!isValidEmail}
@@ -199,7 +204,9 @@ export default function BasicTabs() {
                             Submit
                         </button>
                         <button
-                            className="btn">
+                            className="btn"
+                            onClick={downloadSampleVacancy}
+                        >
                             Download sample file
                         </button>
                     </Modal.Footer>

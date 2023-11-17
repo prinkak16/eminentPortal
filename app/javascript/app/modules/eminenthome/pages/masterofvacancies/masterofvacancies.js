@@ -41,9 +41,6 @@ const MasterVacancies=({tabId})=> {
             const data = [{...ministryData, departments: departmentData}]
             setTabData(data)
         }
-
-        // const ministryData = DUMMY_DATA.filter(data => data.ministryId === ministryId);
-        // setTabData(ministryData);
     };
     useEffect(() => {
         axios.get('https://vacancies-dummy-apis-default-rtdb.firebaseio.com/ministries.json')
@@ -58,7 +55,6 @@ const MasterVacancies=({tabId})=> {
 
             })
     }, []);
-    console.log(DUMMY_DATA);
     return (
         <>
             {/*<h5>Position Analytics</h5>*/}
