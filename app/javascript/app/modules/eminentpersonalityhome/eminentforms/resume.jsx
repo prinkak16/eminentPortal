@@ -65,7 +65,6 @@ const Resumeform = (props) => {
     });
 
     const uploadResume = (event) => {
-        debugger
         const file = event.target.files[0]
         if (file.type.split('/').pop() === 'pdf') {
             handleImageUpload(file)
