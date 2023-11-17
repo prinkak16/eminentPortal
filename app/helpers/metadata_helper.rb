@@ -41,7 +41,7 @@ module MetadataHelper
   end
 
   def fetch_states
-    State.select('id', 'name').order(id: :asc)
+    CountryState.select('id', 'name').order(id: :asc)
   end
 
   def fetch_state_party_list(cs)
