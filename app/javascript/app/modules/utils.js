@@ -195,7 +195,7 @@ const electionWin =  {
 
 const ministerPortfolio = {
     is_conditional: true,
-        condition_key: 'election_win',
+    condition_key: 'election_win',
     condition_value:'Yes',
     type: 'radio',
     name: 'Do you have any portfilio as Minister',
@@ -204,7 +204,7 @@ const ministerPortfolio = {
 }
 const ministryName = {
     is_conditional: true,
-        condition_key: 'minister_portfolio',
+    condition_key: 'minister_portfolio',
     condition_value:'Yes',
     type: 'textField',
     name: 'Name Of Ministry',
@@ -222,7 +222,7 @@ const ministryName = {
 }
 const ministryDuration = {
     is_conditional: true,
-        condition_key: 'minister_portfolio',
+    condition_key: 'minister_portfolio',
     condition_value:'Yes',
     type: 'textField',
     name: 'Duration',
@@ -456,4 +456,9 @@ export const yearToDateConvert = (year) => {
         timeZoneName: 'short',
         timeZone: 'Asia/Kolkata', // Use the appropriate time zone for India
     });
+}
+
+export const  toSnakeCase = (inputString) => {
+    const cleanedString = inputString.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+    return cleanedString.replace(/\s+/g, '_').toLowerCase();
 }

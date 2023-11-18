@@ -19,7 +19,7 @@ import {
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress
+    saveProgress, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -50,14 +50,17 @@ const PolticalandGovrnform =(props)=>{
     const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
-console.log(props.formValues.election_fought,'props.formValues.election_fought')
+    useEffect(() => {
+        setElectoralDetails(props.userData.election_fought)
+    },[])
+
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
         setcount(count+1);
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:[]}])
+        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
     }
 
     const deleteSocialFields = () => {
@@ -171,10 +174,7 @@ console.log(props.formValues.election_fought,'props.formValues.election_fought')
         setElectoralDetails(updatedElectoralData);
     }
 
-    function toSnakeCase(inputString) {
-        const cleanedString = inputString.replace(/[^a-zA-Z0-9\s]/g, '').trim();
-        return cleanedString.replace(/\s+/g, '_').toLowerCase();
-    }
+
 
     const saveElectoralData = (data,index) => {
         setElectoralDetails((preElectoral) => {
@@ -477,7 +477,7 @@ PolticalandGovrnform.initialValues = {
     election_contested: false,
     election_fought: [
         {
-            election_type: '', election_details: []
+            election_type: '', election_details: {}
         }
     ],
 
