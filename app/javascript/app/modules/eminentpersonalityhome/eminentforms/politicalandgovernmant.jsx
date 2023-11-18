@@ -32,7 +32,7 @@ import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints"
 import {boolean} from "yup";
 
 const PolticalandGovrnform =(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -47,10 +47,10 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(false)
-    const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought|| [])
-    const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No" || null)
+    const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
+    const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
-
+console.log(props.formValues.election_fought,'props.formValues.election_fought')
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
         setcount(count+1);
@@ -192,7 +192,7 @@ const PolticalandGovrnform =(props)=>{
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -418,14 +418,12 @@ const PolticalandGovrnform =(props)=>{
                         <div className='d-flex mt-2'>
                             <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
-                        <ErrorMessage name="won" component="div" />
                     </Grid>
-                    {electionContested && electoralDetails.map((field,index) => (
+                    {electionContested === 'Yes' && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
-                                        {electionContested &&
                                             <div className="d-flex">
                                                 <AutoCompleteDropdown
                                                     classes={'election-dropdown'}
@@ -437,7 +435,6 @@ const PolticalandGovrnform =(props)=>{
                                                 />
                                                 <Primarybutton addclass="deletebtn delete-btn" starticon={<DeleteIcon/>} handleclick={()=>deleteElectoralFields(index)}/>
                                             </div>
-                                        }
                                     </Grid>
                                     <Grid item xs={9}>
                                         {isValuePresent(field.election_type) &&
@@ -478,7 +475,11 @@ PolticalandGovrnform.initialValues = {
     other_parties: [],
     social_profiles: [],
     election_contested: false,
-    election_fought: [],
+    election_fought: [
+        {
+            election_type: '', election_details: []
+        }
+    ],
 
 };
 

@@ -116,6 +116,7 @@ const FormStepper = ({
                         </Button>
                     </Box>
                 </div>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
             </div>
         </>
     );

@@ -65,7 +65,6 @@ const Resumeform = (props) => {
     });
 
     const uploadResume = (event) => {
-        debugger
         const file = event.target.files[0]
         if (file.type.split('/').pop() === 'pdf') {
             handleImageUpload(file)
@@ -92,7 +91,7 @@ const Resumeform = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 

@@ -23,7 +23,7 @@ import OtherNumberField from "../component/otherFormFields/otherNumberInput";
 import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -34,6 +34,7 @@ const Communicationform =(props)=>{
     const [formValues, setFormValues] = useState(props.formValues.address)
     const [otherPinData, setOtherPinData] = useState([])
     const [mobileFields, setMobileFields] =useState([])
+    const [sameAddress, setSameAddress] = useState(props.formValues.check || false)
 
     useEffect(() => {
         const mobiles = props.formValues.mobiles
@@ -46,7 +47,6 @@ const Communicationform =(props)=>{
         }
     }, [])
 
-    console.log(formValues)
 
         useEffect(() => {
         const otherAddress = props.formValues.other_address
@@ -77,6 +77,7 @@ const Communicationform =(props)=>{
     const handlePinCodeChange = (pinCode, otherFromIndex) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
+            formValues[otherFromIndex].state = ''
             axios.get(pinApi)
                 .then((response) => {
                     const responseData = response.data[0];
@@ -128,35 +129,28 @@ const Communicationform =(props)=>{
     }
 
 
-    const changeDistrictState = (value, name, type) => {
-            if (name === 'District') {
-                props.formValues[type][0].district = value
-            } else {
-                props.formValues[type][0].state = value
+    useEffect(() => {
+        if (sameAddress) {
+            for (const key in formValues[0]) {
+                if (key !== 'address_type') {
+                    if (formValues[1].hasOwnProperty(key)) {
+                        formValues[1][key] = formValues[0][key]
+                    }
+                }
             }
-    }
+        }
+    }, [sameAddress, formValues[0]]);
 
-    const sameAddress = (event) => {
-        if (event.target.checked) {
-            // setHomePinData(curPinData)
-            props.formValues.home_flat = props.formValues.flat
-            props.formValues.home_pincode = props.formValues.pincode
-            props.formValues.home_street = props.formValues.street
-            props.formValues.home_district = props.formValues.district
-            props.formValues.home_state = props.formValues.state
+    useEffect(() => {
+        if (sameAddress) {
+            handlePinCodeChange(props.formValues.address[1].pincode,  1)
         }
-        if (!event.target.checked) {
-            // setHomePinData({district: [], state: []})
-            props.formValues.home_flat = ''
-            props.formValues.home_pincode = ''
-            props.formValues.home_street = ''
-            props.formValues.home_district = ''
-            props.formValues.home_state = ''
-        }
-    }
+    },[props.formValues.address[1].pincode])
 
     const otherAddressChange = (name, index) => (value) => {
         if (name === 'pincode') {
+            otherAddressChange('district', index)('')
+            otherAddressChange('state', index)('')
             handlePinCodeChange(value,  index)
         }
 
@@ -201,7 +195,7 @@ const Communicationform =(props)=>{
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -303,7 +297,7 @@ const Communicationform =(props)=>{
                                         {formValues && formValues.map((element, index) => (
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
-                                                    <Grid item xs={12}>
+                                                    <Grid item xs={12} className="d-flex">
                                                         <FormLabel className="light-circle">
                                                             <Box
                                                                 className="addnumber"
@@ -314,17 +308,17 @@ const Communicationform =(props)=>{
                                                             {element.address_type}
                                                         </FormLabel>
                                                         {element.address_type === 'Home Town Address' &&
-                                                            <Grid className='testright' item xs={7}>
+                                                            <Grid className='testright ml-auto-important' item xs={7}>
                                                                 <FormLabel>Home town address is same as current? Yes
                                                                     <mark>*</mark>
                                                                 </FormLabel>
-                                                                <Field onClick={sameAddress} type="checkbox"
+                                                                <Field onClick={() => setSameAddress(!sameAddress)} type="checkbox"
                                                                        name="check"/>
                                                             </Grid>
                                                         }
                                                     </Grid>
 
-                                                    {element.address_type === 'Other' &&
+                                                    {element.address_type !== 'Home Town Address' &&  element.address_type !== 'Current Address' &&
                                                         <Grid item xs={6}>
                                                             <FormLabel>Type of Address
                                                                 <mark>*</mark>

@@ -25,6 +25,7 @@ export const educationDetailsJson = {
             name: 'Qualification',
             key: 'qualification',
             placeholder: 'Select Party level',
+            isRequired: true
         },
         {
             key: 'course',
@@ -39,6 +40,7 @@ export const educationDetailsJson = {
             name: "University / Board",
             placeholder: 'Enter University / Board',
             type: 'textField',
+            isRequired: true
         },
         {
             key: 'college',
@@ -46,6 +48,7 @@ export const educationDetailsJson = {
             name: "College / School",
             placeholder: 'Enter College / School',
             type: 'textField',
+            isRequired: true
         },
         {
             key: 'start_year',
@@ -72,6 +75,7 @@ export const ProfessionJson = {
             name: "Profession",
             placeholder: 'Enter profession',
             type: 'textField',
+            isRequired: true
         },
         {
             key: 'position',

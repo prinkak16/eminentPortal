@@ -29,7 +29,7 @@ import moment from "moment";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 
 const PersonalDetails = (props) => {
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
             if (props.formValues.hasOwnProperty(key)) {
@@ -96,7 +96,7 @@ const PersonalDetails = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 

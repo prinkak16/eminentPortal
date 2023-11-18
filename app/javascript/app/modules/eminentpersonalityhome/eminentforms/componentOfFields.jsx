@@ -172,6 +172,10 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return  fieldsData[key]
     }
 
+    const requiredField = (state) => {
+        return isValuePresent(state) ? <mark>*</mark> : ''
+    }
+
     return (
         <div>
             <Grid container className="educationforms grid-wrap">
@@ -187,7 +191,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         {
                             f.type === 'dropdown' &&
                                 <Grid item xs={4}>
-                                    <FormLabel>{f.name} <sup>*</sup></FormLabel>
+                                    <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <AutoCompleteDropdown
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
@@ -199,7 +203,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         {
                             f.type === "textField" &&
                                 <Grid item xs={4}>
-                                    <FormLabel>{f.name} <sup>*</sup></FormLabel>
+                                    <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <OtherInputField
                                         disabled={disabledField(f.key)}
                                         type="text"
@@ -212,11 +216,12 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         {
                             f.type === "date" &&
                             <Grid item xs={4}>
-                                <FormLabel fullwidth>{f.name}</FormLabel>
+                                <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder}>
                                         {({field}) => (
                                             <DatePicker
+                                                isRequired={isValuePresent(f?.isRequired)}
                                                 disabled={disabledField(f.key)}
                                                 label={`Select ${field.name}`}
                                                 value={field.value}

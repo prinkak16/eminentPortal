@@ -24,10 +24,11 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
 
     const getStates = () => {
         getStateData.then((res) => {
-            setStates(res.data.data)
+           const respondStates = res.data.data
+            setStates(respondStates)
             setLocationsArray((prevFieldsData) => ({
                 ...prevFieldsData,
-                ['State']: res.data.data.map(item => item.name),
+                ['State']: respondStates.map(item => item.name),
             }));
         })
     }
@@ -80,9 +81,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
 
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
-            let field = jsonForm.find((item) => item.key === 'State')
+            let field = jsonForm.fields.find((item) => item.key === 'State')
             let state = states.find((item) => item.name === value)
-            getLocations(state[0].id, field.combo_fields[0])
+            if (isValuePresent(field.combo_fields)) {
+                resetLocationFields(field.combo_fields[0])
+                getLocations(state.id, field.combo_fields[0])
+            }
         }
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
@@ -117,6 +121,20 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
        }
     }
 
+    const resetLocationFields = (field) => {
+        setFieldsData((prevFieldsData) => ({
+            ...prevFieldsData,
+            [field.key]: '',
+        }));
+    }
+
+    useEffect(() => {
+        let field = jsonForm.fields.find((item) => item.key === 'State')
+        if (isValuePresent(field.combo_fields)) {
+            let state = states.find((item) => item.name === fieldsData?.State)
+            getLocations(state?.id, field?.combo_fields[0])
+        }
+    }, [fieldsData?.State]);
 
     const getList = (key) => {
         return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
