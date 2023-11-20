@@ -109,14 +109,13 @@ const FormStepper = ({
                             Previous
                         </Button>
                         <Typography variant="p" component="p">
-                            Step {activeStep + 1} of Step 6
+                            Step {activeStep + 1} of Step {steps.length}
                         </Typography>
                         <Button className="nextbtn" type="submit"  >
                             {isLastStep() ? "Submit" : "Save & Next"}
                         </Button>
                     </Box>
                 </div>
-                <pre>{JSON.stringify(values, null, 2)}</pre>
             </div>
         </>
     );

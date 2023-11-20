@@ -1,5 +1,5 @@
 import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Popper, Fade} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import Startdatepicker from '../component/startdatepicker/startdatepicker';
@@ -25,15 +25,19 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress} from "../../utils";
+import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, formFilledValues} from "../../utils";
+import {ApiContext} from "../../ApiContext";
 
 const Educationform = (props) => {
-    const [selectedOption, setSelectedOption] = useState('');
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
+    const [educationsList, setEducationsList] = useState([]);
+    const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
+    const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -52,9 +56,19 @@ const Educationform = (props) => {
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
 
-    const selectChange = (e) => {
-        setSelectedOption(e.target.value);
+    const setHighestQualification = (e) => {
+        setEducationLevel(e.target.value);
     };
+
+    useEffect(() => {
+        const filteredItems = EducationData.filter((item) => item.name === props.formValues.education_level);
+        const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
+        let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
+        filteredArray = filteredArray.map(item => item.name);
+        setEducationsList(filteredArray)
+    },[props.formValues.education_level])
+
+
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -93,8 +107,8 @@ const Educationform = (props) => {
             university: formData.university,
             start_year: formData.start_year,
             end_year: formData.end_year,
+            highest_qualification: formData.highest_qualification,
         };
-
         setEducationDetails((prevData) =>
             isValuePresent(id)
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
@@ -142,9 +156,32 @@ const Educationform = (props) => {
 
     };
 
-    const progressSave = () => {
-        saveProgress(props.formValues, props.activeStep + 1)
+    const saveProgress = () => {
+        const fieldsWithValues = formFilledValues(props.formValues);
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        });
     }
+
+
+    const deleteFields = (type, id) => {
+        if (type === 'education') {
+            const form = educationDetails.filter((item) => item.id !== id);
+            if (form) {
+                setEducationDetails(form)
+            }
+        } else {
+            const form = professionDetails.filter((item) => item.id !== id);
+            if (form) {
+                setProfessionDetails(form)
+            }
+        }
+    }
+
+    const changeProfessionDescription = (e) => {
+        setProfessionDescription(e.target.value)
+        props.formValues.profession_description = e.target.value
+    }
+
 
     return (
         <>
@@ -152,18 +189,19 @@ const Educationform = (props) => {
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={progressSave} />
+                        <Savebtn onClick={saveProgress} />
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
                     <Grid item xs={6} className='education-field pb-3'>
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                            <SelectField name="education_level" selectedvalues={selectedOption}
+                            <SelectField name="education_level"
+                                         value={educationLevel}
+                                         placeholder={"Select Highest Education"}
                                          defaultOption="Select Highest Education"
-                                         handleSelectChange={selectChange}
+                                         handleSelectChange={setHighestQualification}
                                          optionList={EducationData}/>
-
                             <ErrorMessage name="education_level" component="div"/>
                         </Grid>
                     </Grid>
@@ -205,7 +243,7 @@ const Educationform = (props) => {
                                                                 <Paper>
                                                                     <Typography sx={{p: 2}}
                                                                                 onClick={() => editEducationForm('education',data.id)}><Edit/></Typography>
-                                                                    <Typography
+                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
                                                                         sx={{p: 2}}><DeleteIcon/></Typography>
                                                                 </Paper>
                                                             </Fade>
@@ -221,8 +259,7 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField}/>
-
+                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField} educationsList={educationsList}/>
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
@@ -258,8 +295,8 @@ const Educationform = (props) => {
                                                                 <Paper>
                                                                     <Typography sx={{p: 2}}
                                                                                 onClick={() => editEducationForm('profession',data.id)}><Edit/></Typography>
-                                                                    <Typography
-                                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
+                                                                        sx={{p: 2}}><DeleteIcon /></Typography>
                                                                 </Paper>
                                                             </Fade>
                                                         )}
@@ -291,11 +328,14 @@ const Educationform = (props) => {
                                 className="profession-description"
                                 fullWidth
                                 name="profession_description"
+                                onChange={changeProfessionDescription}
+                                value={professionDescription}
                                 multiline
                                 minRows={2}
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
+                            <ErrorMessage name={`profession_description`} component="div" />
                         </div>
 
                     </Grid>
@@ -314,15 +354,12 @@ Educationform.initialValues = {
     profession_description:"",
     educations: [],
     professions: [],
-
-
 };
 Educationform.validationSchema = Yup.object().shape({
-    // educations: Yup.array()
-    //     .of(Yup.string()) // Assuming elements in the array are strings
-    //     .required('Please select at least one education'),
-    // profession: Yup.array()
-    //     .of(Yup.string()) // Assuming elements in the array are strings
-    //     .required('Please select at least one Profession')
+    education_level: Yup.string().required('Please select your high qualification'),
+    profession_description: Yup.string().required('Please enter your profession description'),
+
+
+
 });
 export default Educationform

@@ -82,7 +82,6 @@ export default function PersistentDrawerLeft() {
             let numberString = `${number}`;
             fetchMobile(numberString).then(res => {
                 setUserData(res.data.data)
-                console.log(res.data.data)
                 setExistingData(res);
                 setSubmitDisabled(false);
             }).catch(err => {

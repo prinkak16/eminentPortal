@@ -64,7 +64,7 @@ const HomeTable = (props) => {
         const newState ={
             "id": currId,
             "aasm_state": currStatus=== 'freeze' ? 'approve' : 'reject',
-            "reason": reasonToUpdateState
+            "rejection_reason": reasonToUpdateState
         }
       updateState(newState).then(res=>{
           setWantToChangeStatus(false);
@@ -134,12 +134,24 @@ const HomeTable = (props) => {
 
     const handleDownload = (url) => {
         const link = document.createElement('a');
-        link.href = 'url';
+        link.href = url;
         link.download = "ExamplePdf.pdf";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
+
+    const  editUser = (number) => {
+        localStorage.setItem('eminent_number', number);
+        navigate({
+            pathname: '/eminent_form'
+        }, {
+            state: {
+                eminent_number: number,
+            }
+        });
+    }
+
 
 
     return (
@@ -245,40 +257,40 @@ const HomeTable = (props) => {
                                                     {({TransitionProps}) => (
                                                         <Fade {...TransitionProps} timeout={350}>
                                                             <Paper>
-
-                                                                <Typography sx={{p: 2}} className="tableiconlist">
-                                                                    {  (member.aasm_state !== 'approved') &&
-                                                                        <p onClick={() => navigate(`/EminentPersonality?id=${member.id}`)}>Edit</p>
-                                                                    }
-                                                                    <p onClick={()=>navigate(`/EminentPersonality?id=${member.id}`)}>View</p>
-                                                                    {member.attached && <p onClick={() => openDocument(member.attached)}>View Documents</p>}
-                                                                    <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
-                                                                    { (member.aasm_state === 'submitted') &&
-                                                                    <div className="btn-group dropstart">
-                                                                        <p type="button" className="dropdown-toggle"
-                                                                           data-bs-toggle="dropdown"
-                                                                           data-mdb-toggle="dropdown"
-                                                                           aria-expanded="false">
-                                                                            Freeze/ Re-edit
-                                                                        </p>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li
-                                                                                className="ms-4"
-                                                                                onClick={()=>updateCurrentState(member.id, 'freeze')}>
-                                                                                Freeze
-                                                                            </li>
-                                                                            <li
-                                                                                className="ms-4"
-                                                                                onClick={()=>updateCurrentState(member.id, 're-edit')}
-                                                                            >
-                                                                                Re-edit
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                    }
-
-                                                                    <p onClick={()=>handleDownload(member.attached)}>Download</p>
-                                                                </Typography>
+                                                                <div className='edit-user-container'>
+                                                                    <Typography sx={{p: 2}} className="tableiconlist">
+                                                                        {  (member.aasm_state !== 'approved') &&
+                                                                            <p onClick={() => editUser(member.phone)}>Edit</p>
+                                                                        }
+                                                                        <p onClick={() => editUser(member.phone)}>View</p>
+                                                                        {member.data.attachment && <p onClick={() => openDocument(member.data.attachment)}>View Documents</p>}
+                                                                        <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
+                                                                        { (member.aasm_state === 'submitted') &&
+                                                                            <div className="btn-group dropstart">
+                                                                                <p type="button" className="dropdown-toggle"
+                                                                                   data-bs-toggle="dropdown"
+                                                                                   data-mdb-toggle="dropdown"
+                                                                                   aria-expanded="false">
+                                                                                    Freeze/ Re-edit
+                                                                                </p>
+                                                                                <ul className="dropdown-menu">
+                                                                                    <li
+                                                                                        className="ms-4"
+                                                                                        onClick={()=>updateCurrentState(member.id, 'freeze')}>
+                                                                                        Freeze
+                                                                                    </li>
+                                                                                    <li
+                                                                                        className="ms-4"
+                                                                                        onClick={()=>updateCurrentState(member.id, 're-edit')}
+                                                                                    >
+                                                                                        Re-edit
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        }
+                                                                        {member.data.attachment &&  <p onClick={()=>handleDownload(member.data.attachment)}>Download</p> }
+                                                                    </Typography>
+                                                                </div>
                                                             </Paper>
                                                         </Fade>
                                                     )}

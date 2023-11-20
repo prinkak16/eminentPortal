@@ -5,62 +5,97 @@ import Checklist from "./../../../../../../../public/images/checklist.svg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
-import {statsData} from "../../../../api/eminentapis/endpoints";
+import {getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
     const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
-
-
-
     useEffect(()=>{
-        statsData().then(res=> {
-            setHomeStats(res.data.data);
-        })
+        switch (props.tabId) {
+            case '1':
+                statsData().then(res => {
+                    setHomeStats(res.data.data);
+                })
+                break;
+            case '4':
+                getVacancyAnalytics().then(res=>{
+                    setHomeStats(res.data.data)
+                })
+                break;
+            case '5':
+                getVacancyAnalytics().then(res=>{
+                    setHomeStats(res.data.data)
+                })
+                break;
+        }
     },[])
 
     const createAnalyticCard = () => {
         return Object.keys(homeStats).map(value=>{
             let label = '';
             let icon = null;
-            switch (value) {
-                case 'incomplete': {
-                    switch (props.tabId) {
-                        case '1':
+                switch (props.tabId){
+                    case '1':
+                    switch (value) {
+                        case'incomplete': {
                             label = 'Total Eminent Personality';
+                            icon = <Incompletefile/>;
                             break;
-                        case '2':
-                            label = 'Total Position';
+                        }
+                        case
+                        'completed'
+                        : {
+                                    label = 'Total Completed Form';
+                            icon = <Checklist/>;
                             break;
-                    }
-                    icon = <Incompletefile />;
-                    break;
-                }
-                case 'completed': {
-                    switch (props.tabId) {
-                        case '1':
-                            label = 'Total Completed Form';
-                            break;
-                        case '2':
-                            label = 'Occupied';
-                            break;
-                    }
-                    icon = <Checklist />;
-                    break;
-                }
-                case 'overall': {
-                    switch (props.tabId) {
-                        case '1':
+                        }
+                        case
+                        'overall'
+                        : {
                             label = 'Total incompleted Form';
+                            icon = <Usergroup/>;
                             break;
-                        case '2':
-                            label = 'Vacant';
-                            break;
-                    }
-                    icon = <Usergroup />;
-                    break;
-                }
+                        }
 
+                    }
+                    break;
+                    case '4':
+                        switch (value) {
+                            case'total': {
+                                label = 'Total Position';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'occupied': {
+                                label = 'Occupied';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'vacant': {
+                                label = 'Vacant';
+                                icon = <Usergroup/>;
+                                break;
+                            }
+                        }
+                        break;
+                    case '5':
+                        switch (value) {
+                            case'total': {
+                                label = 'Total Position';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'occupied': {
+                                label = 'Slotted';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case'vacant': {
+                                label = 'Unslotted';
+                                icon = <Usergroup/>;
+                                break;
+                            }
+                        }
 
             }
             return <div className="col" key={value}>

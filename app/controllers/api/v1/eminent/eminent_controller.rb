@@ -94,6 +94,13 @@ class Api::V1::Eminent::EminentController < BaseApiController
       end
 
       phone_number = params[:data][:mobiles]
+      # Check for duplicate phone number
+      if phone_number.size != phone_number.to_set.size
+        return render json: {
+          success: false,
+          message: 'Phone number has already been added by you, please provide a another phone number.'
+        }, status: :bad_request
+      end
       form_type = params[:form_type]
       is_draft = params[:is_draft]
       eminent_channel = params[:channel].present? ? params[:channel] : nil
@@ -187,5 +194,20 @@ class Api::V1::Eminent::EminentController < BaseApiController
     rescue StandardError => e
       render json: { success: false, message: e.message }, status: :bad_request
     end
+  end
+
+  def add_file
+    require 'digest/md5'
+    unless params[:file].present?
+      render json: { success: false, message: 'Please provide a file.' }, status: :bad_request
+    end
+
+    uploaded_file = params[:file]
+    # Access the original filename
+    file_name = uploaded_file.original_filename.present? ? uploaded_file.original_filename : nil
+    file_extension = ".#{file_name.delete(' ').partition('.').last}"
+    custom_file_name = Digest::MD5.hexdigest(file_name + SecureRandom.uuid.last(10).to_s) + file_extension
+    url = upload_file_on_gcloud(uploaded_file, custom_file_name)
+    render json: { success: true, message: 'Success', file_path: url }, status: :ok
   end
 end

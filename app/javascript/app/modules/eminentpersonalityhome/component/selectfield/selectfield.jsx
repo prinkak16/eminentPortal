@@ -9,6 +9,7 @@ const Selectfield=(props)=>{
         <>
             <FormControl>
                 <Field
+                    key={name}
                     placeholde={placeholder}
                     as={Select}
                     name={name}

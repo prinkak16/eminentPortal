@@ -1,3 +1,8 @@
 .auto-complete-dropdown-true .MuiOutlinedInput-notchedOutline {
     border: none !important;
 }
+
+.election-dropdown {
+    width: 20rem;
+    margin-right: 2rem;
+}

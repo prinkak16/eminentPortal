@@ -6,7 +6,7 @@ RUN apt-get install -y zlib1g-dev liblzma-dev patch
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update -qq && apt-get install -y yarn && apt-get install -y ghostscript && apt-get upgrade -y
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
 RUN apt install nodejs -y
 RUN apt autoremove -y
 
@@ -29,6 +29,8 @@ RUN bundle config github.com $ACCESS_TOKEN
 COPY . .
 
 RUN bundle install
+RUN yarn install
+RUN yarn build
 #RUN bundle update saral-locatable
 
 
