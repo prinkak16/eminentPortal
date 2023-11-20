@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import {Stack, Typography, Button, Box, Paper, Grid, FormLabel, TextField} from '@mui/material';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
@@ -12,6 +12,7 @@ import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
     const {config, isCandidateLogin} = useContext(ApiContext)
+    const [mobile, setMobile] = useState()
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -33,6 +34,20 @@ const Refferedform = (props) => {
         });
     }
 
+    const enterMobileNumber = (event) => {
+        const phoneNumber = event.target.value.replace(/[^\d०१२३४५६७८९]/g, '');
+        if (/^[5-9५६७८९]/.test(phoneNumber)) {
+            event.target.value = phoneNumber;
+        } else {
+            event.target.value = ''; // Clear the input value if it doesn't start with 5-9 or a Hindi digit
+        }
+        setMobile(event.target.value)
+    }
+
+    useEffect(() => {
+        props.formValues.reference.mobile = mobile
+    }, [mobile]);
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -51,12 +66,14 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.name`} component="div"/>
 
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} className="d-grid">
                         <FormLabel>Phone no.</FormLabel>
-                        <Inputfield type="text"
-                                    name={`reference.mobile`}
-                                    value={props?.formValues?.reference?.mobile}
-                                    placeholder="Enter phone no."/>
+                        <input
+                            maxLength={10}
+                            placeholder='Enter Mobile Number'
+                            value={mobile}
+                            onChange={enterMobileNumber}
+                            className="reff-mobile" />
                         <ErrorMessage name={`reference.mobile`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
