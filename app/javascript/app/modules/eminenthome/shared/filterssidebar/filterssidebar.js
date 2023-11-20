@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "./filterssidebar.scss"
 import {useEffect, useState} from "react";
-import {getData, getFilters} from "../../../../api/eminentapis/endpoints";
+import {getData, getFilters, getFiltersForGOM} from "../../../../api/eminentapis/endpoints";
 
 export default function FiltersSidebar(props) {
     const [filtersList, setFiltersList] = useState([]);
@@ -40,17 +40,28 @@ export default function FiltersSidebar(props) {
         console.log(appliedFilters);
     }
 
+
+
     useEffect(() => {
-        getFilters().then(res => {
-            setFiltersList(res.data.data)
-        });
+        switch (props.tabId) {
+            case '4':
+                getFiltersForGOM().then(response => {
+                    setFiltersList(response.data.data)
+                })
+                break;
+            default:
+                getFilters().then(res => {
+                    setFiltersList(res.data.data)
+                });
+        }
         applyFilter();
-    }, []);
+    }, [props.tabId]);
 
     const handleChange = (value) => (event, isExpanded) => {
         if (expandedFilter === value) {
             setExpandedFilter('');
         } else {
+            setExpandedFilter(value);
             setExpandedFilter(value);
         }
     };

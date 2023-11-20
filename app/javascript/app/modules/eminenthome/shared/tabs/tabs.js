@@ -13,6 +13,7 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import GomPage from "../../pages/GOM/GomPage/GomPage";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -25,7 +26,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs() {
+export default function BasicTabs({ onSwitchTab }) {
     const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -119,6 +120,7 @@ export default function BasicTabs() {
     }
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        onSwitchTab(newValue);
     };
 
     const  navigateForm = () => {
@@ -221,8 +223,8 @@ export default function BasicTabs() {
                         <Tab label="File Stauts" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
-                        <Tab label="GOM Management" value="6" />
 
+                        <Tab label="GOM Management" value="6" />
                     </TabList>
                     {buttonContent}
                 </Box>
@@ -235,6 +237,10 @@ export default function BasicTabs() {
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
+                <TabPanel value="6">
+                    <GomPage tabId={value}/>
+                </TabPanel>
+
             </TabContext>
             <Modal
                 contentClassName="deleteModal"
