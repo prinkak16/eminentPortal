@@ -43,21 +43,9 @@ const MasterVacancies=({tabId})=> {
             setTabData(data)
         }
     };
-    useEffect(() => {
-        const params = new URLSearchParams({
-            search_by: 'ministry_wise',
-            order_by: 'total',
-            order_type: 'DESC'
-        });
-            getMinistryWiseData(params).then(response => {
-                setTabData(response.data.data.value);
 
-            })
-    }, []);
     return (
         <>
-            {/*<h5>Position Analytics</h5>*/}
-
         <Analytics tabId={tabId}/>
         <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
             <TabContext value={value}>
@@ -70,7 +58,7 @@ const MasterVacancies=({tabId})=> {
                     <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
                 </Box>
                 <TabPanel value="1"  className="p-0">
-                    <MinistryTable data={tabData} onSwitchTab={switchTabDataHandler} />
+                    <MinistryTable onSwitchTab={switchTabDataHandler} />
                 </TabPanel>
                 <TabPanel value="2" className="p-0">
                     <PSUTable  data={tabData} onSwitchTab={switchTabDataHandler}/>
