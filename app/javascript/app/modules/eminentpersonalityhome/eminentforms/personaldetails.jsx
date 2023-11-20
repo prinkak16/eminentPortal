@@ -32,8 +32,10 @@ const PersonalDetails = (props) => {
     const {config,isCandidateLogin} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
-            if (props.formValues.hasOwnProperty(key)) {
-                props.formValues[key] = props.userData[key]
+            if (key !== 'election_fought') {
+                if (props.formValues.hasOwnProperty(key)) {
+                    props.formValues[key] = props.userData[key]
+                }
             }
         }
     }, []);

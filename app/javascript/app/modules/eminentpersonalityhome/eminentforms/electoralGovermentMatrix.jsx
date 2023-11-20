@@ -16,6 +16,7 @@ import {
     getLocationsData,
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import NumberField from "../component/numberfield/numberfield";
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [editField, setEditField] = useState(0);
@@ -181,6 +182,23 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                 </Grid>
                             }
                             {
+                                f.type === "numField" &&
+                                <Grid item xs={4}>
+                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
+                                    <NumberField
+                                        className='elec-number-field'
+                                        value={fieldsData[f.key] || null}
+                                        type="text"
+                                        textType={f.key}
+                                        placeholder={f.placeholder}
+                                        onChange={(e) => handleFieldChange(e.target.name, f.name ,f.key)}
+                                        onInput={(event) => {
+                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                        }}
+                                    />
+                                </Grid>
+                            }
+                            {
                                 f.type === "radio" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
@@ -212,6 +230,25 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 onChange={handleFieldChange}
                                                 textType={fi.key}
                                                 placeholder={fi.placeholder}/>
+                                        </Grid>
+                                    }
+                                    {
+                                        fi.type === "numField" &&
+                                        <Grid item xs={4}>
+                                            <FormLabel>{f.name}
+                                                <mark>*</mark>
+                                            </FormLabel>
+                                            <NumberField
+                                                className='std-code-input'
+                                                value={fieldsData[fi.key] || null}
+                                                type="text"
+                                                textType={fi.key}
+                                                placeholder={fi.placeholder}
+                                                onChange={(e) => handleFieldChange(e.target.name, fi.name, fi.key)}
+                                                onInput={(event) => {
+                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                }}
+                                            />
                                         </Grid>
                                     }
                                     {
