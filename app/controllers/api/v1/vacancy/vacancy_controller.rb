@@ -311,26 +311,30 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       when 'vacancy_wise'
         sql = "
           SELECT
-            ministry.id as ministry_id,
-            ministry.name as ministry_name,
-            dept.id as dept_id,
-            dept.name as dept_name,
-            org.id as org_id,
-            org.name as org_name,
-            vac.id as vac_id,
-            vac.designation,
-            vac.status,
-            vac.tenure_started_at,
-            vac.tenure_ended_at
+            ministry.id AS ministry_id,
+            ministry.name AS ministry_name,
+            jsonb_agg(
+              DISTINCT jsonb_build_object(
+                'dept_id', dept.id,
+                'dept_name', dept.name,
+                'org_id', org.id,
+                'org_name', org.name,
+                'vac_id', vac.id,
+                'designation', vac.designation,
+                'status', vac.status,
+                'tenure_started_at', vac.tenure_started_at,
+                'tenure_ended_at', vac.tenure_ended_at
+              )
+            ) AS vac_info
           FROM public.user_ministries AS um
-          LEFT JOIN public.ministries AS ministry
-          ON um.ministry_id = ministry.id
-          LEFT JOIN public.departments AS dept
-          ON ministry.id = dept.ministry_id
-          LEFT JOIN public.organizations AS org
-          ON dept.id = org.department_id
           LEFT JOIN public.vacancies AS vac
-          ON ministry.id = vac.ministry_id
+          ON um.ministry_id = vac.ministry_id
+          LEFT JOIN public.ministries AS ministry
+          ON vac.ministry_id = ministry.id
+          LEFT JOIN public.departments AS dept
+          ON vac.department_id = dept.id
+          LEFT JOIN public.organizations AS org
+          ON vac.organization_id = org.id
           WHERE
             um.is_minister IS false
             AND
@@ -348,17 +352,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         sql += "
           GROUP BY
             ministry.id,
-            ministry.name,
-            dept.id,
-            dept.name,
-            org.id,
-            org.name,
-            org.is_listed,
-            vac.id,
-            vac.designation,
-            vac.status,
-            vac.tenure_started_at,
-            vac.tenure_ended_at
+            ministry.name
           ORDER BY #{order_by} #{order_type}
         "
         stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
@@ -367,15 +361,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           results << {
             ministry_id: stat.ministry_id.present? ? stat.ministry_id : nil,
             ministry_name: stat.ministry_name.present? ? stat.ministry_name : nil,
-            dept_id: stat.dept_id.present? ? stat.dept_id : nil,
-            dept_name: stat.dept_name.present? ? stat.dept_name : nil,
-            org_id: stat.org_id.present? ? stat.org_id : nil,
-            org_name: stat.org_name.present? ? stat.org_name : nil,
-            vac_id: stat.vac_id.present? ? stat.vac_id : nil,
-            designation: stat.designation.present? ? stat.designation : nil,
-            status: stat.status.present? ? stat.status : nil,
-            tenure_started_at: stat.tenure_started_at.present? ? stat.tenure_started_at : nil,
-            tenure_ended_at: stat.tenure_ended_at.present? ? stat.tenure_ended_at : nil
+            vac_info: stat.vac_info.present? ? stat.vac_info : nil
           }
         end
       end
