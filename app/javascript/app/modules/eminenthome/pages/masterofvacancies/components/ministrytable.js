@@ -12,7 +12,6 @@ import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 
 
 const  MinistryTable = ({onSwitchTab}) => {
-    const [tableData, setTableData] = useState(null);
     const [currentPage, setCurrentPage] = useState('');
     const [ministryTableData, setMinistryTableData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
