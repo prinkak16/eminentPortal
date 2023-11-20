@@ -16,17 +16,20 @@ import {
     getLocationsData,
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
+import NumberField from "../component/numberfield/numberfield";
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
+    const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
 
     const getStates = () => {
         getStateData.then((res) => {
-            setStates(res.data.data)
+           const respondStates = res.data.data
+            setStates(respondStates)
             setLocationsArray((prevFieldsData) => ({
                 ...prevFieldsData,
-                ['State']: res.data.data.map(item => item.name),
+                ['State']: respondStates.map(item => item.name),
             }));
         })
     }
@@ -71,26 +74,20 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                     updatedFieldsData[key] = isEditable[key];
                 }
             }
+            setEditField(1)
             setFieldsData(updatedFieldsData);
         }
     }, [isEditable]);
 
 
-    const resetFieldsToBlank = () => {
-        setFieldsData((prevFieldsData) => {
-            const updatedFieldsData = { ...prevFieldsData };
-            for (const key in updatedFieldsData) {
-                updatedFieldsData[key] = '';
-            }
-            return updatedFieldsData;
-        });
-    };
-
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
-            let field = jsonForm.find((item) => item.key === 'State')
+            let field = jsonForm.fields.find((item) => item.key === 'State')
             let state = states.find((item) => item.name === value)
-            getLocations(state[0].id, field.combo_fields[0])
+            if (isValuePresent(field.combo_fields)) {
+                resetLocationFields(field.combo_fields[0])
+                getLocations(state.id, field.combo_fields[0])
+            }
         }
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
@@ -125,13 +122,31 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
        }
     }
 
+    const resetLocationFields = (field) => {
+        setFieldsData((prevFieldsData) => ({
+            ...prevFieldsData,
+            [field.key]: '',
+        }));
+    }
+
+    useEffect(() => {
+        let field = jsonForm.fields.find((item) => item.key === 'State')
+        if (isValuePresent(field.combo_fields)) {
+            let state = states.find((item) => item.name === fieldsData?.State)
+            getLocations(state?.id, field?.combo_fields[0])
+        }
+    }, [fieldsData?.State]);
 
     const getList = (key) => {
         return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
     }
 
     useEffect(() => {
-        handleSave()
+        if (editField === 0) {
+            handleSave()
+        } else {
+            setEditField(0)
+        }
     }, [fieldsData]);
 
     return (
@@ -167,6 +182,23 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                 </Grid>
                             }
                             {
+                                f.type === "numField" &&
+                                <Grid item xs={4}>
+                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
+                                    <NumberField
+                                        className='elec-number-field'
+                                        value={fieldsData[f.key] || null}
+                                        type="text"
+                                        textType={f.key}
+                                        placeholder={f.placeholder}
+                                        onChange={(e) => handleFieldChange(e.target.name, f.name ,f.key)}
+                                        onInput={(event) => {
+                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                        }}
+                                    />
+                                </Grid>
+                            }
+                            {
                                 f.type === "radio" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
@@ -198,6 +230,25 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 onChange={handleFieldChange}
                                                 textType={fi.key}
                                                 placeholder={fi.placeholder}/>
+                                        </Grid>
+                                    }
+                                    {
+                                        fi.type === "numField" &&
+                                        <Grid item xs={4}>
+                                            <FormLabel>{f.name}
+                                                <mark>*</mark>
+                                            </FormLabel>
+                                            <NumberField
+                                                className='std-code-input'
+                                                value={fieldsData[fi.key] || null}
+                                                type="text"
+                                                textType={fi.key}
+                                                placeholder={fi.placeholder}
+                                                onChange={(e) => handleFieldChange(e.target.name, fi.name, fi.key)}
+                                                onInput={(event) => {
+                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                }}
+                                            />
                                         </Grid>
                                     }
                                     {

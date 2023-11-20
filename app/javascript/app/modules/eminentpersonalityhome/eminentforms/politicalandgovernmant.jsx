@@ -19,7 +19,7 @@ import {
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress
+    saveProgress, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -32,7 +32,7 @@ import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints"
 import {boolean} from "yup";
 
 const PolticalandGovrnform =(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -40,32 +40,19 @@ const PolticalandGovrnform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [socialFields, setSocialFields] = useState([])
+    const [socialFields, setSocialFields] = useState(props.formValues.social_profiles || [])
     const [count, setcount]=useState(2)
-    const [politicalProfileDetails, setPoliticalProfileDetails] = useState([]);
-    const [otherPartyDetails, setOtherPartyDetails] = useState([]);
+    const [politicalProfileDetails, setPoliticalProfileDetails] = useState(props.formValues.political_profile || []);
+    const [otherPartyDetails, setOtherPartyDetails] = useState(props.formValues.other_parties || []);
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(false)
-    const [electoralDetails, setElectoralDetails] = useState([])
+    const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
     useEffect(() => {
-        isValuePresent(props.formValues.political_profile) ? setPoliticalProfileDetails(props.formValues.political_profile) : null
-        isValuePresent(props.formValues.other_parties) ? setOtherPartyDetails(props.formValues.other_parties) : null
-        isValuePresent(props.formValues.election_fought) ? setElectoralDetails(props.formValues.election_fought) : null
-        isValuePresent(props.formValues.social_profiles) ? setSocialFields(props.formValues.social_profiles) : null
-        // isValuePresent(props.formValues.election_contested) ? setElectionContested(props?.formValues?.election_contested ? "Yes" : "No") : null
-    }, []);
-
-    useEffect(() => {
-        setTimeout(() => {
-            console.log(props?.formValues?.election_contested)
-        }, 1000);
-
-    }, [props?.formValues?.election_contested]);
-
-    console.log('okay')
+        setElectoralDetails(props.userData.election_fought)
+    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -73,7 +60,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
-        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:[]}])
+        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
     }
 
     const deleteSocialFields = () => {
@@ -82,7 +69,6 @@ const PolticalandGovrnform =(props)=>{
         setSocialFields(newFormValues);
         setcount(count-1);
     }
-
 
     const handleSave = ( title, formData, id) => {
         if (title === 'Political Profile') {
@@ -111,7 +97,6 @@ const PolticalandGovrnform =(props)=>{
 
     };
 
-
     const politicalProfileSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
@@ -128,7 +113,6 @@ const PolticalandGovrnform =(props)=>{
                 : [...prevData, newFormData]
         );
     }
-
 
     const otherPartiProfileSave = (formData, id) => {
         const newFormData = {
@@ -148,6 +132,7 @@ const PolticalandGovrnform =(props)=>{
 
     const NotApplicableFields = (event) => {
         setNAFields(event.target.checked)
+        props.formValues.political_not_applicable = event.target.checked
     }
 
     const enterSocialFields = (field,index) => (event) => {
@@ -178,13 +163,10 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
-
-
     const contestedElection = (value) => {
         setElectionContested(value)
         props.formValues.election_contested = value === 'Yes'
     }
-
 
     const changeElectionType = (value,name ,type, formIndex) => {
         const updatedElectoralData = [...electoralDetails];
@@ -192,10 +174,7 @@ const PolticalandGovrnform =(props)=>{
         setElectoralDetails(updatedElectoralData);
     }
 
-    function toSnakeCase(inputString) {
-        const cleanedString = inputString.replace(/[^a-zA-Z0-9\s]/g, '').trim();
-        return cleanedString.replace(/\s+/g, '_').toLowerCase();
-    }
+
 
     const saveElectoralData = (data,index) => {
         setElectoralDetails((preElectoral) => {
@@ -211,15 +190,9 @@ const PolticalandGovrnform =(props)=>{
         });
     }
 
-
-
-
-
     const saveProgress = () => {
-        debugger
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -240,6 +213,22 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.other_parties =  otherPartyDetails
     }, [otherPartyDetails]);
 
+    const deleteElectoralFields = (index) => {
+        const fields  = electoralDetails.filter((item, i) => i !== index)
+        setElectoralDetails(fields)
+    }
+
+    useEffect(() => {
+        if (props.formValues.election_contested) {
+            if (!isValuePresent(props.formValues.election_fought)) {
+                setElectoralDetails([{
+                    election_type: '', election_details: {}
+                }])
+            }
+        }
+
+    },[props.formValues.election_contested])
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -253,7 +242,7 @@ const PolticalandGovrnform =(props)=>{
                     <div className="data-table">
                         <table className="w-100 table-responsive text-center">
                             <thead>
-                            <tr>
+                            <tr key={'otherPartyDetails'}>
                                 <th>Party level</th>
                                 <th>Unit</th>
                                 <th>Designation</th>
@@ -263,7 +252,7 @@ const PolticalandGovrnform =(props)=>{
                             </thead>
                             <tbody>
                             {politicalProfileDetails.map((data, index) => (
-                            <tr>
+                            <tr key={index}>
                                 <td>{data.party_level}</td>
                                 <td>{data.unit}</td>
                                 <td>{data.designation}</td>
@@ -315,21 +304,23 @@ const PolticalandGovrnform =(props)=>{
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
                         <Inputfield type="number"
-                                    name="bjp"
-                                    placeholder="00"/>
+                                    name="bjp_years"
+                                    placeholder="Enter in year"/>
+                        <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
                         <Inputfield type="number"
-                                    name="rss"
-                                    placeholder="00"/>
+                                    name="rss_years"
+                                    placeholder="Enter in year"/>
+                        <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>
                 {otherPartyDetails.length > 0 && (
                     <div className="data-table">
                         <table className="w-100 table-responsive text-center">
                             <thead>
-                            <tr>
+                            <tr key={'otherPartyDetails'}>
                                 <th>Party</th>
                                 <th>Position</th>
                                 <th>Start Year</th>
@@ -338,7 +329,7 @@ const PolticalandGovrnform =(props)=>{
                             </thead>
                             <tbody>
                             {otherPartyDetails.map((data, index) => (
-                            <tr>
+                            <tr key={index}>
                                 <td>{data.party}</td>
                                 <td>{data.position}</td>
                                 <td>{data.start_year}</td>
@@ -438,22 +429,25 @@ const PolticalandGovrnform =(props)=>{
                         <div className='d-flex mt-2'>
                             <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
-                        <ErrorMessage name="won" component="div" />
                     </Grid>
-                    {electionContested && electoralDetails.map((field,index) => (
+                    {electionContested === 'Yes' && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
-                                        {electionContested &&
-                                            <AutoCompleteDropdown
-                                                name={'Election Type'}
-                                                selectedValue={field.election_type}
-                                                listArray={electionTypeList}
-                                                onChangeValue={changeElectionType}
-                                                formIndex={index}
-                                            />
-                                        }
+                                            <div className="d-flex">
+                                                <AutoCompleteDropdown
+                                                    classes={'election-dropdown'}
+                                                    name={'Election Type'}
+                                                    selectedValue={field.election_type}
+                                                    listArray={electionTypeList}
+                                                    onChangeValue={changeElectionType}
+                                                    formIndex={index}
+                                                />
+                                                {electoralDetails.length > 1 &&
+                                                <Primarybutton addclass="deletebtn delete-btn" starticon={<DeleteIcon/>} handleclick={()=>deleteElectoralFields(index)}/>
+                                                }
+                                            </div>
                                     </Grid>
                                     <Grid item xs={9}>
                                         {isValuePresent(field.election_type) &&
@@ -487,46 +481,26 @@ const PolticalandGovrnform =(props)=>{
 }
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
+    political_not_applicable:false,
     political_profile: [],
     rss_years: '',
     bjp_years: '',
     other_parties: [],
     social_profiles: [],
-    election_contested: '',
-    election_fought: [],
+    election_contested: false,
+    election_fought: [
+        {
+            election_type: '', election_details: {}
+        }
+    ],
 
 };
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    rss_years: Yup.string().required('Please enter rss joined years'),
-    bjp_years: Yup.string().required('Please enter bjp joined year'),
-    election_contested: Yup.string().required('Please Select election contest'),
-
-    political_profile: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                unit: Yup.string().required('Please enter your course'),
-                designation: Yup.string().required('Please enter your college'),
-                end_year: Yup.string().required('Please Select  end year'),
-                start_year: Yup.string().required('Please Select  start year'),
-                party_level: Yup.string().required('Please enter your university'),
-            }),
-        })
-    ),
-
-    other_parties: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                party: Yup.string().required('Please enter your course'),
-                position: Yup.string().required('Please enter your college'),
-                end_year: Yup.string().required('Please Select  end year'),
-                start_year: Yup.string().required('Please Select  start year'),
-            }),
-        })
-    ),
+    rss_years: Yup.number().required('Please enter rss joined years'),
+    bjp_years: Yup.number().required('Please enter bjp joined year'),
+    election_contested: Yup.boolean().required('Please Select election contest'),
 
     social_profiles: Yup.array().of(
         Yup.object().shape({

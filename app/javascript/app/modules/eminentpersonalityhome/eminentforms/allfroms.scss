@@ -519,6 +519,26 @@ button.cancelbtn{
   gap: 1rem;
 }
 
-.pdf-file-name {
-  cursor: pointer;
+#pdf-file-name {
+  cursor: pointer !important;
+}
+
+.delete-btn {
+  margin-top: 0rem !important;
+}
+
+.ml-auto-important {
+  margin-left: auto !important;
+}
+.elec-number-field {
+  width: 10rem;
+}
+
+.reff-mobile {
+  width: 100% !important;
+  height: 3.4rem !important;
+  border-radius: 13px;
+  border: 1px solid grey;
+  background: #ffffff;
+  padding-left: 1.2rem;
 }

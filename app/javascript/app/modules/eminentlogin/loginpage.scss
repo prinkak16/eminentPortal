@@ -8,3 +8,14 @@
 .inputNumber:focus{
   outline-color: #e50202;
 }
+
+.login-design {
+  height: 60rem;
+  width: 60rem;
+  margin-left: -26rem;
+}
+
+.login-container {
+  height: 100vh !important;
+  overflow-y: clip;
+}

@@ -11,6 +11,7 @@ import {isValuePresent} from "./modules/utils";
 import {ApiContext} from "./modules/ApiContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 
 const beforeLoginRoutes =  <Routes>
                                         <Route path={'/'} element={<LoginPage/>}/>
@@ -25,6 +26,7 @@ const adminRoutes = <Routes>
                                 <Route path='/' element={<HomePage/>}/>
                                 <Route path='/eminent_form' element={<EminentPersonality/>}/>
                                 <Route path='/masterofvacancies' element={<MasterVacancies/>}/>
+                                <Route path='/gom' element={<GomPage />}/>
                                 <Route path='/*' element={<Navigate to="/"/>}/>
                             </Routes>
 
@@ -32,7 +34,7 @@ const adminRoutes = <Routes>
 
 function App() {
     const [authToken, setAuthToken ] = useState(localStorage.getItem('auth_token'))
-    let isCandidateLogin = document.getElementById('app').getAttribute('data-candidate-login');
+    let isCandidateLogin = JSON.parse(document.getElementById('app').getAttribute('data-candidate-login'));
     const config = {
         headers: {
             'Authorization': authToken,

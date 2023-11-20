@@ -1,7 +1,8 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
 import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
-export const getFormData = async (data, activeStep, config, isDraft = true) => {
+export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin) => {
+    const updateData = isCandidateLogin ? "eminent/update" : "custom_member_forms/add"
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
@@ -13,7 +14,7 @@ export const getFormData = async (data, activeStep, config, isDraft = true) => {
         "channel": "Link"
     }
     try {
-        const response = await axios.post(apiBaseUrl + 'eminent/update', formData, config);
+        const response = await axios.post(apiBaseUrl + updateData, formData, config);
         showSuccessToast(response.data.message);
         return true
     } catch (error) {
@@ -23,12 +24,13 @@ export const getFormData = async (data, activeStep, config, isDraft = true) => {
     }
 }
 
-export const getFileUpload = async (file, pdfUrl) => {
+export const getFileUpload = async (file, config,isCandidateLogin) => {
+    const uploadPath = isCandidateLogin ? 'eminent/add_file' : 'custom_member_forms/add_file'
     let url = ''
     const formData = new FormData();
     formData.append("file", file);
     try {
-        url = await axios.post(apiBaseUrl + fileUpload, formData);
+        url = await axios.post(apiBaseUrl + uploadPath, formData,config);
     } catch (error) {
         console.log("Error:", error);
     }
@@ -52,7 +54,7 @@ export const getReligionData = (config,) => {
     })
 }
 
-export const getGenderData = (config,) => {
+export const getGenderData = (config) => {
     return axios.get(apiBaseUrl + 'metadata/genders',{
         params: {
         },
