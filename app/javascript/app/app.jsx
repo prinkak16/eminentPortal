@@ -9,7 +9,7 @@ import LoginPage from "./modules/./eminentlogin/loginpage";
 import MasterVacancies from "./modules/eminenthome/pages/masterofvacancies/masterofvacancies";
 import {isValuePresent} from "./modules/utils";
 import {ApiContext} from "./modules/ApiContext";
-// import GomPage from "./modules/GOM/GomPage/GomPage";
+import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 
 const BeforeLoginRoutes = () => {
     let candidate_login = document.getElementById('app').getAttribute('data-candidate-login');
@@ -21,7 +21,7 @@ const BeforeLoginRoutes = () => {
     const AdminLogin =   <Routes>
                                     <Route path='/' element={<HomePage/>}/>
 
-                                    {/*<Route path='/gom' element={<GomPage />}/>*/}
+                                    <Route path='/gom' element={<GomPage />}/>
                                    <Route path='/*' element={<Navigate to="/"/>}/>
                                   </Routes>
     return (
