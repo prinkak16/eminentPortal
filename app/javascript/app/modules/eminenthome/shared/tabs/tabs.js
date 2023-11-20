@@ -13,6 +13,7 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -147,7 +148,7 @@ export default function BasicTabs() {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
-                    Upload File
+                   <ArrowUpwardIcon/> Upload CSV File
                 </Button>
 
                 <Modal  show={show} onHide={handleClose}

@@ -38,7 +38,7 @@ const  MinistryTable = ({onSwitchTab}) => {
 
     return (
         <>
-
+            { error && <h1>Error: {error.response.data.message}</h1> }
                 <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                     open={isFetching}

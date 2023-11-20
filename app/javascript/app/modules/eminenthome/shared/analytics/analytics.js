@@ -124,10 +124,10 @@ const Analytics = (props) => {
                 </div>
                 <div>
 
-                    <div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>
-                        <p className="seemorebutton">See More</p>
-                        <ExpandMoreIcon className='expandicon'/>
-                    </div>
+                    {/*<div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>*/}
+                    {/*    <p className="seemorebutton">See More</p>*/}
+                    {/*    <ExpandMoreIcon className='expandicon'/>*/}
+                    {/*</div>*/}
 
                     { showSeeMore &&
                         <div className="card seemorecard">
