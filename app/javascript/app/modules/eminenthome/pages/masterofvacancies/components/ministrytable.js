@@ -38,11 +38,11 @@ const  MinistryTable = ({data, onSwitchTab}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map((ministry, index) => <TableRow key={ministry.ministryId}>
+                    {data.map((ministry, index) => <TableRow key={ministry.ministry_id}>
                         <TableCell>{index + 1}</TableCell>
                         { }
-                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministryId)}>{ministry.ministryName}</TableCell>
-                        <TableCell>{ministry.totalPositions}</TableCell>
+                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
+                        <TableCell>{ministry.total}</TableCell>
                         <TableCell>{ministry.occupied}</TableCell>
                         <TableCell>{ministry.vacant}</TableCell>
                     </TableRow>)}

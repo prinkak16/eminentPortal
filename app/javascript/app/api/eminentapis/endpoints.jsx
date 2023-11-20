@@ -54,3 +54,7 @@ export  const getSlottingTable =()=>{
 export const getSlottingPsuData=()=> {
     return axios.get('https://psudetails-default-rtdb.asia-southeast1.firebasedatabase.app/psudetail.json')
 }
+
+export const getMinistryWiseData = (params) => {
+    return axios.get(apiBaseUrl + 'vacancy/list', { params });
+}

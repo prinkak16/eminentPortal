@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import './masterofvacancies.css'
 import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import {getMinistryWiseData} from "../../../../api/eminentapis/endpoints";
 
 const DUMMY_DATA = []
 const MasterVacancies=({tabId})=> {
@@ -26,15 +27,15 @@ const MasterVacancies=({tabId})=> {
         setTabData(DUMMY_DATA);
     };
     const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
-        if(tabId=='1'){
+        if(tabId === '1'){
             setValue(tabId);
         }
-        else if(tabId=='2'){
+        else if(tabId === '2'){
             setValue(tabId);
             const ministryData= DUMMY_DATA.filter(data=>data.ministryId===ministryId);
             setTabData(ministryData);
         }
-        else if(tabId=='3'){
+        else if(tabId === '3'){
             setValue(tabId);
             const ministryData= DUMMY_DATA.find(data=>data.ministryId===ministryId);
             const departmentData = ministryData.departments.filter(department=>department.departmentId === departmentId)
@@ -43,15 +44,13 @@ const MasterVacancies=({tabId})=> {
         }
     };
     useEffect(() => {
-        axios.get('https://vacancies-dummy-apis-default-rtdb.firebaseio.com/ministries.json')
-            .then(response => {
-                for (let key in response.data) {
-                    DUMMY_DATA.push({
-                        ministryId: key,
-                        ...response.data[key]
-                    })
-                }
-                setTabData(DUMMY_DATA);
+        const params = new URLSearchParams({
+            search_by: 'ministry_wise',
+            order_by: 'total',
+            order_type: 'DESC'
+        });
+            getMinistryWiseData(params).then(response => {
+                setTabData(response.data.data.value);
 
             })
     }, []);
