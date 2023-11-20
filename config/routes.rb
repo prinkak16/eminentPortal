@@ -69,7 +69,8 @@ Rails.application.routes.draw do
       namespace :gom, path: 'gom' do
         get '/minister_list', to: 'gom#minister_list'
         get '/assigned_ministries', to: 'gom#search_assigned_ministries'
-        get '/assigned_ministries_by_filters', to: 'gom#assigned_ministries_by_filters'
+        get '/assigned_ministries_by_filters', to: 'gom#filter_assigned_ministries'
+        post '/manual_upload/minister_assistant_mapping', to: 'gom#upload_minister_assistant_mapping'
       end
 
       namespace :vacancy, path: 'vacancy' do
@@ -79,9 +80,6 @@ Rails.application.routes.draw do
         get '/list', to: 'vacancy#list_ministry_wise'
       end
 
-      namespace :user, path: 'user' do
-        post '/manual_upload/minister_assistant_mapping', to: 'user#upload_minister_assistant_mapping'
-      end
       namespace :user, path: 'user/:user_id' do
         get '/assigned_ministries', to: 'user#assigned_ministries'
         post '/assign_ministries', to: 'user#assign_ministries'
