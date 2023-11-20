@@ -90,7 +90,6 @@ const FormWrap=({userData})=>{
                             pathname: '/'
                         });
                     }
-
                     handleNext();
                 }
             });
