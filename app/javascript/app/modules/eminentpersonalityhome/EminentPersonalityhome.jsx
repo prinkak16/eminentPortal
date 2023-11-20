@@ -20,7 +20,6 @@ const EminentPersonality=()=> {
     }
 
     const fetchUserByNumber = () => {
-        debugger
         let phoneNumber = isValuePresent(location.state?.eminent_number) ? location.state.eminent_number : localStorage.getItem('eminent_number')
         if (phoneNumber) {
             let numberString = `${phoneNumber}`;
