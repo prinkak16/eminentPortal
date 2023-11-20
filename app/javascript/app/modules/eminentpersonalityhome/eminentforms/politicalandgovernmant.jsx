@@ -218,6 +218,17 @@ const PolticalandGovrnform =(props)=>{
         setElectoralDetails(fields)
     }
 
+    useEffect(() => {
+        if (props.formValues.election_contested) {
+            if (!isValuePresent(props.formValues.election_fought)) {
+                setElectoralDetails([{
+                    election_type: '', election_details: {}
+                }])
+            }
+        }
+
+    },[props.formValues.election_contested])
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -433,7 +444,9 @@ const PolticalandGovrnform =(props)=>{
                                                     onChangeValue={changeElectionType}
                                                     formIndex={index}
                                                 />
+                                                {electoralDetails.length > 1 &&
                                                 <Primarybutton addclass="deletebtn delete-btn" starticon={<DeleteIcon/>} handleclick={()=>deleteElectoralFields(index)}/>
+                                                }
                                             </div>
                                     </Grid>
                                     <Grid item xs={9}>
