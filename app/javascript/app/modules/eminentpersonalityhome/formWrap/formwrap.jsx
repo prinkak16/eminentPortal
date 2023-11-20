@@ -13,6 +13,7 @@ import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
 import {electionWiseJson, isValuePresent, showErrorToast, toSnakeCase} from "../../utils";
 import {ApiContext} from "../../ApiContext";
+import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
 const FormWrap=({userData})=>{
@@ -24,7 +25,7 @@ const FormWrap=({userData})=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-
+    const navigate = useNavigate();
     const [steps, setSteps] = useState([PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform, Refferedform])
 
     useEffect(() => {
@@ -84,6 +85,11 @@ const FormWrap=({userData})=>{
         if (!isError) {
             getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin).then(response => {
                 if (response) {
+                    if (activeStep + 1 === 6) {
+                        navigate({
+                            pathname: '/'
+                        });
+                    }
                     handleNext();
                 }
             });
