@@ -101,7 +101,6 @@ class Api::V1::Gom::GomController < BaseApiController
 
       # fetch all the user ids
       user_ids = user_ministries.map { |row| row['user_id'] }
-      puts user_ids
 
       # fetch all the user information
       user_information = fetch_user_information(user_ids)
@@ -205,6 +204,7 @@ class Api::V1::Gom::GomController < BaseApiController
       user_information = fetch_user_information(user_ids)
       user_information = user_information[:user].index_by(&:user_id)
 
+      # fetch all the auth user information
       auth_user_information = fetch_auth_users(user_ids)
       auth_user_information = auth_user_information[:user].index_by(&:id)
 
