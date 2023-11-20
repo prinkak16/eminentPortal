@@ -1,17 +1,18 @@
 import * as React from 'react';
-import {Button,Tab, Box, TextField, styled, InputLabel } from '@mui/material';
+import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
-import {getData} from "../../../../api/eminentapis/endpoints";
+import {getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -38,66 +39,57 @@ export default function BasicTabs() {
     const handleShow = () => setShow(true);
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState();
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
+    const [alertMessage, setAlertMessage] = useState(false)
+    const notify = () => toast("CSV file Uploaded successfully");
+    const handleEmailChange = (e) => {
+        const inputValue = e.target.value;
+        setEmail(inputValue);
+        if (inputValue && isValidEmail === false) {
+            setIsValidEmail(true);
+        }
     };
-    const isValidEmailFormat = (email) => {
-        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
     };
+
     const uploadExcel = (event) => {
-        const file = event.target.files[0]
-        const allowedExtensions = ['.xlsx', '.xls'];
-        const fileExtension = file.name.split('.').pop().toLowerCase();
-        if (allowedExtensions.includes('.' + fileExtension)) {
-            setFileName(file.name);
-            setExcelFile(file);
+        const file = event.target.files[0];
+        const allowedExtensions = ['.csv'];
+
+        if (file) {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (allowedExtensions.includes('.' + fileExtension)) {
+                setFileName(file.name);
+                setExcelFile(file);
+            } else {
+                alert('Please upload CSV files with .csv extension.');
+            }
+        }
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (excelFile && validateEmail(email)) {
+            setIsValidEmail(true);
+            const formData = new FormData();
+            formData.append('file', excelFile);
+            formData.append('email', email);
+            uploadVacancy(formData).then((response) => response.json())
+            setShow(false)
+            notify()
         } else {
-            alert('Please upload Excel files with .xlsx or .xls extension.');
+            setIsValidEmail(false);
         }
     }
-    const handleSubmit = (event, file) => {
-        event.preventDefault();
-        if(file){
-
-            const apiUrl = 'your_backend_api_url';
-            const formData = new FormData();
-            if (isValidEmailFormat(email)) {
-                setIsValidEmail(true);
-                formData.append('excelFile', file, email);
-            } else {
-                setIsValidEmail(false);
-            }
-            fetch(apiUrl, {
-                method: 'POST',
-                body: formData,
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('File uploaded successfully', data);
-                })
-                .catch((error) => {
-                    console.error('Error uploading file', error);
-                });
-        } else {
-            console.error('No file selected');
-        }
-        const handleSubmit = (event) => {
-            event.preventDefault();
-
-            // Use the browser's built-in email validation
-            if (isValidEmailFormat(email)) {
-                // Valid email format
-                setIsValidEmail(true);
-                // Proceed with form submission
-            } else {
-                // Invalid email format
-                setIsValidEmail(false);
-            }
-        };
+    const fileUrl="https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
+    const downloadSampleVacancy=()=>{
+        window.open(fileUrl,'_blank')
     }
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
@@ -151,13 +143,14 @@ export default function BasicTabs() {
             </svg>
             Add New
         </button>
-    } else if (value === '2') {
+    } else if (value === '4') {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
                     Upload File
                 </Button>
-                <Modal show={show} onHide={handleClose}
+
+                <Modal  show={show} onHide={handleClose}
                        aria-labelledby="contained-modal-title-vcenter"
                        centered
                 >
@@ -165,6 +158,7 @@ export default function BasicTabs() {
                         <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <ToastContainer />
                         <div className="excel-upload d-flex align-items-center flex-column w-100">
                             <div className='excel-icon-name'>
                                 <span className="material-icons"><PdfIcon/></span>
@@ -172,17 +166,16 @@ export default function BasicTabs() {
                             </div>
                             <div className='upload-excel-button'>
                                 <Button component="label" variant="contained">
-                                    <VisuallyHiddenInput accept=".xlsx, .xls" onChange={uploadExcel} type="file"/><br/>
+                                    <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
                                     Drag and Drop Excel file here <br/> or <br/> click here to upload
                                 </Button>
                                 <TextField
-                                    className="mt-3"
+                                    variant="outlined"
                                     type="email"
-                                    placeholder="Enter your email"
                                     value={email}
                                     onChange={handleEmailChange}
                                     error={!isValidEmail}
-                                    helperText={!isValidEmail ? 'Invalid email format' : ''}
+                                    helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
                                 />
                             </div>
                         </div>
@@ -191,7 +184,7 @@ export default function BasicTabs() {
                     <Modal.Footer>
                         <button
                             className="btn"
-                            onClick={() => setWantToAddNew(false)}>
+                            onClick={handleClose}>
                             Cancel
                         </button>
                         <button
@@ -199,7 +192,9 @@ export default function BasicTabs() {
                             Submit
                         </button>
                         <button
-                            className="btn">
+                            className="btn"
+                            onClick={downloadSampleVacancy}
+                        >
                             Download sample file
                         </button>
                     </Modal.Footer>
@@ -222,19 +217,22 @@ export default function BasicTabs() {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
-                        <Tab label="Master of Vacancies" value="2" />
-                        <Tab label="Slotting" value="3" />
-                        <Tab label="File Stauts" value="4" />
+                        <Tab label="Allotment" value="2" />
+                        <Tab label="File Stauts" value="3" />
+                        <Tab label="Master of Vacancies" value="4" />
+                        <Tab label="Slotting" value="5" />
+                        <Tab label="GOM Management" value="6" />
+
                     </TabList>
                     {buttonContent}
                 </Box>
                 <TabPanel value="1">
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="2">
+                <TabPanel value="4">
                     <MasterVacancies  tabId={value}/>
                 </TabPanel>
-                <TabPanel value="3">
+                <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
             </TabContext>

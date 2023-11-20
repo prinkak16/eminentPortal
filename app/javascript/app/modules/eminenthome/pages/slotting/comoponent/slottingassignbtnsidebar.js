@@ -4,7 +4,9 @@ import {
     Box,
     Drawer,
     Divider,
-    Typography
+    Typography,
+    TextField,
+    Button
 
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +21,8 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import './slottingassignbtnsidebar.css'
+import AddIcon  from '@mui/icons-material/Add'
+import MinimizeIcon from '@mui/icons-material/Minimize';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -88,6 +92,21 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <div className="vacancytostate">
+                    <div>
+                        <Typography>
+                            Vacancy Count
+                        </Typography>
+                        <div>
+                            <Button><MinimizeIcon/></Button>
+                            <TextField type="number" name="count"/>
+                            <Button><AddIcon/></Button>
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
             </Drawer>
         </Box>
     );
