@@ -5,7 +5,7 @@ class Admin::AdminController < ApplicationController
   include MailHelper
 
   def manual_upload
-    permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+    permission_exist = is_permissible('Eminent', 'Whitelisting')
     if permission_exist.nil?
       return render 'home/unauthorized'
     else
@@ -14,7 +14,7 @@ class Admin::AdminController < ApplicationController
   end
   def manual_upload_data
     begin
-      permission_exist = is_permissible('EminentAdmin', 'Whitelisting')
+      permission_exist = is_permissible('Eminent', 'Whitelisting')
       if permission_exist.nil?
         redirect_to admin_manual_upload_path, allow_other_host: true
         return
