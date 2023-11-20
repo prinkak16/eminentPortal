@@ -22,7 +22,7 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks({style, onSelectMinistries, data}) {
-    debugger
+
     // console.log('style is ',style)
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);

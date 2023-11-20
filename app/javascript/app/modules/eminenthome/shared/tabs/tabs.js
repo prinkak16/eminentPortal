@@ -223,9 +223,8 @@ export default function BasicTabs({ onSwitchTab }) {
                         <Tab label="File Stauts" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
-                        <Tab label="GOM Management" value="6" />
 
-                        <Tab label="GOM Management" value="4" />
+                        <Tab label="GOM Management" value="6" />
                     </TabList>
                     {buttonContent}
                 </Box>
@@ -238,7 +237,7 @@ export default function BasicTabs({ onSwitchTab }) {
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="4">
+                <TabPanel value="6">
                     <GomPage tabId={value}/>
                 </TabPanel>
 

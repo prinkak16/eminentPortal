@@ -72,8 +72,8 @@ function GomPage({tabId}) {
     };
     const AssignUpdate = () =>{
         assignMinistriesAndMinister(ministryIds, ministerId).then(res => {
-            console.log(res);
-            alert("You have successfully assign the ministry to the minister.")
+            // console.log(res);
+            // alert("You have successfully assign the ministry to the minister.")
         })
     }
     const handleMinistryIds = (ministryIds) => {
