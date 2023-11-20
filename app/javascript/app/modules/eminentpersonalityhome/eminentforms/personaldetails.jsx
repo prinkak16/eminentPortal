@@ -56,7 +56,7 @@ const PersonalDetails = (props) => {
     const [selectedLanguages, setSelectedLanguages] = useState(isValuePresent(props.formValues.languages) ? props.formValues.languages : []);
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
-
+    const [eminentAge, setEminentAge] = useState(props.formValues.dob)
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
@@ -117,16 +117,17 @@ const PersonalDetails = (props) => {
         }
     }
     const calculateAge = (dob) => {
-        if (!dob) return '';
-        const today = new Date();
-        const birthDate = new Date(dob);
-        let age = today.getFullYear() - birthDate.getFullYear();
+            if (dob.$y === null) return '';
+            const today = new Date();
+            const birthDate = new Date(dob);
+            let age = today.getFullYear() - birthDate.getFullYear();
 
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+
     };
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
@@ -147,6 +148,7 @@ const PersonalDetails = (props) => {
     }
 
     const handleDateChange = (event)    => {
+        setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
     const dobFormat = (date) => {
@@ -244,7 +246,7 @@ const PersonalDetails = (props) => {
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {calculateAge(dobFormat(props.formValues.dob))} Years</Typography>
+                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge ))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
