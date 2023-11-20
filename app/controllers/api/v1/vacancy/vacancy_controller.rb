@@ -187,25 +187,18 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
             SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
             SUM(1) AS total
           FROM public.user_ministries AS um
-          LEFT JOIN public.ministries AS ministry
-          ON um.ministry_id = ministry.id
-          LEFT JOIN public.departments AS dept
-          ON ministry.id = dept.ministry_id
-          LEFT JOIN public.organizations AS org
-          ON dept.id = org.department_id
           LEFT JOIN public.vacancies AS vac
-          ON ministry.id = vac.ministry_id
+          ON um.ministry_id = vac.ministry_id
+          LEFT JOIN public.ministries AS ministry
+          ON vac.ministry_id = ministry.id
           WHERE
             um.is_minister IS false
             AND
             um.user_id = #{current_user.id}
             AND
-            org.country_state_id IN (#{state_id_search})
+            vac.country_state_id IN (#{state_id_search})
         "
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
-        sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
-        sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
-        sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
         sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
           GROUP BY
@@ -227,31 +220,58 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       when 'organization_wise'
         sql = "
           SELECT
-            ministry.id as ministry_id,
-            ministry.name as ministry_name,
-            dept.id as dept_id,
-            dept.name as dept_name,
-            org.id as org_id,
-            org.name as org_name,
-            org.is_listed as is_listed,
-            SUM(CASE WHEN vac.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant,
-            SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
-            SUM(1) AS total
-          FROM public.user_ministries AS um
-          LEFT JOIN public.ministries AS ministry
-          ON um.ministry_id = ministry.id
-          LEFT JOIN public.departments AS dept
-          ON ministry.id = dept.ministry_id
-          LEFT JOIN public.organizations AS org
-          ON dept.id = org.department_id
-          LEFT JOIN public.vacancies AS vac
-          ON ministry.id = vac.ministry_id
-          WHERE
-            um.is_minister IS false
-            AND
-            um.user_id = #{current_user.id}
-            AND
-            org.country_state_id IN (#{state_id_search})
+            min_info.ministry_id,
+            min_info.ministry_name,
+            jsonb_agg(
+              DISTINCT jsonb_build_object(
+                'dept_id', min_info.dept_id,
+                'dept_name', min_info.dept_name,
+                'org_info', min_info.org_info
+              )
+            ) AS dept_info
+          FROM (
+             SELECT
+                data_info.ministry_id,
+                data_info.ministry_name,
+                data_info.dept_id,
+                data_info.dept_name,
+                jsonb_agg(
+                  DISTINCT jsonb_build_object(
+                    'org_id', data_info.org_id,
+                    'org_name', data_info.org_name,
+                    'is_listed', data_info.is_listed,
+                    'vacant', data_info.vacant,
+                    'occupied', data_info.occupied,
+                    'total', data_info.total
+                  )
+                ) AS org_info
+             FROM (
+                SELECT
+                  ministry.id as ministry_id,
+                  ministry.name as ministry_name,
+                  dept.id as dept_id,
+                  dept.name as dept_name,
+                  org.id as org_id,
+                  org.name as org_name,
+                  org.is_listed as is_listed,
+                  SUM(CASE WHEN vac.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant,
+                  SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
+                  SUM(1) AS total
+                FROM public.user_ministries AS um
+                LEFT JOIN public.vacancies AS vac
+                ON um.ministry_id = vac.ministry_id
+                LEFT JOIN public.ministries AS ministry
+                ON vac.ministry_id = ministry.id
+                LEFT JOIN public.departments AS dept
+                ON vac.department_id = dept.id
+                LEFT JOIN public.organizations AS org
+                ON vac.organization_id = org.id
+                WHERE
+                  um.is_minister IS false
+                  AND
+                  um.user_id = #{current_user.id}
+                  AND
+                  org.country_state_id IN (#{state_id_search})
         "
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
@@ -259,30 +279,33 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
         sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
+            GROUP BY
+              ministry.id,
+              ministry.name,
+              dept.id,
+              dept.name,
+              org.id,
+              org.name
+            ORDER BY #{order_by} #{order_type}
+          ) AS data_info
           GROUP BY
-            ministry.id,
-            ministry.name,
-            dept.id,
-            dept.name,
-            org.id,
-            org.name,
-            org.is_listed
-          ORDER BY #{order_by} #{order_type}
+            data_info.ministry_id,
+            data_info.ministry_name,
+            data_info.dept_id,
+            data_info.dept_name
+        ) AS min_info
+        GROUP BY
+          min_info.ministry_id,
+          min_info.ministry_name
         "
+
         stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
             ministry_id: stat.ministry_id.present? ? stat.ministry_id : nil,
             ministry_name: stat.ministry_name.present? ? stat.ministry_name : nil,
-            dept_id: stat.dept_id.present? ? stat.dept_id : nil,
-            dept_name: stat.dept_name.present? ? stat.dept_name : nil,
-            org_id: stat.org_id.present? ? stat.org_id : nil,
-            org_name: stat.org_name.present? ? stat.org_name : nil,
-            is_listed: stat.is_listed.present? ? stat.is_listed : nil,
-            vacant: stat.vacant.present? ? stat.vacant : nil,
-            occupied: stat.occupied.present? ? stat.occupied : nil,
-            total: stat.total.present? ? stat.total : nil
+            dept_info: stat.dept_info.present? ? stat.dept_info : nil
           }
         end
       when 'vacancy_wise'
