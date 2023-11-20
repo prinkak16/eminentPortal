@@ -64,6 +64,7 @@ export default function FiltersSidebar(props) {
             setExpandedFilter('');
         } else {
             setExpandedFilter(value);
+            setExpandedFilter(value);
         }
     };
 
