@@ -106,10 +106,18 @@ class Api::V1::Gom::GomController < BaseApiController
       user_information = fetch_user_information(user_ids)
       user_information = user_information[:user].index_by(&:user_id)
 
+      # fetch all the auth user information
+      auth_user_information = fetch_auth_users(user_ids)
+      auth_user_information = auth_user_information[:user].index_by(&:id)
+
       user_ministries.each do |user_ministry|
         assigned_ministries << {
           user_id: user_ministry.user_id.present? ? user_ministry.user_id : nil,
-          name: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]].name : nil,
+          name: user_information[user_ministry.user_id].present? ?
+                  user_information[user_ministry.user_id].name :
+                  auth_user_information[user_ministry.user_id].present? ?
+                    auth_user_information[user_ministry.user_id].name :
+                    nil,
           allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
           assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
           assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
@@ -196,10 +204,18 @@ class Api::V1::Gom::GomController < BaseApiController
       user_information = fetch_user_information(user_ids)
       user_information = user_information[:user].index_by(&:user_id)
 
+      # fetch all the auth user information
+      auth_user_information = fetch_auth_users(user_ids)
+      auth_user_information = auth_user_information[:user].index_by(&:id)
+
       user_ministries.each do |user_ministry|
         assigned_ministries << {
           user_id: user_ministry.id.present? ? user_ministry.id : nil,
-          name: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]].name : nil,
+          name: user_information[user_ministry[:id]].present? ?
+                  user_information[user_ministry[:id]].name :
+                  auth_user_information[user_ministry[:id]].present? ?
+                    auth_user_information[user_ministry[:id]].name :
+                    nil,
           allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
           assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
           assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
