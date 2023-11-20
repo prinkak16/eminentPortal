@@ -32,12 +32,11 @@ export const uploadVacancy = (formData) => {
     });
 };
 
-export const fetchMobile = (config,number) => {
+export const fetchMobile = (number) => {
     return axios.get(apiBaseUrl + 'custom_member_forms/fetch_by_number',{
         params: {
             phone_number: number
-        },
-        headers: config?.headers
+        }
     });
 }
 
