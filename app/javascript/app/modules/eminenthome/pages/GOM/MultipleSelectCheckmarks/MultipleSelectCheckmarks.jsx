@@ -9,6 +9,7 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import './MultipleSelectCheckmarks.scss'
 import {getMinistry} from "../../../../../api/eminentapis/endpoints"
+import SearchIcon from "../../../../../../../../public/images/SearchOutline.svg";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -20,7 +21,8 @@ const MenuProps = {
     },
 };
 
-export default function MultipleSelectCheckmarks({style, onSelectMinistries}) {
+export default function MultipleSelectCheckmarks({style, onSelectMinistries, data}) {
+    debugger
     // console.log('style is ',style)
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);
@@ -32,7 +34,7 @@ export default function MultipleSelectCheckmarks({style, onSelectMinistries}) {
         })
     }
     useEffect(() => {
-        getMinistryData()
+        getMinistryData();
     }, []);
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -80,11 +82,12 @@ export default function MultipleSelectCheckmarks({style, onSelectMinistries}) {
                         className="input-field"
                         style={{width: '90%', border: 'none', color: 'black'}}
                     />
-                    <img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>
+                    {/*<img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>*/}
+                    <SearchIcon width={'20px'} height={'30px'} />
 
                 </div>
 
-                {ministryData.map((ministry) => (
+                {data.map((ministry) => (
                     <MenuItem key={ministry.id} value={ministry.name}>
                         <Checkbox checked={personName.indexOf(ministry.name) > -1} />
                         <ListItemText primary={ministry.name} />

@@ -9,8 +9,15 @@ import UploadFile from '../../../../../../../../public/images/upload_file.svg'
 import Modal from "react-bootstrap/Modal";
 import EditIcon from "../../../../../../../../public/images/Edit.svg"
 import CloseIcon from "../../../../../../../../public/images/CloseIcon.svg"
+import SearchIcon from "../../../../../../../../public/images/SearchOutline.svg"
 // import axios from "axios";
-import {assignMinistriesAndMinister, getGOMTableData} from "../../../../../api/eminentapis/endpoints"
+import {
+    assignMinistriesAndMinister,
+    getGOMTableData,
+    getMinisters,
+    getMinistry
+} from "../../../../../api/eminentapis/endpoints"
+import axios from "axios";
 function GomPage({tabId}) {
     const [gomTableData, setGomTableData] = useState([]);
     const hiddenFileInput = useRef(null);
@@ -22,6 +29,18 @@ function GomPage({tabId}) {
     const [ministerId, setMinisterId] = useState(null);
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [ministryData, setMinistryData] = useState([]);
+    const [ministerData, setMinisterData] = useState([]);
+
+
+    useEffect(() => {
+        getMinistry().then((res)=>{
+            setMinistryData(res.data.data.ministries);
+        })
+        axios.get('/api/v1/gom/minister_list').then(res => {
+            setMinisterData(res.data.data.ministries);
+        })
+    }, []);
 
     const handleDownload = (url) => {
         const link = document.createElement('a');
@@ -54,6 +73,7 @@ function GomPage({tabId}) {
     const AssignUpdate = () =>{
         assignMinistriesAndMinister(ministryIds, ministerId).then(res => {
             console.log(res);
+            alert("You have successfully assign the ministry to the minister.")
         })
     }
     const handleMinistryIds = (ministryIds) => {
@@ -70,7 +90,7 @@ function GomPage({tabId}) {
                 <div style={{display:"flex",paddingLeft:"10px",gap:"40px",backgroundColor:"#F8F8F8"}} >
                     <div>
                         <p className="mb-0" style={{marginLeft:"15px"}}>Ministry<span style={{color: "#BB0E0F", fontSize: "10px"}}>★</span></p>
-                        <MultipleSelectCheckmarks onSelectMinistries={handleMinistryIds} />
+                        <MultipleSelectCheckmarks data={ministryData} onSelectMinistries={handleMinistryIds} />
                     </div>
                     <div>
                         <p className="mb-0" style={{marginLeft:"15px"}}> Assign to minister<span style={{color: "#BB0E0F", fontSize: "10px"}}>★</span></p>
@@ -90,7 +110,6 @@ function GomPage({tabId}) {
                         style={{display: 'none'}}
                     />
                 </div>
-
                 <br/>
                 <div className="table">
                     <div className="minister-selection">
@@ -112,7 +131,8 @@ function GomPage({tabId}) {
                                  padding: '5px 15px',
                                 marginLeft: '20px'
                             }}>
-                                <img src="SearchOutline.svg" alt="" width={'30px'} height={'30px'}/>
+                                <SearchIcon width={'20px'} height={'30px'} />
+                                {/*<img src={SearchIcon} alt="" width={'30px'} height={'30px'} />*/}
                                 <input
                                     type="text"
                                     placeholder="Search by Ministry"
@@ -126,9 +146,10 @@ function GomPage({tabId}) {
                                 border: '1px solid black',
                                 borderRadius: '10px',
                                 padding: '5px 15px',
-                                // marginTop: ''
                             }}>
-                                <img src="SearchOutline.svg" alt="" width={'30px'} height={'30px'}/>
+                                <SearchIcon width={'20px'} height={'30px'} />
+
+                                {/*<img src={SearchIcon} alt="" width={'30px'} height={'30px'}/>*/}
                                 <input
                                     type="text"
                                     placeholder="Search by Minister"
@@ -233,15 +254,15 @@ function GomPage({tabId}) {
                             <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                         </div>
                         <p>Minister Name</p>
-                        <MultipleSelectCheckmarks style={{width:"200px",margin:1 }}  />
+                        <MultipleSelectCheckmarks data={ministerData} style={{width:"200px",margin:1 }} />
                         <div style={{display:"flex"}}>
                             <div>
-                                <p>Assigned Ministers</p>
-                                <MultipleSelectCheckmarks  style={{width:"200px",margin:1 }} />
+                                <p>Assigned Ministries</p>
+                                <MultipleSelectCheckmarks data={ministryData}  style={{width:"200px",margin:1 }} />
                             </div>
                             <div>
                                 <p>Own Ministry</p>
-                                <MultipleSelectCheckmarks style={{width:"200px" ,margin:1}} />
+                                <MultipleSelectCheckmarks data={ministryData} style={{width:"200px" ,margin:1}} />
                             </div>
                         </div>
                     </div>

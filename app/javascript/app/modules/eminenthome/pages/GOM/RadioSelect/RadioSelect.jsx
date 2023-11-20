@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Radio from '@mui/material/Radio';
 import  {getMinisters} from "../../../../../api/eminentapis/endpoints"
+import SearchIcon from "../../../../../../../../public/images/SearchOutline.svg";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -62,7 +63,8 @@ export default function RadioSelect({onSelectMinister}) {
                             className="input-field"
                             style={{width: '90%', border: 'none', color: 'black'}}
                         />
-                        <img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>
+                        {/*<img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>*/}
+                        <SearchIcon width={'20px'} height={'30px'} />
 
                     </div>
 
@@ -72,10 +74,7 @@ export default function RadioSelect({onSelectMinister}) {
                             <ListItemText primary={ministerName.name} />
                         </MenuItem>
                     ))}
-
                 </Select>
-
-
             </FormControl>
         </div>
     );

@@ -45,13 +45,11 @@ export default function FiltersSidebar(props) {
     useEffect(() => {
         switch (props.tabId) {
             case '4':
-                debugger
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
                 })
                 break;
             default:
-                debugger
                 getFilters().then(res => {
                     setFiltersList(res.data.data)
                 });
