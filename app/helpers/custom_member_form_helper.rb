@@ -30,7 +30,8 @@ module CustomMemberFormHelper
           2,
           3,
           4,
-          5
+          5,
+          6
         ]
       },
       'state_id': {
@@ -301,11 +302,7 @@ module CustomMemberFormHelper
         'PhD and Above'
       ]
     },
-    'profession': {
-      'type': [nil,'string'],
-      'maxLength': 200 # Max length of 200 characters
-    },
-    'professional_positions': {
+    'professions': {
       'type': 'array',
       'items': {
         'type': 'object',
@@ -314,7 +311,7 @@ module CustomMemberFormHelper
             'type': 'string',
             'maxLength': 200 # Max length of 200 characters
           },
-          'organisation': {
+          'organization': {
             'type': 'string',
             'minLength': 2, # Min length of 200 characters
             'maxLength': 200 # Max length of 200 characters
@@ -334,14 +331,11 @@ module CustomMemberFormHelper
             'minimum': 1900,
             'maximum': 3000
           },
-          'current_organization': {
-            'type': 'boolean'
-          }
         },
-        'required': %w[profession organisation position start_year end_year current_organization]
+        'required': %w[profession organization position start_year end_year]
       }
     },
-    'description': {
+    'profession_description': {
       'type': 'string'
     }
   )
@@ -371,9 +365,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
     ]
   )
 
@@ -553,9 +546,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years
@@ -706,9 +698,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years
@@ -727,6 +718,7 @@ module CustomMemberFormHelper
       facebook
       instagram
       attachment
+      attachment_name
     ]
   )
 
@@ -782,9 +774,8 @@ module CustomMemberFormHelper
       address
       educations
       education_level
-      profession
-      professional_positions
-      description
+      professions
+      profession_description
       political_not_applicable
       political_profile
       rss_years
@@ -803,6 +794,7 @@ module CustomMemberFormHelper
       facebook
       instagram
       attachment
+      attachment_name
       reference
     ]
   )

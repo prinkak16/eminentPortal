@@ -29,7 +29,7 @@ import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, form
 import {ApiContext} from "../../ApiContext";
 
 const Educationform = (props) => {
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
@@ -158,8 +158,7 @@ const Educationform = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -180,7 +179,9 @@ const Educationform = (props) => {
 
     const changeProfessionDescription = (e) => {
         setProfessionDescription(e.target.value)
+        props.formValues.profession_description = e.target.value
     }
+
 
     return (
         <>
@@ -334,6 +335,7 @@ const Educationform = (props) => {
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
+                            <ErrorMessage name={`profession_description`} component="div" />
                         </div>
 
                     </Grid>
@@ -352,39 +354,12 @@ Educationform.initialValues = {
     profession_description:"",
     educations: [],
     professions: [],
-
-
 };
 Educationform.validationSchema = Yup.object().shape({
     education_level: Yup.string().required('Please select your high qualification'),
-    profession_description: Yup.string().required('Please enter your profession_description'),
+    profession_description: Yup.string().required('Please enter your profession description'),
 
-    educations: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                course: Yup.string().required('Please enter your course'),
-                college: Yup.string().required('Please enter your college'),
-                end_year: Yup.string().required('Please Select  end year'),
-                start_year: Yup.string().required('Please Select  start year'),
-                university: Yup.string().required('Please enter your university'),
-                qualification: Yup.string().required('Please enter your qualification'),
-                highest_qualification: Yup.string().required('Please enter your Pincode'),
-            }),
-        })
-    ),
 
-    professions: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                Position: Yup.string().required('Please enter your Address'),
-                profession: Yup.string().required('Please enter your Street'),
-                organization: Yup.string().required('Please Select your District'),
-                start_year: Yup.string().required('Please Select your State'),
-                end_year: Yup.string().required('Please enter your Pincode'),
-            }),
-        })
-    ),
+
 });
 export default Educationform

@@ -84,4 +84,16 @@ module UserHelper
     end
   end
 
+  def fetch_auth_users(user_ids)
+    result = {
+      'isExist': false,
+      'user': []
+    }
+    if user_ids.length.positive?
+      result[:isExist] = true
+      result[:user] = AuthUser.where(id: user_ids)
+    end
+    result
+  end
+
 end

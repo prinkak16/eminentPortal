@@ -23,7 +23,7 @@ import OtherNumberField from "../component/otherFormFields/otherNumberInput";
 import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
-    const {config} = useContext(ApiContext)
+    const {config,isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -31,11 +31,10 @@ const Communicationform =(props)=>{
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [formValues, setFormValues] = useState([])
-    const [curPinData, setCurPinData] = useState({district: [], state: []})
-    const [homePinData, setHomePinData] = useState({district: [], state: []})
+    const [formValues, setFormValues] = useState(props.formValues.address)
     const [otherPinData, setOtherPinData] = useState([])
     const [mobileFields, setMobileFields] =useState([])
+    const [sameAddress, setSameAddress] = useState(props.formValues.check || false)
 
     useEffect(() => {
         const mobiles = props.formValues.mobiles
@@ -48,19 +47,19 @@ const Communicationform =(props)=>{
         }
     }, [])
 
+
         useEffect(() => {
         const otherAddress = props.formValues.other_address
         if (isValuePresent(otherAddress)) {
             setFormValues(otherAddress)
         }
-    }, [])
+          }, [])
 
 
 
     let addFormFields = () => {
         setFormValues([...formValues, {
-            id: uuidv4(),
-            address_type: "",
+            address_type: "Other",
             flat: "",
             pincode: "",
             street: "",
@@ -75,25 +74,18 @@ const Communicationform =(props)=>{
     }
 
 
-    const handlePinCodeChange = (pinCode, type, otherFromIndex) => {
+    const handlePinCodeChange = (pinCode, otherFromIndex) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
+            formValues[otherFromIndex].state = ''
             axios.get(pinApi)
                 .then((response) => {
                     const responseData = response.data[0];
                     if (responseData.Status === 'Success') {
                         const district = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        if (type === 'pincode') {
-                           setCurPinData({district: district, state: state})
-                            props.formValues.current_address[0].state = state[0]
-                        } else if (type === 'home_pincode') {
-                            setHomePinData({district: district, state: state})
-                            props.formValues.home_address[0].state = state[0]
-                        } else if (type === 'other_pincode') {
-                            setOtherPinData([...otherPinData, {id: otherFromIndex, district: district, state: state}])
-                            formValues[otherFromIndex].state = state[0]
-                        }
+                        setOtherPinData([...otherPinData, {id: otherFromIndex, district: district, state: state}])
+                        formValues[otherFromIndex].state = state[0]
                     }
                 })
                 .catch((error) => {
@@ -138,48 +130,28 @@ const Communicationform =(props)=>{
 
 
     useEffect(() => {
-        if (props.formValues.current_address[0].pincode.length > 5) {
-            handlePinCodeChange(props.formValues.current_address[0].pincode, 'pincode')
+        if (sameAddress) {
+            for (const key in formValues[0]) {
+                if (key !== 'address_type') {
+                    if (formValues[1].hasOwnProperty(key)) {
+                        formValues[1][key] = formValues[0][key]
+                    }
+                }
+            }
         }
-    }, [props.formValues.current_address[0].pincode]);
+    }, [sameAddress, formValues[0]]);
 
     useEffect(() => {
-        if (props.formValues.home_address[0].pincode.length > 5) {
-            handlePinCodeChange(props.formValues.home_address[0].pincode, 'home_pincode')
+        if (sameAddress) {
+            handlePinCodeChange(props.formValues.address[1].pincode,  1)
         }
-
-    }, [props.formValues.home_address[0].pincode]);
-
-    const changeDistrictState = (value, name, type) => {
-            if (name === 'District') {
-                props.formValues[type][0].district = value
-            } else {
-                props.formValues[type][0].state = value
-            }
-    }
-
-    const sameAddress = (event) => {
-        if (event.target.checked) {
-            setHomePinData(curPinData)
-            props.formValues.home_flat = props.formValues.flat
-            props.formValues.home_pincode = props.formValues.pincode
-            props.formValues.home_street = props.formValues.street
-            props.formValues.home_district = props.formValues.district
-            props.formValues.home_state = props.formValues.state
-        }
-        if (!event.target.checked) {
-            setHomePinData({district: [], state: []})
-            props.formValues.home_flat = ''
-            props.formValues.home_pincode = ''
-            props.formValues.home_street = ''
-            props.formValues.home_district = ''
-            props.formValues.home_state = ''
-        }
-    }
+    },[props.formValues.address[1].pincode])
 
     const otherAddressChange = (name, index) => (value) => {
         if (name === 'pincode') {
-            handlePinCodeChange(value, 'other_pincode', index)
+            otherAddressChange('district', index)('')
+            otherAddressChange('state', index)('')
+            handlePinCodeChange(value,  index)
         }
 
         setFormValues((prevFormValues) => {
@@ -217,14 +189,13 @@ const Communicationform =(props)=>{
     }
 
     useEffect(() => {
-        props.formValues.other_address = formValues
+        props.formValues.address = formValues
     },[formValues])
 
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config).then(response => {
-            console.log('API response:', response.data);
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
         });
     }
 
@@ -317,167 +288,55 @@ const Communicationform =(props)=>{
                                     <ErrorMessage name="email" component="div" />
                                 </Grid>
                             </Grid>
-                            <Grid container spacing={2} sx={{mb:3}}>
-                                <Grid item xs={12} >
-                                    <Grid className="addressfields grid-wrap" container spacing={2} sx={{ pt:2,pb:6}}>
-                                        <Grid item xs={12}>
-                                            <Formheading number="2" heading="Address" />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>{1}</Box> Current Address</FormLabel>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
-                                            <Inputfield type="text"
-                                                        value={props.formValues.current_address[0].flat}
-                                                        name={`current_address.${0}.flat`}
-                                                        placeholder="Enter your address"/>
-                                            <ErrorMessage name={`current_address.${0}.flat`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>PIN Code <mark>*</mark></FormLabel>
-                                            <NumberField
-                                                className=''
-                                                value={props.formValues.current_address[0].pincode}
-                                                name={`current_address.${0}.pincode`}
-                                                placeholder='Enter Pin Code'
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
-
-                                                }}
-                                            />
-                                            <ErrorMessage name={`current_address.${0}.pincode`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
-                                            <Field type="text"
-                                                   id="street"
-                                                   selectedValue={props.formValues.current_address[0].street}
-                                                   name={`current_address.${0}.street`}
-                                                   as={TextField} />
-                                            <ErrorMessage name={`current_address.${0}.street`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Town/City <mark>*</mark></FormLabel>
-                                            <AutoCompleteDropdown
-                                                name={'District'}
-                                                selectedValue={props.formValues.current_address[0].district}
-                                                listArray={curPinData.district}
-                                                onChangeValue={changeDistrictState}
-                                                dropDownType={'current_address'} />
-                                            <ErrorMessage name={`current_address.${0}.district`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>State <mark>*</mark></FormLabel>
-                                            <AutoCompleteDropdown
-                                                name={'State'}
-                                                selectedValue={props.formValues.current_address[0].state}
-                                                listArray={curPinData.state}
-                                                onChangeValue={changeDistrictState}
-                                                dropDownType={'current_address'} />
-                                            <ErrorMessage name={`current_address.${0}.state`} component="div" />
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pt:5,pb:5}}>
-                                        <Grid item xs={5}>
-                                            <FormLabel className="light-circle"><Box className="addnumber" component="div" sx={{ display: 'inline-block' }}>2</Box> Home Town Address</FormLabel>
-                                        </Grid>
-                                        <Grid className='testright' item xs={7}>
-                                            <FormLabel>Home town address is same as current?  Yes<mark>*</mark></FormLabel>
-                                            <Field onClick={ sameAddress} type="checkbox" name="check" />
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
-                                            <Inputfield
-                                                type="text"
-                                                name={`home_address.${0}.flat`}
-                                                value={props.formValues.home_address[0].flat}
-                                                placeholder="Enter your address"
-                                            />
-                                            <ErrorMessage name={`home_address.${0}.flat`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>PIN Code <mark>*</mark></FormLabel>
-                                            <NumberField
-                                                className=''
-                                                name={`home_address.${0}.pincode`}
-                                                value={props.formValues.home_address[0].pincode}
-                                                placeholder='Enter Pin Code'
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
-
-                                                }}
-                                            />
-                                            <ErrorMessage name={`home_address.${0}.pincode`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
-                                            <Inputfield type="text"
-                                                        name={`home_address.${0}.street`}
-                                                        value={props.formValues.home_address[0].street}
-                                                        placeholder="Enter Area, Street, Etc.s"
-                                            />
-                                            <ErrorMessage name={`home_address.${0}.pincode`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>Town/City <mark>*</mark></FormLabel>
-                                            <AutoCompleteDropdown
-                                                name={'District'}
-                                                selectedValue={props.formValues.home_address[0].district}
-                                                listArray={homePinData.district}
-                                                onChangeValue={changeDistrictState}
-                                                dropDownType={'home_address'} />
-                                            <ErrorMessage name={`home_address.${0}.district`} component="div" />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormLabel>State <mark>*</mark></FormLabel>
-                                            <AutoCompleteDropdown
-                                                name={'State'}
-                                                selectedValue={props.formValues.home_address[0].state}
-                                                listArray={homePinData.state}
-                                                onChangeValue={changeDistrictState}
-                                                dropDownType={'home_address'} />
-                                            <ErrorMessage name={`home_address.${0}.state`} component="div" />
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
+                            <Grid container spacing={2} sx={{mb:3}} class='mt-4'>
                                 <Grid item xs={12} className="pt-0">
+                                    <Grid item xs={12}>
+                                        <Formheading number="2" heading="Address" />
+                                    </Grid>
                                     <Grid className="addressfields" sx={{pb:5}}>
                                         {formValues && formValues.map((element, index) => (
                                             <div>
                                                 <Grid className="addressfields grid-wrap"  container spacing={2} sx={{ pb:5, pt:5}}>
-                                                    <Grid item xs={12}>
+                                                    <Grid item xs={12} className="d-flex">
                                                         <FormLabel className="light-circle">
                                                             <Box
                                                                 className="addnumber"
                                                                 component="div" sx={{ display: 'inline-block' }}
                                                             >
-                                                                {index +3}
+                                                                {index + 1}
                                                             </Box>
-                                                            Other
+                                                            {element.address_type}
                                                         </FormLabel>
-
-
+                                                        {element.address_type === 'Home Town Address' &&
+                                                            <Grid className='testright ml-auto-important' item xs={7}>
+                                                                <FormLabel>Home town address is same as current? Yes
+                                                                    <mark>*</mark>
+                                                                </FormLabel>
+                                                                <Field onClick={() => setSameAddress(!sameAddress)} type="checkbox"
+                                                                       name="check"/>
+                                                            </Grid>
+                                                        }
                                                     </Grid>
-                                                    <Grid item xs={6}>
-                                                        <FormLabel>Type of Address<mark>*</mark></FormLabel>
-                                                        <OtherInputField type="text"
-                                                                    value={fieldValue(index,'address_type')}
-                                                                    onChange={otherAddressChange('address_type', index)}
-                                                                    placeholder="Example Offce Address Capital Address...Etc. "/>
 
-                                                    </Grid>
-
+                                                    {element.address_type !== 'Home Town Address' &&  element.address_type !== 'Current Address' &&
+                                                        <Grid item xs={6}>
+                                                            <FormLabel>Type of Address
+                                                                <mark>*</mark>
+                                                            </FormLabel>
+                                                            <OtherInputField type="text"
+                                                                             value={fieldValue(index, 'address_type')}
+                                                                             onChange={otherAddressChange('address_type', index)}
+                                                                             placeholder="Example Offce Address Capital Address...Etc. "/>
+                                                            <ErrorMessage name={`address.${index}.address_type`} component="div"/>
+                                                        </Grid>
+                                                    }
                                                     <Grid item xs={12}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                                         <OtherInputField type="text"
                                                                     value={fieldValue(index,'flat')}
                                                                     onChange={otherAddressChange('flat', index)}
                                                                     placeholder="Example Offce Address Capital Address...Etc. "/>
-                                                        {otherAddressError('flat', index) && <p>Please enter flat details</p>}
+                                                        <ErrorMessage name={`address.${index}.flat`} component="div" />
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
@@ -492,7 +351,7 @@ const Communicationform =(props)=>{
 
                                                             }}
                                                         />
-                                                        {otherAddressError('pincode', index) && <p>Please enter pincode</p>}
+                                                        <ErrorMessage name={`address.${index}.pincode`} component="div" />
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
@@ -501,7 +360,7 @@ const Communicationform =(props)=>{
                                                                          onChange={otherAddressChange('street', index)}
                                                                          placeholder="Enter Area, Street, Etc.s"
                                                         />
-                                                        {otherAddressError('street', index) && <p>Please enter street details </p>}
+                                                        <ErrorMessage name={`address.${index}.street`} component="div" />
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
@@ -511,7 +370,7 @@ const Communicationform =(props)=>{
                                                             listArray={otherDistrictStateArray('district', index)}
                                                             onChangeValue={otherAddressChange('district', index)}
                                                         />
-                                                        {otherAddressError('district', index) && <p>Please select district</p>}
+                                                        <ErrorMessage name={`address.${index}.district`} component="div" />
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
@@ -521,7 +380,7 @@ const Communicationform =(props)=>{
                                                             listArray={otherDistrictStateArray('state', index)}
                                                             onChangeValue={otherAddressChange('state', index)}
                                                         />
-                                                        {otherAddressError('state', index) &&  <p>Please select state</p>}
+                                                        <ErrorMessage name={`address.${index}.state`} component="div" />
                                                     </Grid>
                                                 </Grid>
                                                     <Grid item xs={12} className="d-flex align-items-center">
@@ -535,7 +394,7 @@ const Communicationform =(props)=>{
                                                                     etc.)</Typography>
                                                             </div>
                                                         }
-                                                        {formValues.length >= 1 ? (
+                                                        {formValues.length === index + 1 ? (
                                                             <Primarybutton addclass="deletebtn"
                                                                            buttonlabel={<DeleteIcon/>}
                                                                            handleclick={() => removeFormFields(index)}/>
@@ -576,20 +435,24 @@ Communicationform.initialValues = {
     landline: "",
     email:"",
     check:false,
-    current_address:[{
-        flat:"",
-        pincode:"",
-        street:"",
-        district:"",
-        state:"",
-    }],
-    home_address:[{
-        flat:"",
-        pincode:"",
-        street:"",
-        district:"",
-        state:"",
-    }],
+    address:[
+        {
+            address_type: "Current Address",
+            flat: "",
+            pincode: "",
+            street: "",
+            district: "",
+            state: "",
+        },
+        {
+            address_type: "Home Town Address",
+            flat: "",
+            pincode: "",
+            street: "",
+            district: "",
+            state: "",
+        }
+        ],
     other_address:[],
 };
 Communicationform.validationSchema = Yup.object().shape({
@@ -600,7 +463,7 @@ Communicationform.validationSchema = Yup.object().shape({
             'Invalid email format'
         ),
 
-    current_address: Yup.array().of(
+    address: Yup.array().of(
         Yup.object().shape({
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),
@@ -610,28 +473,8 @@ Communicationform.validationSchema = Yup.object().shape({
         })
     ),
 
-    home_address: Yup.array().of(
-        Yup.object().shape({
-            flat: Yup.string().required('Please enter your Address'),
-            street: Yup.string().required('Please enter your Street'),
-            district: Yup.string().required('Please Select your District'),
-            state: Yup.string().required('Please Select your State'),
-            pincode: Yup.string().required('Please enter your Pincode'),
-        })
-    ),
 
-    other_address: Yup.array().of(
-        Yup.object().when('length', {
-            is: (length) => length > 0,
-            then: Yup.object().shape({
-                flat: Yup.string().required('Please enter your Address'),
-                street: Yup.string().required('Please enter your Street'),
-                district: Yup.string().required('Please Select your District'),
-                state: Yup.string().required('Please Select your State'),
-                pincode: Yup.string().required('Please enter your Pincode'),
-            }),
-        })
-    ),
+
 
 });
 export default Communicationform

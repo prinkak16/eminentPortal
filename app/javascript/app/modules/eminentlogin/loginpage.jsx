@@ -5,6 +5,7 @@ import {enterPhoneNumber} from "../utils";
 import {useNavigate} from "react-router-dom";
 import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import {ApiContext} from "../ApiContext";
+import PageDesign from '../../../../../public/images/saffron_bg 1.svg'
 
 const LoginPage = () => {
     const {setAuthToken} = useContext(ApiContext)
@@ -47,9 +48,10 @@ const LoginPage = () => {
     }
 
     return(
-        <div className="container h-100">
+        <div className="container h-100 login-container d-flex">
+            <PageDesign className='login-design' />
             <div className="row h-100 justify-content-center align-items-center">
-                <div className="col-3">
+                <div className="">
                     <div className="justify-content-start">
                         <label>{otpSent ? 'OTP':'Phone Number'}<span className="text-danger">*</span></label>
                         <input className="inputNumber ps-2"

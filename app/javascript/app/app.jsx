@@ -32,7 +32,7 @@ const adminRoutes = <Routes>
 
 function App() {
     const [authToken, setAuthToken ] = useState(localStorage.getItem('auth_token'))
-    let isCandidateLogin = document.getElementById('app').getAttribute('data-candidate-login');
+    let isCandidateLogin = JSON.parse(document.getElementById('app').getAttribute('data-candidate-login'));
     const config = {
         headers: {
             'Authorization': authToken,

@@ -519,6 +519,17 @@ button.cancelbtn{
   gap: 1rem;
 }
 
-.pdf-file-name {
-  cursor: pointer;
+#pdf-file-name {
+  cursor: pointer !important;
+}
+
+.delete-btn {
+  margin-top: 0rem !important;
+}
+
+.ml-auto-important {
+  margin-left: auto !important;
+}
+.elec-number-field {
+  width: 10rem;
 }
