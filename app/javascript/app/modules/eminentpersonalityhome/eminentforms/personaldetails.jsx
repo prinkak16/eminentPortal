@@ -350,7 +350,7 @@ PersonalDetails.validationSchema = Yup.object().shape({
     religion: Yup.string().required('Please select your Religion'),
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
+    caste: Yup.string().required('Please Enter your Caste'),
     // dob: Yup.string().required('Please select your Date Of Birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),

@@ -68,26 +68,26 @@ const Communicationform =(props)=>{
         }])
     }
 
+
     let removeFormFields = (formIndex) => {
         const newFormValues =  formValues.filter((field, index) => index !== formIndex)
+        const pinData = otherPinData.filter((item) => item.id !== formIndex)
+        setOtherPinData(pinData)
         setFormValues(newFormValues);
     }
 
 
-    const handlePinCodeChange = (pinCode, otherFromIndex) => {
-        debugger
+    const handlePinCodeChange = (pinCode, pincodeType) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
-            formValues[otherFromIndex].state = ''
             axios.get(pinApi)
                 .then((response) => {
                     const responseData = response.data[0];
                     if (responseData.Status === 'Success') {
                         showSuccessToast(responseData.Message)
-                        const district = [...new Set(responseData.PostOffice.map(item => item.District))];
+                        const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        setOtherPinData([...otherPinData, {id: otherFromIndex, district: district, state: state}])
-                        formValues[otherFromIndex].state = state[0]
+                        setPincodes(districts, state, pincodeType)
                     } else {
                         showErrorToast(responseData.Message)
                     }
@@ -98,6 +98,11 @@ const Communicationform =(props)=>{
                 });
         }
     };
+
+    const setPincodes = (districts, state, pincodeType) => {
+        let totalData = otherPinData.filter((item) => item.id !== pincodeType);
+        setOtherPinData(totalData.concat({ id: pincodeType, district: districts, state: state }));
+    }
 
     const addMobileField = () => {
         setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
@@ -144,19 +149,15 @@ const Communicationform =(props)=>{
                 }
             }
         }
+
     }, [sameAddress, formValues[0]]);
 
-    useEffect(() => {
-        if (sameAddress) {
-            handlePinCodeChange(props.formValues.address[1].pincode,  1)
-        }
-    },[props.formValues.address[1].pincode])
 
-    const otherAddressChange = (name, index) => (value) => {
+    const otherAddressChange = (name, index, formType) => (value) => {
         if (name === 'pincode') {
             otherAddressChange('district', index)('')
             otherAddressChange('state', index)('')
-            handlePinCodeChange(value,  index)
+            handlePinCodeChange(value,  formType)
         }
 
         setFormValues((prevFormValues) => {
@@ -180,12 +181,12 @@ const Communicationform =(props)=>{
         } else {
             ''
         }
-
     }
 
+console.log(otherPinData)
 
-    const otherDistrictStateArray = (type, formIndex) => {
-        const form = otherPinData.find((field, index) => index === formIndex)
+    const otherDistrictStateArray = (type, formType) => {
+        const form = otherPinData.find((field) => field.id === formType)
        if (form) {
            return form[type]
        } else {
@@ -329,6 +330,7 @@ const Communicationform =(props)=>{
                                                                 <mark>*</mark>
                                                             </FormLabel>
                                                             <OtherInputField type="text"
+                                                                             disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                                              value={fieldValue(index, 'address_type')}
                                                                              onChange={otherAddressChange('address_type', index)}
                                                                              placeholder="Example Offce Address Capital Address...Etc. "/>
@@ -338,6 +340,7 @@ const Communicationform =(props)=>{
                                                     <Grid item xs={12}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                                         <OtherInputField type="text"
+                                                                    disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                                     value={fieldValue(index,'flat')}
                                                                     onChange={otherAddressChange('flat', index)}
                                                                     placeholder="Example Offce Address Capital Address...Etc. "/>
@@ -346,10 +349,11 @@ const Communicationform =(props)=>{
                                                     <Grid item xs={6}>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
+                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                             className=''
                                                             name="other_pincode"
                                                             value={fieldValue(index,'pincode')}
-                                                            onChange={otherAddressChange('pincode', index)}
+                                                            onChange={otherAddressChange('pincode', index, element.address_type)}
                                                             placeholder='Enter Pin Code'
                                                             onInput={(event) => {
                                                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
@@ -361,6 +365,7 @@ const Communicationform =(props)=>{
                                                     <Grid item xs={6}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                                         <OtherInputField type="text"
+                                                                         disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                                          value={fieldValue(index,'street')}
                                                                          onChange={otherAddressChange('street', index)}
                                                                          placeholder="Enter Area, Street, Etc.s"
@@ -370,9 +375,10 @@ const Communicationform =(props)=>{
                                                     <Grid item xs={6}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
+                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                             name={'District'}
                                                             selectedValue={fieldValue(index,'district')}
-                                                            listArray={otherDistrictStateArray('district', index)}
+                                                            listArray={otherDistrictStateArray('district', element.address_type)}
                                                             onChangeValue={otherAddressChange('district', index)}
                                                         />
                                                         <ErrorMessage name={`address.${index}.district`} component="div" />
@@ -380,9 +386,10 @@ const Communicationform =(props)=>{
                                                     <Grid item xs={6}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
+                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
                                                             name={'State'}
                                                             selectedValue={fieldValue(index,'state')}
-                                                            listArray={otherDistrictStateArray('state', index)}
+                                                            listArray={otherDistrictStateArray('state', element.address_type)}
                                                             onChangeValue={otherAddressChange('state', index)}
                                                         />
                                                         <ErrorMessage name={`address.${index}.state`} component="div" />
@@ -399,7 +406,7 @@ const Communicationform =(props)=>{
                                                                     etc.)</Typography>
                                                             </div>
                                                         }
-                                                        {formValues.length === index + 1 ? (
+                                                        {index > 1 && formValues?.length === index + 1? (
                                                             <Primarybutton addclass="deletebtn"
                                                                            buttonlabel={<DeleteIcon/>}
                                                                            handleclick={() => removeFormFields(index)}/>

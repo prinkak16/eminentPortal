@@ -14,6 +14,7 @@ import {isDisabled} from "bootstrap/js/src/util";
 const dayjs = require('dayjs');
 const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
     const [fieldsData, setFieldsData] = useState({});
+    const [endYearView, setEndYearView] = useState(false)
 
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
@@ -35,6 +36,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     const generateInitialFieldsData = (keys, value) => {
         const initialFieldsData = { id: '' };
         keys.forEach((key) => {
+
             initialFieldsData[key] = isValuePresent(value) ? value : '';
         });
         if (jsonForm.title ===  'Education Details') {
@@ -42,6 +44,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         }
         return initialFieldsData;
     };
+
+    console.log(fieldsData)
 
     useEffect(() => {
         if (isValuePresent(isEditable)) {
@@ -103,6 +107,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         let date = new Date(2040, 0, 1)
         if (key === 'start_year') {
             date = new Date()
+            // if (isValuePresent(fieldsData.start_year)) {
+            //     date = new Date(parseInt(fieldsData.end_year), 0, 1)
+            // }
         }
         if (fieldsData.start_year === 'NA') {
             date = new Date()
@@ -147,8 +154,13 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     const handleSave = (id) => {
         for (let key in fieldsData) {
             if (key !== 'id') {
-                if (!isValuePresent(fieldsData[key])) {
+                if (!isValuePresent(fieldsData[key]) && fieldsData[key] !== false) {
                     return showErrorToast(`Please enter ${key}`)
+                }
+                if (key === 'end_year' && fieldsData.end_year !== 'NA') {
+                    if (fieldsData.start_year >= fieldsData.end_year) {
+                        return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
+                    }
                 }
             }
         }
@@ -213,38 +225,40 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         placeholder={f.placeholder}/>
                                 </Grid>
                         }
+
+
                         {
                             f.type === "date" &&
-                            <Grid item xs={4}>
-                                <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder}>
-                                        {({field}) => (
-                                            <DatePicker
-                                                isRequired={isValuePresent(f?.isRequired)}
-                                                disabled={disabledField(f.key)}
-                                                label={`Select ${field.name}`}
-                                                value={field.value}
-                                                disableFuture={f.key === 'start_year'}
-                                                onChange={handleEduStartDateChange(f.key)}
-                                                views={['year']}
-                                                maxDate={maxDate(f.key)}
-                                                minDate={minDate(f.key)}
-                                            />
-                                        )}
-                                    </Field>
-                                </LocalizationProvider>
-                                {f.na_button &&
-                                    <div className='date-na-button'>
+                                <Grid item xs={4}>
+                                    <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder}>
+                                            {({field}) => (
+                                                <DatePicker
+                                                    isRequired={isValuePresent(f?.isRequired)}
+                                                    disabled={disabledField(f.key)}
+                                                    label={fieldValue(f.key) ? '' : `Select ${field.name}`}
+                                                    value={field.value}
+                                                    disableFuture={f.key === 'start_year'}
+                                                    onChange={handleEduStartDateChange(f.key)}
+                                                    views={['year']}
+                                                    maxDate={maxDate(f.key)}
+                                                    minDate={minDate(f.key)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </LocalizationProvider>
+                                    {f.na_button &&
+                                        <div className='date-na-button'>
                                         <span className='na-check-box'>
                                             <input type="checkbox" onClick={notApplicableFields(f.na_type,f.key)} />
                                         </span>
-                                        <span className='na-check-msg'>
+                                            <span className='na-check-msg'>
                                             {f.na_massage}
                                         </span>
-                                    </div>
-                                }
-                            </Grid>
+                                        </div>
+                                    }
+                                </Grid>
                         }
                     </>
 
