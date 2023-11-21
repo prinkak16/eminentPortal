@@ -59,11 +59,10 @@ const Educationform = (props) => {
 
     const setHighestQualification = (value) => {
         setEducationLevel(value);
-        props.formValues.highest_qualification = value;
+        props.formValues.education_level = value;
     };
 
     useEffect(() => {
-        debugger
         const filteredItems = EducationData.filter((item) => item === educationLevel);
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
         let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
@@ -183,7 +182,6 @@ const Educationform = (props) => {
         setProfessionDescription(e.target.value)
         props.formValues.profession_description = e.target.value
     }
-
 
     return (
         <>

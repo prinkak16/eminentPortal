@@ -432,7 +432,7 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container className="grid-wrap">
                     <Grid item sx={{mt:3}} xs={12}>
                         <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <sup>*</sup>
+                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <mark>*</mark>
                         </Typography>
                     </Grid>
                     <Grid item xs={4} sx={{mt:2, ml:3}}>
@@ -497,7 +497,10 @@ PolticalandGovrnform.initialValues = {
     rss_years: '',
     bjp_years: '',
     other_parties: [],
-    social_profiles: [],
+    social_profiles: [{
+        organization:'',
+        description: ''
+    }],
     election_contested: false,
     election_fought: [
         {
@@ -509,18 +512,7 @@ PolticalandGovrnform.initialValues = {
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    rss_years: Yup.number().required('Please enter rss joined years'),
-    bjp_years: Yup.number().required('Please enter bjp joined year'),
     election_contested: Yup.boolean().required('Please Select election contest'),
-
-    social_profiles: Yup.array().of(
-        Yup.object().shape({
-            organization: Yup.string().required('Please enter your Address'),
-            description: Yup.string().required('Please enter your Street'),
-        })
-    ),
-
-
 
 });
 export default PolticalandGovrnform
