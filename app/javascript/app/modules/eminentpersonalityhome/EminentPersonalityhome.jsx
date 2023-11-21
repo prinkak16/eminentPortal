@@ -11,9 +11,11 @@ const EminentPersonality=()=> {
     const {config, isCandidateLogin} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()
+    const [userStateId, setUserStateId] = useState()
     const fetchUserDetails = () => {
         fetchUser(config).then(res => {
             setUserData(res.data.data.data)
+            setUserStateId(res.data.data.country_state_id)
         }).catch(err => {
             console.log(err);
         });
@@ -25,6 +27,7 @@ const EminentPersonality=()=> {
             let numberString = `${phoneNumber}`;
             fetchMobile(numberString).then(res => {
                 setUserData(res.data.data.data)
+                setUserStateId(res.data.data.country_state_id)
             }).catch(err => {
                 console.log(err);
             });
@@ -62,7 +65,7 @@ const EminentPersonality=()=> {
                         </g>
                     </svg>
                 </Grid>
-            {userData && <FormWrap userData={userData}/>}
+            {userData && <FormWrap userData={userData} stateId={ userStateId}/>}
         </>
     )
 }

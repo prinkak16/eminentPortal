@@ -19,6 +19,7 @@ import {useNavigate} from "react-router-dom";
 import { ClickAwayListener } from '@mui/base';
 import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
+import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 const HomeTable = (props) => {
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
@@ -152,6 +153,9 @@ const HomeTable = (props) => {
         });
     }
 
+    const getUserProfession = (professions) => {
+        return isValuePresent(professions) ? professions[0].profession : ''
+    }
 
 
     return (
@@ -206,11 +210,11 @@ const HomeTable = (props) => {
                                 <div className="row">
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Age</p>
-                                        <p>xx Years</p>
+                                        <p>{member.data.dob ? `${calculateAge(dobFormat(member.data.dob))} Years` : ''}</p>
                                     </div>
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Profession</p>
-                                        <p>xx</p>
+                                        <p>{getUserProfession(member.data.professions)}</p>
                                     </div>
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Education</p>

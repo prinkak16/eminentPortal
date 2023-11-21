@@ -1,7 +1,7 @@
 import axios from "axios";
 import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
 import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
-export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin) => {
+export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin, stateId) => {
     const updateData = isCandidateLogin ? "eminent/update" : "custom_member_forms/add"
     const formData =  {
         "form_type": "eminent_personality",
@@ -10,8 +10,8 @@ export const getFormData = async (data, activeStep, config, isDraft = true, isCa
         "is_draft": isDraft,
         "version": 3,
         "form_step": activeStep,
-        "state_id": 30,
-        "channel": "Link"
+        "state_id": stateId,
+        "channel": isCandidateLogin ? "Link" : "Office"
     }
     try {
         const response = await axios.post(apiBaseUrl + updateData, formData, config);

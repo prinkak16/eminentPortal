@@ -16,7 +16,7 @@ import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
-const FormWrap=({userData})=>{
+const FormWrap=({userData, stateId})=>{
     const {config, isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -83,7 +83,7 @@ const FormWrap=({userData})=>{
             }
         }
         if (!isError) {
-            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin).then(response => {
+            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId).then(response => {
                 if (response) {
                     if (activeStep + 1 === 6) {
                         navigate({
@@ -199,6 +199,7 @@ const FormWrap=({userData})=>{
                             {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
                                 <Form>
                                     <FormStepper
+                                        stateId={stateId}
                                         userData={userData}
                                         activeStep={activeStep}
                                         handlePrev={handlePrev}

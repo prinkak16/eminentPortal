@@ -21,7 +21,7 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {formFilledValues, isValuePresent, languagesName} from "../../utils";
+import {calculateAge, dobFormat, formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
@@ -96,7 +96,7 @@ const PersonalDetails = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 
@@ -116,19 +116,7 @@ const PersonalDetails = (props) => {
             props.formValues.photo = url;
         }
     }
-    const calculateAge = (dob) => {
-            if (dob.$y === null) return '';
-            const today = new Date();
-            const birthDate = new Date(dob);
-            let age = today.getFullYear() - birthDate.getFullYear();
 
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
-
-    };
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -150,9 +138,6 @@ const PersonalDetails = (props) => {
     const handleDateChange = (event)    => {
         setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
-    }
-    const dobFormat = (date) => {
-      return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
     }
 
 
