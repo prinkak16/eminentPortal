@@ -65,7 +65,6 @@ const PersonalDetails = (props) => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
 
-    console.log(props.formValues.dob)
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -146,6 +145,11 @@ const PersonalDetails = (props) => {
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
 
+    const maxDate = () => {
+        const today = new Date ()
+        const date = new Date(today.getFullYear() -18 , today.getMonth(), today.getDate())
+        return  dayjs(date)
+    }
 
     return (
         <>
@@ -225,6 +229,7 @@ const PersonalDetails = (props) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
                                             value={dobFormat(props.formValues.dob)}
