@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {createContext} from 'react';
 import {
     Box,
     Tab,
@@ -16,11 +16,12 @@ import './masterofvacancies.css'
 import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {getMinistryWiseData} from "../../../../api/eminentapis/endpoints";
-
+const Context = createContext();
 const DUMMY_DATA = []
 const MasterVacancies=({tabId})=> {
     const [value, setValue] = React.useState('1');
     const [tabData, setTabData] = useState([]);
+    const [ministryId, setMinistryId] = useState(null);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -32,8 +33,7 @@ const MasterVacancies=({tabId})=> {
         }
         else if(tabId === '2'){
             setValue(tabId);
-            const ministryData= DUMMY_DATA.filter(data=>data.ministryId===ministryId);
-            setTabData(ministryData);
+            setMinistryId(ministryId);
         }
         else if(tabId === '3'){
             setValue(tabId);
@@ -45,6 +45,7 @@ const MasterVacancies=({tabId})=> {
     };
 
     return (
+
         <>
         <Analytics tabId={tabId}/>
         <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
@@ -61,7 +62,7 @@ const MasterVacancies=({tabId})=> {
                     <MinistryTable onSwitchTab={switchTabDataHandler} />
                 </TabPanel>
                 <TabPanel value="2" className="p-0">
-                    <PSUTable  data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    <PSUTable ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
                 </TabPanel>
                 <TabPanel value="3" className="p-0">
                     <VacancyTable data={tabData} onSwitchTab={switchTabDataHandler}/>

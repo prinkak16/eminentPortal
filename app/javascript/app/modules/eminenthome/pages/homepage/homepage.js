@@ -57,6 +57,8 @@ const DrawerHeader = styled('div')(({theme}) => ({
 }));
 
 export default function PersistentDrawerLeft() {
+
+
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [toggle, setToggle] = useState(1);
@@ -68,9 +70,7 @@ export default function PersistentDrawerLeft() {
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [userData, setUserData] = useState(true);
     const [tabId, setTabId] = useState('1');
-
     const navigate = useNavigate();
-
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
         return regex.test(number);
@@ -166,12 +166,12 @@ export default function PersistentDrawerLeft() {
 
                         </div>
 
-                    <BasicTabs onSwitchTab={switchTabHandler}/>
-                        <>
-                            {/*<Analytics toggle={toggle}/>*/}
-                            {/*<HomeTable filterString={filterString}/>*/}
+                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}/>
+                        {/*<>*/}
+                        {/*    <Analytics toggle={toggle}/>*/}
+                        {/*    <HomeTable filterString={filterString}/>*/}
 
-                        </>
+                        {/*</>*/}
                         {/*</div>*/}
 
                     </Typography>

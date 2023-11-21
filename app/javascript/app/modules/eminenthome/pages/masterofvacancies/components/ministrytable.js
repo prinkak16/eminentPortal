@@ -21,8 +21,8 @@ const  MinistryTable = ({onSwitchTab}) => {
         setIsFetching(true);
         const params = {
             search_by: 'ministry_wise',
-            order_by: 'total',
-            order_type: 'DESC'
+            // order_by: 'total',
+            // order_type: 'DESC'
         };
         getMinistryWiseData(params)
             .then(response => {
@@ -47,7 +47,7 @@ const  MinistryTable = ({onSwitchTab}) => {
                 </Backdrop>
 
 
-        <TableContainer component={Paper} className="psutable">
+        <TableContainer component={Paper} className="psutable mb-3">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>

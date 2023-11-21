@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+    import React, {useEffect, useState} from "react";
 import "./hometable.scss"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
@@ -20,6 +20,7 @@ import { ClickAwayListener } from '@mui/base';
 import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 const HomeTable = (props) => {
+    console.log('homeprops', props)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "./filterssidebar.scss"
 import {useEffect, useState} from "react";
-import {getData, getFilters, getFiltersForGOM} from "../../../../api/eminentapis/endpoints";
+import {getData, getFilters, getFiltersForGOM, getMinistryWiseFilterData} from "../../../../api/eminentapis/endpoints";
 
 export default function FiltersSidebar(props) {
     const [filtersList, setFiltersList] = useState([]);
@@ -41,10 +41,14 @@ export default function FiltersSidebar(props) {
     }
 
 
-
     useEffect(() => {
         switch (props.tabId) {
             case '4':
+                getMinistryWiseFilterData().then(response => {
+                    setFiltersList(response.data.data)
+                })
+                break;
+            case '6':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
                 })

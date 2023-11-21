@@ -15,6 +15,7 @@ import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import {TabsContext} from "../../../tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -27,8 +28,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab }) {
-    const [filterString, setFilterString] = useState('');
+export default function BasicTabs({ onSwitchTab, filterString }) {
+    // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
