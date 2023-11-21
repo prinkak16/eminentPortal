@@ -148,7 +148,6 @@ export default function PersistentDrawerLeft() {
                 </Drawer>
                 <Main open={open} className="p-0 mt-5">
                     <Typography className="ms-15-30">
-
                         <div className="d-flex justify-content-between">
                             <p className="heading">
                             <span>
