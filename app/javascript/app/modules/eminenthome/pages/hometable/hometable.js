@@ -157,6 +157,20 @@ const HomeTable = (props) => {
         return isValuePresent(professions) ? professions[0].profession : ''
     }
 
+    const getUserEducation = (educations) => {
+        let education = ''
+        for (const item in educations) {
+                if (educations[item].highest_qualification) {
+                 return educations[item].qualification
+                }
+        }
+        return education
+    }
+
+    const getAddress = (address) => {
+        const customAddress = isValuePresent(address) ? address[0] : ''
+        if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
+    }
 
     return (
         <>
@@ -218,7 +232,7 @@ const HomeTable = (props) => {
                                     </div>
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Education</p>
-                                        <p>xx</p>
+                                        <p>{getUserEducation(member.data.educations)}</p>
                                     </div>
 
                                 </div>
@@ -226,7 +240,7 @@ const HomeTable = (props) => {
                             <Grid item xs className="gridItem">
                                 <div className="row data-display">
                                     <p className="text-labels">Address</p>
-                                    <p>Value</p>
+                                    <p>{getAddress(member.data.address)}</p>
                                 </div>
                             </Grid>
                             <Grid item xs className="gridItem">
@@ -244,14 +258,14 @@ const HomeTable = (props) => {
                                 <div className="d-flex">
                                     <div className="row data-display">
                                         <p className="text-labels">Referred by</p>
-                                        <p>Name</p>
-                                        <p>98765467</p>
+                                        <p>{member.data.reference?.name}</p>
+                                        <p>{member.data.reference?.mobile}</p>
 
                                     </div>
                                     <ClickAwayListener onClickAway={handleClickAway}>
                                         <PopupState variant="popper" popupId="demo-popup-popper">
                                         {(popupState) => (
-                                            <div>
+                                            <div className="edit-box-container">
                                                 <p variant="contained" {...bindToggle(popupState)}
                                                    className="popupicon">
                                                     <Icon/>
@@ -314,7 +328,7 @@ const HomeTable = (props) => {
 
             </div>
             <div>
-                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>
+                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp; { tableData?.data?.data.length ?  Math.ceil(tableData?.data?.data.length / limit) : ''}</p>
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
