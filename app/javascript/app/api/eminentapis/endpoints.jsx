@@ -5,6 +5,10 @@ import {apiBaseUrl} from "../api_endpoints";
 export const getFilters = ()  => {
     return axios.get(apiBaseUrl + 'filters/home');
 }
+export const getFiltersForGOM = (params) => {
+    return axios.get(apiBaseUrl + 'filters/gom_management')
+}
+
 // export const getVacancy
 export const getData = (filters = '') => {
     return axios.get(apiBaseUrl + 'custom_member_forms/list?type=eminent_personality' + filters);
@@ -56,4 +60,28 @@ export const getSlottingPsuData=()=> {
 
 export const getMinistryWiseData = (params) => {
     return axios.get(apiBaseUrl + 'vacancy/list', { params });
+}
+
+export const getMinistry = () => {
+    return axios.get(apiBaseUrl + 'ministry');
+}
+
+export const getMinisters = () => {
+    return axios.get(apiBaseUrl + 'gom/minister_list');
+}
+export const getGOMTableData = () => {
+    return axios.get(apiBaseUrl + 'gom/assigned_ministries')
+        .then(response => {
+            console.log("Data received:", response.data);
+            return response.data; // You can return the data if needed
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            throw error; // Rethrow the error to handle it at the caller's end
+        });
+}
+export const assignMinistriesAndMinister = (ministryIds, ministerId) => {
+    return axios.post(apiBaseUrl + `user/${ministerId}/assign_ministries`, {
+        ministry_ids: ministryIds
+    })
 }

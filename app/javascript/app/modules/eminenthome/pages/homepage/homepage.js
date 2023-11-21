@@ -67,6 +67,7 @@ export default function PersistentDrawerLeft() {
     const [inputNumber, setInputNumber] = useState('');
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [userData, setUserData] = useState(true);
+    const [tabId, setTabId] = useState('1');
 
     const navigate = useNavigate();
 
@@ -117,7 +118,9 @@ export default function PersistentDrawerLeft() {
             }
         });
     }
-
+    const switchTabHandler = (id) => {
+        setTabId(id)
+    }
 
     return (<>
             <Header/>
@@ -139,7 +142,7 @@ export default function PersistentDrawerLeft() {
                                 {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                             </IconButton>
                         </DrawerHeader>
-                        <FiltersSidebar setFilterString={setFilterString}/>
+                        <FiltersSidebar setFilterString={setFilterString} tabId={tabId} />
 
                     </div>
                 </Drawer>
@@ -163,7 +166,7 @@ export default function PersistentDrawerLeft() {
 
                         </div>
 
-                    <BasicTabs/>
+                    <BasicTabs onSwitchTab={switchTabHandler}/>
                         <>
                             {/*<Analytics toggle={toggle}/>*/}
                             {/*<HomeTable filterString={filterString}/>*/}

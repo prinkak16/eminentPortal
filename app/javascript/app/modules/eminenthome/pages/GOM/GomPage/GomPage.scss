@@ -1,0 +1,111 @@
+
+.mainDiv{
+  width: 100%;
+}
+
+.gomtable{
+  width: 100%;
+}
+.Assign{
+  border-radius: 8px;
+  background: var(--Color, #FF9559);
+  color: white;
+  height:50px;
+  width:150px;
+  margin-top: 35px;
+  border: none;
+}
+.Submit{
+  border-radius: 8px;
+  background: var(--Color, #FF9559);
+  color: white;
+  height:30px;
+  width:100px;
+  margin-top: 35px;
+  padding-left: 10px;
+  border: none;
+}
+.Update-btn{
+  border-radius: 8px;
+  background: var(--Color, #FF9559);
+  color: white;
+  height:40px;
+  width:100px;
+  margin-top: 35px;
+  border: none;
+}
+.Cancel-btn{
+  border-radius: 8px;
+  background: white;
+  color: black;
+  height:40px;
+  width:100px;
+  margin-top: 35px;
+  //border: none;
+}
+.button-upload{
+  border-radius: 10px;
+  background: green;
+  color: white;
+  height:47px;
+  width: 180px;
+  margin-top: 35px;
+  border: none;
+}
+.minister-selection{
+  //width: 90%;
+  //height: 630px;
+  text-align: center;
+  gap: 20px;
+
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+}
+table{
+  width: 100%;
+  //margin: auto;
+}
+
+input{
+  border-radius: 5px;
+}
+
+.input-field{
+  display: flex;
+  width: 20%;
+  padding: 0;
+  // margin-left: 50px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.40);
+  outline: none;
+}
+.Ministry{
+  display: flex;
+  width: 421px;
+  padding: 16px;
+  align-items: center;
+  gap: 10px;
+}
+
+//.pagination{
+//  margin-top: 0%;
+//}
+
+//.mainDiv{
+//  margin-top: 5%;
+//  margin-left: 1.5%;
+//  margin-right: 1.5%;
+//}
+
+.uploadBox{
+  border: 1px dashed #CED5DE;
+  border-radius: 12px;
+}
+.update-modal{
+  height: 5%;
+  width:  200%;
+
+}
