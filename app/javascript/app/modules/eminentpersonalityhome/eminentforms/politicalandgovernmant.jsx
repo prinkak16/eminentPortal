@@ -30,6 +30,7 @@ import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import {boolean} from "yup";
+import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
     const {config,isCandidateLogin} = useContext(ApiContext)
@@ -303,16 +304,26 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
-                        <Inputfield type="number"
-                                    name="bjp_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="bjp_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
-                        <Inputfield type="number"
-                                    name="rss_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="rss_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>

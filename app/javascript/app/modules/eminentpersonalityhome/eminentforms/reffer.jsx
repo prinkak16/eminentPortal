@@ -58,7 +58,7 @@ const Refferedform = (props) => {
                 </Stack>
                 <Grid container spacing={2} sx={{mb: 3}} className="grid-wrap">
                     <Grid item xs={6}>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>Name <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.name`}
                                     value={props?.formValues?.reference?.name}
@@ -67,7 +67,7 @@ const Refferedform = (props) => {
 
                     </Grid>
                     <Grid item xs={6} className="d-grid">
-                        <FormLabel>Phone no.</FormLabel>
+                        <FormLabel>Phone no. <mark>*</mark></FormLabel>
                         <input
                             maxLength={10}
                             placeholder='Enter Mobile Number'
@@ -77,7 +77,7 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.mobile`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>BJP ID</FormLabel>
+                        <FormLabel>BJP ID <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.bjp_id`}
                                     value={props?.formValues?.reference?.bjp_id}
@@ -86,7 +86,7 @@ const Refferedform = (props) => {
 
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>Grade</FormLabel>
+                        <FormLabel>Grade <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.grade`}
                                     value={props?.formValues?.reference?.grade}
@@ -94,7 +94,7 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.grade`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>comments</FormLabel>
+                        <FormLabel>comments <mark>*</mark></FormLabel>
                         <TextField
                             className='p-0'
                             fullWidth

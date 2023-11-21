@@ -15,7 +15,7 @@ import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/steppe
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
-import {formFilledValues, isValuePresent, saveProgress} from "../../utils";
+import {formFilledValues, isValuePresent, saveProgress, showErrorToast, showSuccessToast} from "../../utils";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
@@ -75,6 +75,7 @@ const Communicationform =(props)=>{
 
 
     const handlePinCodeChange = (pinCode, otherFromIndex) => {
+        debugger
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             formValues[otherFromIndex].state = ''
@@ -82,13 +83,17 @@ const Communicationform =(props)=>{
                 .then((response) => {
                     const responseData = response.data[0];
                     if (responseData.Status === 'Success') {
+                        showSuccessToast(responseData.Message)
                         const district = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
                         setOtherPinData([...otherPinData, {id: otherFromIndex, district: district, state: state}])
                         formValues[otherFromIndex].state = state[0]
+                    } else {
+                        showErrorToast(responseData.Message)
                     }
                 })
                 .catch((error) => {
+
                     console.error('Error fetching data:', error);
                 });
         }

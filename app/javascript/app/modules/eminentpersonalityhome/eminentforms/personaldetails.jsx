@@ -57,10 +57,15 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
+
+    useEffect(() => {
+        setEminentAge(props.formValues.dob)
+    },[props.formValues.dob])
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
 
+    console.log(props.formValues.dob)
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -136,6 +141,7 @@ const PersonalDetails = (props) => {
     }
 
     const handleDateChange = (event)    => {
+        if (event.$d === null) return;
         setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
@@ -231,7 +237,7 @@ const PersonalDetails = (props) => {
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge ))} Years` : ''}</Typography>
+                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
