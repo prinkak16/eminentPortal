@@ -1,5 +1,6 @@
 import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
 import { toast } from 'react-toastify';
+import moment from "moment/moment";
 const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
@@ -224,7 +225,7 @@ const ministryDuration = {
     is_conditional: true,
     condition_key: 'minister_portfolio',
     condition_value:'Yes',
-    type: 'textField',
+    type: 'numField',
     name: 'Duration',
     key: 'ministry_duration',
     placeholder: 'Enter Duration (in Months)'
@@ -462,3 +463,21 @@ export const  toSnakeCase = (inputString) => {
     const cleanedString = inputString.replace(/[^a-zA-Z0-9\s]/g, '').trim();
     return cleanedString.replace(/\s+/g, '_').toLowerCase();
 }
+
+export const dobFormat = (date) => {
+    return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
+}
+
+export const calculateAge = (dob) => {
+    if (dob.$y === null) return '';
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+
+};

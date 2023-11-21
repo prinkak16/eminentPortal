@@ -21,7 +21,7 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {formFilledValues, isValuePresent, languagesName} from "../../utils";
+import {calculateAge, dobFormat, formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
@@ -57,10 +57,15 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
+
+    useEffect(() => {
+        setEminentAge(props.formValues.dob)
+    },[props.formValues.dob])
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
 
+    console.log(props.formValues.dob)
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -96,7 +101,7 @@ const PersonalDetails = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 
@@ -116,19 +121,7 @@ const PersonalDetails = (props) => {
             props.formValues.photo = url;
         }
     }
-    const calculateAge = (dob) => {
-            if (dob.$y === null) return '';
-            const today = new Date();
-            const birthDate = new Date(dob);
-            let age = today.getFullYear() - birthDate.getFullYear();
 
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
-
-    };
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -148,11 +141,9 @@ const PersonalDetails = (props) => {
     }
 
     const handleDateChange = (event)    => {
+        if (event.$d === null) return;
         setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
-    }
-    const dobFormat = (date) => {
-      return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
     }
 
 
@@ -246,7 +237,7 @@ const PersonalDetails = (props) => {
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge ))} Years` : ''}</Typography>
+                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>

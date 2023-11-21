@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import './loginpage.scss'
 import {getLocationsData, sendOtp, validateOtp} from "../../api/stepperApiEndpoints/stepperapiendpoints";
-import {enterPhoneNumber} from "../utils";
+import {enterPhoneNumber, showErrorToast, showSuccessToast} from "../utils";
 import {useNavigate} from "react-router-dom";
 import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import {ApiContext} from "../ApiContext";
@@ -30,6 +30,9 @@ const LoginPage = () => {
             setPhoneNumber(inputNumber)
             sendOtp(inputNumber).then((res) => {
                 setOtpSent(res.data.success)
+                if (res.data.success) {
+                    showSuccessToast(res.data.message)
+                }
                 setInputNumber('')
             })
     }
@@ -38,6 +41,9 @@ const LoginPage = () => {
 
     const submitOtp = () => {
         validateOtp(phoneNumber, inputNumber).then((res) => {
+            if (res.data.success) {
+                showSuccessToast('OTP verified successfully')
+            }
             localStorage.setItem('auth_token', res.data.auth_token)
             setAuthToken(res.data.auth_token)
             navigate({

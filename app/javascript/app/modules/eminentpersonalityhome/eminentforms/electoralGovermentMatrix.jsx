@@ -1,4 +1,4 @@
-import {FormLabel, Grid, Typography} from "@mui/material";
+import {FormLabel, Grid, TextField, Typography} from "@mui/material";
 import Inputfield from "../component/inputfield/inputfield";
 import {ErrorMessage, Field} from "formik";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
@@ -89,11 +89,13 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 getLocations(state.id, field.combo_fields[0])
             }
         }
+
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
         }));
     };
+    console.log(fieldsData)
 
     const handleSave = () => {
         saveData(fieldsData,formIndex)
@@ -185,13 +187,16 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                 f.type === "numField" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <NumberField
-                                        className='elec-number-field'
-                                        value={fieldsData[f.key] || null}
+                                    <Field
                                         type="text"
-                                        textType={f.key}
+                                        value={fieldsData[f.key] || null}
+                                        as={TextField}
+                                        className='elec-number-field'
                                         placeholder={f.placeholder}
-                                        onChange={(e) => handleFieldChange(e.target.name, f.name ,f.key)}
+                                        onChange={(e) => handleFieldChange(e.target.value, f.name ,f.key)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
                                         onInput={(event) => {
                                             event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
                                         }}
@@ -244,7 +249,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 type="text"
                                                 textType={fi.key}
                                                 placeholder={fi.placeholder}
-                                                onChange={(e) => handleFieldChange(e.target.name, fi.name, fi.key)}
+                                                onChange={(e) => handleFieldChange(e.target.value, fi.name, fi.key)}
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
                                                 }}
