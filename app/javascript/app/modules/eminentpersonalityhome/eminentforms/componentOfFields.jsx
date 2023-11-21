@@ -45,7 +45,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return initialFieldsData;
     };
 
-    console.log(fieldsData)
+
 
     useEffect(() => {
         if (isValuePresent(isEditable)) {
