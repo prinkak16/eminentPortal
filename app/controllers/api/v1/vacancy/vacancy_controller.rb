@@ -19,12 +19,26 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         'occupied': 0,
         'vacant': 0
       }
-
-      results = UserMinistry.where(is_minister: false, user_id: current_user.id)
-                            .joins('LEFT JOIN vacancies ON user_ministries.ministry_id = vacancies.ministry_id')
-                            .select("SUM(CASE WHEN vacancies.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant")
-                            .select("SUM(CASE WHEN vacancies.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied")
-                            .select('SUM(1) AS total')
+      sql = "
+        SELECT
+           SUM(CASE WHEN vac.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant,
+           SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
+           SUM(1) AS total
+         FROM public.user_ministries AS um
+         LEFT JOIN public.vacancies AS vac
+         ON um.ministry_id = vac.ministry_id
+         LEFT JOIN public.ministries AS ministry
+         ON vac.ministry_id = ministry.id
+         WHERE
+           um.is_minister IS false
+           AND
+           vac.id IS NOT null
+           AND
+           vac.deleted_at IS null
+           AND
+           um.user_id = #{current_user.id}
+      "
+      results = UserMinistry.find_by_sql(sql)
 
       if results.present? && results[0].present?
         stats[:total] = results[0]['total'] || 0
@@ -175,6 +189,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           WHERE
             um.is_minister IS false
             AND
+            vac.id IS NOT null
+            AND
             vac.deleted_at IS null
             AND
             um.user_id = #{current_user.id}
@@ -251,6 +267,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                 WHERE
                   um.is_minister IS false
                   AND
+                  vac.id IS NOT null
+                  AND
                   vac.deleted_at IS null
                   AND
                   um.user_id = #{current_user.id}
@@ -320,6 +338,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           ON vac.organization_id = org.id
           WHERE
             um.is_minister IS false
+            AND
+            vac.id IS NOT null
             AND
             vac.deleted_at IS null
             AND
