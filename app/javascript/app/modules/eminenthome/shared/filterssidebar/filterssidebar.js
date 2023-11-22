@@ -5,10 +5,18 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "./filterssidebar.scss"
-import {useEffect, useState} from "react";
-import {getData, getFilters, getFiltersForGOM, getMinistryWiseFilterData} from "../../../../api/eminentapis/endpoints";
+import {useContext, useEffect, useState} from "react";
+import {
+    getData,
+    getFilters,
+    getFiltersForGOM,
+    getMinistryWiseFilterData,
+    getOrganizationWiseFilterData, getVacancyWiseFilterData
+} from "../../../../api/eminentapis/endpoints";
+import {HomeContext} from "../../../../context/tabdataContext";
 
 export default function FiltersSidebar(props) {
+    const homeContext = useContext(HomeContext);
     const [filtersList, setFiltersList] = useState([]);
     const [expandedFilter, setExpandedFilter] = useState('');
     const [appliedFilters, setAppliedFilters] = useState([]);
@@ -37,16 +45,29 @@ export default function FiltersSidebar(props) {
             filterString += `&${value.parent_key}=${value.selectedValues.join(',')}`;
         });
         props.setFilterString(filterString);
-        console.log(appliedFilters);
     }
 
 
     useEffect(() => {
+        console.log('Filter side: ', homeContext.movTabId)
         switch (props.tabId) {
             case '4':
-                getMinistryWiseFilterData().then(response => {
-                    setFiltersList(response.data.data)
-                })
+                if (homeContext.movTabId === '1') {
+                    getMinistryWiseFilterData().then(response => {
+                        setFiltersList(response.data.data)
+                        // console.log('Ministry wise Data: ', response.data.data)
+                    })
+                } else if (homeContext.movTabId === '2') {
+                    getOrganizationWiseFilterData().then(response => {
+                        setFiltersList(response.data.data);
+                        // console.log('Psu wise data: ', response.data.data)
+                    })
+                } else if (homeContext.movTabId === '3') {
+                    getVacancyWiseFilterData().then(response=>{
+                        setFiltersList(response.data.data)
+                    })
+                    console.log('Vacancy tab');
+                }
                 break;
             case '6':
                 getFiltersForGOM().then(response => {
@@ -59,7 +80,7 @@ export default function FiltersSidebar(props) {
                 });
         }
         applyFilter();
-    }, [props.tabId]);
+    }, [props.tabId, homeContext.movTabId]);
 
     const handleChange = (value) => (event, isExpanded) => {
         if (expandedFilter === value) {
@@ -74,7 +95,6 @@ export default function FiltersSidebar(props) {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
         return parentOption && parentOption.selectedValues.includes(optionValue);
     }
-
     return (
         <div>
             <div className="d-flex justify-content-between mt-4 ms-4">

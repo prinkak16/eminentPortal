@@ -23,6 +23,7 @@ import {fetchMobile, getData} from "../../../../api/eminentapis/endpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
 import BasicTabs from "../../shared/tabs/tabs";
 import PlusIcon from './../../../../../../../public/images/plus.svg'
+import {HomeContext} from "../../../../context/tabdataContext";
 
 
 const drawerWidth = 240;
@@ -70,6 +71,7 @@ export default function PersistentDrawerLeft() {
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [userData, setUserData] = useState(true);
     const [tabId, setTabId] = useState('1');
+    const [movTabId, setMovTabId] = useState('1');
     const navigate = useNavigate();
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
@@ -121,8 +123,11 @@ export default function PersistentDrawerLeft() {
     const switchTabHandler = (id) => {
         setTabId(id)
     }
-
+    const handleMovTabsFilter = (newValue)=>{
+        setMovTabId(newValue)
+    }
     return (<>
+            <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
             <Header/>
             <Box sx={{display: 'flex'}} className="mt-5">
                 <Drawer
@@ -176,7 +181,7 @@ export default function PersistentDrawerLeft() {
                     </Typography>
                 </Main>
             </Box>
-
+            </HomeContext.Provider>
         </>
 
     );

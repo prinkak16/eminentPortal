@@ -61,10 +61,15 @@ export const getSlottingPsuData=()=> {
 export const getMinistryWiseData = (params) => {
     return axios.get(apiBaseUrl + 'vacancy/list', { params });
 }
-export const getMinistryWiseFilterData = (params) => {
-    return axios.get(apiBaseUrl + 'filters/vacancy_ministry_wise', { params });
+export const getMinistryWiseFilterData = () => {
+    return axios.get(apiBaseUrl + 'filters/vacancy_ministry_wise');
 }
-
+export const getOrganizationWiseFilterData = () => {
+    return axios.get(apiBaseUrl + 'filters/vacancy_organization_wise');
+}
+export const getVacancyWiseFilterData = () => {
+    return axios.get(apiBaseUrl + 'filters/vacancy_wise');
+}
 export const getMinistry = () => {
     return axios.get(apiBaseUrl + 'ministry');
 }

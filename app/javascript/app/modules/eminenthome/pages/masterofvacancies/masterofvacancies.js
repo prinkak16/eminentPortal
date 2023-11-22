@@ -1,4 +1,4 @@
-import React, {createContext} from 'react';
+import React, {createContext, useContext} from 'react';
 import {
     Box,
     Tab,
@@ -15,17 +15,19 @@ import {useEffect, useState} from "react";
 import './masterofvacancies.css'
 import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import {getMinistryWiseData} from "../../../../api/eminentapis/endpoints";
-const Context = createContext();
+import {HomeContext} from "../../../../context/tabdataContext";
+
 const DUMMY_DATA = []
-const MasterVacancies=({tabId})=> {
+const MasterVacancies = ({tabId}) => {
+    const homeContext = useContext(HomeContext);
+
     const [value, setValue] = React.useState('1');
     const [tabData, setTabData] = useState([]);
     const [ministryId, setMinistryId] = useState(null);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        setTabData(DUMMY_DATA);
+        homeContext.handleMovTabsFilter(newValue);
     };
     const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
         if(tabId === '1'){
@@ -43,7 +45,6 @@ const MasterVacancies=({tabId})=> {
             setTabData(data)
         }
     };
-
     return (
 
         <>
