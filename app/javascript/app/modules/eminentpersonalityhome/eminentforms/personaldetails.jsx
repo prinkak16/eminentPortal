@@ -297,7 +297,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={12}>
                                 <Formheading number="2" heading="ID Proof"/>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     name="aadhaar"
@@ -311,7 +311,7 @@ const PersonalDetails = (props) => {
                                 <ErrorMessage name="aadhaar" component="div"/>
 
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
                                     value={props.formValues.voter_id}

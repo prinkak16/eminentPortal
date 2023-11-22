@@ -503,7 +503,7 @@ PolticalandGovrnform.initialValues = {
     election_contested: false,
     election_fought: [
         {
-            election_type: '', election_details: {}
+            election_type: '', election_details: [{}]
         }
     ],
 
