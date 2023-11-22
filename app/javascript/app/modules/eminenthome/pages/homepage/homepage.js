@@ -126,7 +126,7 @@ export default function PersistentDrawerLeft() {
     const handleMovTabsFilter = (newValue)=>{
         setMovTabId(newValue)
     }
-    console.log(open)
+
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
             <Header/>

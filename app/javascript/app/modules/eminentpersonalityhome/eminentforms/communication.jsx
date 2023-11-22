@@ -352,7 +352,7 @@ const Communicationform =(props)=>{
                                                                     placeholder="Example Offce Address Capital Address...Etc. "/>
                                                         <ErrorMessage name={`address.${index}.flat`} component="div" />
                                                     </Grid>
-                                                    <Grid item xs={6}>
+                                                    <Grid item xs={6} className='d-grid'>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
                                                             disabled={element.address_type === 'Home Town Address' ? sameAddress : false}

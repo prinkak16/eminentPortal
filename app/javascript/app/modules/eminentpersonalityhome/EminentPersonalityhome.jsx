@@ -22,7 +22,7 @@ const EminentPersonality=()=> {
     }
 
     const fetchUserByNumber = () => {
-        let phoneNumber = isValuePresent(location.state?.eminent_number) ? location.state.eminent_number : localStorage.getItem('eminent_number')
+        let phoneNumber =  localStorage.getItem('eminent_number')
         if (phoneNumber) {
             let numberString = `${phoneNumber}`;
             fetchMobile(numberString).then(res => {
@@ -35,7 +35,12 @@ const EminentPersonality=()=> {
     }
 
     useEffect(() => {
-        isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
+        if (isValuePresent(location.state?.user_data)) {
+            setUserData(location.state?.user_data.data)
+        } else {
+            isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
+        }
+
     }, []);
 
     return(

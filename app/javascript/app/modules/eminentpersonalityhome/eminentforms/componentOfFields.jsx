@@ -229,7 +229,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
                         {
                             f.type === "date" &&
-                                <Grid item xs={4}>
+                                <Grid item xs={4} className='d-grid'>
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder}>

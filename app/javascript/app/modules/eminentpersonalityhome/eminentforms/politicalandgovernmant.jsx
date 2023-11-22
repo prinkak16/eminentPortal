@@ -48,9 +48,6 @@ const PolticalandGovrnform =(props)=>{
     const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
-    useEffect(() => {
-        setElectoralDetails(props.userData.election_fought)
-    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -218,7 +215,7 @@ const PolticalandGovrnform =(props)=>{
 
     useEffect(() => {
         if (props.formValues.election_contested) {
-            if (!isValuePresent(props.formValues.election_fought)) {
+            if (!isValuePresent(props.formValues?.election_fought)) {
                 setElectoralDetails([{
                     election_type: '', election_details: {}
                 }])
