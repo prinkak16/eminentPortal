@@ -2,8 +2,6 @@ import React, {useEffect, useState} from "react";
 import "./analytics.css"
 import Usergroup from "../../../../../../../public/images/usergroup.svg";
 import TotalEminent from '../../../../../../../public/images/totalEminent.svg'
-import CompletedForm from '../../../../../../../public/images/CompletedForm.svg'
-import Checklist from "./../../../../../../../public/images/checklist.svg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
