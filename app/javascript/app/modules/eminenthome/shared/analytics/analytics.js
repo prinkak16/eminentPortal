@@ -38,7 +38,7 @@ const Analytics = (props) => {
                 switch (props.tabId){
                     case '1':
                     switch (value) {
-                        case'incomplete': {
+                        case'overall': {
                             label = 'Total Eminent Personality';
                             icon = <TotalEminent/>;
                             break;
@@ -46,13 +46,13 @@ const Analytics = (props) => {
                         case
                         'completed'
                         : {
-                                    label = 'Total Completed Form';
+                            label = 'Total Completed Form';
                             iconType = 'png';
                             icon = 'https://storage.googleapis.com/public-saral/public_document/checklist (1) 1.png';
                             break;
                         }
                         case
-                        'overall'
+                        'incomplete'
                         : {
                             label = 'Total Incompleted Form';
                             iconType = 'png';
@@ -102,6 +102,7 @@ const Analytics = (props) => {
 
             }
             return <div className="col" key={value}>
+                {console.log(homeStats[value])}
                <div className="card">
                    <div className="card-body d-flex p-0">
                        <div> {iconType === 'svg' ?
@@ -119,7 +120,7 @@ const Analytics = (props) => {
            </div>
         })
     }
-
+console.log(homeStats)
     return (
         <>
             <div className="analyticsDiv">
