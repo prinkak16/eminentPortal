@@ -161,7 +161,7 @@ export default function PersistentDrawerLeft() {
                             <SideBarIcon/>
                         </IconButton>
                             </span>
-                                Eminent Personality</p>
+                                Eminent Personalities</p>
 
                         </div>
 

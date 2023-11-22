@@ -220,7 +220,7 @@ const HomeTable = (props) => {
                                     </div>
                                 </div>
                             </Grid>
-                            <Grid item xs className="gridItem">
+                            <Grid item xs className="gridItem education-profession-container">
                                 <div className="row">
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Age</p>

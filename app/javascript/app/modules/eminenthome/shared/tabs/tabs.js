@@ -220,17 +220,17 @@ export default function BasicTabs({ onSwitchTab }) {
             Add New
         </button>
     }
+    console.log(window.innerWidth,'window.innerWidth')
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 ? '45rem' : ''}} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
                         <Tab label="Allotment" value="2" />
-                        <Tab label="File Stauts" value="3" />
+                        <Tab label="File Status" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
-
                         <Tab label="GOM Management" value="6" />
                     </TabList>
                     {buttonContent}
