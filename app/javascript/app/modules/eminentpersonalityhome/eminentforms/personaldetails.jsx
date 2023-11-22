@@ -14,6 +14,7 @@ import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronDown, faInfoCircle, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
+    getFileUpload,
     getFormData,
     getGenderData,
     getReligionData,
@@ -27,7 +28,7 @@ import {
     formFilledValues,
     isValuePresent,
     languagesName, saveProgress,
-    saveProgressButton
+    saveProgressButton, VisuallyHiddenInput
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
@@ -35,8 +36,11 @@ import dayjs from "dayjs";
 import moment from "moment";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Tooltip from '@mui/material/Tooltip';
+import UserIcon from '../../../../../../public/images/userIcon.svg'
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 const PersonalDetails = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
                 if (props.formValues.hasOwnProperty(key)) {
@@ -64,10 +68,16 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
+    const [userPhoto, setUserPhoto] = useState(props.formValues.photo)
 
     useEffect(() => {
         setEminentAge(props.formValues.dob)
     },[props.formValues.dob])
+
+    useEffect(() => {
+        setUserPhoto(props.formValues.photo)
+    }, [props.formValues.photo])
+
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
@@ -122,9 +132,14 @@ const PersonalDetails = (props) => {
         }
     }
 
-    const updatePhotoUrl = (url) => {
-        if (url && url.length > 0) {
-            props.formValues.photo = url;
+    const updatePhotoUrl = (event) => {
+        setBackDropToggle(true)
+        if (isValuePresent(event.target.files)) {
+            getFileUpload(event.target.files[0], config, isCandidateLogin, setBackDropToggle).then(res => {
+                setUserPhoto(res.data.file_path, 'res.data.file_path');
+                console.log(res.data.file_path)
+                props.formValues.photo = res.data.file_path;
+            });
         }
     }
 
@@ -326,15 +341,20 @@ const PersonalDetails = (props) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={4}>
-                        <Item>
-                            <ImageUpload
-                                validationSchema={props.validationSchema}
-                                isSubmitting={props.isSubmitting}
-                                values={props.formValues}
-                                updatePhotoUrl={updatePhotoUrl}
-                                setFieldValue={props.setFieldValue}
-                                cardName="Input Image"/>
-                        </Item>
+                        <div className='image-container'>
+                            <div className="user-photo-container" >
+                                {isValuePresent(userPhoto) ?
+                                    <img className="user-image" src={userPhoto} alt='eminent-profile'/>
+                                    :  <UserIcon className="mt-2rem" />
+                                }
+                            </div>
+                        </div>
+                        <div className='photo-btn'>
+                            <Button component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
+                                Add Photo
+                                <VisuallyHiddenInput accept="image/*"  type="file"/>
+                            </Button>
+                        </div>
                     </Grid>
                 </Grid>
 

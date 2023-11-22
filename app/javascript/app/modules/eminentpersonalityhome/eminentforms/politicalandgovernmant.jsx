@@ -30,7 +30,7 @@ import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints"
 import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -44,7 +44,7 @@ const PolticalandGovrnform =(props)=>{
     const [otherPartyDetails, setOtherPartyDetails] = useState(props.formValues.other_parties || []);
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
-    const [NAFields, setNAFields] = useState(false)
+    const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
     const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
@@ -186,8 +186,9 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId, setBackDropToggle).then(response => {
         });
     }
 
@@ -289,7 +290,7 @@ const PolticalandGovrnform =(props)=>{
                 {politicalProfileDetails.length === 0 &&
                     <div className='date-na-button date-na-button-out-side'>
                          <span className='na-check-box'>
-                           <input type="checkbox" onClick={NotApplicableFields}/>
+                           <input type="checkbox" checked={NAFields} onClick={NotApplicableFields}/>
                         </span>
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
@@ -464,6 +465,7 @@ const PolticalandGovrnform =(props)=>{
                                                         saveData={saveElectoralData}
                                                         isEditable={field.election_details}
                                                         formIndex={index}
+                                                        setBackDropToggle={setBackDropToggle}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
                                                     <Primarybutton

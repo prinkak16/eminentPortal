@@ -17,7 +17,7 @@ import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
 const FormWrap=({userData, stateId})=>{
-    const {config, isCandidateLogin} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -65,6 +65,7 @@ const FormWrap=({userData, stateId})=>{
 
 
     const onSubmit = (values, formikBag) => {
+        setBackDropToggle(true)
         const {setSubmitting} = formikBag;
         const newStepValues = [...stepValues];
         newStepValues[activeStep] = values;
@@ -82,7 +83,7 @@ const FormWrap=({userData, stateId})=>{
             }
         }
         if (!isError) {
-            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId).then(response => {
+            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
                 if (response) {
                     if (activeStep + 1 === 6) {
                         navigate({

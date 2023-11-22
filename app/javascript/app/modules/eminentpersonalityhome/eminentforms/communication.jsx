@@ -28,7 +28,7 @@ import OtherNumberField from "../component/otherFormFields/otherNumberInput";
 import {ApiContext} from "../../ApiContext";
 
 const Communicationform =(props)=>{
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -85,6 +85,7 @@ const Communicationform =(props)=>{
     const handlePinCodeChange = (pinCode, pincodeType) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
+            setBackDropToggle(true)
             axios.get(pinApi)
                 .then((response) => {
                     const responseData = response.data[0];
@@ -93,7 +94,9 @@ const Communicationform =(props)=>{
                         const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
                         setPincodes(districts, state, pincodeType)
+                        setBackDropToggle(false)
                     } else {
+                        setBackDropToggle(false)
                         showErrorToast(responseData.Message)
                     }
                 })
@@ -204,15 +207,12 @@ const Communicationform =(props)=>{
 
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId, setBackDropToggle).then(response => {
         });
     }
 
-    const otherAddressError = (key, formIndex) => {
-        const form = formValues.find((field, index) => index === formIndex)
-        return  !isValuePresent(form[key])
-    }
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
