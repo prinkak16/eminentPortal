@@ -14,6 +14,8 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+// import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -26,8 +28,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab }) {
-    const [filterString, setFilterString] = useState('');
+export default function BasicTabs({ onSwitchTab, filterString }) {
+    // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -156,7 +158,7 @@ export default function BasicTabs({ onSwitchTab }) {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
-                    Upload File
+                   <ArrowUpwardIcon/> Upload CSV File
                 </Button>
 
                 <Modal  show={show} onHide={handleClose}
@@ -230,7 +232,6 @@ export default function BasicTabs({ onSwitchTab }) {
                         <Tab label="File Stauts" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
-
                         <Tab label="GOM Management" value="6" />
                     </TabList>
                     {buttonContent}
@@ -239,7 +240,7 @@ export default function BasicTabs({ onSwitchTab }) {
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="4">
-                    <MasterVacancies  tabId={value}/>
+                    <MasterVacancies filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>

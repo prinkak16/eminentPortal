@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {createContext, useContext} from 'react';
 import {
     Box,
     Tab,
@@ -15,25 +15,27 @@ import {useEffect, useState} from "react";
 import './masterofvacancies.css'
 import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import {getMinistryWiseData} from "../../../../api/eminentapis/endpoints";
+import {HomeContext} from "../../../../context/tabdataContext";
 
 const DUMMY_DATA = []
-const MasterVacancies=({tabId})=> {
+const MasterVacancies = ({ tabId, filterString }) => {
+    const homeContext = useContext(HomeContext);
+
     const [value, setValue] = React.useState('1');
     const [tabData, setTabData] = useState([]);
+    const [ministryId, setMinistryId] = useState(null);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        setTabData(DUMMY_DATA);
+        homeContext.handleMovTabsFilter(newValue);
     };
     const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
-        if(tabId === '1'){
+        if(tabId === '1') {
             setValue(tabId);
         }
-        else if(tabId === '2'){
+        else if(tabId === '2') {
             setValue(tabId);
-            const ministryData= DUMMY_DATA.filter(data=>data.ministryId===ministryId);
-            setTabData(ministryData);
+            setMinistryId(ministryId);
         }
         else if(tabId === '3'){
             setValue(tabId);
@@ -43,7 +45,6 @@ const MasterVacancies=({tabId})=> {
             setTabData(data)
         }
     };
-
     return (
         <>
         <Analytics tabId={tabId}/>
@@ -58,10 +59,10 @@ const MasterVacancies=({tabId})=> {
                     <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
                 </Box>
                 <TabPanel value="1"  className="p-0">
-                    <MinistryTable onSwitchTab={switchTabDataHandler} />
+                    <MinistryTable filterString={filterString} onSwitchTab={switchTabDataHandler} />
                 </TabPanel>
                 <TabPanel value="2" className="p-0">
-                    <PSUTable  data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    <PSUTable ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
                 </TabPanel>
                 <TabPanel value="3" className="p-0">
                     <VacancyTable data={tabData} onSwitchTab={switchTabDataHandler}/>
