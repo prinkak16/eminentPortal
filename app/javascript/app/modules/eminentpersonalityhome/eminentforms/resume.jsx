@@ -75,7 +75,6 @@ const Resumeform = (props) => {
 
     const handleImageUpload = (file) => {
         getFileUpload(file,config,isCandidateLogin).then(res => {
-            console.log('res.data.file_path', res.data.file_path)
             setPdfFileName(file.name)
             props.formValues.attachment_name = file.name
             setPdfFile(res.data.file_path)

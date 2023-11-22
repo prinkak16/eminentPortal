@@ -183,7 +183,6 @@ const Communicationform =(props)=>{
         }
     }
 
-console.log(otherPinData)
 
     const otherDistrictStateArray = (type, formType) => {
         const form = otherPinData.find((field) => field.id === formType)
