@@ -3,6 +3,7 @@ import {apiBaseUrl, allSteps, fileUpload} from "../api_endpoints";
 import {isValuePresent, showErrorToast, showSuccessToast} from "../../modules/utils";
 export const getFormData = async (data, activeStep, config, isDraft = true, isCandidateLogin, stateId) => {
     const updateData = isCandidateLogin ? "eminent/update" : "custom_member_forms/add"
+    debugger
     const formData =  {
         "form_type": "eminent_personality",
         "data": data,
@@ -19,7 +20,11 @@ export const getFormData = async (data, activeStep, config, isDraft = true, isCa
         return true
     } catch (error) {
         const errors = error.response.data.error
-        showErrorToast(errors[0].message)
+        if (!isValuePresent(errors)) {
+            showErrorToast(error.response.data.message)
+        } else {
+            showErrorToast(errors[0].message)
+        }
         return false
     }
 }

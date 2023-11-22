@@ -6,8 +6,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
-import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import * as Yup from "yup";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -19,7 +17,7 @@ import {
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress, toSnakeCase
+    saveProgress, saveProgressButton, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -29,7 +27,6 @@ import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
-import {boolean} from "yup";
 import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
@@ -236,7 +233,9 @@ const PolticalandGovrnform =(props)=>{
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={() => saveProgress()} />
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 {politicalProfileDetails.length > 0 && (

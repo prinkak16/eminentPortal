@@ -2,30 +2,28 @@ import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Poppe
 import React, {useContext, useEffect, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
-import Startdatepicker from '../component/startdatepicker/startdatepicker';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
-import SelectField from "../component/selectfield/selectfield";
-import Inputfield from "../component/inputfield/inputfield";
-import Primarybutton from '../component/primarybutton/primarybutton';
 import {v4 as uuidv4} from 'uuid';
 import ComponentOfFields from './componentOfFields'
 import {
     getEducationData,
     getFormData,
-    getGenderData,
-    getReligionData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, formFilledValues} from "../../utils";
+import {
+    educationDetailsJson,
+    ProfessionJson,
+    isValuePresent,
+    saveProgress,
+    formFilledValues,
+    saveProgressButton
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 
@@ -189,7 +187,9 @@ const Educationform = (props) => {
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={saveProgress} />
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>

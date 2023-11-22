@@ -78,7 +78,6 @@ const FormWrap=({userData, stateId})=>{
         }
         if (activeStep + 1 === 4) {
             if (activeStepData.election_contested) {
-                debugger
              isError = checkValidationsElectoral(activeStepData.election_fought)
             }
         }

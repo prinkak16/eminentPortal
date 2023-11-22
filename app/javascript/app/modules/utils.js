@@ -1,6 +1,11 @@
 import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
 import { toast } from 'react-toastify';
 import moment from "moment/moment";
+import {Button} from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import React from "react";
 const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
@@ -402,8 +407,6 @@ export const saveProgress = (formValues, activeStep) => {
         }
     }
     getFormData(fieldsWithValues, activeStep).then(response => {
-        console.log('API response:', response.data);
-
     });
 }
 
@@ -481,3 +484,10 @@ export const calculateAge = (dob) => {
     return age;
 
 };
+
+export const saveProgressButton=
+    <Button>Save Progress
+        <Tooltip title="">
+            <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
+        </Tooltip>
+    </Button>

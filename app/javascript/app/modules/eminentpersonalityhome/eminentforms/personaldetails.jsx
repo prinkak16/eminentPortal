@@ -12,7 +12,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronDown, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faChevronDown, faInfoCircle, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
     getFormData,
     getGenderData,
@@ -21,13 +21,20 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {calculateAge, dobFormat, formFilledValues, isValuePresent, languagesName} from "../../utils";
+import {
+    calculateAge,
+    dobFormat,
+    formFilledValues,
+    isValuePresent,
+    languagesName, saveProgress,
+    saveProgressButton
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import moment from "moment";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-
+import Tooltip from '@mui/material/Tooltip';
 const PersonalDetails = (props) => {
     const {config,isCandidateLogin} = useContext(ApiContext)
     useEffect(() => {
@@ -155,9 +162,11 @@ const PersonalDetails = (props) => {
         <>
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Personal Detail"/></Item>
+                    <Item><Formheading number="1" heading="Personal Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Button onClick={saveProgress}>Save Progress</Button>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 <Grid className='detailFrom' container spacing={2}>
