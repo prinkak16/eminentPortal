@@ -36,7 +36,7 @@ const FormWrap=({userData, stateId})=>{
     }, []);
 
     const [stepValues, setStepValues]=useState([])
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState(2);
 
     const isLastStep = () => {
         return activeStep === steps.length - 1;
@@ -76,9 +76,9 @@ const FormWrap=({userData, stateId})=>{
             const fieldsToValidate = ['educations', 'professions'];
             isError = validateFields(activeStepData, fieldsToValidate);
         }
-
         if (activeStep + 1 === 4) {
             if (activeStepData.election_contested) {
+                debugger
              isError = checkValidationsElectoral(activeStepData.election_fought)
             }
         }
@@ -136,7 +136,7 @@ const FormWrap=({userData, stateId})=>{
         if (isValuePresent(electoralDetails)) {
             for (const item in electoralDetails) {
                 if (!isError) {
-                    if (isValuePresent(electoralDetails[item].election_type)) {
+                    if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
                             for (const index in fields) {

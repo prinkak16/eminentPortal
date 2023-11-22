@@ -65,7 +65,6 @@ const PersonalDetails = (props) => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
 
-    console.log(props.formValues.dob)
     const selectChange = (e) => {
         setSelectedOption(e.target.value);
     };
@@ -146,6 +145,11 @@ const PersonalDetails = (props) => {
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
 
+    const maxDate = () => {
+        const today = new Date ()
+        const date = new Date(today.getFullYear() -18 , today.getMonth(), today.getDate())
+        return  dayjs(date)
+    }
 
     return (
         <>
@@ -225,6 +229,7 @@ const PersonalDetails = (props) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
                                             value={dobFormat(props.formValues.dob)}
@@ -350,7 +355,7 @@ PersonalDetails.validationSchema = Yup.object().shape({
     religion: Yup.string().required('Please select your Religion'),
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
+    caste: Yup.string().required('Please Enter your Caste'),
     // dob: Yup.string().required('Please select your Date Of Birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),

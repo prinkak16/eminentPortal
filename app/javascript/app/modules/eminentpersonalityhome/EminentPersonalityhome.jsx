@@ -41,7 +41,8 @@ const EminentPersonality=()=> {
     return(
         <>
             <Header/>
-                <Grid className="detailHeading" sx={{textAlign:'center', mb:8, mt:15 }}>
+                <Grid className="detailHeading d-flex justify-content-center" sx={{textAlign:'center', mb:8, mt:15 }}>
+                    <div className="detailHeading-dashed dashed-1"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="456" height="48" viewBox="0 0 456 48" fill="none">
                         <g opacity="0.7">
                             <path d="M22.6807 36H0.888672V0.911964H22.6807V6.57596H7.03267V15.6H21.0487V21.024H7.03267V30.336H22.6807V36Z" fill="#575C61"/>
@@ -64,6 +65,7 @@ const EminentPersonality=()=> {
                             <path d="M431.256 46.992V42.096H434.76C437.064 42.096 438.504 41.568 439.512 38.784L440.184 37.008L430.632 12.288H436.824L442.92 29.568L449.352 12.288H455.4L443.784 41.28C442.008 45.696 439.512 47.52 435.624 47.52C433.992 47.52 432.552 47.328 431.256 46.992Z" fill="#575C61"/>
                         </g>
                     </svg>
+                    <div className="detailHeading-dashed dashed-2"></div>
                 </Grid>
             {userData && <FormWrap userData={userData} stateId={ userStateId}/>}
         </>

@@ -95,7 +95,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
             [valueType]: value,
         }));
     };
-    console.log(fieldsData)
+
 
     const handleSave = () => {
         saveData(fieldsData,formIndex)
