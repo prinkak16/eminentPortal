@@ -5,7 +5,7 @@ import {useState, useContext} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
-import {getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
+import {fetchMobile, getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
@@ -103,11 +103,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
         setInputNumber(number.replace(/[^0-9]/g, ''));
         setEminentMsg('')
         if (number && number.length === 10 && isValidNumber(number)) {
-            let numberString = `&query=${number}`;
-            getData(numberString).then(res => {
-                setEminentMsg('Number Already Exist')
-                setUserData(res?.data?.data.members[0])
-                setExistingData(res?.data?.data)
+            fetchMobile(number).then(res => {
+                setEminentMsg(res.data?.message)
+                setUserData(res?.data?.data)
                 setSubmitDisabled(false);
             }).catch(err => {
                 setSubmitDisabled(true);
@@ -133,6 +131,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
         }, {
             state: {
                 eminent_number: userData.phone,
+                user_data: userData
             }
         });
     }
@@ -222,7 +221,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
             Add New
         </button>
     }
-    console.log(window.innerWidth,'window.innerWidth')
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
