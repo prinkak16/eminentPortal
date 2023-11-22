@@ -233,7 +233,7 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="4">
-                    <MasterVacancies  tabId={value}/>
+                    <MasterVacancies filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>

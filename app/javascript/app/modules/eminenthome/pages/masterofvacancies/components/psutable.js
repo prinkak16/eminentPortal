@@ -12,7 +12,7 @@ import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 
 
-const  PSUTable = ({data, onSwitchTab, ministryId}) => {
+const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
     const [psuTableData, setPsuTableData] = useState([])
     useEffect(() => {
         const params = {

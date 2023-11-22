@@ -58,11 +58,11 @@ export const getSlottingPsuData=()=> {
     return axios.get('https://psudetails-default-rtdb.asia-southeast1.firebasedatabase.app/psudetail.json')
 }
 
-export const getMinistryWiseData = (params) => {
-    return axios.get(apiBaseUrl + 'vacancy/list', { params });
+export const getMinistryWiseData = (params, queryParams) => {
+    return axios.get(`${apiBaseUrl}vacancy/list?${queryParams}`, { params });
 }
-export const getMinistryWiseFilterData = () => {
-    return axios.get(apiBaseUrl + 'filters/vacancy_ministry_wise');
+export const getMinistryWiseFilterData = (params) => {
+    return axios.get(apiBaseUrl + 'filters/vacancy_ministry_wise',{params});
 }
 export const getOrganizationWiseFilterData = () => {
     return axios.get(apiBaseUrl + 'filters/vacancy_organization_wise');
@@ -80,7 +80,6 @@ export const getMinisters = () => {
 export const getGOMTableData = () => {
     return axios.get(apiBaseUrl + 'gom/assigned_ministries')
         .then(response => {
-            console.log("Data received:", response.data);
             return response.data; // You can return the data if needed
         })
         .catch(error => {

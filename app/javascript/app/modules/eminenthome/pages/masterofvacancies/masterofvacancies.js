@@ -18,7 +18,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
 
 const DUMMY_DATA = []
-const MasterVacancies = ({tabId}) => {
+const MasterVacancies = ({ tabId, filterString }) => {
     const homeContext = useContext(HomeContext);
 
     const [value, setValue] = React.useState('1');
@@ -30,10 +30,10 @@ const MasterVacancies = ({tabId}) => {
         homeContext.handleMovTabsFilter(newValue);
     };
     const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
-        if(tabId === '1'){
+        if(tabId === '1') {
             setValue(tabId);
         }
-        else if(tabId === '2'){
+        else if(tabId === '2') {
             setValue(tabId);
             setMinistryId(ministryId);
         }
@@ -46,7 +46,6 @@ const MasterVacancies = ({tabId}) => {
         }
     };
     return (
-
         <>
         <Analytics tabId={tabId}/>
         <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
@@ -60,7 +59,7 @@ const MasterVacancies = ({tabId}) => {
                     <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
                 </Box>
                 <TabPanel value="1"  className="p-0">
-                    <MinistryTable onSwitchTab={switchTabDataHandler} />
+                    <MinistryTable filterString={filterString} onSwitchTab={switchTabDataHandler} />
                 </TabPanel>
                 <TabPanel value="2" className="p-0">
                     <PSUTable ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>

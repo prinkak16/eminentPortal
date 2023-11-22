@@ -46,16 +46,20 @@ export default function FiltersSidebar(props) {
         });
         props.setFilterString(filterString);
     }
+    const [ministryInfo, setMinistryInfo] = useState('')
 
 
     useEffect(() => {
-        console.log('Filter side: ', homeContext.movTabId)
         switch (props.tabId) {
             case '4':
                 if (homeContext.movTabId === '1') {
-                    getMinistryWiseFilterData().then(response => {
+                    const params={
+                        ministry_name:'',
+                        department_name:'',
+                        organization_name:'',
+                    }
+                    getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
-                        // console.log('Ministry wise Data: ', response.data.data)
                     })
                 } else if (homeContext.movTabId === '2') {
                     getOrganizationWiseFilterData().then(response => {

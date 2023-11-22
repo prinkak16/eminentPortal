@@ -5,11 +5,12 @@ import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 
 
-const  MinistryTable = ({onSwitchTab}) => {
+const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [currentPage, setCurrentPage] = useState('');
     const [ministryTableData, setMinistryTableData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
+
     const prepareToGetDisplayData = () => {
         // let pageString = '';
         // let offset = currentPage * limit;
@@ -24,7 +25,7 @@ const  MinistryTable = ({onSwitchTab}) => {
             // order_by: 'total',
             // order_type: 'DESC'
         };
-        getMinistryWiseData(params)
+        getMinistryWiseData(params, filterString)
             .then(response => {
             setIsFetching(false);
             setMinistryTableData(response.data.data.value);
@@ -34,8 +35,7 @@ const  MinistryTable = ({onSwitchTab}) => {
             console.error(error);
         })
         prepareToGetDisplayData();
-    }, [currentPage]);
-
+    }, [currentPage, filterString]);
     return (
         <>
             { error && <h1>Error: {error.response.data.message}</h1> }

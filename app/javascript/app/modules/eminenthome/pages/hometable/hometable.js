@@ -21,7 +21,6 @@ import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 const HomeTable = (props) => {
-    console.log('homeprops', props)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');

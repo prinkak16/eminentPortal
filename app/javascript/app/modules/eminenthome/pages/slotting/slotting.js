@@ -42,7 +42,6 @@ const SlottingTabPage =({tabId})=>{
                 })
             }
             setSlottingTableData(temp)
-            console.log("slotting", temp);
         })
         // getSlottingTable()
         // setSlottingTableData(slottingTableData)
