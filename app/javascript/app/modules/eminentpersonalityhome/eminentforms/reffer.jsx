@@ -12,7 +12,7 @@ import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
     const {config, isCandidateLogin} = useContext(ApiContext)
-    const [mobile, setMobile] = useState()
+    const [mobile, setMobile] = useState(props?.formValues?.reference?.mobile)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
