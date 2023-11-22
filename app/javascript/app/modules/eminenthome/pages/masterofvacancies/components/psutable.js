@@ -9,12 +9,24 @@ import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
 import  './movtable.css'
 import ReactPaginate from "react-paginate";
+import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 
 
-const  PSUTable = ({data, onSwitchTab}) => {
+const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
+    const [psuTableData, setPsuTableData] = useState([])
+    useEffect(() => {
+        const params = {
+            search_by: 'organization_wise',
+            order_by: 'total',
+            order_type: 'DESC',
+            ministry_id: ministryId
+        };
+        getMinistryWiseData(params).then(res=>
+            setPsuTableData(res.data.data.value))
+    }, []);
     return (
         <>
-        <TableContainer component={Paper} className="psutable">
+        <TableContainer component={Paper} className="psutable mb-3">
             <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                 <TableHead>
                     <TableRow>
@@ -29,25 +41,25 @@ const  PSUTable = ({data, onSwitchTab}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map((ministry, ministryIndex) => {
+                    {psuTableData.map((ministry, ministryIndex) => {
                         let ministryCount = 0;
                         let ministryRowSpan = 0;
-                        ministry.departments.forEach(department => {
-                            ministryRowSpan += department.psus.length;
+                        ministry.dept_info.forEach(department => {
+                            ministryRowSpan += department.org_info.length;
                         })
-                        return ministry.departments.map((department, departmentIndex) => {
+                        return ministry.dept_info.map((department, departmentIndex) => {
                             ministryCount += departmentIndex;
-                            const departmentRowSpan = department.psus.length;
-                            return department.psus.map((psu, psuIndex) => {
+                            const departmentRowSpan = department.org_info.length;
+                            return department.org_info.map((psu, psuIndex) => {
                                 ministryCount += psuIndex;
                                 return (
-                                    <TableRow key={psu.psu_id}>
+                                    <TableRow key={psu.org_id}>
                                         {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('1')}>{ministry.ministryName}</TableCell>}
-                                        {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.departmentName}</TableCell>}
-                                        <TableCell onClick={()=>onSwitchTab('3', ministry.ministryId, department.departmentId)}>{psu.psuName}</TableCell>
-                                        <TableCell >{psu.psuListed}</TableCell>
-                                        <TableCell>{psu.totalPosition}</TableCell>
+                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('1')}>{ministry.ministry_name}</TableCell>}
+                                        {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
+                                        <TableCell onClick={()=>onSwitchTab('3', ministry.ministryId, department.departmentId)}>{psu.org_name}</TableCell>
+                                        <TableCell >{psu.is_listed}</TableCell>
+                                        <TableCell>{psu.total}</TableCell>
                                         <TableCell>{psu.occupied}</TableCell>
                                         <TableCell>{psu.vacant}</TableCell>
                                     </TableRow>
