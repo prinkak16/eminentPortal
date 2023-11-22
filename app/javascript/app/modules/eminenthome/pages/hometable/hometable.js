@@ -200,7 +200,7 @@ const HomeTable = (props) => {
 
                     <div className="table-container mt-4" key={member.id}>
                         <Grid container className="single-row">
-                            <Grid item xs={3} className="gridItem">
+                            <Grid item xs={3} className="gridItem min-width-24rem">
                                 <div className="row">
                                     <div className="col-md-4 pe-0">
                                         <div className='imgdiv circle'>
@@ -214,13 +214,13 @@ const HomeTable = (props) => {
                                             <div/>
                                             <div className="d-flex">
                                                 <IdBadge/>
-                                                <p className="id-text">ID-No.{member.id}</p>
+                                                <p className="id-text">ID No. - {member.id}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </Grid>
-                            <Grid item xs className="gridItem">
+                            <Grid item xs className="gridItem education-profession-container">
                                 <div className="row">
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Age</p>
@@ -245,11 +245,11 @@ const HomeTable = (props) => {
                             </Grid>
                             <Grid item xs className="gridItem">
                                 <div className="row data-display">
-                                    <p className="text-labels">Form Status</p>
+                                    <p className="text-labels">Form Status:</p>
                                     <p>{member.aasm_state}</p>
                                 </div>
                                 <div className="row data-display">
-                                    <p className="text-labels">Channel</p>
+                                    <p className="text-labels">Channel:</p>
                                     <p>{member.channel}</p>
                                 </div>
 
