@@ -109,8 +109,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
                 setSubmitDisabled(false);
             }).catch(err => {
                 setSubmitDisabled(true);
-                setEminentMsg('No member found.')
-                console.log(err);
+                setEminentMsg(err.response.data.message)
             });
             setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
