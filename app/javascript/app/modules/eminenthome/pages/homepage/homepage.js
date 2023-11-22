@@ -126,6 +126,7 @@ export default function PersistentDrawerLeft() {
     const handleMovTabsFilter = (newValue)=>{
         setMovTabId(newValue)
     }
+    console.log(open)
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
             <Header/>
@@ -170,7 +171,7 @@ export default function PersistentDrawerLeft() {
 
                         </div>
 
-                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}/>
+                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler} openFilter={open}/>
                         {/*<>*/}
                         {/*    <Analytics toggle={toggle}/>*/}
                         {/*    <HomeTable filterString={filterString}/>*/}

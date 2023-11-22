@@ -28,7 +28,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab, filterString }) {
+export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
     // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -227,7 +227,7 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 ? '45rem' : ''}} aria-label="lab API tabs example">
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
                         <Tab label="Allotment" value="2" />
                         <Tab label="File Status" value="3" />
