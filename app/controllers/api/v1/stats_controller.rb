@@ -18,7 +18,7 @@ class Api::V1::StatsController < BaseApiController
       return render json: { success: true, message: 'Success', data: stats }, status: :ok unless state_ids.size.positive?
 
       results = CustomMemberForm.select(
-        "SUM(CASE WHEN aasm_state = 'incomplete' THEN 1 ELSE 0 END) AS incomplete",
+        "SUM(CASE WHEN aasm_state IN ('pending', 'incomplete', 'otp_verified') THEN 1 ELSE 0 END) AS incomplete",
         "SUM(CASE WHEN aasm_state IN ('submitted', 'approved', 'rejected') THEN 1 ELSE 0 END) AS completed",
         "SUM(1) AS overall"
       ).find_by(country_state_id: state_ids)
