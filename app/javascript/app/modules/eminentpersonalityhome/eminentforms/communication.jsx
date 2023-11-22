@@ -5,9 +5,7 @@ import {styled} from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
-import SelectField from "../component/selectfield/selectfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +13,14 @@ import {getFormData, getStateData} from "../../../api/stepperApiEndpoints/steppe
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
-import {formFilledValues, isValuePresent, saveProgress, showErrorToast, showSuccessToast} from "../../utils";
+import {
+    formFilledValues,
+    isValuePresent,
+    saveProgress,
+    saveProgressButton,
+    showErrorToast,
+    showSuccessToast
+} from "../../utils";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
@@ -214,7 +219,9 @@ const Communicationform =(props)=>{
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
-                        <Savebtn onClick={saveProgress}/>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 <div className="detailFrom">

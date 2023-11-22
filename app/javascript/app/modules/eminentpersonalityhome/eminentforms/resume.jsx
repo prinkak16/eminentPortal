@@ -18,14 +18,13 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress, showErrorToast} from "../../utils";
+import {formFilledValues, saveProgress, saveProgressButton, showErrorToast} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
@@ -107,7 +106,11 @@ const Resumeform = (props) => {
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
+                    </Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
                     <Grid item xs={6}>

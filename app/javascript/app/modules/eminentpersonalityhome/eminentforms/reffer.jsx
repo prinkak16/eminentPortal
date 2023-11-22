@@ -3,11 +3,10 @@ import {Stack, Typography, Button, Box, Paper, Grid, FormLabel, TextField} from 
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import {formFilledValues} from "../../utils";
+import {formFilledValues, saveProgressButton} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
@@ -54,7 +53,11 @@ const Refferedform = (props) => {
 
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Referred by"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
+                    </Item>
                 </Stack>
                 <Grid container spacing={2} sx={{mb: 3}} className="grid-wrap">
                     <Grid item xs={6}>
