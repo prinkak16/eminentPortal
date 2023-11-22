@@ -75,7 +75,6 @@ const Resumeform = (props) => {
 
     const handleImageUpload = (file) => {
         getFileUpload(file,config,isCandidateLogin).then(res => {
-            console.log('res.data.file_path', res.data.file_path)
             setPdfFileName(file.name)
             props.formValues.attachment_name = file.name
             setPdfFile(res.data.file_path)
@@ -91,7 +90,7 @@ const Resumeform = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 

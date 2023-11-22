@@ -14,6 +14,8 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+// import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -26,8 +28,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab }) {
-    const [filterString, setFilterString] = useState('');
+export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
+    // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -108,6 +110,7 @@ export default function BasicTabs({ onSwitchTab }) {
                 setExistingData(res?.data?.data)
                 setSubmitDisabled(false);
             }).catch(err => {
+                setSubmitDisabled(true);
                 setEminentMsg('No member found.')
                 console.log(err);
             });
@@ -134,6 +137,12 @@ export default function BasicTabs({ onSwitchTab }) {
         });
     }
 
+    const cancelAddNew = () => {
+        setWantToAddNew(false)
+        setInputNumber('')
+        setEminentMsg((''))
+    }
+
     let buttonContent;
     if (value === '1') {
         buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
@@ -149,7 +158,7 @@ export default function BasicTabs({ onSwitchTab }) {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
-                    Upload File
+                   <ArrowUpwardIcon/> Upload CSV File
                 </Button>
 
                 <Modal  show={show} onHide={handleClose}
@@ -213,17 +222,17 @@ export default function BasicTabs({ onSwitchTab }) {
             Add New
         </button>
     }
+    console.log(window.innerWidth,'window.innerWidth')
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
                         <Tab label="Allotment" value="2" />
-                        <Tab label="File Stauts" value="3" />
+                        <Tab label="File Status" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
-
                         <Tab label="GOM Management" value="6" />
                     </TabList>
                     {buttonContent}
@@ -232,7 +241,7 @@ export default function BasicTabs({ onSwitchTab }) {
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="4">
-                    <MasterVacancies  tabId={value}/>
+                    <MasterVacancies filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
@@ -263,7 +272,7 @@ export default function BasicTabs({ onSwitchTab }) {
                 <Modal.Footer>
                     <button
                         className="btn"
-                        onClick={() => setWantToAddNew(false)}>
+                        onClick={cancelAddNew}>
                         Cancel
                     </button>
                     <button

@@ -16,7 +16,7 @@ import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
-const FormWrap=({userData})=>{
+const FormWrap=({userData, stateId})=>{
     const {config, isCandidateLogin} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -76,14 +76,14 @@ const FormWrap=({userData})=>{
             const fieldsToValidate = ['educations', 'professions'];
             isError = validateFields(activeStepData, fieldsToValidate);
         }
-
         if (activeStep + 1 === 4) {
             if (activeStepData.election_contested) {
+                debugger
              isError = checkValidationsElectoral(activeStepData.election_fought)
             }
         }
         if (!isError) {
-            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin).then(response => {
+            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId).then(response => {
                 if (response) {
                     if (activeStep + 1 === 6) {
                         navigate({
@@ -136,7 +136,7 @@ const FormWrap=({userData})=>{
         if (isValuePresent(electoralDetails)) {
             for (const item in electoralDetails) {
                 if (!isError) {
-                    if (isValuePresent(electoralDetails[item].election_type)) {
+                    if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
                             for (const index in fields) {
@@ -199,6 +199,7 @@ const FormWrap=({userData})=>{
                             {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
                                 <Form>
                                     <FormStepper
+                                        stateId={stateId}
                                         userData={userData}
                                         activeStep={activeStep}
                                         handlePrev={handlePrev}

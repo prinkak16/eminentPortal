@@ -30,6 +30,7 @@ import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import {boolean} from "yup";
+import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
     const {config,isCandidateLogin} = useContext(ApiContext)
@@ -192,7 +193,7 @@ const PolticalandGovrnform =(props)=>{
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId).then(response => {
         });
     }
 
@@ -303,16 +304,26 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
-                        <Inputfield type="number"
-                                    name="bjp_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="bjp_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
-                        <Inputfield type="number"
-                                    name="rss_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="rss_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>
@@ -421,7 +432,7 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container className="grid-wrap">
                     <Grid item sx={{mt:3}} xs={12}>
                         <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <sup>*</sup>
+                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <mark>*</mark>
                         </Typography>
                     </Grid>
                     <Grid item xs={4} sx={{mt:2, ml:3}}>
@@ -486,7 +497,10 @@ PolticalandGovrnform.initialValues = {
     rss_years: '',
     bjp_years: '',
     other_parties: [],
-    social_profiles: [],
+    social_profiles: [{
+        organization:'',
+        description: ''
+    }],
     election_contested: false,
     election_fought: [
         {
@@ -498,18 +512,7 @@ PolticalandGovrnform.initialValues = {
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    rss_years: Yup.number().required('Please enter rss joined years'),
-    bjp_years: Yup.number().required('Please enter bjp joined year'),
     election_contested: Yup.boolean().required('Please Select election contest'),
-
-    social_profiles: Yup.array().of(
-        Yup.object().shape({
-            organization: Yup.string().required('Please enter your Address'),
-            description: Yup.string().required('Please enter your Street'),
-        })
-    ),
-
-
 
 });
 export default PolticalandGovrnform

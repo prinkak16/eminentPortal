@@ -21,7 +21,7 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {formFilledValues, isValuePresent, languagesName} from "../../utils";
+import {calculateAge, dobFormat, formFilledValues, isValuePresent, languagesName} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
@@ -57,6 +57,10 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
+
+    useEffect(() => {
+        setEminentAge(props.formValues.dob)
+    },[props.formValues.dob])
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
@@ -96,7 +100,7 @@ const PersonalDetails = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 
@@ -116,19 +120,7 @@ const PersonalDetails = (props) => {
             props.formValues.photo = url;
         }
     }
-    const calculateAge = (dob) => {
-            if (dob.$y === null) return '';
-            const today = new Date();
-            const birthDate = new Date(dob);
-            let age = today.getFullYear() - birthDate.getFullYear();
 
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
-
-    };
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -148,13 +140,16 @@ const PersonalDetails = (props) => {
     }
 
     const handleDateChange = (event)    => {
+        if (event.$d === null) return;
         setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
-    const dobFormat = (date) => {
-      return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
-    }
 
+    const maxDate = () => {
+        const today = new Date ()
+        const date = new Date(today.getFullYear() -18 , today.getMonth(), today.getDate())
+        return  dayjs(date)
+    }
 
     return (
         <>
@@ -234,6 +229,7 @@ const PersonalDetails = (props) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
                                             value={dobFormat(props.formValues.dob)}
@@ -246,7 +242,7 @@ const PersonalDetails = (props) => {
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge ))} Years` : ''}</Typography>
+                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
@@ -359,7 +355,7 @@ PersonalDetails.validationSchema = Yup.object().shape({
     religion: Yup.string().required('Please select your Religion'),
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
+    caste: Yup.string().required('Please Enter your Caste'),
     // dob: Yup.string().required('Please select your Date Of Birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),

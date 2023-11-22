@@ -15,6 +15,7 @@ import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FormStepper = ({
+                        stateId,
                         userData,
                          activeStep,
                          handlePrev,
@@ -99,7 +100,7 @@ const FormStepper = ({
                         </div>
                     }
                     <DeviceInfo/>
-                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData} activeStep={activeStep} userData={userData} formValues={values} onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
+                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData} activeStep={activeStep} userData={userData} stateId={stateId} formValues={values} onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
                     <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between">
                         <Button
                             disabled={activeStep === 0 || isSubmitting}
