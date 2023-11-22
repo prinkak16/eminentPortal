@@ -130,7 +130,6 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           next
         else
           organization_slug = convert_to_snake_case(row_data[:organization_name])
-          puts organization_slug
           organization_details = Organization.where(
             ministry_id: ministry_id_v,
             department_id: department_id_v,
