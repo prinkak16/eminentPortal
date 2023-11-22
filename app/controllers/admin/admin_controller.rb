@@ -232,7 +232,7 @@ class Admin::AdminController < ApplicationController
 
       sa = send_email('Result if manual upload of eminents', '<div><br>Please find the attachments.<br></div>', email, attachments = attachments)
 
-      flash[:success] = 'Success. Please check you provided email address for update.'
+      flash[:success] = 'File uploaded successfully. Please check your provided email address for file status update.'
       redirect_to admin_manual_upload_path, allow_other_host: true
       return
     rescue StandardError => e
