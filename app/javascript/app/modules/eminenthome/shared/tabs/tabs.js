@@ -108,6 +108,7 @@ export default function BasicTabs({ onSwitchTab }) {
                 setExistingData(res?.data?.data)
                 setSubmitDisabled(false);
             }).catch(err => {
+                setSubmitDisabled(true);
                 setEminentMsg('No member found.')
                 console.log(err);
             });
@@ -132,6 +133,12 @@ export default function BasicTabs({ onSwitchTab }) {
                 eminent_number: userData.phone,
             }
         });
+    }
+
+    const cancelAddNew = () => {
+        setWantToAddNew(false)
+        setInputNumber('')
+        setEminentMsg((''))
     }
 
     let buttonContent;
@@ -263,7 +270,7 @@ export default function BasicTabs({ onSwitchTab }) {
                 <Modal.Footer>
                     <button
                         className="btn"
-                        onClick={() => setWantToAddNew(false)}>
+                        onClick={cancelAddNew}>
                         Cancel
                     </button>
                     <button
