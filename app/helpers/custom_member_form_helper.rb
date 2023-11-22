@@ -58,7 +58,7 @@ module CustomMemberFormHelper
       'type': 'array',
       'items': {
         'type': 'string',
-        'pattern': "^[5-9]{1}\\d{9}$",
+        'pattern': '^[5-9]{1}\\d{9}$',
         'minLength': 10,
         'maxLength': 10,
         'pattern_example': '9876543210'
@@ -96,14 +96,12 @@ module CustomMemberFormHelper
     },
     'sub_caste': {
       'type': 'string',
-      'minLength': 2,
       'maxLength': 100
     },
     'languages': {
       'type': 'array',
       'items': {
         'type': 'string',
-        'minLength': 2,
         'maxLength': 30
       },
       'minItems': 1,
@@ -115,21 +113,22 @@ module CustomMemberFormHelper
     },
     'aadhaar': {
       'type': 'string',
-      'pattern': "^$|^\\d{12}$",
+      'pattern': '^$|^\\d{12}$',
       'minLength': 0, # Min length of 12 characters
       'maxLength': 12, # Max length of 12 characters
       'pattern_example': '123456789012'
     },
     'voter_id': {
       'type': 'string',
-      'pattern': "^$|^[A-Za-z]{3}\\d{7}$",
+      'pattern': '^$|^[A-Za-z]{3}\\d{7}$',
       'minLength': 0, # Min length of 12 characters
       'maxLength': 10, # Max length of 12 characters
       'pattern_example': 'ABC1234567'
     },
     'photo': {
       'type': 'string',
-      'format': 'uri'
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.domain.com/file.ext'
     }
   }
 
@@ -160,13 +159,13 @@ module CustomMemberFormHelper
   second_step_validations = first_step_validations.merge(
     'std_code': {
       'type': 'string',
-      'pattern': "^$|^\\d{3,6}$",
+      'pattern': '^$|^\\d{3,6}$',
       'maxLength': 6,
       'pattern_example': '0120'
     },
     'landline': {
       'type': 'string',
-      'pattern': "^$|^\\d{6,10}$",
+      'pattern': '^$|^\\d{6,10}$',
       'maxLength': 12,
       'pattern_example': '22324252'
     },
@@ -205,7 +204,7 @@ module CustomMemberFormHelper
           },
           'pincode': {
             'type': 'string',
-            'pattern': "^\\d{6}$",
+            'pattern': '^\\d{6}$',
             'minLength': 6,
             'maxLength': 6,
             'pattern_example': '110001'
@@ -579,7 +578,7 @@ module CustomMemberFormHelper
           }
         },
         'required': %w[name profile relationship]
-      },
+      }
     },
     'father': {
       'type': 'string',
@@ -596,80 +595,38 @@ module CustomMemberFormHelper
     'children': {
       'type': 'array',
       'items': {
-        'type': 'string',
+        'type': 'string'
       }
     },
     'website': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.website.com'
     },
     'twitter': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.twitter.com'
     },
     'linkedin': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.linkedin.com'
     },
     'facebook': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.facebook.com'
     },
     'instagram': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.instagram.com'
     },
     'attachment': {
-      'anyOf' => [
-        {
-          'type' => 'string',
-          'format' => 'uri'
-        },
-        {
-          'type' => 'string',
-          'enum' => ['']
-        }
-      ]
+      'type': 'string',
+      'pattern': '^$|\A(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)\b',
+      'pattern_example': 'www.domain.com/file.ext'
     }
   )
 

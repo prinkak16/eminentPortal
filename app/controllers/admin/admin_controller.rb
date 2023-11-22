@@ -160,8 +160,10 @@ class Admin::AdminController < ApplicationController
           custom_member_form = CustomMemberForm.where(phone: phone_number, form_type: form_type)
                                                .or(CustomMemberForm.where("data -> 'mobiles' ? :query", query: phone_number).where(form_type: form_type))
           custom_member_form = custom_member_form.first
+
           if person_id_detail.blank?
             if custom_member_form.blank?
+              # create new custom member
               custom_member_form = CustomMemberForm.create!(
                 phone: phone_number,
                 data: row_data[:data],
@@ -181,10 +183,11 @@ class Admin::AdminController < ApplicationController
               failed_eminent_users << row_data
               next
             else
-              if %w[pending otp_verified].include?(custom_member_form.aasm_state)
-                custom_member_form.update(data: row_data[:data])
-                custom_member_form.update(phone: phone_number)
-              end
+              # logic remove as per discussion with Shivam, Anurag(QA)
+              # if %w[pending otp_verified].include?(custom_member_form.aasm_state)
+              #   custom_member_form.update(data: row_data[:data])
+              #   custom_member_form.update(phone: phone_number)
+              # end
               row_data[:error] = 'Member already exists in system.'
               failed_eminent_users << row_data
               next
