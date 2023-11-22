@@ -187,7 +187,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
           custom_member.mark_incomplete!
         end
         # check if form is submitted
-        if !is_draft && custom_member.may_submit?
+        if !is_draft && params['form_step'] == 6 && custom_member.may_submit?
           custom_member.submit!
         end
         if is_draft
@@ -219,7 +219,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
         end
-        if !is_draft && custom_member.may_submit?
+        if !is_draft && params['form_step'] == 6 && custom_member.may_submit?
           custom_member.submit!
         end
         if current_user.blank? || custom_member.aasm_state == 'incomplete'
