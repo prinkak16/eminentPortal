@@ -35,7 +35,7 @@ const HomeTable = (props) => {
     const [open, setOpen] = useState(true);
     const navigate = useNavigate();
     const offset = 0;
-    const limit = 10;
+    const limit = 2;
     const displayPhoneNumbers = (member) => {
         const displayingNumbers = member.data.mobiles.splice(0, 2);
         return displayingNumbers.map((number, index) => (

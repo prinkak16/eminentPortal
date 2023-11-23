@@ -1,4 +1,4 @@
-import React, {createContext, useContext} from 'react';
+import React, {createContext, useContext, useState, useEffect} from 'react';
 import {
     Box,
     Tab,
@@ -11,7 +11,6 @@ import Analytics from '../../shared/analytics/analytics'
 import MinistryTable from "./components/ministrytable";
 import PSUTable from "./components/psutable";
 import VacancyTable from "./components/vacancytable";
-import {useEffect, useState} from "react";
 import './masterofvacancies.css'
 import axios from "axios";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -24,25 +23,24 @@ const MasterVacancies = ({ tabId, filterString }) => {
     const [value, setValue] = React.useState('1');
     const [tabData, setTabData] = useState([]);
     const [ministryId, setMinistryId] = useState(null);
-
+    const [organizationId, setOrganizationId] = useState(null)
     const handleChange = (event, newValue) => {
         setValue(newValue);
         homeContext.handleMovTabsFilter(newValue);
     };
-    const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
+    const switchTabDataHandler = (tabId, ministryId, organizationId) => {
         if(tabId === '1') {
             setValue(tabId);
         }
         else if(tabId === '2') {
             setValue(tabId);
             setMinistryId(ministryId);
+            console.log('ministryId', ministryId)
         }
         else if(tabId === '3'){
             setValue(tabId);
-            const ministryData= DUMMY_DATA.find(data=>data.ministryId===ministryId);
-            const departmentData = ministryData.departments.filter(department=>department.departmentId === departmentId)
-            const data = [{...ministryData, departments: departmentData}]
-            setTabData(data)
+            setOrganizationId(organizationId)
+            console.log('organizationId', organizationId)
         }
     };
     return (
@@ -62,10 +60,10 @@ const MasterVacancies = ({ tabId, filterString }) => {
                     <MinistryTable filterString={filterString} onSwitchTab={switchTabDataHandler} />
                 </TabPanel>
                 <TabPanel value="2" className="p-0">
-                    <PSUTable ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    <PSUTable filterString={filterString} ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
                 </TabPanel>
                 <TabPanel value="3" className="p-0">
-                    <VacancyTable data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    <VacancyTable filterString={filterString} organizationId={organizationId} data={tabData} onSwitchTab={switchTabDataHandler}/>
                 </TabPanel>
             </TabContext>
         </Box>

@@ -64,7 +64,6 @@ export default function FiltersSidebar(props) {
                 } else if (homeContext.movTabId === '2') {
                     getOrganizationWiseFilterData().then(response => {
                         setFiltersList(response.data.data);
-                        // console.log('Psu wise data: ', response.data.data)
                     })
                 } else if (homeContext.movTabId === '3') {
                     getVacancyWiseFilterData().then(response=>{
