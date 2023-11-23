@@ -2,34 +2,33 @@ import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Poppe
 import React, {useContext, useEffect, useState} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
-import Startdatepicker from '../component/startdatepicker/startdatepicker';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
-import SelectField from "../component/selectfield/selectfield";
-import Inputfield from "../component/inputfield/inputfield";
-import Primarybutton from '../component/primarybutton/primarybutton';
 import {v4 as uuidv4} from 'uuid';
 import ComponentOfFields from './componentOfFields'
 import {
     getEducationData,
     getFormData,
-    getGenderData,
-    getReligionData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import {Edit} from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {educationDetailsJson, ProfessionJson, isValuePresent, saveProgress, formFilledValues} from "../../utils";
+import {
+    educationDetailsJson,
+    ProfessionJson,
+    isValuePresent,
+    saveProgress,
+    formFilledValues,
+    saveProgressButton
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
+import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 
 const Educationform = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
@@ -56,18 +55,17 @@ const Educationform = (props) => {
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
 
-    const setHighestQualification = (e) => {
-        setEducationLevel(e.target.value);
+    const setHighestQualification = (value) => {
+        setEducationLevel(value);
+        props.formValues.education_level = value;
     };
 
     useEffect(() => {
-        const filteredItems = EducationData.filter((item) => item.name === props.formValues.education_level);
+        const filteredItems = EducationData.filter((item) => item === educationLevel);
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
         let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
-        filteredArray = filteredArray.map(item => item.name);
         setEducationsList(filteredArray)
-    },[props.formValues.education_level])
-
+    },[educationLevel])
 
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -79,7 +77,8 @@ const Educationform = (props) => {
 
     const getEducation = () => {
         getEducationData.then((response) => {
-            setEducationData(response.data.data)
+            const data = response.data.data.map(item => item.name)
+            setEducationData(data)
         })
     }
 
@@ -157,8 +156,9 @@ const Educationform = (props) => {
     };
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
         });
     }
 
@@ -182,26 +182,28 @@ const Educationform = (props) => {
         props.formValues.profession_description = e.target.value
     }
 
-
     return (
         <>
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={saveProgress} />
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
                     <Grid item xs={6} className='education-field pb-3'>
                         <Grid item xs={7}>
                             <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
-                            <SelectField name="education_level"
-                                         value={educationLevel}
-                                         placeholder={"Select Highest Education"}
-                                         defaultOption="Select Highest Education"
-                                         handleSelectChange={setHighestQualification}
-                                         optionList={EducationData}/>
+                            <AutoCompleteDropdown
+                                name='Education Level ( Highest )'
+                                selectedValue={educationLevel}
+                                listArray={EducationData}
+                                placeholder={"Select Highest Education"}
+                                onChangeValue={setHighestQualification}
+                            />
                             <ErrorMessage name="education_level" component="div"/>
                         </Grid>
                     </Grid>

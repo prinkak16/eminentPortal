@@ -5,7 +5,7 @@ import {useState, useContext} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
-import {getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
+import {fetchMobile, getData, uploadVacancy} from "../../../../api/eminentapis/endpoints";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
@@ -28,7 +28,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab, filterString }) {
+export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
     // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -103,15 +103,13 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
         setInputNumber(number.replace(/[^0-9]/g, ''));
         setEminentMsg('')
         if (number && number.length === 10 && isValidNumber(number)) {
-            let numberString = `&query=${number}`;
-            getData(numberString).then(res => {
-                setEminentMsg('Number Already Exist')
-                setUserData(res?.data?.data.members[0])
-                setExistingData(res?.data?.data)
+            fetchMobile(number).then(res => {
+                setEminentMsg(res.data?.message)
+                setUserData(res?.data?.data)
                 setSubmitDisabled(false);
             }).catch(err => {
-                setEminentMsg('No member found.')
-                console.log(err);
+                setSubmitDisabled(true);
+                setEminentMsg(err.response.data.message)
             });
             setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
@@ -132,8 +130,15 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
         }, {
             state: {
                 eminent_number: userData.phone,
+                user_data: userData
             }
         });
+    }
+
+    const cancelAddNew = () => {
+        setWantToAddNew(false)
+        setInputNumber('')
+        setEminentMsg((''))
     }
 
     let buttonContent;
@@ -219,10 +224,10 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
                         <Tab label="Allotment" value="2" />
-                        <Tab label="File Stauts" value="3" />
+                        <Tab label="File Status" value="3" />
                         <Tab label="Master of Vacancies" value="4" />
                         <Tab label="Slotting" value="5" />
                         <Tab label="GOM Management" value="6" />
@@ -264,7 +269,7 @@ export default function BasicTabs({ onSwitchTab, filterString }) {
                 <Modal.Footer>
                     <button
                         className="btn"
-                        onClick={() => setWantToAddNew(false)}>
+                        onClick={cancelAddNew}>
                         Cancel
                     </button>
                     <button

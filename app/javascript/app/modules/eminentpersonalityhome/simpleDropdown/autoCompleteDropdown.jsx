@@ -4,7 +4,7 @@ import {TextField} from "@mui/material";
 import './autoCompleteDropdown.css'
 import {isValuePresent} from "../../utils";
 
-const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dropDownType, formIndex, classes}) => {
+const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dropDownType, formIndex, classes, disabled}) => {
     const onChange = (event, value) => {
         onChangeValue(value, name, dropDownType,formIndex)
     }
@@ -12,6 +12,7 @@ const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dro
     return (
         <div>
             <Autocomplete
+                disabled={disabled}
                 className={classes}
                 value={selectedValue}
                 onChange={onChange}

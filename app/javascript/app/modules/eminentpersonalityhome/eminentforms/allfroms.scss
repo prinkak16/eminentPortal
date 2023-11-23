@@ -541,6 +541,46 @@ button.cancelbtn{
   height: 3.4rem !important;
   border-radius: 13px;
   border: 1px solid grey;
-  background: #ffffff;
+  background: #f8f9fa;
   padding-left: 1.2rem;
+}
+
+.save-progress-info {
+  margin-left: 0.3rem;
+}
+
+.image-container {
+  width: 15rem;
+  height: 15rem;
+  background: #e9ecef;
+  margin-left: auto;
+  margin-right: 1.5rem;
+}
+
+.user-photo-container {
+  display: flex;
+  justify-content: center;
+}
+
+.photo-btn {
+  justify-content: center;
+  display: flex;
+}
+
+.user-upload-photo {
+  color: #FF9559 !important;
+  background: #FFE8DB !important;
+  border-radius: 4.714px !important;
+  margin-left: auto !important;
+  margin-right: 5rem !important;
+  margin-top: -1.3rem !important;
+}
+
+.mt-2rem {
+  margin-top: 2rem;
+}
+
+.user-image {
+  height: 15rem !important;
+  width: 15rem !important;
 }

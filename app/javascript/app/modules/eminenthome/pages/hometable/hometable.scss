@@ -111,6 +111,7 @@ border: solid 1px rgba(0,0,0,0.3);
 }
 
 .gridItem{
+  padding-right: 0.5rem;
   margin-left: 1.5% !important;
   border-right: solid 1px rgba(0,0,0,0.1);
 }
@@ -199,9 +200,10 @@ border: solid 1px rgba(0,0,0,0.3);
  width: 80%;
 }
 .img{
-  width: 80%;;
+  height: 5rem;
+  width: 5rem;
+  border-radius: 5rem;
   flex-shrink: 0;
-  border-radius: 40px;
   background: lightgray 50%;
 }
 
@@ -253,4 +255,12 @@ font-size: 1rem !important;
 
 .edit-box-container {
   margin-left: auto;
+}
+
+.min-width-24rem {
+  min-width: 24rem;
+}
+
+.education-profession-container {
+  min-width: 10rem;
 }

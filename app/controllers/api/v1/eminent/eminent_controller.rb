@@ -149,8 +149,12 @@ class Api::V1::Eminent::EminentController < BaseApiController
       if is_draft && custom_member.may_mark_incomplete?
         custom_member.mark_incomplete!
       end
-      if !is_draft && custom_member.may_submit?
-        custom_member.submit!
+      if !is_draft
+        if params['form_step'] == 5 && custom_member.may_submit?
+          custom_member.submit!
+        elsif params['form_step'] < 5 && custom_member.may_mark_incomplete?
+          custom_member.mark_incomplete!
+        end
       end
       if current_user.blank?
         if custom_member.aasm_state == 'incomplete'
