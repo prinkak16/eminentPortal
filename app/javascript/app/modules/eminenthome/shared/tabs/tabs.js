@@ -14,6 +14,7 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
+import Allotment from "../../../eminenthome/pages/allotment/Allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
@@ -237,6 +238,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
                 <TabPanel value="1">
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
+
+                <TabPanel value="2">
+                    <Allotment  tabId={value}/>
+                </TabPanel>
+
                 <TabPanel value="4">
                     <MasterVacancies filterString={filterString} tabId={value}/>
                 </TabPanel>
