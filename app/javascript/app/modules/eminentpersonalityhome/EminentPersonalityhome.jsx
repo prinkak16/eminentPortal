@@ -8,15 +8,18 @@ import {isValuePresent} from "../utils";
 import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
 import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
-    const {config, isCandidateLogin} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()
     const [userStateId, setUserStateId] = useState()
     const fetchUserDetails = () => {
+        setBackDropToggle(true)
         fetchUser(config).then(res => {
+            setBackDropToggle(false)
             setUserData(res.data.data.data)
             setUserStateId(res.data.data.country_state_id)
         }).catch(err => {
+            setBackDropToggle(false)
             console.log(err);
         });
     }
@@ -24,11 +27,13 @@ const EminentPersonality=()=> {
     const fetchUserByNumber = () => {
         let phoneNumber =  localStorage.getItem('eminent_number')
         if (phoneNumber) {
-            let numberString = `${phoneNumber}`;
-            fetchMobile(numberString).then(res => {
+            setBackDropToggle(true)
+            fetchMobile(phoneNumber, setBackDropToggle).then(res => {
                 setUserData(res.data.data.data)
                 setUserStateId(res.data.data.country_state_id)
+                setBackDropToggle(false)
             }).catch(err => {
+                setBackDropToggle(false)
                 console.log(err);
             });
         }

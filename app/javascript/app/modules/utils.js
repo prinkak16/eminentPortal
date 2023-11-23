@@ -1,4 +1,4 @@
-import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFileUpload, getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
 import { toast } from 'react-toastify';
 import moment from "moment/moment";
 import {Button} from "@mui/material";
@@ -6,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
+import {styled} from "@mui/material/styles";
 const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
@@ -491,3 +492,16 @@ export const saveProgressButton=
             <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
         </Tooltip>
     </Button>
+
+
+export const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});

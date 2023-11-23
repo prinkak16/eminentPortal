@@ -28,7 +28,7 @@ import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 
 const Educationform = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
@@ -156,8 +156,9 @@ const Educationform = (props) => {
     };
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
         });
     }
 

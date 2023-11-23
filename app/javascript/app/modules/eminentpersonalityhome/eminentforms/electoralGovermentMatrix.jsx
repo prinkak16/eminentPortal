@@ -17,13 +17,14 @@ import {
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex, setBackDropToggle}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
 
     const getStates = () => {
+        setBackDropToggle(true)
         getStateData.then((res) => {
            const respondStates = res.data.data
             setStates(respondStates)
@@ -31,6 +32,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 ...prevFieldsData,
                 ['State']: respondStates.map(item => item.name),
             }));
+            setBackDropToggle(false)
         })
     }
 
@@ -114,12 +116,14 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
 
    const getLocations = (stateId,field) => {
        if (stateId) {
+           setBackDropToggle(true)
            let dataAssembly = `?location_type=State&location_id=${stateId}&required_location_type=${field.key}`;
            getLocationsData(dataAssembly).then((res) => {
                setLocationsArray((prevFieldsData) => ({
                    ...prevFieldsData,
                    [field.key]: res.data.data.locations.map(item => item.name),
                }));
+               setBackDropToggle(false)
            })
        }
     }

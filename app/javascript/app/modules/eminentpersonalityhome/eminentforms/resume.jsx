@@ -24,11 +24,11 @@ import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress, saveProgressButton, showErrorToast} from "../../utils";
+import {formFilledValues, saveProgress, saveProgressButton, showErrorToast, VisuallyHiddenInput} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -51,18 +51,6 @@ const Resumeform = (props) => {
     }
 
 
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
-
     const uploadResume = (event) => {
         const file = event.target.files[0]
         if (file.type.split('/').pop() === 'pdf') {
@@ -73,7 +61,8 @@ const Resumeform = (props) => {
     }
 
     const handleImageUpload = (file) => {
-        getFileUpload(file,config,isCandidateLogin).then(res => {
+        setBackDropToggle(true)
+        getFileUpload(file,config,isCandidateLogin, setBackDropToggle).then(res => {
             setPdfFileName(file.name)
             props.formValues.attachment_name = file.name
             setPdfFile(res.data.file_path)
@@ -88,8 +77,9 @@ const Resumeform = (props) => {
     };
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
         });
     }
 
@@ -307,7 +297,7 @@ const Resumeform = (props) => {
                                 </div>
                                 <div className='upload-resume-button'>
                                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon/>}>
-                                        Upload APR
+                                        Upload
                                         <VisuallyHiddenInput accept="application/pdf" onChange={uploadResume} type="file"/>
                                     </Button>
                                 </div>
