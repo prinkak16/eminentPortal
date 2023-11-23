@@ -9,7 +9,7 @@ class CreateVaccancyTable < ActiveRecord::Migration[7.0]
       t.boolean :is_selected, null: false, default: false
       t.datetime :tenure_started_at, default: nil
       t.datetime :tenure_ended_at, default: nil
-      t.string :status, null: false, default: 'VACANT'
+      t.string :status, null: false, default: 'vacant'
       t.timestamps
       t.datetime :deleted_at, default: nil
     end

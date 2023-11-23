@@ -139,11 +139,11 @@ module VacancyFilterHelper
       'type': 'array',
       'values': [
         {
-          'value': 'VACANT',
+          'value': 'vacant',
           'display_name': 'Vacant'
         },
         {
-          'value': 'OCCUPIED',
+          'value': 'occupied',
           'display_name': 'Occupied'
         }
       ]
