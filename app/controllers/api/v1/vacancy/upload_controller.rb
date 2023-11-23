@@ -83,14 +83,10 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
         # compute state
         state_id_v = nil
-        if !row_data[:state_name].present?
-          row_data[:error] = 'Please provide state name.'
-          upload_result << row_data
-          next
-        else
+        if row_data[:state_name].present?
           state_details = CountryState.find_by(name: row_data[:state_name])
           if state_details.nil?
-            row_data[:error] = 'Please provide a valid state name.'
+            row_data[:error] = 'Please provide a valid slotted state name.'
             upload_result << row_data
             next
           else
@@ -137,7 +133,6 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           organization_details = Organization.where(
             ministry_id: ministry_id_v,
             department_id: department_id_v,
-            country_state_id: state_id_v,
             name: row_data[:organization_name],
             slug: organization_slug
           ).first_or_create!
@@ -220,8 +215,8 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           'Organization Name',
           'State Name',
           'Designation',
-          'Success',
-          'Error'
+          'Error',
+          'Success'
         ]
         upload_result.each do |csv_row_data|
           csv << [
@@ -245,7 +240,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
       attachments << attachment
 
       send_email(
-        'Result of manual upload of Minister/Assistant/PA',
+        'Result of manual upload of Vacancies.',
         '<div>Hi,<br><div><br>Please find the attachments.<br></div></div>',
         email,
         attachments = attachments
@@ -253,8 +248,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
       return render json: {
         success: true,
-        message: 'Success. Please check you provided email address for update.',
-        test: upload_result
+        message: 'Success. Please check you provided email address for update.'
       }, status: :ok
     rescue StandardError => e
       return render json: {

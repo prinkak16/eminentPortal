@@ -1,5 +1,12 @@
-import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
+import {getFileUpload, getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
 import { toast } from 'react-toastify';
+import moment from "moment/moment";
+import {Button} from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import {styled} from "@mui/material/styles";
 const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
@@ -224,7 +231,7 @@ const ministryDuration = {
     is_conditional: true,
     condition_key: 'minister_portfolio',
     condition_value:'Yes',
-    type: 'textField',
+    type: 'numField',
     name: 'Duration',
     key: 'ministry_duration',
     placeholder: 'Enter Duration (in Months)'
@@ -401,8 +408,6 @@ export const saveProgress = (formValues, activeStep) => {
         }
     }
     getFormData(fieldsWithValues, activeStep).then(response => {
-        console.log('API response:', response.data);
-
     });
 }
 
@@ -462,3 +467,41 @@ export const  toSnakeCase = (inputString) => {
     const cleanedString = inputString.replace(/[^a-zA-Z0-9\s]/g, '').trim();
     return cleanedString.replace(/\s+/g, '_').toLowerCase();
 }
+
+export const dobFormat = (date) => {
+    return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
+}
+
+export const calculateAge = (dob) => {
+    if (dob.$y === null) return '';
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+
+};
+
+export const saveProgressButton=
+    <Button>Save Progress
+        <Tooltip title="">
+            <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
+        </Tooltip>
+    </Button>
+
+
+export const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});

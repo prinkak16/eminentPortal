@@ -1,4 +1,4 @@
-import {FormLabel, Grid, Typography} from "@mui/material";
+import {FormLabel, Grid, TextField, Typography} from "@mui/material";
 import Inputfield from "../component/inputfield/inputfield";
 import {ErrorMessage, Field} from "formik";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
@@ -17,13 +17,14 @@ import {
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex}) => {
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex, setBackDropToggle}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
 
     const getStates = () => {
+        setBackDropToggle(true)
         getStateData.then((res) => {
            const respondStates = res.data.data
             setStates(respondStates)
@@ -31,6 +32,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 ...prevFieldsData,
                 ['State']: respondStates.map(item => item.name),
             }));
+            setBackDropToggle(false)
         })
     }
 
@@ -89,11 +91,13 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 getLocations(state.id, field.combo_fields[0])
             }
         }
+
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
         }));
     };
+
 
     const handleSave = () => {
         saveData(fieldsData,formIndex)
@@ -112,12 +116,14 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
 
    const getLocations = (stateId,field) => {
        if (stateId) {
+           setBackDropToggle(true)
            let dataAssembly = `?location_type=State&location_id=${stateId}&required_location_type=${field.key}`;
            getLocationsData(dataAssembly).then((res) => {
                setLocationsArray((prevFieldsData) => ({
                    ...prevFieldsData,
                    [field.key]: res.data.data.locations.map(item => item.name),
                }));
+               setBackDropToggle(false)
            })
        }
     }
@@ -185,13 +191,16 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                 f.type === "numField" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <NumberField
-                                        className='elec-number-field'
-                                        value={fieldsData[f.key] || null}
+                                    <Field
                                         type="text"
-                                        textType={f.key}
+                                        value={fieldsData[f.key] || null}
+                                        as={TextField}
+                                        className='elec-number-field'
                                         placeholder={f.placeholder}
-                                        onChange={(e) => handleFieldChange(e.target.name, f.name ,f.key)}
+                                        onChange={(e) => handleFieldChange(e.target.value, f.name ,f.key)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
                                         onInput={(event) => {
                                             event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
                                         }}
@@ -244,7 +253,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 type="text"
                                                 textType={fi.key}
                                                 placeholder={fi.placeholder}
-                                                onChange={(e) => handleFieldChange(e.target.name, fi.name, fi.key)}
+                                                onChange={(e) => handleFieldChange(e.target.value, fi.name, fi.key)}
                                                 onInput={(event) => {
                                                     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
                                                 }}

@@ -12,8 +12,9 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronDown, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faChevronDown, faInfoCircle, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {
+    getFileUpload,
     getFormData,
     getGenderData,
     getReligionData,
@@ -21,15 +22,25 @@ import {
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
-import {formFilledValues, isValuePresent, languagesName} from "../../utils";
+import {
+    calculateAge,
+    dobFormat,
+    formFilledValues,
+    isValuePresent,
+    languagesName, saveProgress,
+    saveProgressButton, VisuallyHiddenInput
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import moment from "moment";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-
+import Tooltip from '@mui/material/Tooltip';
+import UserIcon from '../../../../../../public/images/userIcon.svg'
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 const PersonalDetails = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     useEffect(() => {
         for (const key in props.userData) {
                 if (props.formValues.hasOwnProperty(key)) {
@@ -57,6 +68,16 @@ const PersonalDetails = (props) => {
     const [customSelectedLanguages, setCustomSelectedLanguages] = useState([]);
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
+    const [userPhoto, setUserPhoto] = useState(props.formValues.photo)
+
+    useEffect(() => {
+        setEminentAge(props.formValues.dob)
+    },[props.formValues.dob])
+
+    useEffect(() => {
+        setUserPhoto(props.formValues.photo)
+    }, [props.formValues.photo])
+
     useEffect(() => {
         setSelectedLanguages(props.formValues.languages)
     }, [props.formValues.languages]);
@@ -96,7 +117,7 @@ const PersonalDetails = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 
@@ -111,24 +132,17 @@ const PersonalDetails = (props) => {
         }
     }
 
-    const updatePhotoUrl = (url) => {
-        if (url && url.length > 0) {
-            props.formValues.photo = url;
+    const updatePhotoUrl = (event) => {
+        setBackDropToggle(true)
+        if (isValuePresent(event.target.files)) {
+            getFileUpload(event.target.files[0], config, isCandidateLogin, setBackDropToggle).then(res => {
+                setUserPhoto(res.data.file_path, 'res.data.file_path');
+                console.log(res.data.file_path)
+                props.formValues.photo = res.data.file_path;
+            });
         }
     }
-    const calculateAge = (dob) => {
-            if (dob.$y === null) return '';
-            const today = new Date();
-            const birthDate = new Date(dob);
-            let age = today.getFullYear() - birthDate.getFullYear();
 
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
-
-    };
     const openLangDrawer = () => {
         setLangDrawer(!langDrawer)
         setCustomSelectedLanguages(selectedLanguages)
@@ -148,21 +162,26 @@ const PersonalDetails = (props) => {
     }
 
     const handleDateChange = (event)    => {
+        if (event.$d === null) return;
         setEminentAge(dateFormat(event.$d, 'yyyy-mm-dd'))
         props.formValues.dob = dateFormat(event.$d, 'yyyy-mm-dd')
     }
-    const dobFormat = (date) => {
-      return dayjs(moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD').toString())
-    }
 
+    const maxDate = () => {
+        const today = new Date ()
+        const date = new Date(today.getFullYear() -18 , today.getMonth(), today.getDate())
+        return  dayjs(date)
+    }
 
     return (
         <>
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
-                    <Item><Formheading number="1" heading="Personal Detail"/></Item>
+                    <Item><Formheading number="1" heading="Personal Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Button onClick={saveProgress}>Save Progress</Button>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 <Grid className='detailFrom' container spacing={2}>
@@ -234,6 +253,7 @@ const PersonalDetails = (props) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
                                             value={dobFormat(props.formValues.dob)}
@@ -246,7 +266,7 @@ const PersonalDetails = (props) => {
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge ))} Years` : ''}</Typography>
+                                <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known</FormLabel>
@@ -292,7 +312,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={12}>
                                 <Formheading number="2" heading="ID Proof"/>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     name="aadhaar"
@@ -306,7 +326,7 @@ const PersonalDetails = (props) => {
                                 <ErrorMessage name="aadhaar" component="div"/>
 
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
                                     value={props.formValues.voter_id}
@@ -321,15 +341,20 @@ const PersonalDetails = (props) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={4}>
-                        <Item>
-                            <ImageUpload
-                                validationSchema={props.validationSchema}
-                                isSubmitting={props.isSubmitting}
-                                values={props.formValues}
-                                updatePhotoUrl={updatePhotoUrl}
-                                setFieldValue={props.setFieldValue}
-                                cardName="Input Image"/>
-                        </Item>
+                        <div className='image-container'>
+                            <div className="user-photo-container" >
+                                {isValuePresent(userPhoto) ?
+                                    <img className="user-image" src={userPhoto} alt='eminent-profile'/>
+                                    :  <UserIcon className="mt-2rem" />
+                                }
+                            </div>
+                        </div>
+                        <div className='photo-btn'>
+                            <Button component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
+                                Add Photo
+                                <VisuallyHiddenInput accept="image/*"  type="file"/>
+                            </Button>
+                        </div>
                     </Grid>
                 </Grid>
 
@@ -359,7 +384,7 @@ PersonalDetails.validationSchema = Yup.object().shape({
     religion: Yup.string().required('Please select your Religion'),
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please select your Caste'),
+    caste: Yup.string().required('Please Enter your Caste'),
     // dob: Yup.string().required('Please select your Date Of Birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),

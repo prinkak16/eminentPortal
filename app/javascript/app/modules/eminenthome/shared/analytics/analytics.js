@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "./analytics.css"
 import Usergroup from "../../../../../../../public/images/usergroup.svg";
-import Checklist from "./../../../../../../../public/images/checklist.svg";
+import TotalEminent from '../../../../../../../public/images/totalEminent.svg'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
@@ -38,27 +38,30 @@ const Analytics = (props) => {
     const createAnalyticCard = () => {
         return Object.keys(homeStats).map(value=>{
             let label = '';
+            let iconType = 'svg'
             let icon = null;
                 switch (props.tabId){
                     case '1':
                     switch (value) {
-                        case'incomplete': {
+                        case'overall': {
                             label = 'Total Eminent Personality';
-                            icon = <Incompletefile/>;
+                            icon = <TotalEminent/>;
                             break;
                         }
                         case
                         'completed'
                         : {
-                                    label = 'Total Completed Form';
-                            icon = <Checklist/>;
+                            label = 'Total Completed Form';
+                            iconType = 'png';
+                            icon = 'https://storage.googleapis.com/public-saral/public_document/checklist (1) 1.png';
                             break;
                         }
                         case
-                        'overall'
+                        'incomplete'
                         : {
-                            label = 'Total incompleted Form';
-                            icon = <Usergroup/>;
+                            label = 'Total Incompleted Form';
+                            iconType = 'png';
+                            icon = 'https://storage.googleapis.com/public-saral/public_document/IncompleteFileIcon1.png';
                             break;
                         }
 
@@ -130,9 +133,15 @@ const Analytics = (props) => {
 
             }
             return <div className="col" key={value}>
+                {console.log(homeStats[value])}
                <div className="card">
                    <div className="card-body d-flex p-0">
-                       <div><p className="align-middle">{icon}</p></div>
+                       <div> {iconType === 'svg' ?
+                           <p className="align-middle">{icon}</p>
+                           :
+                           <img className={`analytics-icon-image ${label}`}src={icon} alt={label}/>
+                       }
+                       </div>
                        <div className="ms-4">
                            <p className="cardlabel mb-0">{label}</p>
                            <p className="cardvalue">{homeStats[value]}</p>
@@ -142,7 +151,7 @@ const Analytics = (props) => {
            </div>
         })
     }
-
+console.log(homeStats)
     return (
         <>
             <div className="analyticsDiv">
@@ -155,10 +164,10 @@ const Analytics = (props) => {
                 </div>
                 <div>
 
-                    <div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>
-                        <p className="seemorebutton">See More</p>
-                        <ExpandMoreIcon className='expandicon'/>
-                    </div>
+                    {/*<div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>*/}
+                    {/*    <p className="see-more-button">See More</p>*/}
+                    {/*    <ExpandMoreIcon className='expandicon'/>*/}
+                    {/*</div>*/}
 
                     { showSeeMore &&
                         <div className="card seemorecard">

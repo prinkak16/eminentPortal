@@ -19,23 +19,31 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         'occupied': 0,
         'vacant': 0
       }
-      state_ids = [1]
-      fetch_user_assigned_country_states.each do |country_state|
-        state_ids << country_state['id']
-      end
+      sql = "
+        SELECT
+           SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+           SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
+           SUM(1) AS total
+         FROM public.user_ministries AS um
+         LEFT JOIN public.vacancies AS vac
+         ON um.ministry_id = vac.ministry_id
+         LEFT JOIN public.ministries AS ministry
+         ON vac.ministry_id = ministry.id
+         WHERE
+           um.is_minister IS false
+           AND
+           vac.id IS NOT null
+           AND
+           vac.deleted_at IS null
+           AND
+           um.user_id = #{current_user.id}
+      "
+      results = UserMinistry.find_by_sql(sql)
 
-      return render json: { success: true, message: 'Success', data: stats }, status: :ok unless state_ids.size.positive?
-
-      results = Vacancy.select(
-        "SUM(CASE WHEN status = 'VACANT' THEN 1 ELSE 0 END) AS vacant",
-        "SUM(CASE WHEN status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied",
-        "SUM(1) AS total"
-      ).find_by(country_state_id: state_ids)
-
-      unless results.nil?
-        stats[:total] = results['total'] if results['total'].present?
-        stats[:occupied] = results['occupied'] if results['occupied'].present?
-        stats[:vacant] = results['vacant'] if results['vacant'].present?
+      if results.present? && results[0].present?
+        stats[:total] = results[0]['total'] || 0
+        stats[:occupied] = results[0]['occupied'] || 0
+        stats[:vacant] = results[0]['vacant'] || 0
       end
       return render json: { success: true, message: 'Success', data: stats }, status: :ok
     rescue StandardError => e
@@ -53,32 +61,27 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         }, status: :unauthorized
       end
 
-      stats = []
-
       state_details = {}
-      state_ids = []
-      fetch_user_assigned_country_states.each do |country_state|
-        state_ids << country_state['id']
-        state_details[country_state['id']] = country_state['name']
-      end
-
-      return render json: { success: true, message: 'Success', data: stats }, status: :ok unless state_ids.size.positive?
-
-      results = Vacancy
-        .select('COUNT(*) AS vacant, country_state_id AS cs_id')
-        .where(status: 'VACANT')
-        .group('country_state_id')
-        .order('country_state_id ASC')
-
-      results.each do |result|
-        stats << {
-          count: result['vacant'],
-          cs_id: result['cs_id'],
-          cs_name: state_details[result['cs_id']].present? ? state_details[result['cs_id']] : nil
+      all_country_states = CountryState.all
+      all_country_states.each do |country_state|
+        state_details[country_state['id']] = {
+          count: 0,
+          cs_id: country_state[:id],
+          cs_name: country_state[:name]
         }
       end
 
-      return render json: { success: true, message: 'Success', data: stats }, status: :ok
+      results = Vacancy
+                  .select('COUNT(*) AS vacant, country_state_id AS cs_id')
+                  .where(status: 'vacant')
+                  .group('country_state_id')
+                  .order('country_state_id ASC')
+
+      results.each do |result|
+        state_details[result['cs_id']][:count] = result['vacant']
+      end
+
+      return render json: { success: true, message: 'Success', data: state_details.values }, status: :ok
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
@@ -133,7 +136,6 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         end
       end
 
-
       # compute order type
       order_type = params[:order_type].present? ? params[:order_type] : 'ASC'
       unless ['ASC', 'DESC'].include?(order_type)
@@ -145,14 +147,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       is_download = params[:offset].present? ? params[:offset] : false
 
       # state id computation
-      state_ids = params[:country_state_id].present? ? params[:country_state_id].split(',') : nil
-      if state_ids.nil?
-        state_ids = []
-        fetch_user_assigned_country_states.each do |country_state|
-          state_ids << country_state['id']
-        end
-      end
-      state_id_search = state_ids.length.positive? ? state_ids.join(',') : nil
+      state_id_search = params[:country_state_id].present? ? params[:country_state_id] : nil
 
       # ministry id computation
       ministry_id_search = params[:ministry].present? ? params[:ministry] : nil
@@ -183,8 +178,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           SELECT
             ministry.id as ministry_id,
             ministry.name as ministry_name,
-            SUM(CASE WHEN vac.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant,
-            SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
+            SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+            SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
             SUM(1) AS total
           FROM public.user_ministries AS um
           LEFT JOIN public.vacancies AS vac
@@ -194,10 +189,13 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           WHERE
             um.is_minister IS false
             AND
-            um.user_id = #{current_user.id}
+            vac.id IS NOT null
             AND
-            vac.country_state_id IN (#{state_id_search})
+            vac.deleted_at IS null
+            AND
+            um.user_id = #{current_user.id}
         "
+        sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
@@ -254,8 +252,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                   org.id as org_id,
                   org.name as org_name,
                   org.is_listed as is_listed,
-                  SUM(CASE WHEN vac.status = 'VACANT' THEN 1 ELSE 0 END) AS vacant,
-                  SUM(CASE WHEN vac.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS occupied,
+                  SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+                  SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
                   SUM(1) AS total
                 FROM public.user_ministries AS um
                 LEFT JOIN public.vacancies AS vac
@@ -269,10 +267,13 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                 WHERE
                   um.is_minister IS false
                   AND
-                  um.user_id = #{current_user.id}
+                  vac.id IS NOT null
                   AND
-                  org.country_state_id IN (#{state_id_search})
+                  vac.deleted_at IS null
+                  AND
+                  um.user_id = #{current_user.id}
         "
+        sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
@@ -338,12 +339,13 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           WHERE
             um.is_minister IS false
             AND
-            um.user_id = #{current_user.id}
-            AND
-            org.country_state_id IN (#{state_id_search})
+            vac.id IS NOT null
             AND
             vac.deleted_at IS null
+            AND
+            um.user_id = #{current_user.id}
         "
+        sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?

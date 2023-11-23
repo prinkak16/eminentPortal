@@ -3,16 +3,15 @@ import {Stack, Typography, Button, Box, Paper, Grid, FormLabel, TextField} from 
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import {formFilledValues} from "../../utils";
+import {formFilledValues, saveProgressButton} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
     const {config, isCandidateLogin} = useContext(ApiContext)
-    const [mobile, setMobile] = useState()
+    const [mobile, setMobile] = useState(props?.formValues?.reference?.mobile)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -30,7 +29,7 @@ const Refferedform = (props) => {
 
     const saveProgress = () => {
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
         });
     }
 
@@ -54,11 +53,15 @@ const Refferedform = (props) => {
 
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Referred by"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
+                    </Item>
                 </Stack>
                 <Grid container spacing={2} sx={{mb: 3}} className="grid-wrap">
                     <Grid item xs={6}>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>Name <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.name`}
                                     value={props?.formValues?.reference?.name}
@@ -67,7 +70,7 @@ const Refferedform = (props) => {
 
                     </Grid>
                     <Grid item xs={6} className="d-grid">
-                        <FormLabel>Phone no.</FormLabel>
+                        <FormLabel>Phone no. <mark>*</mark></FormLabel>
                         <input
                             maxLength={10}
                             placeholder='Enter Mobile Number'
@@ -77,7 +80,7 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.mobile`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>BJP ID</FormLabel>
+                        <FormLabel>BJP ID <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.bjp_id`}
                                     value={props?.formValues?.reference?.bjp_id}
@@ -86,7 +89,7 @@ const Refferedform = (props) => {
 
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>Grade</FormLabel>
+                        <FormLabel>Grade <mark>*</mark></FormLabel>
                         <Inputfield type="text"
                                     name={`reference.grade`}
                                     value={props?.formValues?.reference?.grade}
@@ -94,7 +97,7 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.grade`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>comments</FormLabel>
+                        <FormLabel>comments <mark>*</mark></FormLabel>
                         <TextField
                             className='p-0'
                             fullWidth

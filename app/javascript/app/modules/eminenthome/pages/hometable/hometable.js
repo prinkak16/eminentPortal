@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+    import React, {useEffect, useState} from "react";
 import "./hometable.scss"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
@@ -19,6 +19,7 @@ import {useNavigate} from "react-router-dom";
 import { ClickAwayListener } from '@mui/base';
 import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
+import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 const HomeTable = (props) => {
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
@@ -152,7 +153,24 @@ const HomeTable = (props) => {
         });
     }
 
+    const getUserProfession = (professions) => {
+        return isValuePresent(professions) ? professions[0].profession : ''
+    }
 
+    const getUserEducation = (educations) => {
+        let education = ''
+        for (const item in educations) {
+                if (educations[item].highest_qualification) {
+                 return educations[item].qualification
+                }
+        }
+        return education
+    }
+
+    const getAddress = (address) => {
+        const customAddress = isValuePresent(address) ? address[0] : ''
+        if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
+    }
 
     return (
         <>
@@ -182,7 +200,7 @@ const HomeTable = (props) => {
 
                     <div className="table-container mt-4" key={member.id}>
                         <Grid container className="single-row">
-                            <Grid item xs={3} className="gridItem">
+                            <Grid item xs={3} className="gridItem min-width-24rem">
                                 <div className="row">
                                     <div className="col-md-4 pe-0">
                                         <div className='imgdiv circle'>
@@ -196,25 +214,25 @@ const HomeTable = (props) => {
                                             <div/>
                                             <div className="d-flex">
                                                 <IdBadge/>
-                                                <p className="id-text">ID-No.{member.id}</p>
+                                                <p className="id-text">ID No. - {member.id}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </Grid>
-                            <Grid item xs className="gridItem">
+                            <Grid item xs className="gridItem education-profession-container">
                                 <div className="row">
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Age</p>
-                                        <p>xx Years</p>
+                                        <p>{member.data.dob ? `${calculateAge(dobFormat(member.data.dob))} Years` : ''}</p>
                                     </div>
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Profession</p>
-                                        <p>xx</p>
+                                        <p>{getUserProfession(member.data.professions)}</p>
                                     </div>
                                     <div className="col-md-6 data-display">
                                         <p className="text-labels">Education</p>
-                                        <p>xx</p>
+                                        <p>{getUserEducation(member.data.educations)}</p>
                                     </div>
 
                                 </div>
@@ -222,16 +240,16 @@ const HomeTable = (props) => {
                             <Grid item xs className="gridItem">
                                 <div className="row data-display">
                                     <p className="text-labels">Address</p>
-                                    <p>Value</p>
+                                    <p>{getAddress(member.data.address)}</p>
                                 </div>
                             </Grid>
                             <Grid item xs className="gridItem">
                                 <div className="row data-display">
-                                    <p className="text-labels">Form Status</p>
+                                    <p className="text-labels">Form Status:</p>
                                     <p>{member.aasm_state}</p>
                                 </div>
                                 <div className="row data-display">
-                                    <p className="text-labels">Channel</p>
+                                    <p className="text-labels">Channel:</p>
                                     <p>{member.channel}</p>
                                 </div>
 
@@ -240,14 +258,14 @@ const HomeTable = (props) => {
                                 <div className="d-flex">
                                     <div className="row data-display">
                                         <p className="text-labels">Referred by</p>
-                                        <p>Name</p>
-                                        <p>98765467</p>
+                                        <p>{member.data.reference?.name}</p>
+                                        <p>{member.data.reference?.mobile}</p>
 
                                     </div>
                                     <ClickAwayListener onClickAway={handleClickAway}>
                                         <PopupState variant="popper" popupId="demo-popup-popper">
                                         {(popupState) => (
-                                            <div>
+                                            <div className="edit-box-container">
                                                 <p variant="contained" {...bindToggle(popupState)}
                                                    className="popupicon">
                                                     <Icon/>
@@ -310,7 +328,7 @@ const HomeTable = (props) => {
 
             </div>
             <div>
-                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>
+                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp; { tableData?.data?.data.length ?  Math.ceil(tableData?.data?.data.length / limit) : ''}</p>
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}

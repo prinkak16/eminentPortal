@@ -3,7 +3,7 @@ import {TextField} from "@mui/material";
 import React from "react";
 import {validate} from "uuid";
 
-const OtherNumberField =({id,name,placeholder,onInput,inputProps, onChange, value})=>{
+const OtherNumberField =({id,name,placeholder,onInput,inputProps, onChange, value,disabled})=>{
 
     const onFieldChange = (event) => {
         onChange(event.target.value)
@@ -11,6 +11,7 @@ const OtherNumberField =({id,name,placeholder,onInput,inputProps, onChange, valu
     return(
         <>
             <Field
+                disabled={disabled}
                 id={id}
                 type="text"
                 value={value}

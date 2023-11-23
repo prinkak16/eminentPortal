@@ -2,10 +2,13 @@ module UtilHelper
   def custom_error_message(errors)
     error_messages = []
     errors.each do |error|
-      puts error
       attribute_key = ''
       if error['data_pointer'].present? && error['data_pointer'].length
-        attribute_key = (error['data_pointer'].sub! '/', '').gsub('/', '.').to_s
+        if error['data_pointer'].include?('/')
+          attribute_key = (error['data_pointer'].sub! '/', '').gsub('/', '.').to_s
+        else
+          attribute_key = (error['data_pointer'].sub! '/', '').to_s
+        end
       end
       case error['type']
       when 'required'

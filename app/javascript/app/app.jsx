@@ -13,6 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
+import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
 
 const beforeLoginRoutes =  <Routes>
                                         <Route path={'/'} element={<LoginPage/>}/>
@@ -37,6 +38,7 @@ const adminRoutes = <Routes>
 function App() {
     const [authToken, setAuthToken ] = useState(localStorage.getItem('auth_token'))
     let isCandidateLogin = JSON.parse(document.getElementById('app').getAttribute('data-candidate-login'));
+    const [backDropToggle, setBackDropToggle] = useState(false)
     const config = {
         headers: {
             'Authorization': authToken,
@@ -50,7 +52,8 @@ function App() {
     return (
         <>
             <ToastContainer />
-            <ApiContext.Provider  value={{config, setAuthToken, isCandidateLogin}}>
+            <BackDrop toggle={backDropToggle}/>
+            <ApiContext.Provider  value={{config, setAuthToken, isCandidateLogin, setBackDropToggle}}>
                 {routesOfProjects()}
             </ApiContext.Provider>
 

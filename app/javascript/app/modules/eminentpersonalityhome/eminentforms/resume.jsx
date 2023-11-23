@@ -18,18 +18,17 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
 import Inputfield from "../component/inputfield/inputfield";
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress, showErrorToast} from "../../utils";
+import {formFilledValues, saveProgress, saveProgressButton, showErrorToast, VisuallyHiddenInput} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -52,18 +51,6 @@ const Resumeform = (props) => {
     }
 
 
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
-
     const uploadResume = (event) => {
         const file = event.target.files[0]
         if (file.type.split('/').pop() === 'pdf') {
@@ -74,8 +61,8 @@ const Resumeform = (props) => {
     }
 
     const handleImageUpload = (file) => {
-        getFileUpload(file,config,isCandidateLogin).then(res => {
-            console.log('res.data.file_path', res.data.file_path)
+        setBackDropToggle(true)
+        getFileUpload(file,config,isCandidateLogin, setBackDropToggle).then(res => {
             setPdfFileName(file.name)
             props.formValues.attachment_name = file.name
             setPdfFile(res.data.file_path)
@@ -90,8 +77,9 @@ const Resumeform = (props) => {
     };
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
         });
     }
 
@@ -108,7 +96,11 @@ const Resumeform = (props) => {
             <Box sx={{flexGrow: 1}}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
-                    <Item sx={{textAlign: 'right'}}><Savebtn onClick={saveProgress}/></Item>
+                    <Item sx={{textAlign: 'right'}}>
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
+                    </Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
                     <Grid item xs={6}>
@@ -305,7 +297,7 @@ const Resumeform = (props) => {
                                 </div>
                                 <div className='upload-resume-button'>
                                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon/>}>
-                                        Upload APR
+                                        Upload
                                         <VisuallyHiddenInput accept="application/pdf" onChange={uploadResume} type="file"/>
                                     </Button>
                                 </div>

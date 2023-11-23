@@ -6,8 +6,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Formheading from "../component/formheading/formheading";
-import Savebtn from "../component/saveprogressbutton/button";
-import Inputfield from "../component/inputfield/inputfield";
 import Primarybutton from '../component/primarybutton/primarybutton';
 import * as Yup from "yup";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -19,7 +17,7 @@ import {
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress, toSnakeCase
+    saveProgress, saveProgressButton, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -29,10 +27,10 @@ import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
-import {boolean} from "yup";
+import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
-    const {config,isCandidateLogin} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -46,13 +44,10 @@ const PolticalandGovrnform =(props)=>{
     const [otherPartyDetails, setOtherPartyDetails] = useState(props.formValues.other_parties || []);
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
-    const [NAFields, setNAFields] = useState(false)
+    const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
     const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
 
-    useEffect(() => {
-        setElectoralDetails(props.userData.election_fought)
-    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -191,8 +186,9 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const saveProgress = () => {
+        setBackDropToggle(true)
         const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin).then(response => {
+        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId, setBackDropToggle).then(response => {
         });
     }
 
@@ -220,7 +216,7 @@ const PolticalandGovrnform =(props)=>{
 
     useEffect(() => {
         if (props.formValues.election_contested) {
-            if (!isValuePresent(props.formValues.election_fought)) {
+            if (!isValuePresent(props.formValues?.election_fought)) {
                 setElectoralDetails([{
                     election_type: '', election_details: {}
                 }])
@@ -235,7 +231,9 @@ const PolticalandGovrnform =(props)=>{
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
                     <Item sx={{textAlign: 'right'}}>
-                        <Savebtn onClick={() => saveProgress()} />
+                        <div onClick={saveProgress}>
+                            {saveProgressButton}
+                        </div>
                     </Item>
                 </Stack>
                 {politicalProfileDetails.length > 0 && (
@@ -292,7 +290,7 @@ const PolticalandGovrnform =(props)=>{
                 {politicalProfileDetails.length === 0 &&
                     <div className='date-na-button date-na-button-out-side'>
                          <span className='na-check-box'>
-                           <input type="checkbox" onClick={NotApplicableFields}/>
+                           <input type="checkbox" checked={NAFields} onClick={NotApplicableFields}/>
                         </span>
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
@@ -303,16 +301,26 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
-                        <Inputfield type="number"
-                                    name="bjp_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="bjp_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
-                        <Inputfield type="number"
-                                    name="rss_years"
-                                    placeholder="Enter in year"/>
+                        <NumberField
+                            type="number"
+                            name="rss_years"
+                            placeholder='00'
+                            onInput={(event) => {
+                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
+                            }}
+                        />
                         <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>
@@ -421,7 +429,7 @@ const PolticalandGovrnform =(props)=>{
                 <Grid container className="grid-wrap">
                     <Grid item sx={{mt:3}} xs={12}>
                         <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <sup>*</sup>
+                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>{socialFields.length+3}</Box> Electoral / Government <mark>*</mark>
                         </Typography>
                     </Grid>
                     <Grid item xs={4} sx={{mt:2, ml:3}}>
@@ -457,6 +465,7 @@ const PolticalandGovrnform =(props)=>{
                                                         saveData={saveElectoralData}
                                                         isEditable={field.election_details}
                                                         formIndex={index}
+                                                        setBackDropToggle={setBackDropToggle}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
                                                     <Primarybutton
@@ -486,7 +495,10 @@ PolticalandGovrnform.initialValues = {
     rss_years: '',
     bjp_years: '',
     other_parties: [],
-    social_profiles: [],
+    social_profiles: [{
+        organization:'',
+        description: ''
+    }],
     election_contested: false,
     election_fought: [
         {
@@ -498,18 +510,7 @@ PolticalandGovrnform.initialValues = {
 
 
 PolticalandGovrnform.validationSchema = Yup.object().shape({
-    rss_years: Yup.number().required('Please enter rss joined years'),
-    bjp_years: Yup.number().required('Please enter bjp joined year'),
     election_contested: Yup.boolean().required('Please Select election contest'),
-
-    social_profiles: Yup.array().of(
-        Yup.object().shape({
-            organization: Yup.string().required('Please enter your Address'),
-            description: Yup.string().required('Please enter your Street'),
-        })
-    ),
-
-
 
 });
 export default PolticalandGovrnform
