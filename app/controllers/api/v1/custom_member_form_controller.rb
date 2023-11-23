@@ -123,7 +123,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
         }, status: :bad_request
       end
 
-      custom_member = params[:data][:id].present? ? CustomMxemberForm.find_by_id(params[:data][:id]) : nil
+      custom_member = params[:data][:id].present? ? CustomMemberForm.find_by_id(params[:data][:id]) : nil
       phone_number = params[:data][:mobiles]
       # Check for duplicate phone number
       if phone_number.size != phone_number.to_set.size
