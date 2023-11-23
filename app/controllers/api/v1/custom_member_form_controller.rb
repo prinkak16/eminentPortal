@@ -187,16 +187,20 @@ class Api::V1::CustomMemberFormController < BaseApiController
           custom_member.mark_incomplete!
         end
         # check if form is submitted
-        if !is_draft && params['form_step'] == 6 && custom_member.may_submit?
-          custom_member.submit!
+        if !is_draft
+          if params['form_step'] == 6 && custom_member.may_submit?
+            custom_member.submit!
+          elsif params['form_step'] < 6 && custom_member.may_mark_incomplete?
+            custom_member.mark_incomplete!
+          end
         end
         if is_draft
           render json: {
-            success: true, data: custom_member, message: 'Member.'
+            success: true, data: custom_member, message: 'Member saved successfully.'
           }, status: :ok
         else
           render json: {
-            success: true, message: 'Member Saved successfully'
+            success: true, message: 'Member Saved successfully.'
           }, status: :ok
         end
       else
@@ -219,8 +223,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
         if is_draft && custom_member.may_mark_incomplete?
           custom_member.mark_incomplete!
         end
-        if !is_draft && params['form_step'] == 6 && custom_member.may_submit?
-          custom_member.submit!
+        if !is_draft
+          if params['form_step'] == 6 && custom_member.may_submit?
+            custom_member.submit!
+          elsif params['form_step'] < 6 && custom_member.may_mark_incomplete?
+            custom_member.mark_incomplete!
+          end
         end
         if current_user.blank? || custom_member.aasm_state == 'incomplete'
           if custom_member.aasm_state == 'incomplete'
