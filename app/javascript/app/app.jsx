@@ -12,6 +12,7 @@ import {ApiContext} from "./modules/ApiContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
+import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
 
 const beforeLoginRoutes =  <Routes>
                                         <Route path={'/'} element={<LoginPage/>}/>
@@ -27,6 +28,7 @@ const adminRoutes = <Routes>
                                 <Route path='/eminent_form' element={<EminentPersonality/>}/>
                                 <Route path='/masterofvacancies' element={<MasterVacancies/>}/>
                                 <Route path='/gom' element={<GomPage />}/>
+                                <Route path= '/allotment' element={<Allotment />} />
                                 <Route path='/*' element={<Navigate to="/"/>}/>
                             </Routes>
 
