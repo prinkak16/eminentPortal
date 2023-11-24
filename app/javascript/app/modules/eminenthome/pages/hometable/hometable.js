@@ -142,13 +142,14 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number) => {
+    const  editUser = (number, userData) => {
         localStorage.setItem('eminent_number', number);
         navigate({
             pathname: '/eminent_form'
         }, {
             state: {
                 eminent_number: number,
+                user_data: userData,
             }
         });
     }
@@ -278,9 +279,9 @@ const HomeTable = (props) => {
                                                                 <div className='edit-user-container'>
                                                                     <Typography sx={{p: 2}} className="tableiconlist">
                                                                         {  (member.aasm_state !== 'approved') &&
-                                                                            <p onClick={() => editUser(member.phone)}>Edit</p>
+                                                                            <p onClick={() => editUser( member.phone, member)}>Edit</p>
                                                                         }
-                                                                        <p onClick={() => editUser(member.phone)}>View</p>
+                                                                        <p onClick={() => editUser(member.phone, member)}>View</p>
                                                                         {member.data.attachment && <p onClick={() => openDocument(member.data.attachment)}>View Documents</p>}
                                                                         <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
                                                                         { (member.aasm_state === 'submitted') &&
