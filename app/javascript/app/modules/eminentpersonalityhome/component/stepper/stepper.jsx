@@ -110,7 +110,7 @@ const FormStepper = ({
                             Previous
                         </Button>
                         <Typography variant="p" component="p">
-                            Step {activeStep + 1} of Step {steps.length}
+                            Step {activeStep + 1} of {steps.length}
                         </Typography>
                         <Button className="nextbtn" type="submit"  >
                             {isLastStep() ? "Submit" : "Save & Next"}

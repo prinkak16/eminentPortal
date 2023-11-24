@@ -1,5 +1,5 @@
 import {Typography, Stack, Box, Paper, Grid, FormLabel, TextField, Button, Popper, Fade} from '@mui/material';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -22,7 +22,7 @@ import {
     isValuePresent,
     saveProgress,
     formFilledValues,
-    saveProgressButton
+    saveProgressButton, showErrorToast
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
@@ -37,6 +37,8 @@ const Educationform = (props) => {
     const [educationsList, setEducationsList] = useState([]);
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
     const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
+    const [showList, setShowList] = useState()
+    const componentRef = useRef(null);
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -48,6 +50,7 @@ const Educationform = (props) => {
             setEducationDetails(Objects)
         }
     }, [])
+
 
 
     useEffect(() => {
@@ -65,7 +68,8 @@ const Educationform = (props) => {
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
         let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
         setEducationsList(filteredArray)
-    },[educationLevel])
+    },[educationLevel, EducationData])
+
 
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -177,10 +181,24 @@ const Educationform = (props) => {
         }
     }
 
-    const changeProfessionDescription = (e) => {
-        setProfessionDescription(e.target.value)
-        props.formValues.profession_description = e.target.value
+    const changeProfessionDescription = (event) => {
+        const inputValue = event.target.value;
+        if (inputValue.length <= 500) {
+            setProfessionDescription(inputValue)
+            props.formValues.profession_description = inputValue
+        } else {
+            showErrorToast('Description can not be greater than 500 character')
+        }
     }
+
+    const openList = (id) => {
+        if (showList === id) {
+            setShowList(null)
+        } else {
+            setShowList(id)
+        }
+    }
+
 
     return (
         <>
@@ -196,7 +214,7 @@ const Educationform = (props) => {
                 <Grid container sx={{mb: 5}}>
                     <Grid item xs={6} className='education-field pb-3'>
                         <Grid item xs={7}>
-                            <FormLabel>Education Level ( Highest ) <sup>*</sup></FormLabel>
+                            <FormLabel>Education Level ( Highest ) <mark>*</mark></FormLabel>
                             <AutoCompleteDropdown
                                 name='Education Level ( Highest )'
                                 selectedValue={educationLevel}
@@ -230,30 +248,20 @@ const Educationform = (props) => {
                                     <td>{data.college}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <PopupState variant="popper" popupId="demo-popup-popper">
-                                            {(popupState) => (
-                                                <div className='edit-button-logo'>
-                                                    <Button
-                                                        variant="contained" {...bindToggle(popupState)}
-                                                        className="bg-transparent text-black display-contents">
-                                                        <MoreVertIcon/>
-                                                    </Button>
-                                                    <Popper {...bindPopper(popupState)} transition>
-                                                        {({TransitionProps}) => (
-                                                            <Fade {...TransitionProps}
-                                                                  timeout={350}>
-                                                                <Paper>
-                                                                    <Typography sx={{p: 2}}
-                                                                                onClick={() => editEducationForm('education',data.id)}><Edit/></Typography>
-                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
-                                                                        sx={{p: 2}}><DeleteIcon/></Typography>
-                                                                </Paper>
-                                                            </Fade>
-                                                        )}
-                                                    </Popper>
-                                                </div>
+                                        <div className='edit-button-logo' ref={componentRef}>
+                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon/>
+                                            </Button>
+                                            {showList === data.id && (
+                                                <Paper className='details-edit-list'>
+                                                    <Typography sx={{p: 2}}
+                                                                onClick={() => editEducationForm('education', data.id)}><Edit/></Typography>
+                                                    <Typography
+                                                        onClick={() => deleteFields('education', data.id)}
+                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                </Paper>
                                             )}
-                                        </PopupState>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -282,30 +290,24 @@ const Educationform = (props) => {
                                     <td>{data.organization}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <PopupState variant="popper" popupId="demo-popup-popper">
-                                            {(popupState) => (
-                                                <div className='edit-button-logo'>
-                                                    <Button
-                                                        variant="contained" {...bindToggle(popupState)}
-                                                        className="bg-transparent text-black display-contents">
-                                                        <MoreVertIcon/>
-                                                    </Button>
-                                                    <Popper {...bindPopper(popupState)} transition>
-                                                        {({TransitionProps}) => (
-                                                            <Fade {...TransitionProps}
-                                                                  timeout={350}>
-                                                                <Paper>
-                                                                    <Typography sx={{p: 2}}
-                                                                                onClick={() => editEducationForm('profession',data.id)}><Edit/></Typography>
-                                                                    <Typography onClick={() => deleteFields('professions', data.id)}
-                                                                        sx={{p: 2}}><DeleteIcon /></Typography>
-                                                                </Paper>
-                                                            </Fade>
-                                                        )}
-                                                    </Popper>
-                                                </div>
-                                            )}
-                                        </PopupState>
+                                        <div className='edit-button-logo'>
+                                            <Button
+                                                onClick={() => openList(data.id)}
+                                                className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon/>
+                                            </Button>
+                                            {showList === data.id &&
+                                                (
+                                                    <Paper className='details-edit-list'>
+                                                        <Typography sx={{p: 2}}
+                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/></Typography>
+                                                        <Typography
+                                                            onClick={() => deleteFields('profession', data.id)}
+                                                            sx={{p: 2}}><DeleteIcon/></Typography>
+                                                    </Paper>
+                                                )
+                                            }
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -332,6 +334,7 @@ const Educationform = (props) => {
                                 name="profession_description"
                                 onChange={changeProfessionDescription}
                                 value={professionDescription}
+                                max
                                 multiline
                                 minRows={2}
                                 maxRows={2}
