@@ -47,6 +47,7 @@ const PersonalDetails = (props) => {
                     props.formValues[key] = props.userData[key]
                 }
         }
+        props.formValues.mobiles = props.userData.mobiles
     }, []);
 
 
@@ -123,9 +124,10 @@ const PersonalDetails = (props) => {
 
 
     const handleLanguageChanges = (lang) => {
+        debugger
         let languages = []
         if (customSelectedLanguages.includes(lang)) {
-            languages = selectedLanguages.filter(item => item !== lang)
+            languages = customSelectedLanguages.filter(item => item !== lang)
             setCustomSelectedLanguages(languages)
         } else {
             setCustomSelectedLanguages([...customSelectedLanguages, lang])
@@ -269,7 +271,8 @@ const PersonalDetails = (props) => {
                                 <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <FormLabel>Languages known</FormLabel>
+                                <FormLabel>Languages known <mark>*</mark></FormLabel>
+                                <ErrorMessage name="languages" component="div" className="error"/>
                                 <div className="language-container" onClick={() => openLangDrawer()}>
                                     <span>Select Languages</span>
                                     <span
@@ -354,6 +357,10 @@ const PersonalDetails = (props) => {
                                 Add Photo
                                 <VisuallyHiddenInput accept="image/*"  type="file"/>
                             </Button>
+                        </div>
+
+                        <div className="photo-error-container">
+                            <p className='photo-error'>This field is mandatory <mark>*</mark></p>
                         </div>
                     </Grid>
                 </Grid>

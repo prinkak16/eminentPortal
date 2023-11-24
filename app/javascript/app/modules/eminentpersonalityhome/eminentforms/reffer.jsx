@@ -66,7 +66,7 @@ const Refferedform = (props) => {
                                     name={`reference.name`}
                                     value={props?.formValues?.reference?.name}
                                     placeholder="Enter Name"/>
-                        <ErrorMessage name={`reference.name`} component="div"/>
+                        <ErrorMessage name={`reference.name`}   component="div"/>
 
                     </Grid>
                     <Grid item xs={6} className="d-grid">

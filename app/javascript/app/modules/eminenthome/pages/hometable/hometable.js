@@ -46,6 +46,7 @@ const HomeTable = (props) => {
         ))
     }
 
+
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
     }
@@ -170,7 +171,7 @@ const HomeTable = (props) => {
 
     const getAddress = (address) => {
         const customAddress = isValuePresent(address) ? address[0] : ''
-        if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
+        if (isValuePresent(customAddress)) return `${customAddress.flat}, ${customAddress.street}, ${customAddress.district}, ${customAddress.state}, ${customAddress.pincode}`
     }
 
     return (
@@ -211,7 +212,12 @@ const HomeTable = (props) => {
                                     <div className="col-md-8">
                                         <h2 className="headingName">{member.data.name}</h2>
                                         <div className="row d-flex">
-                                            {displayPhoneNumbers(member)}
+                                            {member.data?.mobiles && member.data?.mobiles?.slice(0,2).map((number, index) => (
+                                                <div className="col-md-6 text-container pe-0 ps-2.5" key={member.id}>
+                                                    {index === 0 && <Phone/>}
+                                                    <p className={`ml-2 label-text ${index === 0 ? 'br-label first-number' : 'br-label2 pt-5'}`}>{number}</p>
+                                                </div>
+                                            ))}
                                             <div/>
                                             <div className="d-flex">
                                                 <IdBadge/>

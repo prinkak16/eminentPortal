@@ -24,7 +24,6 @@ const EminentPersonality=()=> {
         });
     }
 
-    console.log(location.state, 'location.state')
 
     const fetchUserByNumber = () => {
         let phoneNumber =  localStorage.getItem('eminent_number')

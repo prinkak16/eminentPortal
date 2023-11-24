@@ -1,5 +1,5 @@
 import {Box, Button, Fade, FormLabel, Grid, Paper, Popper, Stack, TextField, Typography} from '@mui/material';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {ErrorMessage} from 'formik';
 import {styled} from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -47,6 +47,8 @@ const PolticalandGovrnform =(props)=>{
     const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
     const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
+    const [showList, setShowList] = useState()
+    const componentRef = useRef(null);
 
 
     const addSocialFields = () => {
@@ -225,6 +227,14 @@ const PolticalandGovrnform =(props)=>{
 
     },[props.formValues.election_contested])
 
+    const openList = (id) => {
+        if (showList === id) {
+            setShowList(null)
+        } else {
+            setShowList(id)
+        }
+    }
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -256,30 +266,19 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{data.designation}</td>
                                 <td>{data.start_year}</td>
                                 <td className='end-date-td'>{data.end_year}
-                                    <PopupState variant="popper" popupId="demo-popup-popper">
-                                        {(popupState) => (
-                                            <div className='edit-button-logo'>
-                                                <Button
-                                                    variant="contained" {...bindToggle(popupState)}
-                                                    className="bg-transparent text-black display-contents">
-                                                    <MoreVertIcon/>
-                                                </Button>
-                                                <Popper {...bindPopper(popupState)} transition>
-                                                    {({TransitionProps}) => (
-                                                        <Fade {...TransitionProps}
-                                                              timeout={350}>
-                                                            <Paper>
-                                                                <Typography sx={{p: 2}}
-                                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/></Typography>
-                                                                <Typography
-                                                                    sx={{p: 2}}><DeleteIcon/></Typography>
-                                                            </Paper>
-                                                        </Fade>
-                                                    )}
-                                                </Popper>
-                                            </div>
+                                    <div className='edit-button-logo' ref={componentRef}>
+                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <MoreVertIcon/>
+                                        </Button>
+                                        {showList === data.id && (
+                                            <Paper className='details-edit-list'>
+                                                <Typography sx={{p: 2}}
+                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
+                                                <Typography
+                                                    sx={{p: 2}}><DeleteIcon/></Typography>
+                                            </Paper>
                                         )}
-                                    </PopupState>
+                                    </div>
                                 </td>
                             </tr>
                             ))}
@@ -342,30 +341,19 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{data.position}</td>
                                 <td>{data.start_year}</td>
                                 <td className='end-date-td'>{data.end_year}
-                                    <PopupState variant="popper" popupId="demo-popup-popper">
-                                        {(popupState) => (
-                                            <div className='edit-button-logo'>
-                                                <Button
-                                                    variant="contained" {...bindToggle(popupState)}
-                                                    className="bg-transparent text-black display-contents">
-                                                    <MoreVertIcon/>
-                                                </Button>
-                                                <Popper {...bindPopper(popupState)} transition>
-                                                    {({TransitionProps}) => (
-                                                        <Fade {...TransitionProps}
-                                                              timeout={350}>
-                                                            <Paper>
-                                                                <Typography sx={{p: 2}}
-                                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
-                                                                <Typography
-                                                                    sx={{p: 2}}><DeleteIcon/></Typography>
-                                                            </Paper>
-                                                        </Fade>
-                                                    )}
-                                                </Popper>
-                                            </div>
+                                    <div className='edit-button-logo' ref={componentRef}>
+                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <MoreVertIcon/>
+                                        </Button>
+                                        {showList === data.id && (
+                                            <Paper>
+                                                <Typography sx={{p: 2}}
+                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
+                                                <Typography
+                                                    sx={{p: 2}}><DeleteIcon/></Typography>
+                                            </Paper>
                                         )}
-                                    </PopupState>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
