@@ -102,7 +102,6 @@ const Analytics = (props) => {
 
             }
             return <div className="col" key={value}>
-                {console.log(homeStats[value])}
                <div className="card">
                    <div className="card-body d-flex p-0">
                        <div> {iconType === 'svg' ?
@@ -120,7 +119,7 @@ const Analytics = (props) => {
            </div>
         })
     }
-console.log(homeStats)
+
     return (
         <>
             <div className="analyticsDiv">
