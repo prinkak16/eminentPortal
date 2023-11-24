@@ -124,7 +124,6 @@ const PersonalDetails = (props) => {
 
 
     const handleLanguageChanges = (lang) => {
-        debugger
         let languages = []
         if (customSelectedLanguages.includes(lang)) {
             languages = customSelectedLanguages.filter(item => item !== lang)
