@@ -191,7 +191,7 @@ export const otherPartyJson = {
     ]
 }
 
-export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (vidhan sabha)", "Legislative Council (vidhan sabha)", "Urban Local body", "Rural Local body", "Other"]
+export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (Vidhan Sabha)", "Legislative Council (Vidhan Parishad)", "Urban Local body", "Rural Local body", "Other"]
 
 const electionWin =  {
     type: 'radio',
@@ -441,7 +441,7 @@ export const showSuccessToast = (massage) => {
 export const showErrorToast = (massage) => {
     toast.error(massage, {
         position: 'top-right',
-        autoClose: 3000, // milliseconds
+        autoClose: false, // milliseconds
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

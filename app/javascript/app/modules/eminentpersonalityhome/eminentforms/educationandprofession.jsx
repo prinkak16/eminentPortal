@@ -70,7 +70,6 @@ const Educationform = (props) => {
         setEducationsList(filteredArray)
     },[educationLevel, EducationData])
 
-    console.log(educationsList)
 
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',

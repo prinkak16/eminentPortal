@@ -138,7 +138,6 @@ const PersonalDetails = (props) => {
         if (isValuePresent(event.target.files)) {
             getFileUpload(event.target.files[0], config, isCandidateLogin, setBackDropToggle).then(res => {
                 setUserPhoto(res.data.file_path, 'res.data.file_path');
-                console.log(res.data.file_path)
                 props.formValues.photo = res.data.file_path;
             });
         }
