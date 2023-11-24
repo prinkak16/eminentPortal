@@ -16,15 +16,15 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const limit=2;
+    const limit=10;
     useEffect(() => {
         setIsFetching(true)
         const params={
             search_by:'vacancy_wise',
             order_by:'ministry_name',
             order_type:'DESC',
-            organization:organizationId,
-            limit:limit,
+            organization: organizationId,
+            limit: limit,
             offset: currentPage * limit
         }
         getMinistryWiseData(params, filterString)
@@ -37,6 +37,7 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                 setError(error);
             })
     }, [currentPage, filterString]);
+    console.log('id', organizationId)
     return (
         <>
             <Backdrop
@@ -71,10 +72,10 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                                     <TableCell>{vacancy.org_name}</TableCell>
                                     <TableCell>{vacancy.designation}</TableCell>
                                     <TableCell>{vacancy.status}</TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell>{vacancy.tenure_started_at}</TableCell>
-                                    <TableCell>{vacancy.tenure_ended_at}</TableCell>
+                                    <TableCell className="text-center">----</TableCell>
+                                    <TableCell className="text-center">----</TableCell>
+                                    <TableCell className="text-center">{vacancy.tenure_started_at ? (vacancy.tenure_started_at):'----'}</TableCell>
+                                    <TableCell className="text-center">{vacancy.tenure_ended_at ? (vacancy.tenure_started_at):'----'}</TableCell>
                                 </TableRow>
                             )
                         })

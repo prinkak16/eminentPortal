@@ -1,9 +1,7 @@
 import * as React from 'react';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Typography from '@mui/material/Typography';
+import {Accordion, AccordionDetails, AccordionSummary, Typography,FormControl, Input, InputAdornment} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SearchIcon from '@mui/icons-material/Search';
 import "./filterssidebar.scss"
 import {useContext, useEffect, useState} from "react";
 import {
@@ -11,15 +9,19 @@ import {
     getFilters,
     getFiltersForGOM,
     getMinistryWiseFilterData,
-    getOrganizationWiseFilterData, getVacancyWiseFilterData
+    getOrganizationWiseFilterData,
+    getVacancyWiseFilterData
 } from "../../../../api/eminentapis/endpoints";
 import {HomeContext} from "../../../../context/tabdataContext";
+import {debounce} from "lodash";
 
 export default function FiltersSidebar(props) {
     const homeContext = useContext(HomeContext);
     const [filtersList, setFiltersList] = useState([]);
     const [expandedFilter, setExpandedFilter] = useState('');
     const [appliedFilters, setAppliedFilters] = useState([]);
+    const [searchMinisterName, setSearchMinisterName] = useState('');
+    const [searchPsuName, setSearchPsuName] = useState('');
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
@@ -54,22 +56,24 @@ export default function FiltersSidebar(props) {
             case '4':
                 if (homeContext.movTabId === '1') {
                     const params={
-                        ministry_name:'',
-                        department_name:'',
-                        organization_name:'',
+                        ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
                     })
                 } else if (homeContext.movTabId === '2') {
-                    getOrganizationWiseFilterData().then(response => {
+                    const psuParams={
+                        ministry_name: '',
+                        department_name: searchPsuName,
+                        organization_name: '',
+                    }
+                    getOrganizationWiseFilterData(psuParams).then(response => {
                         setFiltersList(response.data.data);
                     })
                 } else if (homeContext.movTabId === '3') {
                     getVacancyWiseFilterData().then(response=>{
                         setFiltersList(response.data.data)
                     })
-                    console.log('Vacancy tab');
                 }
                 break;
             case '6':
@@ -83,7 +87,7 @@ export default function FiltersSidebar(props) {
                 });
         }
         applyFilter();
-    }, [props.tabId, homeContext.movTabId]);
+    }, [props.tabId, homeContext.movTabId, searchMinisterName, searchPsuName]);
 
     const handleChange = (value) => (event, isExpanded) => {
         if (expandedFilter === value) {
@@ -93,6 +97,14 @@ export default function FiltersSidebar(props) {
             setExpandedFilter(value);
         }
     };
+
+    const handleSearchFilter = debounce((event) => {
+        if (homeContext.movTabId === '1') {
+            setSearchMinisterName(event.target.value);
+        } else if (homeContext.movTabId === '2') {
+            setSearchPsuName(event.target.value);
+        }
+    }, 1000)
 
     const isChecked = (parentKey, optionValue) => {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
@@ -119,6 +131,32 @@ export default function FiltersSidebar(props) {
                     </AccordionSummary>
                     <AccordionDetails className='filteraccord'>
                         <Typography className="ms-2 filterTypeOptions">
+                            {(props.tabId === '4' && homeContext.movTabId === '1' && ['Ministry'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        }
+                                        onChange={handleSearchFilter}
+                                    />
+                                </FormControl>
+                            }
+                            {(props.tabId === '4' && homeContext.movTabId === '2' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        }
+                                        onChange={handleSearchFilter}
+                                    />
+                                </FormControl>
+                            }
                             {filter?.values && filter.values.map((filterOption) => (
                                 <p key={filterOption.value}><input type="checkbox" checked={isChecked(filter.key, filterOption.value)} onClick={() => applyFilter(filter.key, filterOption.value)}/>
                                     {filterOption.display_name}

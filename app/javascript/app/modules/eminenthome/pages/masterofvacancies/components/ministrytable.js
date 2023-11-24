@@ -11,7 +11,7 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [ministryTableData, setMinistryTableData] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
-    const limit = 2;
+    const limit = 10;
 
     const displayMinistryData = ()=>{
         const params = {

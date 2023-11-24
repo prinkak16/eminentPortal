@@ -33,3 +33,14 @@
 //.filteraccord{
 //  border-bottom: solid 1px rgba(0,0,0,0.1);
 //}
+.srchfilter.MuiFormControl-root {
+  border: solid 1px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 0px 8px;
+}
+.srchfilter .css-v4u5dn-MuiInputBase-root-MuiInput-root:before, .srchfilter .css-v4u5dn-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before, .srchfilter .css-v4u5dn-MuiInputBase-root-MuiInput-root:after{
+  border-bottom: transparent;
+}
+.srchfilter input.MuiInputBase-input{
+  padding: 6px 3px;
+}
