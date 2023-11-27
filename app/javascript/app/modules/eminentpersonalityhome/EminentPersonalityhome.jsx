@@ -54,7 +54,7 @@ const EminentPersonality=()=> {
 
     return(
         <>
-            <Header/>
+            <Header userData={userData}/>
                 <Grid className="detailHeading d-flex justify-content-center" sx={{textAlign:'center', mb:8, mt:15 }}>
                     <div className="detailHeading-dashed dashed-1"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="456" height="48" viewBox="0 0 456 48" fill="none">

@@ -27,6 +27,7 @@ const afterLoginRoutes = (
   <Routes>
     <Route path="/eminent_personality" element={<EminentPersonality />} />
     <Route path="/*" element={<Navigate to="/eminent_personality" />} />
+      <Route path="/form_submitted" element={<AfterFormSubmit />} />
   </Routes>
 );
 
@@ -38,7 +39,7 @@ const adminRoutes = (
     <Route path="/masterofvacancies" element={<MasterVacancies />} />
     <Route path="/gom" element={<GomPage />} />
     <Route path="/allotment/assign" element={<AllotAssign />} />
-    <Route path="/submit" element={<AfterFormSubmit />} />
+    <Route path="/form_submitted" element={<AfterFormSubmit />} />
     <Route path="/*" element={<Navigate to="/" />} />
   </Routes>
 );
