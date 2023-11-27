@@ -63,14 +63,14 @@ export default function FiltersSidebar(props) {
 
         switch (props.tabId) {
             case '4':
-                if (homeContext.movTabId === 'ministry') {
+                if (homeContext.movTabId === '1') {
                     const params = {
                         ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
                     })
-                } else if (homeContext.movTabId === 'psuwise' ) {
+                } else if (homeContext.movTabId === '2' ) {
                     const psuParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -79,7 +79,7 @@ export default function FiltersSidebar(props) {
                     getOrganizationWiseFilterData(psuParams).then(response => {
                         setFiltersList(response.data.data);
                     })
-                } else if (homeContext.movTabId === 'vacancywise') {
+                } else if (homeContext.movTabId === '3') {
                     const vacancyParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -128,11 +128,15 @@ export default function FiltersSidebar(props) {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
         return parentOption && parentOption.selectedValues.includes(optionValue);
     }
+
+    const handleClearFilter = () => {
+        setAppliedFilters([]);
+    }
     return (
         <div>
             <div className="d-flex justify-content-between mt-4 ms-4">
                 <p className="refineoption">Refine by</p>
-                <p className="clearoption me-4" onClick={() => setAppliedFilters([])}>Clear</p>
+                <p className="clearoption me-4" onClick={handleClearFilter}>Clear</p>
             </div>
             {filtersList?.filters && filtersList.filters.map((filter) => (
                 <Accordion className={`accordion ${expandedFilter === filter.key ? 'accordian-with-bt' : ''}`}
@@ -149,7 +153,7 @@ export default function FiltersSidebar(props) {
                     </AccordionSummary>
                     <AccordionDetails className='filteraccord'>
                         <Typography className="ms-2 filterTypeOptions">
-                            {(props.tabId === '4' && homeContext.movTabId === 'ministry' && ['Ministry'].includes(filter.display_name)) &&
+                            {(props.tabId === '4' && homeContext.movTabId === '1' && ['Ministry'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
@@ -163,7 +167,7 @@ export default function FiltersSidebar(props) {
                                 </FormControl>
                             }
 
-                            {(props.tabId === '4' && homeContext.movTabId === 'psuwise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                            {(props.tabId === '4' && homeContext.movTabId === '2' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
@@ -176,7 +180,7 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
-                            {(props.tabId === '4' && homeContext.movTabId === 'vacancywise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                            {(props.tabId === '4' && homeContext.movTabId === '3' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
