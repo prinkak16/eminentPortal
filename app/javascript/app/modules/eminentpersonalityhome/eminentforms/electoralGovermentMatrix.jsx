@@ -57,7 +57,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
 
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'State') {
-            let field = jsonForm.fields.find((item) => item.key === 'State')
+            let field = jsonForm?.fields?.find((item) => item.key === 'State')
             let state = states.find((item) => item.name === value)
             if (isValuePresent(field.combo_fields)) {
                 resetLocationFields(field.combo_fields[0])
@@ -87,6 +87,23 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     }, [fieldsData]);
 
     const contestedElection = (value, fieldKey) => {
+        if (fieldKey === 'election_win') {
+            const filteredItems = jsonForm.fields.filter((item) => item.key === 'minister_portfolio');
+            resetLocationFields(filteredItems[0])
+        }
+
+        if (fieldKey === 'minister_portfolio') {
+            const filteredItems = jsonForm.fields.filter((item) => item.key === 'ministry_name');
+            resetLocationFields(filteredItems[0])
+            if (filteredItems[0]?.hasOwnProperty('combo_fields')[0]) {
+                resetLocationFields(filteredItems[0].combo_fields[0])
+            }
+            const minDuration = jsonForm.fields.find((item) => item.key === 'ministry_duration');
+            if (isValuePresent(minDuration)) {
+                resetLocationFields(minDuration)
+            }
+        }
+
         setData(fieldKey, value)
     }
 
@@ -225,6 +242,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 <Field
                                                     style={{width: '22rem'}}
                                                     type="text"
+                                                    defaultValue={dayjs('2022-04-17')}
                                                     value={fieldsData[fi.key] || null}
                                                     as={TextField}
                                                     className='elec-number-field'

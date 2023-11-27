@@ -191,7 +191,7 @@ export const otherPartyJson = {
     ]
 }
 
-export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (Vidhan Sabha)", "Legislative Council (Vidhan Parishad)", "Urban Local body", "Rural Local body", "Other"]
+export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (Vidhan Sabha)", "Legislative Council (Vidhan Parishad)", "Urban Local body", "Rural Local body"]
 
 const electionWin =  {
     type: 'radio',

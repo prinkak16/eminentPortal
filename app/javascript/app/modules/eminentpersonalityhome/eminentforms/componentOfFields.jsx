@@ -9,12 +9,16 @@ import React, {useEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
-import {isValuePresent, showErrorToast, showSuccessToast, yearToDateConvert} from "../../utils";
+import {educationDetailsJson, isValuePresent, showErrorToast, showSuccessToast, yearToDateConvert} from "../../utils";
 import {isDisabled} from "bootstrap/js/src/util";
-const dayjs = require('dayjs');
+import './componentOfFIelds.scss'
+
+import dayjs from "dayjs";
+import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
     const [fieldsData, setFieldsData] = useState({});
-    const [endYearView, setEndYearView] = useState(false)
+    const [resetYear, setResetYear] = useState(false)
+    const [isNaButtonExist, setIsNaButtonExist] = useState(false)
 
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
@@ -39,16 +43,19 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
             initialFieldsData[key] = isValuePresent(value) ? value : '';
         });
-        if (jsonForm.title ===  'Education Details') {
-            initialFieldsData['highest_qualification'] = false
-        }
         return initialFieldsData;
     };
 
+    useEffect(() => {
+        if (jsonForm?.title ===  'Education Details') {
+            handleFieldChange(false,'', 'highest_qualification' )
+        }
+    }, []);
 
 
     useEffect(() => {
         if (isValuePresent(isEditable)) {
+            setResetYear(true)
             const updatedFieldsData = { ...fieldsData };
             for (const key in isEditable) {
                 if (Object.prototype.hasOwnProperty.call(isEditable, key)) {
@@ -56,9 +63,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 }
             }
             setFieldsData(updatedFieldsData);
+            setResetYear(false)
         }
     }, [isEditable]);
-
 
     const resetFieldsToBlank = () => {
         setFieldsData((prevFieldsData) => {
@@ -68,7 +75,17 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             }
             return updatedFieldsData;
         });
+        setResetYear(true)
     };
+
+    useEffect(() => {
+        if (resetYear) {
+            setResetYear(false)
+        }
+
+    }, [resetYear]);
+
+
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'qualification') {
             const disabledFields = ['Less than 10th', '10th Pass'];
@@ -107,9 +124,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         let date = new Date(2040, 0, 1)
         if (key === 'start_year') {
             date = new Date()
-            // if (isValuePresent(fieldsData.start_year)) {
-            //     date = new Date(parseInt(fieldsData.end_year), 0, 1)
-            // }
         }
         if (fieldsData.start_year === 'NA') {
             date = new Date()
@@ -155,7 +169,10 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         for (let key in fieldsData) {
             if (key !== 'id') {
                 if (!isValuePresent(fieldsData[key]) && fieldsData[key] !== false) {
-                    return showErrorToast(`Please enter ${key}`)
+                 const item = jsonForm.fields.find((item) => item.key === key)
+                    if (item.isRequired) {
+                        return showErrorToast(`Please enter ${key}`)
+                    }
                 }
                 if (key === 'start_year') {
                     if (parseInt(fieldsData[key]) < 1900 ) {
@@ -164,7 +181,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 }
 
                 if (key === 'end_year' && fieldsData.end_year !== 'NA') {
-                    if (fieldsData.start_year >= fieldsData.end_year) {
+                    if (fieldsData.start_year > fieldsData.end_year) {
                         return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
                     }
                 }
@@ -206,7 +223,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     </Grid>
                 }
                 {jsonForm.fields && jsonForm.fields.map((f) => (
-
                     <>
                         {
                             f.type === 'dropdown' &&
@@ -233,45 +249,40 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         placeholder={f.placeholder}/>
                                 </Grid>
                         }
-
-
-                        {
+                        { !resetYear &&
                             f.type === "date" &&
                                 <Grid item xs={4} className='d-grid'>
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder} >
-                                                {({field}) => (
-                                                    <DatePicker
-                                                        className={`${jsonForm.title === 'Profession Profile' && f.key === 'start_year' ? 'start-year-NA' : ''} ${f.key}` }
-                                                        isRequired={isValuePresent(f?.isRequired)}
-                                                        disabled={disabledField(f.key)}
-                                                        label={fieldValue(f.key) ? '' : `Select ${field.name}`}
-                                                        value={field.value}
-                                                        disableFuture={f.key === 'start_year'}
-                                                        onChange={handleEduStartDateChange(f.key)}
-                                                        views={['year']}
-                                                        maxDate={maxDate(f.key)}
-                                                        minDate={minDate(f.key)}
-                                                    />
-                                                )}
-                                            </Field>
-                                        </LocalizationProvider>
-                                    {f.na_button === true &&
-
-                                        <div className='date-na-button'>
-                                        <span className='na-check-box'>
-                                            <input type="checkbox" onClick={notApplicableFields(f.na_type,f.key)} />
-                                        </span>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%'}}>
+                                        <DemoContainer components={['DatePicker']} style={{width: '100%'}} sx={{width: '100%'}}>
+                                            <DatePicker
+                                                label={f.name}
+                                                readOnly={true}
+                                                isRequired={isValuePresent(f?.isRequired)}
+                                                disabled={disabledField(f.key)}
+                                                value={isValuePresent(fieldValue(f.key)) ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
+                                                maxDate={maxDate(f.key)}
+                                                onChange={handleEduStartDateChange(f.key)}
+                                                minDate={minDate(f.key)}
+                                            views={['year']}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                    {f.na_button === true || isNaButtonExist ?
+                                        <div className='date-na-button' style={{visibility: isNaButtonExist === true && f.key === 'start_year' ? 'hidden' : ''}}>
+                                            {!isNaButtonExist ? setIsNaButtonExist(true): null }
+                                            <span className='na-check-box'>
+                                                <input type="checkbox" onClick={notApplicableFields(f.na_type, f.key)}/>
+                                             </span>
                                             <span className='na-check-msg'>
-                                            {f.na_massage}
-                                        </span>
+                                                {f.na_massage}
+                                            </span>
                                         </div>
+                                        : null
                                     }
                                 </Grid>
                         }
                     </>
-
                 ))}
                 {
                     jsonForm.title === 'Education Details' &&
