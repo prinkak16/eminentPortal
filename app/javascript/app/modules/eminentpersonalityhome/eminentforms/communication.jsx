@@ -230,7 +230,7 @@ const Communicationform =(props)=>{
                             <div className='mobiles-container'>
                                 {mobileFields && mobileFields.map((field, i) =>(
                                     <div className='mobile-number-field'>
-                                        <FormLabel className="mobile-label">{i+2}. Mobile Number <mark>*</mark></FormLabel>
+                                        <FormLabel className="mobile-label">{i+1}. Mobile Number <mark>*</mark></FormLabel>
                                         <input
                                             maxLength={10}
                                             disabled={i === 0}
@@ -274,7 +274,7 @@ const Communicationform =(props)=>{
 
                                                 }}
                                             />
-                                            <ErrorMessage name="std_code" component="div" />
+                                            <ErrorMessage name="std_code" style={{color:'red'}} component="p" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <NumberField
@@ -286,8 +286,8 @@ const Communicationform =(props)=>{
 
                                                 }}
                                             />
-                                            <ErrorMessage name="landline" component="div" />
 
+                                            <ErrorMessage name="landline" style={{color:'red'}} component="p" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -474,6 +474,8 @@ Communicationform.initialValues = {
     other_address:[],
 };
 Communicationform.validationSchema = Yup.object().shape({
+    std_code: Yup.string().matches(/^\d{3,5}$/, 'Enter 3 to 5 digits STD-Code'),
+    landline: Yup.string().matches(/^\d{6,8}$/, 'Enter 6 to 8 digit landline number'),
     email:Yup.string()
         .required('Email is required')
         .matches(

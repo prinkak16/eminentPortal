@@ -13,7 +13,7 @@ const OtherInputField=({placeholder, value, onChange, textType, disabled, fieldI
             <Field
                 disabled={disabled}
                 name={name}
-                value={value}
+                value={value || ''}
                 placeholder={placeholder}
                 onChange={onFieldChange}
                 as={TextField}

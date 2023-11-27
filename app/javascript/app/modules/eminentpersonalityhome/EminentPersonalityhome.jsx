@@ -11,7 +11,7 @@ const EminentPersonality=()=> {
     const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()
-    const [userStateId, setUserStateId] = useState()
+    const [userStateId, setUserStateId] = useState(location.state?.state_id)
     const fetchUserDetails = () => {
         setBackDropToggle(true)
         fetchUser(config).then(res => {
@@ -23,6 +23,7 @@ const EminentPersonality=()=> {
             console.log(err);
         });
     }
+
 
     const fetchUserByNumber = () => {
         let phoneNumber =  localStorage.getItem('eminent_number')
@@ -42,11 +43,13 @@ const EminentPersonality=()=> {
     useEffect(() => {
         if (isValuePresent(location.state?.user_data)) {
             setUserData(location.state?.user_data.data)
+            setUserStateId(location.state?.user_data.country_state_id)
         } else {
             isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
         }
 
     }, []);
+
 
     return(
         <>

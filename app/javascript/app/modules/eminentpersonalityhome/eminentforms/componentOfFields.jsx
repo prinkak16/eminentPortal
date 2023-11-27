@@ -165,7 +165,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             }
         }
         saveData(jsonForm.title,fieldsData, id)
-        setFieldInitialValue('')
+        resetFieldsToBlank()
     }
 
     const notApplicableFields = (naType, key) => (event) => {
@@ -248,7 +248,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                             )}
                                         </Field>
                                     </LocalizationProvider>
-                                    {f.na_button &&
+
+                                    {f.na_button === true &&
                                         <div className='date-na-button'>
                                         <span className='na-check-box'>
                                             <input type="checkbox" onClick={notApplicableFields(f.na_type,f.key)} />
@@ -266,13 +267,13 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 {
                     jsonForm.title === 'Education Details' &&
                     <Grid item xs={4}>
-                        <FormLabel>Please Select if this is your Highest Qualification <sup>*</sup></FormLabel>
+                        <FormLabel>Please Select if this is your Highest Qualification <mark>*</mark></FormLabel>
                         <input type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>
                 }
                 <Grid item xs={12}>
-                    <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel" onClick={resetFieldsToBlank}/>
+                    <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel" handleclick={() => resetFieldsToBlank()} />
                     <Primarybutton addclass="nextbtn" handleclick={() => handleSave(fieldsData.id)}
                                    buttonlabel="Save"/>
                 </Grid>
