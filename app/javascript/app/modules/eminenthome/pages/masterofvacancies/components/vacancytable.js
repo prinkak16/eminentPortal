@@ -16,7 +16,7 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const limit=10;
+    const limit=4;
     useEffect(() => {
         setIsFetching(true)
         const params={
@@ -67,7 +67,7 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                             return (
                                 <TableRow>
                                     {vacancyIndex === 0 && <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                    {vacancyIndex === 0 && <TableCell onClick={()=>onSwitchTab('ministry')} rowSpan={ministryRowSpan}>{ministry.ministry_name}</TableCell>}
+                                    {vacancyIndex === 0 && <TableCell onClick={()=>onSwitchTab('ministry_wise')} rowSpan={ministryRowSpan}>{ministry.ministry_name}</TableCell>}
                                     <TableCell>{vacancy.org_name}</TableCell>
                                     <TableCell>{vacancy.designation}</TableCell>
                                     <TableCell>{vacancy.status}</TableCell>

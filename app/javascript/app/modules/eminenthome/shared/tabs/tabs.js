@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
+import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography} from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext, useEffect} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
@@ -31,7 +31,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
-    const [basicTabId, setBasicTabId] = useSearchParams({basicTabId: '1'});
+    const [basicTabId, setBasicTabId] = useSearchParams({basicTabId: 'home_table'});
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -49,7 +49,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState(false)
-    const {type} = useParams();
     const notify = () => toast("CSV file Uploaded successfully");
     const handleEmailChange = (e) => {
         const inputValue = e.target.value;
@@ -146,7 +145,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     }
 
     let buttonContent;
-    if (value === '1') {
+    if (value === 'home_table') {
         buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
@@ -156,7 +155,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             </svg>
             Add New
         </button>
-    } else if (value === '4') {
+    } else if (value === 'master_of_vacancies') {
         buttonContent =
             <>
                 <Button className="downloadBtn" variant="primary" onClick={handleShow}>
@@ -213,7 +212,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                     </Modal.Footer>
                 </Modal>
             </>
-    } else if (value === '3') {
+    } else if (value === 'file_status') {
         buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
@@ -225,45 +224,41 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         </button>
     }
 
-
-    useEffect(() => {
-        if (type && type.length > 0 && type == 'allotment') {
-            handleChange(null, "2")
-        }
-    }, [type]);
-
     const handleBasicTabChange = (basicTabValue) => {
         setBasicTabId(basicTabValue);
     }
+
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
                     <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
-                        <Tab label="Home" value="1" />
-                        <Tab label="Allotment" value="2" />
-                        <Tab label="File Status" value="3" />
-                        <Tab label="Master of Vacancies" value="4" />
-                        <Tab label="Slotting" value="5" />
-                        <Tab label="GOM Management" value="6" />
+                        <Tab label="Home" value="home_table" />
+                        <Tab label="Allotment" value="allotment" />
+                        <Tab label="File Status" value="file_status" />
+                        <Tab label="Master of Vacancies" value="master_of_vacancies" />
+                        <Tab label="Slotting" value="slotting" />
+                        <Tab label="GOM Management" value="gom_management" />
                     </TabList>
                     {buttonContent}
                 </Box>
-                <TabPanel value="1">
+                <TabPanel value="home_table">
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
 
-                <TabPanel value="2">
+                <TabPanel value="allotment">
                     <Allotment  tabId={value}/>
                 </TabPanel>
-
-                <TabPanel value="4">
+                <TabPanel value="file_status">
+                    <Typography>File Status Page coming soon.....</Typography>
+                </TabPanel>
+                <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="5">
+                <TabPanel value="slotting">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="6">
+                <TabPanel value="gom_management">
                     <GomPage tabId={value}/>
                 </TabPanel>
 

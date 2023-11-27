@@ -59,18 +59,16 @@ export default function FiltersSidebar(props) {
         props.setFilterString(filterString);
     }
     useEffect(() => {
-        console.log('Home context value: ', homeContext.movTabId)
-
         switch (props.tabId) {
-            case '4':
-                if (homeContext.movTabId === '1') {
+            case 'master_of_vacancies':
+                if (homeContext.movTabId === 'ministry_wise') {
                     const params = {
                         ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
                     })
-                } else if (homeContext.movTabId === '2' ) {
+                } else if (homeContext.movTabId === 'psu_wise' ) {
                     const psuParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -79,7 +77,7 @@ export default function FiltersSidebar(props) {
                     getOrganizationWiseFilterData(psuParams).then(response => {
                         setFiltersList(response.data.data);
                     })
-                } else if (homeContext.movTabId === '3') {
+                } else if (homeContext.movTabId === 'vacancy_wise') {
                     const vacancyParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -90,7 +88,7 @@ export default function FiltersSidebar(props) {
                     })
                 }
                 break;
-            case '6':
+            case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
                 })
@@ -132,6 +130,7 @@ export default function FiltersSidebar(props) {
     const handleClearFilter = () => {
         setAppliedFilters([]);
     }
+
     return (
         <div>
             <div className="d-flex justify-content-between mt-4 ms-4">
@@ -153,7 +152,7 @@ export default function FiltersSidebar(props) {
                     </AccordionSummary>
                     <AccordionDetails className='filteraccord'>
                         <Typography className="ms-2 filterTypeOptions">
-                            {(props.tabId === '4' && homeContext.movTabId === '1' && ['Ministry'].includes(filter.display_name)) &&
+                            {(props.tabId === 'master_of_vacancies' && homeContext.movTabId === 'ministry_wise' && ['Ministry'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
@@ -167,7 +166,7 @@ export default function FiltersSidebar(props) {
                                 </FormControl>
                             }
 
-                            {(props.tabId === '4' && homeContext.movTabId === '2' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                            {(props.tabId === 'master_of_vacancies' && homeContext.movTabId === 'psu_wise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
@@ -180,7 +179,7 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
-                            {(props.tabId === '4' && homeContext.movTabId === '3' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                            {(props.tabId === 'master_of_vacancies' && homeContext.movTabId === 'vacancy_wise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
