@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
-import {useState, useContext} from "react";
+import {useState, useContext, useEffect} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
@@ -14,7 +14,9 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
+import Allotment from "../../../eminenthome/pages/allotment/Allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import {useParams} from 'react-router-dom';
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -47,6 +49,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState(false)
+    const {type} = useParams();
     const notify = () => toast("CSV file Uploaded successfully");
     const handleEmailChange = (e) => {
         const inputValue = e.target.value;
@@ -119,8 +122,12 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
         setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
     }
     const handleChange = (event, newValue) => {
-        setValue(newValue);
-        onSwitchTab(newValue);
+        if(newValue == 2 && (!type || type != 'allotment')){
+          return navigate('/allotment');
+        } else {
+            setValue(newValue);
+            onSwitchTab(newValue);
+        }
     };
 
     const  navigateForm = () => {
@@ -220,6 +227,13 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
             Add New
         </button>
     }
+
+
+    useEffect(() => {
+        if (type && type.length > 0 && type == 'allotment') {
+            handleChange(null, "2")
+        }
+    }, [type]);
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
@@ -237,6 +251,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
                 <TabPanel value="1">
                     <HomeTable filterString={filterString} tabId={value}/>
                 </TabPanel>
+
+                <TabPanel value="2">
+                    <Allotment  tabId={value}/>
+                </TabPanel>
+
                 <TabPanel value="4">
                     <MasterVacancies filterString={filterString} tabId={value}/>
                 </TabPanel>

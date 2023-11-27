@@ -8,6 +8,7 @@ import {isValuePresent} from "../utils";
 import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
 import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
+
     const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     let location = useLocation();
     const [userData, setUserData] = useState()

@@ -17,6 +17,11 @@ const Analytics = (props) => {
                     setHomeStats(res.data.data);
                 })
                 break;
+            case '2':
+                statsData().then(res => {
+                    setHomeStats(res.data.data);
+                })
+                break;
             case '4':
                 getVacancyAnalytics().then(res=>{
                     setHomeStats(res.data.data)
@@ -62,6 +67,32 @@ const Analytics = (props) => {
 
                     }
                     break;
+
+                    case '2':
+                        switch (value) {
+                            case'incomplete': {
+                                label = 'Total Slotted Position';
+                                icon = <Incompletefile/>;
+                                break;
+                            }
+                            case
+                            'completed'
+                            : {
+                                label = 'Assigned';
+                                icon = <TotalEminent/>;
+                                break;
+                            }
+                            case
+                            'overall'
+                            : {
+                                label = 'Yet to assign';
+                                icon = <Usergroup/>;
+                                break;
+                            }
+
+                        }
+                        break;
+
                     case '4':
                         switch (value) {
                             case'total': {
