@@ -28,7 +28,7 @@ import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 
 const Educationform = (props) => {
-    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
@@ -91,13 +91,16 @@ const Educationform = (props) => {
     },[])
 
     const handleSave = ( title, formData, id) => {
-       if (title === 'Education Details') {
-           educationSave(formData, id)
-       }
+        setBackDropToggle(true)
+        setTimeout(function() {
+            if (title === 'Education Details') {
+                educationSave(formData, id)
+            }
 
-        if (title === 'Profession Profile') {
-            professionSave(formData, id)
-        }
+            if (title === 'Profession Profile') {
+                professionSave(formData, id)
+            }
+        }, 50)
 
     };
 
@@ -117,6 +120,7 @@ const Educationform = (props) => {
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const professionSave = (formData, id) => {
@@ -134,6 +138,7 @@ const Educationform = (props) => {
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     useEffect(() => {
@@ -222,7 +227,7 @@ const Educationform = (props) => {
                                 placeholder={"Select Highest Education"}
                                 onChangeValue={setHighestQualification}
                             />
-                            <ErrorMessage name="education_level" component="div"/>
+                            <ErrorMessage name="education_level" style={{color:'red'}} component="p" />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -269,7 +274,10 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField} educationsList={educationsList}/>
+                {!backDropToggle &&
+                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
+                                       isEditable={educationEditField} educationsList={educationsList}/>
+                }
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
@@ -322,7 +330,10 @@ const Educationform = (props) => {
                                  sx={{display: 'inline-block'}}>2</Box> Professional Profile
                         </Typography>
                     </Grid>
-                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave} isEditable={professionEditField}/>
+                    {!backDropToggle &&
+                        <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
+                                           isEditable={professionEditField}/>
+                    }
                 </Grid>
                 <Grid container sx={{spacing: 0}}>
                     <Grid item xs={8}>
@@ -340,7 +351,7 @@ const Educationform = (props) => {
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
-                            <ErrorMessage name={`profession_description`} component="div" />
+                            <ErrorMessage name={`profession_description`} style={{color:'red'}} component="p" />
                         </div>
 
                     </Grid>

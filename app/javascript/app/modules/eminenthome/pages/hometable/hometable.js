@@ -171,7 +171,13 @@ const HomeTable = (props) => {
 
     const getAddress = (address) => {
         const customAddress = isValuePresent(address) ? address[0] : ''
-        if (isValuePresent(customAddress)) return `${customAddress.flat}, ${customAddress.street}, ${customAddress.district}, ${customAddress.state}, ${customAddress.pincode}`
+        if (isValuePresent(customAddress)) return `${presentFields(customAddress.flat)}
+         ${presentFields(customAddress.street)} ${presentFields(customAddress.district)}
+          ${presentFields(customAddress.state)} ${presentFields(customAddress.pincode, true)}`
+    }
+
+    const presentFields = (field,isLastEntry) => {
+        return isValuePresent(field) ? `${field}${ isValuePresent(isLastEntry) ? '' : ','}` : ''
     }
 
     return (

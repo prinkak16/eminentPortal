@@ -30,7 +30,7 @@ import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints"
 import NumberField from "../component/numberfield/numberfield";
 
 const PolticalandGovrnform =(props)=>{
-    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle,backDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -68,13 +68,17 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const handleSave = ( title, formData, id) => {
-        if (title === 'Political Profile') {
-            politicalProfileSave(formData, id)
-        }
+        setBackDropToggle(true)
+        setTimeout(function() {
+            if (title === 'Political Profile') {
+                politicalProfileSave(formData, id)
+            }
 
-        if (title === 'Other Party Profile') {
-            otherPartiProfileSave(formData, id)
-        }
+            if (title === 'Other Party Profile') {
+                otherPartiProfileSave(formData, id)
+            }
+        }, 50)
+
 
     };
 
@@ -109,6 +113,7 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const otherPartiProfileSave = (formData, id) => {
@@ -125,6 +130,7 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const NotApplicableFields = (event) => {
@@ -163,7 +169,13 @@ const PolticalandGovrnform =(props)=>{
     const contestedElection = (value) => {
         setElectionContested(value)
         props.formValues.election_contested = value === 'Yes'
+        if (value !== 'Yes') {
+            setElectoralDetails([{
+                election_type: '', election_details: {}
+            }])
+        }
     }
+
 
     const changeElectionType = (value,name ,type, formIndex) => {
         const updatedElectoralData = [...electoralDetails];
@@ -172,7 +184,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
 
-
+console.log(electoralDetails)
     const saveElectoralData = (data,index) => {
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
@@ -203,6 +215,8 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
 
+    console.log(electoralDetails)
+
     useEffect(() => {
         props.formValues.political_profile =  politicalProfileDetails
     }, [politicalProfileDetails]);
@@ -216,16 +230,6 @@ const PolticalandGovrnform =(props)=>{
         setElectoralDetails(fields)
     }
 
-    useEffect(() => {
-        if (props.formValues.election_contested) {
-            if (!isValuePresent(props.formValues?.election_fought)) {
-                setElectoralDetails([{
-                    election_type: '', election_details: {}
-                }])
-            }
-        }
-
-    },[props.formValues.election_contested])
 
     const openList = (id) => {
         if (showList === id) {
@@ -294,8 +298,13 @@ const PolticalandGovrnform =(props)=>{
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
                 }
-                {!NAFields &&
-                <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField} notApplicable={NAFields}/>
+                {!backDropToggle &&
+                    <>
+                        {!NAFields &&
+                            <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave}
+                                               isEditable={editableProfileField}
+                                               notApplicable={NAFields}/>}
+                    </>
                 }
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
@@ -308,7 +317,6 @@ const PolticalandGovrnform =(props)=>{
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
                             }}
                         />
-                        <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
@@ -367,8 +375,10 @@ const PolticalandGovrnform =(props)=>{
                             <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
                         </Typography>
                     </Grid>
-
-                    <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave} isEditable={editableOtherPartyField}/>
+                    {!backDropToggle &&
+                        <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
+                                           isEditable={editableOtherPartyField}/>
+                    }
                 </Grid>
                 <Grid container className="grid-wrap">
                     <Grid item  xs={12}>
@@ -426,7 +436,7 @@ const PolticalandGovrnform =(props)=>{
                             <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
                     </Grid>
-                    {electionContested === 'Yes' && electoralDetails.map((field,index) => (
+                    {electionContested === 'Yes' && electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>

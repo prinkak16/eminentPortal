@@ -109,7 +109,7 @@ const Resumeform = (props) => {
                                     value={props.formValues.political_legacy[0].name}
                                     name={`political_legacy.${0}.name`}
                                     placeholder="Enter full name"/>
-                        <ErrorMessage name={`political_legacy.${0}.name`} component="div"/>
+                        <ErrorMessage name={`political_legacy.${0}.name`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>Relationship </FormLabel>
@@ -173,7 +173,7 @@ const Resumeform = (props) => {
                                         value={props.formValues.father}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="father" component="div"/>
+                            <ErrorMessage name="father" style={{color:'red'}} component="p" />
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Mother's Name</FormLabel>
@@ -182,7 +182,7 @@ const Resumeform = (props) => {
                                         value={props.formValues.mother}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="mother" component="div"/>
+                            <ErrorMessage name="mother" style={{color:'red'}} component="p" />
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Spouse Name</FormLabel>
@@ -191,7 +191,7 @@ const Resumeform = (props) => {
                                         value={props.formValues.spouse}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="spouse" component="div"/>
+                            <ErrorMessage name="spouse" style={{color:'red'}} component="p" />
                         </Grid>
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
@@ -201,7 +201,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.children[index]}
                                             placeholder="Enter child name"
                                 />
-                                <ErrorMessage name={`child.${index}`} component="div"/>
+                                <ErrorMessage name={`child.${index}`} style={{color:'red'}} component="p" />
                             </Grid>
                         ))}
                         <Grid item xs={12}>
@@ -230,7 +230,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.website}
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="website" component="div"/>
+                                <ErrorMessage name="website" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
@@ -241,7 +241,7 @@ const Resumeform = (props) => {
                                             inputprop={{endAdornment: <InputAdornment position="end">
                                                     <HelpOutlineOutlinedIcon/>
                                                 </InputAdornment>}}/>
-                                <ErrorMessage name="twitter" component="div"/>
+                                <ErrorMessage name="twitter" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
 
@@ -253,7 +253,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.linkedin}
                                             placeholder="Enter your linkedin Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="linkedin" component="div"/>
+                                <ErrorMessage name="linkedin" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
@@ -262,7 +262,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.facebook}
                                             placeholder="Enter your facebook Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="facebook" component="div"/>
+                                <ErrorMessage name="facebook" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
 
@@ -274,7 +274,7 @@ const Resumeform = (props) => {
                                             name="instagram"
                                             placeholder="Enter your instagram Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="instagram" component="div"/>
+                                <ErrorMessage name="instagram" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -285,7 +285,7 @@ const Resumeform = (props) => {
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
                                      sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
-                                <ErrorMessage name="pdf_url" component="div"/>
+                                <ErrorMessage name="pdf_url" style={{color:'red'}} component="p" />
                             </Typography>
                         </Grid>
 
@@ -322,7 +322,7 @@ Resumeform.initialValues = {
     father:"",
     mother:"",
     spouse:"",
-    children:[],
+    children:[''],
     website:"",
     twitter:"",
     linkedin:"",

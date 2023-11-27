@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       get 'filters/vacancy_ministry_wise', to: 'filter#vacancy_ministry_wise'
       get 'filters/vacancy_organization_wise', to: 'filter#vacancy_organization_wise'
       get 'filters/vacancy_wise', to: 'filter#vacancy_wise'
+      get 'filters/slotting', to: 'filter#slotting'
 
       get 'stats/home', to: 'stats#home'
 
@@ -77,7 +78,16 @@ Rails.application.routes.draw do
         post '/manual_upload', to: 'upload#manual_upload'
         get '/position_analytics', to: 'vacancy#position_analytics'
         get '/vacant_overview/by_state', to: 'vacancy#vacant_overview_by_state'
-        get '/list', to: 'vacancy#list_ministry_wise'
+        get '/list', to: 'vacancy#list'
+      end
+
+      namespace :slotting, path: 'slotting' do
+        get '/position_analytics', to: 'slotting#position_analytics'
+        get '/list', to: 'slotting#list'
+        post '/slot', to: 'slotting#slot'
+        post '/unslot', to: 'slotting#unslot'
+        post '/reslot', to: 'slotting#reslot'
+        get '/stats/:organization_id', to: 'slotting#stats'
       end
 
       namespace :user, path: 'user/:user_id' do

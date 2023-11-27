@@ -415,7 +415,7 @@ export const formFilledValues = (formValues) => {
     const fieldsWithValues = {};
     for (const fieldName of Object.keys(formValues)) {
         const fieldValue = formValues[fieldName];
-        if (fieldValue) {
+        if (isValuePresent(fieldValue)) {
             if (formValues[fieldName] === 'mobile') {
                 fieldsWithValues[fieldName] = [fieldValue];
             } else {
@@ -427,6 +427,11 @@ export const formFilledValues = (formValues) => {
 }
 
 export const showSuccessToast = (massage) => {
+    const isContainerPresent = document.querySelector('.Toastify__toast--success');
+    if (isContainerPresent) {
+        isContainerPresent.remove();
+    }
+
     toast.success(massage, {
         position: 'top-right',
         autoClose: 3000, // milliseconds
@@ -439,14 +444,18 @@ export const showSuccessToast = (massage) => {
 }
 
 export const showErrorToast = (massage) => {
-    toast.error(massage, {
-        position: 'top-right',
-        autoClose: false, // milliseconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-    });
+    const isContainerPresent = document.querySelector('.Toastify__toast-theme--light.Toastify__toast--error.Toastify__toast--close-on-click');
+
+    if (!isContainerPresent) {
+        toast.error(massage, {
+            position: 'top-right',
+            autoClose: 3000, // milliseconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+    }
 }
 
 export const yearToDateConvert = (year) => {

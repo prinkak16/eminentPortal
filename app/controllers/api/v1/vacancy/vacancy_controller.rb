@@ -21,8 +21,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       }
       sql = "
         SELECT
-           SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
-           SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
+           SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+           SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
            SUM(1) AS total
          FROM public.user_ministries AS um
          LEFT JOIN public.vacancies AS vac
@@ -73,7 +73,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
       results = Vacancy
                   .select('COUNT(*) AS vacant, country_state_id AS cs_id')
-                  .where(status: 'vacant')
+                  .where(allotment_status: 'vacant')
+                  .where.not(country_state_id: nil)
                   .group('country_state_id')
                   .order('country_state_id ASC')
 
@@ -87,7 +88,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
     end
   end
 
-  def list_ministry_wise
+  def list
     begin
       permission_exist = is_permissible('Eminent', 'ViewAll')
       if permission_exist.nil?
@@ -178,8 +179,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           SELECT
             ministry.id as ministry_id,
             ministry.name as ministry_name,
-            SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
-            SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
+            SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
             SUM(1) AS total
           FROM public.user_ministries AS um
           LEFT JOIN public.vacancies AS vac
@@ -252,8 +253,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                   org.id as org_id,
                   org.name as org_name,
                   org.is_listed as is_listed,
-                  SUM(CASE WHEN vac.status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
-                  SUM(CASE WHEN vac.status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
+                  SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
+                  SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
                   SUM(1) AS total
                 FROM public.user_ministries AS um
                 LEFT JOIN public.vacancies AS vac
@@ -322,7 +323,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                 'org_name', org.name,
                 'vac_id', vac.id,
                 'designation', vac.designation,
-                'status', vac.status,
+                'status', vac.allotment_status,
                 'tenure_started_at', vac.tenure_started_at,
                 'tenure_ended_at', vac.tenure_ended_at
               )
