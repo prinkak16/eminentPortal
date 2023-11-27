@@ -119,10 +119,9 @@ const Resumeform = (props) => {
                                 labelId="relationship"
                                 className="custom-select"
                                 fullWidth
-                                displayEmpty
                                 inputProps={{'aria-label': 'Without label'}}
                             >
-                                <MenuItem value="0">
+                                <MenuItem value="0" disabled={true}>
                                     <em>Select Relationship</em>
                                 </MenuItem>
                                 <MenuItem value="Father">

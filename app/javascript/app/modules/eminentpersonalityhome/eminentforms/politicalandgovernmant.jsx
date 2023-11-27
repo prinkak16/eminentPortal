@@ -460,6 +460,7 @@ console.log(electoralDetails)
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
+                                                {/*<span className='election-contest-count'>{index+1}</span>*/}
                                                 <AutoCompleteDropdown
                                                     classes={'election-dropdown'}
                                                     name={'Election Type'}
