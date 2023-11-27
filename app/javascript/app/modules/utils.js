@@ -415,7 +415,7 @@ export const formFilledValues = (formValues) => {
     const fieldsWithValues = {};
     for (const fieldName of Object.keys(formValues)) {
         const fieldValue = formValues[fieldName];
-        if (fieldValue) {
+        if (isValuePresent(fieldValue)) {
             if (formValues[fieldName] === 'mobile') {
                 fieldsWithValues[fieldName] = [fieldValue];
             } else {

@@ -113,6 +113,7 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const otherPartiProfileSave = (formData, id) => {
@@ -129,6 +130,7 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const NotApplicableFields = (event) => {
@@ -167,7 +169,13 @@ const PolticalandGovrnform =(props)=>{
     const contestedElection = (value) => {
         setElectionContested(value)
         props.formValues.election_contested = value === 'Yes'
+        if (value !== 'Yes') {
+            setElectoralDetails([{
+                election_type: '', election_details: {}
+            }])
+        }
     }
+
 
     const changeElectionType = (value,name ,type, formIndex) => {
         const updatedElectoralData = [...electoralDetails];
@@ -176,7 +184,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
 
-
+console.log(electoralDetails)
     const saveElectoralData = (data,index) => {
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
@@ -428,7 +436,7 @@ const PolticalandGovrnform =(props)=>{
                             <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
                     </Grid>
-                    {electionContested === 'Yes' && electoralDetails.map((field,index) => (
+                    {electionContested === 'Yes' && electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
