@@ -24,6 +24,7 @@ import Header from "../../../eminentpersonalityhome/header/header";
 import BasicTabs from "../../shared/tabs/tabs";
 import PlusIcon from './../../../../../../../public/images/plus.svg'
 import {HomeContext} from "../../../../context/tabdataContext";
+import {useParams} from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -60,7 +61,7 @@ const DrawerHeader = styled('div')(({theme}) => ({
 export default function PersistentDrawerLeft() {
 
 
-    const theme = useTheme();
+    const theme = useTheme();   
     const [open, setOpen] = React.useState(false);
     const [toggle, setToggle] = useState(1);
     const [filterString, setFilterString] = useState('');
@@ -73,6 +74,9 @@ export default function PersistentDrawerLeft() {
     const [tabId, setTabId] = useState('1');
     const [movTabId, setMovTabId] = useState('1');
     const navigate = useNavigate();
+
+    const {type} = useParams();
+
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
         return regex.test(number);
@@ -110,6 +114,7 @@ export default function PersistentDrawerLeft() {
         setToggle(id);
     }
 
+
     const  navigateForm = () => {
         localStorage.setItem('eminent_number', userData.phone);
         navigate({
@@ -125,7 +130,7 @@ export default function PersistentDrawerLeft() {
     }
     const handleMovTabsFilter = (newValue)=>{
         setMovTabId(newValue)
-    }
+    }   
 
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
@@ -167,8 +172,8 @@ export default function PersistentDrawerLeft() {
                             <SideBarIcon/>
                         </IconButton>
                             </span>
+                                {/* {type && type == 'allotment' ? 'Bread' : 'Eminent Personalities'}</p> */}
                                 Eminent Personalities</p>
-
                         </div>
 
                     <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler} openFilter={open}/>

@@ -7,10 +7,17 @@ import ArrowDownward from "../../../../../../../../public/images/si_File_downloa
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
 
-function AllotmentTable() {
+function    AllotmentTable({setAssignShow}) {
     const [tableData, setTableData] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageCount, setPageCount] = useState(0);
+
+    function changeHandler(data) {
+        if (data.action === 'assign') {
+            setAssignShow(true);
+            console.log('Assign action clicked');
+        }
+    }
 
     const fetchTableData = () => {
 
@@ -54,6 +61,8 @@ function AllotmentTable() {
         setCurrentPage(selectedPage.selected);
     };
 
+
+
     return (
         <div className="allotment-table">
             <div className='wrap'>
@@ -90,6 +99,7 @@ function AllotmentTable() {
                                         <button
                                             variant="contained"
                                             className={data.action === 'assign' ? 'assign-button' : 'update-button'}
+                                            onClick={() => changeHandler(data)}
                                         >
                                             {data.action.charAt(0).toUpperCase() + data.action.slice(1)}
                                         </button>
