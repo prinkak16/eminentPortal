@@ -204,7 +204,6 @@ const Educationform = (props) => {
         }
     }
 
-
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -374,8 +373,6 @@ Educationform.initialValues = {
 Educationform.validationSchema = Yup.object().shape({
     education_level: Yup.string().required('Please select your high qualification'),
     profession_description: Yup.string().required('Please enter your profession description'),
-
-
 
 });
 export default Educationform
