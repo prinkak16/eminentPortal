@@ -81,9 +81,9 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                                 return (
                                     <TableRow key={organization.org_id}>
                                         {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('1', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
+                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
                                         {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
-                                        <TableCell onClick={() => onSwitchTab('3', null, organization.org_id)}>{organization.org_name}</TableCell>
+                                        <TableCell onClick={() => onSwitchTab('vacancywise', null, organization.org_id)}>{organization.org_name}</TableCell>
                                         <TableCell className="text-center">{organization.is_listed ? (organization.is_listed) : '---'}</TableCell>
                                         <TableCell>{organization.total}</TableCell>
                                         <TableCell>{organization.occupied}</TableCell>

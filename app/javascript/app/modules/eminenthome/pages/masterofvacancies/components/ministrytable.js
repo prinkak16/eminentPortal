@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {Table, TableBody,TableCell, TableContainer,TableHead,  TableRow,Paper, Backdrop, CircularProgress } from '@mui/material'
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
-import {value} from "lodash/seq";
-
 
 const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -12,7 +10,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
     const limit = 10;
-
     const displayMinistryData = ()=>{
         const params = {
             search_by: 'ministry_wise',
@@ -34,7 +31,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
         setIsFetching(true);
         displayMinistryData();
     }, [currentPage, filterString]);
-
     return (
         <>
             { error && <h1>Error: {error.response.data.message}</h1> }
@@ -59,8 +55,9 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                 </TableHead>
                 <TableBody>
                     {ministryTableData?.value.map((ministry, index) => <TableRow key={ministry.ministry_id}>
+
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
+                        <TableCell className="element" onClick={() => onSwitchTab('psuwise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
                         <TableCell>{ministry.total}</TableCell>
                         <TableCell>{ministry.occupied}</TableCell>
                         <TableCell>{ministry.vacant}</TableCell>

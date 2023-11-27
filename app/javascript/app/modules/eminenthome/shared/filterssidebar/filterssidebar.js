@@ -22,6 +22,7 @@ import {
 } from "../../../../api/eminentapis/endpoints";
 import {HomeContext} from "../../../../context/tabdataContext";
 import {debounce} from "lodash";
+import {string} from "yup";
 
 export default function FiltersSidebar(props) {
     const homeContext = useContext(HomeContext);
@@ -29,6 +30,8 @@ export default function FiltersSidebar(props) {
     const [expandedFilter, setExpandedFilter] = useState('');
     const [appliedFilters, setAppliedFilters] = useState([]);
     const [searchMinisterName, setSearchMinisterName] = useState('');
+    const [searchDepartmentName, setSearchDepartmentName] = useState('');
+    const [searchOrganizationName, setSearchOrganizationName] = useState('');
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
@@ -55,28 +58,34 @@ export default function FiltersSidebar(props) {
         });
         props.setFilterString(filterString);
     }
-    const [ministryInfo, setMinistryInfo] = useState('')
     useEffect(() => {
+        console.log('Home context value: ', homeContext.movTabId)
+
         switch (props.tabId) {
             case '4':
-                if (homeContext.movTabId === '1') {
+                if (homeContext.movTabId === 'ministry') {
                     const params = {
                         ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
                     })
-                } else if (homeContext.movTabId === '2') {
+                } else if (homeContext.movTabId === 'psuwise' ) {
                     const psuParams = {
-                        ministry_name: '',
-                        department_name: '',
-                        organization_name: '',
+                        ministry_name: searchMinisterName,
+                        department_name: searchDepartmentName,
+                        organization_name: searchOrganizationName,
                     }
                     getOrganizationWiseFilterData(psuParams).then(response => {
                         setFiltersList(response.data.data);
                     })
-                } else if (homeContext.movTabId === '3') {
-                    getVacancyWiseFilterData().then(response => {
+                } else if (homeContext.movTabId === 'vacancywise') {
+                    const vacancyParams = {
+                        ministry_name: searchMinisterName,
+                        department_name: searchDepartmentName,
+                        organization_name: searchOrganizationName,
+                    }
+                    getVacancyWiseFilterData(vacancyParams).then(response => {
                         setFiltersList(response.data.data)
                     })
                 }
@@ -92,7 +101,7 @@ export default function FiltersSidebar(props) {
                 });
         }
         applyFilter();
-    }, [props.tabId, homeContext.movTabId, searchMinisterName]);
+    }, [props.tabId, homeContext.movTabId, searchMinisterName, searchDepartmentName, searchOrganizationName]);
 
     const handleChange = (value) => (event, isExpanded) => {
         if (expandedFilter === value) {
@@ -103,10 +112,16 @@ export default function FiltersSidebar(props) {
         }
     };
 
-    const handleSearchFilter = debounce((event) => {
+    const handleSearchFilter = debounce((event, identifier) => {
         const inputValue = event.target.value;
-        console.log('inputValue', inputValue)
-        setSearchMinisterName(inputValue);
+        if (identifier === 'Ministry') {
+            setSearchMinisterName(inputValue);
+        } else if (identifier === 'Department') {
+            setSearchDepartmentName(inputValue)
+        }
+        else if (identifier === 'Organization') {
+            setSearchOrganizationName(inputValue)
+        }
     }, 1000)
 
     const isChecked = (parentKey, optionValue) => {
@@ -134,7 +149,7 @@ export default function FiltersSidebar(props) {
                     </AccordionSummary>
                     <AccordionDetails className='filteraccord'>
                         <Typography className="ms-2 filterTypeOptions">
-                            {(props.tabId === '4' && homeContext.movTabId === '1' && ['Ministry'].includes(filter.display_name)) &&
+                            {(props.tabId === '4' && homeContext.movTabId === 'ministry' && ['Ministry'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"
@@ -143,7 +158,34 @@ export default function FiltersSidebar(props) {
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
-                                        onChange={handleSearchFilter}
+                                        onChange={() => handleSearchFilter(event, 'Ministry')}
+                                    />
+                                </FormControl>
+                            }
+
+                            {(props.tabId === '4' && homeContext.movTabId === 'psuwise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon/>
+                                            </InputAdornment>
+                                        }
+                                        onChange={() => handleSearchFilter(event, filter.display_name)}
+                                    />
+                                </FormControl>
+                            }
+                            {(props.tabId === '4' && homeContext.movTabId === 'vacancywise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon/>
+                                            </InputAdornment>
+                                        }
+                                        onChange={() => handleSearchFilter(event, filter.display_name)}
                                     />
                                 </FormControl>
                             }

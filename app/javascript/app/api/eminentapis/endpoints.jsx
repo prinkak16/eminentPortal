@@ -67,8 +67,8 @@ export const getMinistryWiseFilterData = (params) => {
 export const getOrganizationWiseFilterData = (params) => {
     return axios.get(apiBaseUrl + 'filters/vacancy_organization_wise', { params });
 }
-export const getVacancyWiseFilterData = () => {
-    return axios.get(apiBaseUrl + 'filters/vacancy_wise');
+export const getVacancyWiseFilterData = (params) => {
+    return axios.get(apiBaseUrl + 'filters/vacancy_wise', {params});
 }
 export const getMinistry = () => {
     return axios.get(apiBaseUrl + 'ministry');

@@ -29,7 +29,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
+export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     // const [filterString, setFilterString] = useState('');
     const [value, setValue] = React.useState('1');
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -122,6 +122,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
     const handleChange = (event, newValue) => {
         setValue(newValue);
         onSwitchTab(newValue);
+        ministryId(newValue)
+        console.log('ministryId(newValue)', ministryId(newValue))
     };
 
     const  navigateForm = () => {
@@ -244,7 +246,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
                 </TabPanel>
 
                 <TabPanel value="4">
-                    <MasterVacancies filterString={filterString} tabId={value}/>
+                    <MasterVacancies  filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="5">
                     <SlottingTabPage filterString={filterString} tabId={value}/>

@@ -72,6 +72,7 @@ export default function PersistentDrawerLeft() {
     const [userData, setUserData] = useState(true);
     const [tabId, setTabId] = useState('1');
     const [movTabId, setMovTabId] = useState('1');
+    const [ministrySwitchPsu, setMinistrySwitchPsu] = useState('');
     const navigate = useNavigate();
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
@@ -87,7 +88,6 @@ export default function PersistentDrawerLeft() {
                 setExistingData(res);
                 setSubmitDisabled(false);
             }).catch(err => {
-                console.log(err);
             });
             setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
@@ -126,6 +126,7 @@ export default function PersistentDrawerLeft() {
     const handleMovTabsFilter = (newValue)=>{
         setMovTabId(newValue)
     }
+
 
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
@@ -171,7 +172,7 @@ export default function PersistentDrawerLeft() {
 
                         </div>
 
-                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler} openFilter={open}/>
+                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open}/>
                         {/*<>*/}
                         {/*    <Analytics toggle={toggle}/>*/}
                         {/*    <HomeTable filterString={filterString}/>*/}
