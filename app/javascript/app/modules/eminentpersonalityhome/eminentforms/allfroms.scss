@@ -182,6 +182,7 @@ button.cancelbtn{
     &:last-child{
       border-right: none !important;
       display: flex;
+      align-items: center;
     }
   }
   th{
@@ -583,4 +584,26 @@ button.cancelbtn{
 .user-image {
   height: 15rem !important;
   width: 15rem !important;
+}
+
+.photo-error-container {
+  display: flex;
+  width: 100%;
+}
+
+.photo-error {
+  margin-left: auto;
+  margin-right: 3rem;
+  margin-top: 1.3rem;
+}
+
+.error {
+  color: red !important;
+}
+.your-custom-class {
+  color: red !important;
+}
+
+.details-edit-list {
+  position: absolute;
 }
