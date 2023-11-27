@@ -80,7 +80,7 @@ const Refferedform = (props) => {
                         <ErrorMessage name={`reference.mobile`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>BJP ID <mark>*</mark></FormLabel>
+                        <FormLabel>BJP ID</FormLabel>
                         <Inputfield type="text"
                                     name={`reference.bjp_id`}
                                     value={props?.formValues?.reference?.bjp_id}
@@ -89,15 +89,9 @@ const Refferedform = (props) => {
 
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>Grade <mark>*</mark></FormLabel>
-                        <Inputfield type="text"
-                                    name={`reference.grade`}
-                                    value={props?.formValues?.reference?.grade}
-                                    placeholder="BJP ID"/>
-                        <ErrorMessage name={`reference.grade`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
-                        <FormLabel>comments <mark>*</mark></FormLabel>
+                        <FormLabel>comments </FormLabel>
                         <TextField
                             className='p-0'
                             fullWidth
@@ -118,7 +112,7 @@ const Refferedform = (props) => {
 }
 Refferedform.label = 'Referred By'
 Refferedform.initialValues = {
-    reference: {name: "", mobile: "", bjp_id: "", grade: "", comments: ""}
+    reference: {name: "", mobile: "", bjp_id: "", comments: ""}
 
 
 };
@@ -126,9 +120,7 @@ Refferedform.validationSchema = Yup.object().shape({
     reference: Yup.object().shape({
         name: Yup.string().required("Name is required"),
         mobile: Yup.string().required("Mobile is required"),
-        bjp_id: Yup.string().required("BJP ID is required"),
-        grade: Yup.string().required("Grade is required"),
-        comments: Yup.string().required("Comments are required"),
+        bjp_id: Yup.string().max(10, "BJP ID must be at most 10 characters"),
     }),
 });
 export default Refferedform;

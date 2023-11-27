@@ -82,7 +82,7 @@ const Communicationform =(props)=>{
     }
 
 
-    const handlePinCodeChange = (pinCode, pincodeType) => {
+    const handlePinCodeChange = (pinCode, pincodeType, index) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             setBackDropToggle(true)
@@ -93,7 +93,7 @@ const Communicationform =(props)=>{
                         showSuccessToast(responseData.Message)
                         const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        setPincodes(districts, state, pincodeType)
+                        setPincodes(districts, state, pincodeType, index)
                         setBackDropToggle(false)
                     } else {
                         setBackDropToggle(false)
@@ -107,9 +107,13 @@ const Communicationform =(props)=>{
         }
     };
 
-    const setPincodes = (districts, state, pincodeType) => {
+    const setPincodes = (districts, state, pincodeType, index) => {
         let totalData = otherPinData.filter((item) => item.id !== pincodeType);
         setOtherPinData(totalData.concat({ id: pincodeType, district: districts, state: state }));
+        otherAddressChange('state', index, pincodeType)(state[0])
+        if (sameAddress) {
+            otherAddressChange('state', 1, pincodeType)(state[0])
+        }
     }
 
     const addMobileField = () => {
@@ -165,7 +169,7 @@ const Communicationform =(props)=>{
         if (name === 'pincode') {
             otherAddressChange('district', index)('')
             otherAddressChange('state', index)('')
-            handlePinCodeChange(value,  formType)
+            handlePinCodeChange(value,  formType, index)
         }
 
         setFormValues((prevFormValues) => {

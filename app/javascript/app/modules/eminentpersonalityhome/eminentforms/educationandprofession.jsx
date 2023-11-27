@@ -338,7 +338,7 @@ const Educationform = (props) => {
                 <Grid container sx={{spacing: 0}}>
                     <Grid item xs={8}>
                         <div>
-                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                            <FormLabel>Description <mark>*</mark><InfoOutlinedIcon/></FormLabel>
                             <TextField
                                 className="profession-description"
                                 fullWidth
