@@ -157,6 +157,12 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 if (!isValuePresent(fieldsData[key]) && fieldsData[key] !== false) {
                     return showErrorToast(`Please enter ${key}`)
                 }
+                if (key === 'start_year') {
+                    if (parseInt(fieldsData[key]) < 1900 ) {
+                        return showErrorToast(`Start Year Should be greater then start year 1900`)
+                    }
+                }
+
                 if (key === 'end_year' && fieldsData.end_year !== 'NA') {
                     if (fieldsData.start_year >= fieldsData.end_year) {
                         return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
