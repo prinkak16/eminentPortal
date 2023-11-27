@@ -89,4 +89,23 @@ class Api::V1::FilterController < BaseApiController
 
     render json: { success: true, data: result, message: 'Vacancy wise filters.' }, status: 200
   end
+
+  def slotting
+    ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
+    department_name = params[:department_name].present? ? params[:department_name] : ''
+    org_name = params[:organization_name].present? ? params[:organization_name] : ''
+
+    result = {
+      'filters': [
+        fetch_vacancy_ministry_filters(ministry_name),
+        fetch_vacancy_department_filters(department_name),
+        fetch_vacancy_organization_filters(org_name),
+        fetch_ratna_type_filter,
+        fetch_position_status_filter,
+        fetch_state_filter
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'Slotting filters.' }, status: 200
+  end
 end

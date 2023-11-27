@@ -159,10 +159,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.integer "organization_id"
     t.integer "country_state_id"
     t.string "designation", default: "", null: false
-    t.boolean "is_selected", default: false, null: false
+    t.string "is_appointed", default: "pending", null: false
     t.datetime "tenure_started_at"
     t.datetime "tenure_ended_at"
-    t.string "status", default: "vacant", null: false
+    t.datetime "appointed_at"
+    t.string "allotment_status", default: "vacant", null: false
+    t.datetime "allotted_at"
+    t.string "slotting_status", default: "unslotted", null: false
+    t.string "slotting_remarks", default: ""
+    t.datetime "slotted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
