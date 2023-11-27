@@ -47,8 +47,10 @@ class Api::V1::Eminent::EminentAuthController < BaseApiController
       require 'bcrypt'
       encrypted_key = BCrypt::Password.create("#{params[:phone]}-#{params[:otp]}")
       custom_member_form.token = encrypted_key
-
-      if custom_member_form.save
+      if custom_member_form.may_verify?
+        custom_member_form.verify!
+      end
+      if custom_member_form.save!
         return render json: { success: true, auth_token: encrypted_key, id: custom_member_form.id, name: custom_member_form.data['name'] || '', is_view: custom_member_form.aasm_state == 'approved' }, status: :ok
       else
         return render json: { success: false, message: 'OTP verification failed. Please try again.' }, status: :bad_request
