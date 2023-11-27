@@ -1,40 +1,35 @@
 import * as React from 'react';
 import {Table, TableBody,TableCell, TableContainer,TableHead,  TableRow,Paper, Backdrop, CircularProgress } from '@mui/material'
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 
-
 const  MinistryTable = ({ onSwitchTab, filterString }) => {
-    const [currentPage, setCurrentPage] = useState('');
-    const [ministryTableData, setMinistryTableData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [ministryTableData, setMinistryTableData] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
-
-    const prepareToGetDisplayData = () => {
-        // let pageString = '';
-        // let offset = currentPage * limit;
-        // pageString = `&offset=${offset}&limit=${limit}`;
-        // tableDataDisplay(searched + pageString);
-        setCurrentPage(currentPage)
-    }
-    useEffect(() => {
-        setIsFetching(true);
+    const limit = 10;
+    const displayMinistryData = ()=>{
         const params = {
             search_by: 'ministry_wise',
-            // order_by: 'total',
-            // order_type: 'DESC'
+            limit: limit,
+            offset: currentPage * limit
         };
+
         getMinistryWiseData(params, filterString)
             .then(response => {
-            setIsFetching(false);
-            setMinistryTableData(response.data.data.value);
-        }).catch(error => {
+                setIsFetching(false);
+                setMinistryTableData(response.data.data);
+            }).catch(error => {
             setIsFetching(false);
             setError(error);
             console.error(error);
         })
-        prepareToGetDisplayData();
+    }
+    useEffect(() => {
+        setIsFetching(true);
+        displayMinistryData();
     }, [currentPage, filterString]);
     return (
         <>
@@ -59,10 +54,10 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {ministryTableData.map((ministry, index) => <TableRow key={ministry.ministry_id}>
+                    {ministryTableData?.value.map((ministry, index) => <TableRow key={ministry.ministry_id}>
+
                         <TableCell>{index + 1}</TableCell>
-                        { }
-                        <TableCell className="element" onClick={() => onSwitchTab('2', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
+                        <TableCell className="element" onClick={() => onSwitchTab('psuwise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
                         <TableCell>{ministry.total}</TableCell>
                         <TableCell>{ministry.occupied}</TableCell>
                         <TableCell>{ministry.vacant}</TableCell>
@@ -71,12 +66,12 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
             </Table>
         </TableContainer>
     <div className="mt-3">
-        <p className="d-flex justify-content-center">{currentPage + 1}</p>
+        <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { ministryTableData?.count ?  Math.ceil(ministryTableData?.count / limit) : ''}</p>
         <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
             breakLabel={"...."}
-            // pageCount={ limit}
+            pageCount={Math.ceil(ministryTableData?.count / limit)}
             marginPagesDisplayed={1}
             pageRangeDisplayed={5}
             onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
