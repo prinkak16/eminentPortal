@@ -11,7 +11,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
 import Allotment from "../../../eminenthome/pages/allotment/Allotment"
@@ -31,8 +31,8 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
-    // const [filterString, setFilterString] = useState('');
-    const [value, setValue] = React.useState('1');
+    const [basicTabId, setBasicTabId] = useSearchParams({basicTabId: '1'});
+    const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
     const [existingData, setExistingData] = useState(null);
@@ -122,12 +122,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
     }
     const handleChange = (event, newValue) => {
-        if(newValue == 2 && (!type || type != 'allotment')){
-          return navigate('/allotment');
-        } else {
-            setValue(newValue);
-            onSwitchTab(newValue);
-        }
+        handleBasicTabChange({basicTabId: newValue});
+        setValue(newValue);
+        onSwitchTab(newValue);
     };
 
     const  navigateForm = () => {
@@ -234,6 +231,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             handleChange(null, "2")
         }
     }, [type]);
+
+    const handleBasicTabChange = (basicTabValue) => {
+        setBasicTabId(basicTabValue);
+    }
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
