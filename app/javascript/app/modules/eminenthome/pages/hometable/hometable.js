@@ -177,7 +177,7 @@ const HomeTable = (props) => {
     }
 
     const presentFields = (field,isLastEntry) => {
-        return isValuePresent(field) && `${field}${ isValuePresent(isLastEntry) ? '' : ','}`
+        return isValuePresent(field) ? `${field}${ isValuePresent(isLastEntry) ? '' : ','}` : ''
     }
 
     return (

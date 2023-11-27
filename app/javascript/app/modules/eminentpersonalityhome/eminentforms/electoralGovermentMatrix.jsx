@@ -79,11 +79,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         saveData(fieldsData,formIndex)
         setIsDataSet(false)
     }
+
     useEffect(() => {
         if (isDataSet) {
             handleSave()
         }
-    }, [isDataSet]);
+    }, [fieldsData]);
 
     const contestedElection = (value, fieldKey) => {
         setData(fieldKey, value)
