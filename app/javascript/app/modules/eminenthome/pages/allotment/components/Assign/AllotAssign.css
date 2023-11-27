@@ -1,0 +1,81 @@
+.allot-card-container{
+    display: flex;
+    align-items: center;
+    height: 150px;
+    border: 1px solid #E6E6E6;
+    border-radius: 10px;
+    box-shadow: 1px 1px 27px 0px #00000017;
+
+}
+
+
+.allot-b1{
+    display: flex;
+    border: 1px solid black;
+    height: 100%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    
+}
+
+.icon-rect{
+    height: 100%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.allot-b2{
+    display: flex;
+    flex-direction: column;
+    width: 92%;
+    padding-left: 27px;
+    padding-right: 5%;
+    padding-top: 18px;
+}
+.allot-c1{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed grey;
+    padding-top: 10px;
+
+}
+
+.allot-c2{
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+.card-cell3{
+    border-right: 1px dashed grey;
+    width: 12%;
+    height: 50px;
+}
+
+.card-cell4{
+    width: 12%;
+}
+
+.para{
+    font-family: Barlow;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.para-remark{
+font-family: Barlow;
+font-size: 18px;
+font-weight: 500;
+}
+
+.card-span{
+    font-family: Barlow;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.para-remark{
+font-family: Barlow;
+font-size: 19px;
+font-weight: 400;
+}

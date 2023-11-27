@@ -79,7 +79,7 @@ const Analytics = (props) => {
                             'completed'
                             : {
                                 label = 'Assigned';
-                                icon = <Checklist/>;
+                                icon = <TotalEminent/>;
                                 break;
                             }
                             case
