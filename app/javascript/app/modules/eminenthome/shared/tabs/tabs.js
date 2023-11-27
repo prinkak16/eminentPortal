@@ -238,7 +238,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1250 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
                         <Tab label="Home" value="1" />
                         <Tab label="Allotment" value="2" />
                         <Tab label="File Status" value="3" />

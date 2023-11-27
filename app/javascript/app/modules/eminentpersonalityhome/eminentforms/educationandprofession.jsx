@@ -277,6 +277,13 @@ const Educationform = (props) => {
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
                                        isEditable={educationEditField} educationsList={educationsList}/>
                 }
+
+                <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
+                    <Typography variant="h5" content="h5">
+                        <Box className="detailnumbers" component="div"
+                             sx={{display: 'inline-block'}}>2</Box> Professional Profile
+                    </Typography>
+                </Grid>
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
@@ -323,12 +330,6 @@ const Educationform = (props) => {
                     </div>
                 )}
                 <Grid container sx={{my: 5}} className="grid-wrap">
-                    <Grid item sx={{mb: 2}} xs={12}>
-                        <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div"
-                                 sx={{display: 'inline-block'}}>2</Box> Professional Profile
-                        </Typography>
-                    </Grid>
                     {!backDropToggle &&
                         <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
                                            isEditable={professionEditField}/>

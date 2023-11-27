@@ -85,9 +85,15 @@ const FormWrap=({userData, stateId})=>{
         if (!isError) {
             getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
                 if (response) {
-                    if (activeStep + 1 === 6) {
+                    if (isCandidateLogin) {
+                        if (activeStep + 1 === 5) {
+                            navigate({
+                                pathname: '/form_submitted'
+                            });
+                        }
+                    } else if (activeStep + 1 === 6) {
                         navigate({
-                            pathname: '/'
+                            pathname: '/form_submitted'
                         });
                     }
                     handleNext();

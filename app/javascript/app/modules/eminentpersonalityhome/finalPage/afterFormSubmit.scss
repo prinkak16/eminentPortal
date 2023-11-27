@@ -3,3 +3,29 @@
     display: grid;
     margin: auto;
 }
+
+.check-icon {
+    height: 8rem;
+    margin: auto;
+}
+
+.main-head {
+    font-size: 4.5rem;
+    margin-top: 3rem;
+}
+
+.sub-head {
+    margin: 1rem auto auto;
+    font-size: 1.5rem;
+}
+
+.go-back {
+    width: 8rem;
+    height: 3rem;
+    border-radius: 0.6rem;
+    background: #FF9559;
+    color: #fff;
+    font-size: 1rem;
+    margin: 2rem auto auto;
+    border: none;
+}
