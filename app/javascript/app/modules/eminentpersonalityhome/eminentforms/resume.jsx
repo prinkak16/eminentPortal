@@ -278,7 +278,7 @@ const Resumeform = (props) => {
                         <Grid item sx={{mb: 2}} xs={12}>
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
-                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
+                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <mark>*</mark>
 
                             </Typography>
                         </Grid>
@@ -296,6 +296,9 @@ const Resumeform = (props) => {
                                     </Button>
                                 </div>
                             </div>
+                        </div>
+                        <div className='pdf-msg'>
+                            <span className='pdf-msg-text'><mark>*</mark> Only PDF file allowed.</span>
                         </div>
                     </Grid>
                 </Grid>

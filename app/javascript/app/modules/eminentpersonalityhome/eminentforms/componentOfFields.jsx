@@ -19,6 +19,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     const [fieldsData, setFieldsData] = useState({});
     const [resetYear, setResetYear] = useState(false)
     const [isNaButtonExist, setIsNaButtonExist] = useState(false)
+    const [disabledFields, setDisabledFields] = useState([])
 
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
@@ -88,16 +89,20 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'qualification') {
+            const fields = []
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
-                fieldsData.start_year = 'NA';
+                fields.push('start_year','course')
+                fieldsData.start_year = '';
                 fieldsData.course = 'NA';
             } else if (value === '12th Pass') {
-                fieldsData.start_year = 'NA';
+                fields.push('course')
+                fieldsData.start_year = '';
             } else {
                 fieldsData.start_year = '';
                 fieldsData.course = '';
             }
+            setDisabledFields(fields)
         }
 
         setFieldsData((prevFieldsData) => ({
@@ -133,37 +138,18 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }
 
 
-    const disabledField = (field) => {
-        let value = false
-        if (jsonForm.title ===  'Education Details') {
-            if (field === 'start_year' || field === 'course') {
-
-                let disabledFields = ['Less than 10th', '10th Pass']
-                if (field === 'start_year') {
-                    disabledFields.push('12th Pass')
-                }
-                value = disabledFields.includes(fieldsData.qualification)
-                if (value) {
-                    fieldsData[field] = 'NA'
-                }
-            }
-        }
-
-        if (field === 'end_year') {
-            if (!isValuePresent(fieldsData.start_year) ) {
-                value = !isValuePresent(fieldsData.start_year)
+    const disabledField = (key) => {
+        let value = disabledFields.includes(key)
+            if (key === 'end_year') {
+                value = !disabledFields.includes('start_year')
             }
 
-            if (disabledField('start_year')) {
-                value = !disabledField('start_year')
+            if (key === 'end_year') {
+               value = !isValuePresent(fieldsData.start_year)
             }
-        }
-
-        if (fieldsData[field] === 'NA') {
-          value = true
-        }
         return value
     }
+
 
     const handleSave = (id) => {
         for (let key in fieldsData) {
@@ -240,24 +226,28 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                             f.type === "textField" &&
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
-                                    <OtherInputField
-                                        disabled={disabledField(f.key)}
-                                        type="text"
-                                        value={fieldValue(f.key) || null}
-                                        onChange={handleFieldChange}
-                                        textType={f.key}
-                                        placeholder={f.placeholder}/>
+                                    <div style={{marginTop:'7px'}}>
+                                        <OtherInputField
+                                            disabled={disabledField(f.key)}
+                                            type="text"
+                                            value={fieldValue(f.key) || null}
+                                            onChange={handleFieldChange}
+                                            textType={f.key}
+                                            placeholder={f.placeholder}/>
+                                    </div>
+
                                 </Grid>
                         }
                         { !resetYear &&
                             f.type === "date" &&
                                 <Grid item xs={4} className='d-grid'>
+                                    {f.key === 'end_year' && console.log(disabledField(f.key), 'end_year')}
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%'}}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%', marginTop: '-5px'}}>
                                         <DemoContainer components={['DatePicker']} style={{width: '100%'}} sx={{width: '100%'}}>
                                             <DatePicker
                                                 label={f.name}
-                                                readOnly={true}
+
                                                 isRequired={isValuePresent(f?.isRequired)}
                                                 disabled={disabledField(f.key)}
                                                 value={isValuePresent(fieldValue(f.key)) ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
