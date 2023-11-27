@@ -160,9 +160,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                             }
                             {
                                 f.type === "numField" &&
-                                <Grid item xs={4}>
+                                <Grid item xs={4} className='d-grid'>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
                                     <Field
+                                        style={{width: '22rem'}}
                                         type="text"
                                         value={fieldsData[f.key] || null}
                                         as={TextField}
@@ -214,21 +215,29 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                     }
                                     {
                                         fi.type === "numField" &&
-                                        <div  className='d-grid'>
-                                            <FormLabel>{f.name}
+                                        <Grid className='d-grid'>
+                                            <FormLabel>{fi.name}
                                                 <mark>*</mark>
                                             </FormLabel>
-                                            <NumberField
-                                                value={fieldsData[fi.key] || null}
-                                                type="text"
-                                                textType={fi.key}
-                                                placeholder={fi.placeholder}
-                                                onChange={(e) => handleFieldChange(e.target.value, fi.name, fi.key)}
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
-                                                }}
-                                            />
-                                        </div>
+                                            <Grid item xs={4} className='d-grid'>
+                                                <FormLabel>{fi.name} <mark>*</mark></FormLabel>
+                                                <Field
+                                                    style={{width: '22rem'}}
+                                                    type="text"
+                                                    value={fieldsData[fi.key] || null}
+                                                    as={TextField}
+                                                    className='elec-number-field'
+                                                    placeholder={fi.placeholder}
+                                                    onChange={(e) => handleFieldChange(e.target.value, fi.name ,fi.key)}
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                    onInput={(event) => {
+                                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                    }}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                     }
                                     {
                                         fi.type === "radio" &&
