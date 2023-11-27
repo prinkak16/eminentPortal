@@ -77,6 +77,10 @@ export const getMinistry = () => {
 export const getMinisters = () => {
     return axios.get(apiBaseUrl + 'gom/minister_list');
 }
+export const getSlottingAnalytics=()=>{
+    return axios.get(apiBaseUrl + 'slotting/position_analytics');
+}
+
 export const getGOMTableData = () => {
     return axios.get(apiBaseUrl + 'gom/assigned_ministries')
         .then(response => {
