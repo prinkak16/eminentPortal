@@ -188,6 +188,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return isValuePresent(state) ? <mark>*</mark> : ''
     }
 
+
     return (
         <div>
             <Grid container className="educationforms grid-wrap">
@@ -199,6 +200,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     </Grid>
                 }
                 {jsonForm.fields && jsonForm.fields.map((f) => (
+
                     <>
                         {
                             f.type === 'dropdown' &&
@@ -231,25 +233,26 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                             f.type === "date" &&
                                 <Grid item xs={4} className='d-grid'>
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder}>
-                                            {({field}) => (
-                                                <DatePicker
-                                                    isRequired={isValuePresent(f?.isRequired)}
-                                                    disabled={disabledField(f.key)}
-                                                    label={fieldValue(f.key) ? '' : `Select ${field.name}`}
-                                                    value={field.value}
-                                                    disableFuture={f.key === 'start_year'}
-                                                    onChange={handleEduStartDateChange(f.key)}
-                                                    views={['year']}
-                                                    maxDate={maxDate(f.key)}
-                                                    minDate={minDate(f.key)}
-                                                />
-                                            )}
-                                        </Field>
-                                    </LocalizationProvider>
-
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <Field name={f.name} value={fieldValue(f.key)} placeholder={f.placeholder} >
+                                                {({field}) => (
+                                                    <DatePicker
+                                                        className={`${jsonForm.title === 'Profession Profile' && f.key === 'start_year' ? 'start-year-NA' : ''} ${f.key}` }
+                                                        isRequired={isValuePresent(f?.isRequired)}
+                                                        disabled={disabledField(f.key)}
+                                                        label={fieldValue(f.key) ? '' : `Select ${field.name}`}
+                                                        value={field.value}
+                                                        disableFuture={f.key === 'start_year'}
+                                                        onChange={handleEduStartDateChange(f.key)}
+                                                        views={['year']}
+                                                        maxDate={maxDate(f.key)}
+                                                        minDate={minDate(f.key)}
+                                                    />
+                                                )}
+                                            </Field>
+                                        </LocalizationProvider>
                                     {f.na_button === true &&
+
                                         <div className='date-na-button'>
                                         <span className='na-check-box'>
                                             <input type="checkbox" onClick={notApplicableFields(f.na_type,f.key)} />

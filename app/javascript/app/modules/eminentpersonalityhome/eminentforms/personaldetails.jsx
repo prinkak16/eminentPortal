@@ -196,7 +196,7 @@ const PersonalDetails = (props) => {
                                         e.preventDefault();
                                     }
                                 }}/>
-                                <ErrorMessage name="name" component="div"/>
+                                <ErrorMessage name="name" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Religion <mark>*</mark></FormLabel>
@@ -206,7 +206,7 @@ const PersonalDetails = (props) => {
                                              defaultOption="Select Religion"
                                              optionList={ReligionData}
                                 />
-                                <ErrorMessage name="religion" component="div"/>
+                                <ErrorMessage name="religion" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Gender <mark>*</mark></FormLabel>
@@ -215,7 +215,7 @@ const PersonalDetails = (props) => {
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
                                              optionList={GenderData}/>
-                                <ErrorMessage name="gender" component="div"/>
+                                <ErrorMessage name="gender" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
@@ -224,7 +224,7 @@ const PersonalDetails = (props) => {
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
                                              optionList={dropDownDataCategory}/>
-                                <ErrorMessage name="category" component="div"/>
+                                <ErrorMessage name="category" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
@@ -235,7 +235,7 @@ const PersonalDetails = (props) => {
                                         e.preventDefault();
                                     }
                                 }}/>
-                                <ErrorMessage name="caste" component="div"/>
+                                <ErrorMessage name="caste" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
@@ -246,7 +246,6 @@ const PersonalDetails = (props) => {
                                                     e.preventDefault();
                                                 }
                                             }}/>
-                                <ErrorMessage name="sub_caste" component="div"/>
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Date of birth <mark>*</mark></FormLabel>
@@ -267,10 +266,11 @@ const PersonalDetails = (props) => {
                                     </DemoContainer>
                                 </LocalizationProvider>
                                 <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
+                                <ErrorMessage name="dob" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known <mark>*</mark></FormLabel>
-                                <ErrorMessage name="languages" component="div" className="error"/>
+                                <ErrorMessage name="languages" style={{color:'red'}} component="p" />
                                 <div className="language-container" onClick={() => openLangDrawer()}>
                                     <span>Select Languages</span>
                                     <span
@@ -324,7 +324,7 @@ const PersonalDetails = (props) => {
 
                                     }}
                                 />
-                                <ErrorMessage name="aadhaar" component="div"/>
+                                <ErrorMessage name="aadhaar" style={{color:'red'}} component="p" />
 
                             </Grid>
                             <Grid item xs={6} className='d-grid'>
@@ -337,7 +337,7 @@ const PersonalDetails = (props) => {
                                     placeholder="XXYYZZ1234"
                                     as={TextField}
                                 />
-                                <ErrorMessage name="voter_id" component="div" className="error"/>
+                                <ErrorMessage name="voter_id" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -390,7 +390,7 @@ PersonalDetails.validationSchema = Yup.object().shape({
     gender: Yup.string().required('Please select your Gender'),
     category: Yup.string().required('Please select your Category'),
     caste: Yup.string().required('Please Enter your Caste'),
-    // dob: Yup.string().required('Please select your Date Of Birth'),
+    dob: Yup.string().required('Please select your Date Of Birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
     languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
