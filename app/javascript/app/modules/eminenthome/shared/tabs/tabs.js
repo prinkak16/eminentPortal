@@ -100,7 +100,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter }) {
             setIsValidEmail(false);
         }
     }
-    const fileUrl="https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
+    const fileUrl= "https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
     const downloadSampleVacancy=()=>{
         window.open(fileUrl,'_blank')
     }
