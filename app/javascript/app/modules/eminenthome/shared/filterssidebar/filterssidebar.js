@@ -11,7 +11,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 import "./filterssidebar.scss"
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState, useRef} from "react";
 import {
     getData,
     getFilters,
@@ -32,6 +32,7 @@ export default function FiltersSidebar(props) {
     const [searchMinisterName, setSearchMinisterName] = useState('');
     const [searchDepartmentName, setSearchDepartmentName] = useState('');
     const [searchOrganizationName, setSearchOrganizationName] = useState('');
+    const [inputSearch, setInputSearch] = useState('');
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
@@ -122,6 +123,11 @@ export default function FiltersSidebar(props) {
         }
     }, 1000)
 
+    const handleInputSearch = (event, identifier) => {
+        setInputSearch(event.target.value);
+        handleSearchFilter(event, identifier);
+    }
+
     const isChecked = (parentKey, optionValue) => {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
         return parentOption && parentOption.selectedValues.includes(optionValue);
@@ -129,6 +135,10 @@ export default function FiltersSidebar(props) {
 
     const handleClearFilter = () => {
         setAppliedFilters([]);
+        setInputSearch('');
+        setSearchMinisterName('');
+        setSearchDepartmentName('');
+        setSearchOrganizationName('');
     }
 
     return (
@@ -161,7 +171,8 @@ export default function FiltersSidebar(props) {
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
-                                        onChange={() => handleSearchFilter(event, 'Ministry')}
+                                        value={inputSearch}
+                                        onChange={() => handleInputSearch(event, 'Ministry')}
                                     />
                                 </FormControl>
                             }
@@ -175,7 +186,8 @@ export default function FiltersSidebar(props) {
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
-                                        onChange={() => handleSearchFilter(event, filter.display_name)}
+                                        value={inputSearch}
+                                        onChange={() => handleInputSearch(event, filter.display_name)}
                                     />
                                 </FormControl>
                             }
@@ -188,7 +200,8 @@ export default function FiltersSidebar(props) {
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
-                                        onChange={() => handleSearchFilter(event, filter.display_name)}
+                                        value={inputSearch}
+                                        onChange={() => handleInputSearch(event, filter.display_name)}
                                     />
                                 </FormControl>
                             }
