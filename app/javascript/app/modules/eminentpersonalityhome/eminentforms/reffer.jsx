@@ -66,7 +66,7 @@ const Refferedform = (props) => {
                                     name={`reference.name`}
                                     value={props?.formValues?.reference?.name}
                                     placeholder="Enter Name"/>
-                        <ErrorMessage name={`reference.name`}   component="div"/>
+                        <ErrorMessage name={`reference.name`}  style={{color:'red'}} component="p" />
 
                     </Grid>
                     <Grid item xs={6} className="d-grid">
@@ -77,7 +77,7 @@ const Refferedform = (props) => {
                             value={mobile}
                             onChange={enterMobileNumber}
                             className="reff-mobile" />
-                        <ErrorMessage name={`reference.mobile`} component="div"/>
+                        <ErrorMessage name={`reference.mobile`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>BJP ID <mark>*</mark></FormLabel>
@@ -85,7 +85,7 @@ const Refferedform = (props) => {
                                     name={`reference.bjp_id`}
                                     value={props?.formValues?.reference?.bjp_id}
                                     placeholder="BJP ID"/>
-                        <ErrorMessage name={`reference.bjp_id`} component="div"/>
+                        <ErrorMessage name={`reference.bjp_id`} style={{color:'red'}} component="p" />
 
                     </Grid>
                     <Grid item xs={6}>
@@ -94,7 +94,7 @@ const Refferedform = (props) => {
                                     name={`reference.grade`}
                                     value={props?.formValues?.reference?.grade}
                                     placeholder="BJP ID"/>
-                        <ErrorMessage name={`reference.grade`} component="div"/>
+                        <ErrorMessage name={`reference.grade`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>comments <mark>*</mark></FormLabel>
@@ -109,7 +109,7 @@ const Refferedform = (props) => {
                             maxRows={4}
                             placeholder="Write something"
                         />
-                        <ErrorMessage name={`reference.comments`} component="div"/>
+                        <ErrorMessage name={`reference.comments`} style={{color:'red'}} component="p" />
                     </Grid>
                 </Grid>
             </Box>

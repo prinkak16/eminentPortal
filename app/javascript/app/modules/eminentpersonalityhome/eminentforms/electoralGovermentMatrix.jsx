@@ -22,6 +22,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
+    const [isDataSet, setIsDataSet] = useState(false)
 
     const getStates = () => {
         setBackDropToggle(true)
@@ -39,34 +40,6 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     useEffect(() => {
         getStates()
     }, []);
-
-    useEffect(() => {
-        if (jsonForm.fields.length > 0) {
-            setFieldInitialValue('')
-        }
-    }, []);
-
-    const setFieldInitialValue = (value) => {
-        const keys = jsonForm.fields.map((field) => field.key);
-        const initialFieldsData = generateInitialFieldsData(keys, value);
-        setFieldsData(initialFieldsData);
-    };
-
-
-
-
-    useEffect(() => {
-        const valueToSet = notApplicable ? 'NA' : '';
-        setFieldInitialValue(valueToSet);
-    }, [notApplicable]);
-
-    const generateInitialFieldsData = (keys, value) => {
-        const initialFieldsData = { id: uuidv4() };
-        keys.forEach((key) => {
-            initialFieldsData[key] = isValuePresent(value) ? value : '';
-        });
-        return initialFieldsData;
-    };
 
     useEffect(() => {
         if (isValuePresent(isEditable)) {
@@ -91,23 +64,29 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 getLocations(state.id, field.combo_fields[0])
             }
         }
+      setData(valueType, value)
+    };
 
+    const setData = (valueType, value) => {
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
         }));
+        setIsDataSet(true)
     };
-
 
     const handleSave = () => {
         saveData(fieldsData,formIndex)
+        setIsDataSet(false)
     }
+    useEffect(() => {
+        if (isDataSet) {
+            handleSave()
+        }
+    }, [isDataSet]);
 
     const contestedElection = (value, fieldKey) => {
-        setFieldsData((prevFieldsData) => ({
-            ...prevFieldsData,
-            [fieldKey]: value,
-        }));
+        setData(fieldKey, value)
     }
 
     const showField = (isConditional, key, value) => {
@@ -147,14 +126,6 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
     }
 
-    useEffect(() => {
-        if (editField === 0) {
-            handleSave()
-        } else {
-            setEditField(0)
-        }
-    }, [fieldsData]);
-
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
@@ -172,7 +143,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                         listArray={getList(f.key)}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
-                                    <ErrorMessage name="qualification" component="div"/>
+                                    <ErrorMessage name="qualification" style={{color:'red'}} component="p" />
                                 </Grid>
                             }
                             {
@@ -189,9 +160,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                             }
                             {
                                 f.type === "numField" &&
-                                <Grid item xs={4}>
+                                <Grid item xs={4} className='d-grid'>
                                     <FormLabel>{f.name} <mark>*</mark></FormLabel>
                                     <Field
+                                        style={{width: '22rem'}}
                                         type="text"
                                         value={fieldsData[f.key] || null}
                                         as={TextField}
@@ -226,7 +198,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                 listArray={getList(fi.key)}
                                                 onChangeValue={handleFieldChange}
                                                 dropDownType={fi.key}/>
-                                            <ErrorMessage name="qualification" component="div"/>
+                                            <ErrorMessage name="qualification" style={{color:'red'}} component="p" />
                                         </Grid>
                                     }
                                     {
@@ -243,21 +215,28 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                     }
                                     {
                                         fi.type === "numField" &&
-                                        <Grid item xs={4}>
-                                            <FormLabel>{f.name}
+                                        <Grid className='d-grid'>
+                                            <FormLabel>{fi.name}
                                                 <mark>*</mark>
                                             </FormLabel>
-                                            <NumberField
-                                                className='std-code-input'
-                                                value={fieldsData[fi.key] || null}
-                                                type="text"
-                                                textType={fi.key}
-                                                placeholder={fi.placeholder}
-                                                onChange={(e) => handleFieldChange(e.target.value, fi.name, fi.key)}
-                                                onInput={(event) => {
-                                                    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
-                                                }}
-                                            />
+                                            <Grid item xs={4} className='d-grid'>
+                                                <FormLabel>{fi.name} <mark>*</mark></FormLabel>
+                                                <Field
+                                                    style={{width: '22rem'}}
+                                                    type="text"
+                                                    value={fieldsData[fi.key] || null}
+                                                    as={TextField}
+                                                    className='elec-number-field'
+                                                    placeholder={fi.placeholder}
+                                                    onChange={(e) => handleFieldChange(e.target.value, fi.name ,fi.key)}
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                    onInput={(event) => {
+                                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                    }}
+                                                />
+                                            </Grid>
                                         </Grid>
                                     }
                                     {

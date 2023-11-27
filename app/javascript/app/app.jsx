@@ -69,7 +69,7 @@ function App() {
       <ToastContainer />
       <BackDrop toggle={backDropToggle} />
       <ApiContext.Provider
-        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle }}
+        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle}}
       >
         {routesOfProjects()}
       </ApiContext.Provider>
