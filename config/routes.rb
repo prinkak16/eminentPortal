@@ -16,6 +16,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'auth_user/details' => 'auth_user#fetch_details'
+      delete 'auth_user/logout' => 'auth_user#logout'
+
       post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
       post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
 
@@ -33,7 +36,6 @@ Rails.application.routes.draw do
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
-      delete 'custom_member_forms/logout' => 'custom_member_form#destroy_session'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
