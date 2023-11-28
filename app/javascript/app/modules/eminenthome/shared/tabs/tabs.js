@@ -47,7 +47,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const [wantToUpload, setWantToUpload] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const hiddenFileInput = useRef(null);
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
     const [email, setEmail] = useState();
@@ -338,7 +337,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 <TabPanel value="slotting">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="6">
+                <TabPanel value="gom_management">
                     <GomPage filterString={filterString} tabId={value}/>
                 </TabPanel>
 
