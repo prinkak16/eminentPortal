@@ -5,30 +5,30 @@ import TotalEminent from '../../../../../../../public/images/totalEminent.svg'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
-import {getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
+import {getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
 const Analytics = (props) => {
     const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
     useEffect(()=>{
         switch (props.tabId) {
-            case '1':
+            case 'home_table':
                 statsData().then(res => {
                     setHomeStats(res.data.data);
                 })
                 break;
-            case '2':
+            case 'allotment':
                 statsData().then(res => {
                     setHomeStats(res.data.data);
                 })
                 break;
-            case '4':
+            case 'master_of_vacancies':
                 getVacancyAnalytics().then(res=>{
                     setHomeStats(res.data.data)
                 })
                 break;
-            case '5':
-                getVacancyAnalytics().then(res=>{
+            case 'slotting':
+                getSlottingAnalytics().then(res=>{
                     setHomeStats(res.data.data)
                 })
                 break;
@@ -41,7 +41,7 @@ const Analytics = (props) => {
             let iconType = 'svg'
             let icon = null;
                 switch (props.tabId){
-                    case '1':
+                    case 'home_table':
                     switch (value) {
                         case'overall': {
                             label = 'Total Eminent Personality';
@@ -68,7 +68,7 @@ const Analytics = (props) => {
                     }
                     break;
 
-                    case '2':
+                    case 'allotment':
                         switch (value) {
                             case'incomplete': {
                                 label = 'Total Slotted Position';
@@ -93,7 +93,7 @@ const Analytics = (props) => {
                         }
                         break;
 
-                    case '4':
+                    case 'master_of_vacancies':
                         switch (value) {
                             case'total': {
                                 label = 'Total Position';
@@ -112,19 +112,19 @@ const Analytics = (props) => {
                             }
                         }
                         break;
-                    case '5':
+                    case 'slotting':
                         switch (value) {
                             case'total': {
                                 label = 'Total Position';
                                 icon = <Incompletefile/>;
                                 break;
                             }
-                            case'occupied': {
+                            case'slotted': {
                                 label = 'Slotted';
                                 icon = <Incompletefile/>;
                                 break;
                             }
-                            case'vacant': {
+                            case'unslotted': {
                                 label = 'Unslotted';
                                 icon = <Usergroup/>;
                                 break;
