@@ -98,6 +98,20 @@ const PolticalandGovrnform =(props)=>{
 
     };
 
+    const deleteFormFields = (type, id) => {
+        if (type === 'Political Profile') {
+            const form = politicalProfileDetails.filter((item) => item.id !== id);
+            if (form) {
+                setPoliticalProfileDetails(form)
+            }
+        } else {
+            const form = otherPartyDetails.filter((item) => item.id !== id);
+            if (form) {
+                setOtherPartyDetails(form)
+            }
+        }
+    }
+
     const politicalProfileSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
@@ -239,6 +253,7 @@ console.log(electoralDetails)
         }
     }
 
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -277,8 +292,8 @@ console.log(electoralDetails)
                                         {showList === data.id && (
                                             <Paper className='details-edit-list'>
                                                 <Typography sx={{p: 2}}
-                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
-                                                <Typography
+                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/></Typography>
+                                                <Typography onClick={() => deleteFormFields('Political Profile',data.id)}
                                                     sx={{p: 2}}><DeleteIcon/></Typography>
                                             </Paper>
                                         )}
@@ -331,6 +346,12 @@ console.log(electoralDetails)
                         <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>
+                <Grid item sx={{mb:2}} xs={12}>
+                    <Typography variant="h5" content="h5">
+                        <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
+                    </Typography>
+                </Grid>
+
                 {otherPartyDetails.length > 0 && (
                     <div className="data-table">
                         <table className="w-100 table-responsive text-center">
@@ -344,44 +365,41 @@ console.log(electoralDetails)
                             </thead>
                             <tbody>
                             {otherPartyDetails.map((data, index) => (
-                            <tr key={index}>
-                                <td>{data.party}</td>
-                                <td>{data.position}</td>
-                                <td>{data.start_year}</td>
-                                <td className='end-date-td'>{data.end_year}
-                                    <div className='edit-button-logo' ref={componentRef}>
-                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                            <MoreVertIcon/>
-                                        </Button>
-                                        {showList === data.id && (
-                                            <Paper>
-                                                <Typography sx={{p: 2}}
-                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
-                                                <Typography
-                                                    sx={{p: 2}}><DeleteIcon/></Typography>
-                                            </Paper>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                <tr key={index}>
+                                    <td>{data.party}</td>
+                                    <td>{data.position}</td>
+                                    <td>{data.start_year}</td>
+                                    <td className='end-date-td'>{data.end_year}
+                                        <div className='edit-button-logo' ref={componentRef}>
+                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon/>
+                                            </Button>
+                                            {showList === data.id && (
+                                                <Paper className='details-edit-list'>
+                                                    <Typography sx={{p: 2}}
+                                                                onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
+                                                    <Typography onClick={() => deleteFormFields('Other Party Profile',data.id)}
+                                                                sx={{p: 2}}><DeleteIcon/></Typography>
+                                                </Paper>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
                 )}
-                <Grid container sx={{my:3}} className="grid-wrap">
-                    <Grid item sx={{mb:2}} xs={12}>
-                        <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
-                        </Typography>
-                    </Grid>
+                <Grid  className="grid-wrap">
                     {!backDropToggle &&
                         <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
                                            isEditable={editableOtherPartyField}/>
                     }
                 </Grid>
+
+
                 <Grid container className="grid-wrap">
-                    <Grid item  xs={12}>
+                    <Grid item  container sx={{my:3}} spacing={2}>
                         {socialFields && socialFields.map((field, index) => (
                             <Grid container className='mb-5'>
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
@@ -442,6 +460,7 @@ console.log(electoralDetails)
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
+                                                {/*<span className='election-contest-count'>{index+1}</span>*/}
                                                 <AutoCompleteDropdown
                                                     classes={'election-dropdown'}
                                                     name={'Election Type'}

@@ -82,7 +82,7 @@ const Communicationform =(props)=>{
     }
 
 
-    const handlePinCodeChange = (pinCode, pincodeType) => {
+    const handlePinCodeChange = (pinCode, pincodeType, index) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             setBackDropToggle(true)
@@ -93,7 +93,7 @@ const Communicationform =(props)=>{
                         showSuccessToast(responseData.Message)
                         const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        setPincodes(districts, state, pincodeType)
+                        setPincodes(districts, state, pincodeType, index)
                         setBackDropToggle(false)
                     } else {
                         setBackDropToggle(false)
@@ -107,9 +107,13 @@ const Communicationform =(props)=>{
         }
     };
 
-    const setPincodes = (districts, state, pincodeType) => {
+    const setPincodes = (districts, state, pincodeType, index) => {
         let totalData = otherPinData.filter((item) => item.id !== pincodeType);
         setOtherPinData(totalData.concat({ id: pincodeType, district: districts, state: state }));
+        otherAddressChange('state', index, pincodeType)(state[0])
+        if (sameAddress) {
+            otherAddressChange('state', 1, pincodeType)(state[0])
+        }
     }
 
     const addMobileField = () => {
@@ -165,7 +169,7 @@ const Communicationform =(props)=>{
         if (name === 'pincode') {
             otherAddressChange('district', index)('')
             otherAddressChange('state', index)('')
-            handlePinCodeChange(value,  formType)
+            handlePinCodeChange(value,  formType, index)
         }
 
         setFormValues((prevFormValues) => {
@@ -274,7 +278,7 @@ const Communicationform =(props)=>{
 
                                                 }}
                                             />
-                                            <ErrorMessage name="std_code" style={{color:'red'}} component="p" />
+                                            <ErrorMessage name="std_code" style={{color:'red', marginBottom: '0px'}} component="p" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <NumberField
@@ -287,7 +291,7 @@ const Communicationform =(props)=>{
                                                 }}
                                             />
 
-                                            <ErrorMessage name="landline" style={{color:'red'}} component="p" />
+                                            <ErrorMessage name="landline" style={{color:'red', marginBottom: '0px'}} component="p" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -297,7 +301,7 @@ const Communicationform =(props)=>{
                                                 name="email"
                                                 value={props.formValues.email}
                                                 placeholder="XYZ@gmail.com"/>
-                                    <ErrorMessage name="email" style={{color:'red'}} component="p"  />
+                                    <ErrorMessage name="email" style={{color:'red', marginBottom: '0px'}} component="p"  />
                                 </Grid>
                             </Grid>
                             <Grid container spacing={2} sx={{mb:3}} class='mt-4'>
@@ -340,7 +344,10 @@ const Communicationform =(props)=>{
                                                                              value={fieldValue(index, 'address_type')}
                                                                              onChange={otherAddressChange('address_type', index)}
                                                                              placeholder="Example Offce Address Capital Address...Etc. "/>
-                                                            <ErrorMessage name={`address.${index}.address_type`}  style={{color:'red'}} component="p" />
+                                                            {formValues[index].address_type === '' ?
+                                                            <ErrorMessage name={`address.${index}.address_type`}  style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                                : null
+                                                            }
                                                         </Grid>
                                                     }
                                                     <Grid item xs={12}>
@@ -350,7 +357,10 @@ const Communicationform =(props)=>{
                                                                     value={fieldValue(index,'flat')}
                                                                     onChange={otherAddressChange('flat', index)}
                                                                     placeholder="Example Offce Address Capital Address...Etc. "/>
-                                                        <ErrorMessage name={`address.${index}.flat`} style={{color:'red'}} component="p" />
+                                                        {formValues[index].flat === '' ?
+                                                            <ErrorMessage name={`address.${index}.flat`} style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6} className='d-grid'>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
@@ -366,7 +376,10 @@ const Communicationform =(props)=>{
 
                                                             }}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.pincode`} style={{color:'red'}} component="p" />
+                                                        {formValues[index].pincode === '' ?
+                                                            <ErrorMessage name={`address.${index}.pincode`} style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
@@ -376,7 +389,10 @@ const Communicationform =(props)=>{
                                                                          onChange={otherAddressChange('street', index)}
                                                                          placeholder="Enter Area, Street, Etc.s"
                                                         />
-                                                        <ErrorMessage name={`address.${index}.street`} style={{color:'red'}} component="p"  />
+                                                        {formValues[index].street === '' ?
+                                                            <ErrorMessage name={`address.${index}.street`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
@@ -387,7 +403,10 @@ const Communicationform =(props)=>{
                                                             listArray={otherDistrictStateArray('district', element.address_type)}
                                                             onChangeValue={otherAddressChange('district', index)}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.district`} style={{color:'red'}} component="p"  />
+                                                        {formValues[index].district === '' ?
+                                                            <ErrorMessage name={`address.${index}.district`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
@@ -398,7 +417,11 @@ const Communicationform =(props)=>{
                                                             listArray={otherDistrictStateArray('state', element.address_type)}
                                                             onChangeValue={otherAddressChange('state', index)}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.state`} style={{color:'red'}} component="p"  />
+                                                        {formValues[index].state === '' ?
+                                                            <ErrorMessage name={`address.${index}.state`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
+
                                                     </Grid>
                                                 </Grid>
                                                     <Grid item xs={12} className="d-flex align-items-center">

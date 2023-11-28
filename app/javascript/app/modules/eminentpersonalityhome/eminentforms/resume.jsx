@@ -109,7 +109,6 @@ const Resumeform = (props) => {
                                     value={props.formValues.political_legacy[0].name}
                                     name={`political_legacy.${0}.name`}
                                     placeholder="Enter full name"/>
-                        <ErrorMessage name={`political_legacy.${0}.name`} style={{color:'red'}} component="p" />
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>Relationship </FormLabel>
@@ -120,10 +119,9 @@ const Resumeform = (props) => {
                                 labelId="relationship"
                                 className="custom-select"
                                 fullWidth
-                                displayEmpty
                                 inputProps={{'aria-label': 'Without label'}}
                             >
-                                <MenuItem value="0">
+                                <MenuItem value="0" disabled={true}>
                                     <em>Select Relationship</em>
                                 </MenuItem>
                                 <MenuItem value="Father">
@@ -140,7 +138,7 @@ const Resumeform = (props) => {
                                 </MenuItem>
                             </Field>
                         </FormControl>
-                        <ErrorMessage  name={`political_legacy.${0}.relationship`} component="div"/>
+
                     </Grid>
                     <Grid item xs={12}>
                         <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
@@ -155,7 +153,6 @@ const Resumeform = (props) => {
                             maxRows={4}
                             placeholder="Tell me about your profile..."
                         />
-                        <ErrorMessage  name={`political_legacy.${0}.profile`} component="div"/>
                     </Grid>
                 </Grid>
                 <Grid container sx={{my: 3}} className="grid-wrap">
@@ -173,7 +170,6 @@ const Resumeform = (props) => {
                                         value={props.formValues.father}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="father" style={{color:'red'}} component="p" />
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Mother's Name</FormLabel>
@@ -182,7 +178,6 @@ const Resumeform = (props) => {
                                         value={props.formValues.mother}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="mother" style={{color:'red'}} component="p" />
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Spouse Name</FormLabel>
@@ -191,7 +186,7 @@ const Resumeform = (props) => {
                                         value={props.formValues.spouse}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="spouse" style={{color:'red'}} component="p" />
+
                         </Grid>
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
@@ -230,7 +225,6 @@ const Resumeform = (props) => {
                                             value={props.formValues.website}
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="website" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
@@ -241,7 +235,6 @@ const Resumeform = (props) => {
                                             inputprop={{endAdornment: <InputAdornment position="end">
                                                     <HelpOutlineOutlinedIcon/>
                                                 </InputAdornment>}}/>
-                                <ErrorMessage name="twitter" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
 
@@ -253,7 +246,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.linkedin}
                                             placeholder="Enter your linkedin Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="linkedin" style={{color:'red'}} component="p" />
+
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
@@ -262,7 +255,7 @@ const Resumeform = (props) => {
                                             value={props.formValues.facebook}
                                             placeholder="Enter your facebook Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="facebook" style={{color:'red'}} component="p" />
+
                             </Grid>
                         </Grid>
 
@@ -274,7 +267,7 @@ const Resumeform = (props) => {
                                             name="instagram"
                                             placeholder="Enter your instagram Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="instagram" style={{color:'red'}} component="p" />
+
                             </Grid>
                         </Grid>
                     </Grid>
@@ -284,11 +277,11 @@ const Resumeform = (props) => {
                         <Grid item sx={{mb: 2}} xs={12}>
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
-                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
-                                <ErrorMessage name="pdf_url" style={{color:'red'}} component="p" />
+                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <mark>*</mark>
+
                             </Typography>
                         </Grid>
-
+                        <ErrorMessage name='attachment' style={{color:'red'}} component="p" />
                         <div>
                             <div className="pdf-upload-div d-flex align-items-center w-100">
                                 <div className='pdf-icon-name'>
@@ -302,6 +295,9 @@ const Resumeform = (props) => {
                                     </Button>
                                 </div>
                             </div>
+                        </div>
+                        <div className='pdf-msg'>
+                            <span className='pdf-msg-text'><mark>*</mark> Only PDF file allowed.</span>
                         </div>
                     </Grid>
                 </Grid>
@@ -332,14 +328,6 @@ Resumeform.initialValues = {
     attachment_name:"",
 };
 Resumeform.validationSchema = Yup.object().shape({
-    father: Yup.string().required('Please enter father name'),
-    mother: Yup.string().required('Please enter mother name'),
-    spouse: Yup.string().required('Please enter spouse name'),
-    children: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    website: Yup.string().required('Please enter website link'),
-    twitter: Yup.string().required('Please enter twitter id'),
-    linkedin: Yup.string().required('Please enter linkedin id'),
-    facebook:Yup.string().required('Please enter facebook id'),
-    instagram:Yup.string().required('Please enter instagram id'),
+    attachment:Yup.string().required('Please Upload resume'),
 });
 export default Resumeform

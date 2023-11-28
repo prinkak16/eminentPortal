@@ -15,6 +15,7 @@ import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
 import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
 import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/AllotAssign";
+import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
 
 const beforeLoginRoutes = (
   <Routes>
@@ -26,6 +27,7 @@ const afterLoginRoutes = (
   <Routes>
     <Route path="/eminent_personality" element={<EminentPersonality />} />
     <Route path="/*" element={<Navigate to="/eminent_personality" />} />
+      <Route path="/form_submitted" element={<AfterFormSubmit />} />
   </Routes>
 );
 
@@ -37,7 +39,7 @@ const adminRoutes = (
     <Route path="/masterofvacancies" element={<MasterVacancies />} />
     <Route path="/gom" element={<GomPage />} />
     <Route path="/allotment/assign" element={<AllotAssign />} />
-
+    <Route path="/form_submitted" element={<AfterFormSubmit />} />
     <Route path="/*" element={<Navigate to="/" />} />
   </Routes>
 );
