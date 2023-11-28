@@ -20,6 +20,7 @@ import { ClickAwayListener } from '@mui/base';
 import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
+import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 const HomeTable = (props) => {
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
@@ -32,11 +33,12 @@ const HomeTable = (props) => {
     const [reasonToUpdateState,  setReasonToUpdateState] = useState('');
     const [currStatus,setCurrStatus] = useState('');
     const [currId, setCurrId] = useState('');
-    const [open, setOpen] = useState(true);
+    const [openPhoto, setOpenPhoto] = useState(true);
     const [openList, setOpenList] = useState(null);
     const [searchValue, setSearchValue] =useState('')
     const [searchType, setSearchType] =useState('')
     const navigate = useNavigate();
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const offset = 0;
     const limit = 10;
     const displayPhoneNumbers = (member) => {
@@ -123,7 +125,7 @@ const HomeTable = (props) => {
             } else if (searchType === 'id') {
                 setSearchId(searchValue);
             }
-        }, 1500);
+        }, 1000);
 
         delayedSearch();
 
@@ -194,6 +196,10 @@ const HomeTable = (props) => {
         const value = openList === null ? id : null
         setOpenList(value)
     }
+
+    const clearPhotoUrl = () => {
+        setProfilePhotoUrl('')
+    }
     return (
         <>
             <Analytics tabId={props.tabId}/>
@@ -215,7 +221,9 @@ const HomeTable = (props) => {
                         {/*<input className="filestatusfield" placeholder="Person file status"/>*/}
                         <button className="downloadBtn ms-4">Download {<Download/>}</button>
                     </div>
-
+                    {profilePhotoUrl &&
+                        <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
+                    }
                 </div>
                 {tableData?.data?.data?.members.length > 0 ?
                     <div>
@@ -224,7 +232,7 @@ const HomeTable = (props) => {
                                 <Grid container className="single-row">
                                     <Grid item xs={3} className="gridItem min-width-24rem">
                                         <div className="row">
-                                            <div className="col-md-4 pe-0">
+                                            <div className="col-md-4 pe-0" onClick={() => setProfilePhotoUrl(member.data.photo)}>
                                                 <div className='imgdiv circle'>
                                                     <img className='img' src={member.data.photo}/>
                                                 </div>
