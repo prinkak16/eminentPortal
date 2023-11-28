@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography} from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
-import {useState, useContext, useEffect} from "react";
+import {useState, useContext, useEffect, useRef} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
@@ -55,6 +55,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState(false)
     const notify = () => toast("CSV file Uploaded successfully");
+    const hiddenFileInput = useRef(null);
     const handleEmailChange = (e) => {
         const inputValue = e.target.value;
         setEmail(inputValue);
@@ -244,9 +245,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                     </Modal.Footer>
                 </Modal>
             </>
-    } else if (value === 'file_status') {
     }
-    else if (value === '6'){
+    else if (value === 'gom_management'){
         buttonContent=
            <>
         <button className="button-upload" onClick={handleClick}>
@@ -291,7 +291,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                    </Modal.Body>
                </Modal>
                </>
-    } else if (value === '3') {
+    } else if (value === 'file_status') {
         buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
