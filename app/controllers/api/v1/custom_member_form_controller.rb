@@ -514,12 +514,4 @@ class Api::V1::CustomMemberFormController < BaseApiController
       render json: { success: false, message: 'No member found.' }, status: :not_found
     end
   end
-
-  def destroy_session
-    user_sign_out
-    render json: {
-      success: true,
-      message: 'Success.'
-    }, status: :ok
-  end
 end
