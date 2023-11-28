@@ -95,10 +95,12 @@ const Educationform = (props) => {
         setTimeout(function() {
             if (title === 'Education Details') {
                 educationSave(formData, id)
+                setEducationEditField({})
             }
 
             if (title === 'Profession Profile') {
                 professionSave(formData, id)
+                setProfessionEditField({})
             }
         }, 50)
 
@@ -150,6 +152,7 @@ const Educationform = (props) => {
     }, [professionDetails]);
 
     const editEducationForm = (type,id) => {
+        setShowList('')
         if (type === 'education') {
             const form = educationDetails.find((item) => item.id === id);
             if (form) {
@@ -173,6 +176,7 @@ const Educationform = (props) => {
 
 
     const deleteFields = (type, id) => {
+        setShowList('')
         if (type === 'education') {
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
