@@ -200,6 +200,8 @@ const electionWin =  {
     list:['Yes', 'No']
 }
 
+const ministerPortfolioArray = [ministerPortfolio, ministryName, ministryDuration]
+
 const ministerPortfolio = {
     is_conditional: true,
     condition_key: 'election_win',
@@ -497,7 +499,7 @@ export const calculateAge = (dob) => {
 
 export const saveProgressButton=
     <Button>Save Progress
-        <Tooltip title="Save form till the current progress. Until submitted, form will not be counted as complete.'">
+        <Tooltip title="Save form till the current progress. Until submitted, form will not be counted as complete.">
             <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
         </Tooltip>
     </Button>
