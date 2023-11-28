@@ -11,6 +11,7 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [error, setError] = useState(null);
     const limit = 4;
     const displayMinistryData = ()=>{
+        debugger
         const params = {
             search_by: 'ministry_wise',
             limit: limit,

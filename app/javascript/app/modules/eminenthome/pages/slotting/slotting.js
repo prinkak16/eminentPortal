@@ -17,43 +17,36 @@ import {getSlottingTable} from "../../../../api/eminentapis/endpoints";
 import AssignBtnSidebar from "./comoponent/slottingassignbtnsidebar";
 
 const SlottingTabPage =({tabId})=>{
-    const [currentPage, setCurrentPage] = useState('');
-    const [slottingTableData, setSlottingTableData] = useState([]);
-    const [open, setOpen] = React.useState(false);
-    const [psuId, setPsuID] = useState(null)
+    const [currentPage, setCurrentPage] = useState(0);
+    const [slottingTableData, setSlottingTableData] = useState();
+    const [open, setOpen] = useState(false);
+    const [psuId, setPsuId] = useState(null)
+    const limit = 18;
     const handleDrawerOpen = (id) => {
         setOpen(true);
-        setPsuID(id)
+        setPsuId(id)
     };
     const handleDrawerClose = () => {
         setOpen(false);
     };
 
-    const prepareToGetDisplayData = () => {
-        setCurrentPage(currentPage)
-    }
     const slottingTable =()=>{
-        getSlottingTable().then(res=>{
-            const temp = [];
-            for (const key in res.data) {
-                temp.push({
-                    id: key,
-                    ...res.data[key]
-                })
-            }
-            setSlottingTableData(temp)
+        const params = {
+            limit: limit,
+            offset: currentPage * limit
+        }
+        getSlottingTable(params).then(res => {
+            setSlottingTableData(res.data.data)
         })
-        // getSlottingTable()
-        // setSlottingTableData(slottingTableData)
     }
     useEffect(() => {
-        prepareToGetDisplayData();
         slottingTable()
     }, [currentPage]);
+
     return (
         <>
             <Analytics tabId={tabId}/>
-            <AssignBtnSidebar psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>
+            {open && <AssignBtnSidebar psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -70,32 +63,32 @@ const SlottingTabPage =({tabId})=>{
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {slottingTableData.map((slotting, index) =>
-                                <TableRow key={slotting.id}>
+                            {slottingTableData?.value.map((slotting, index) =>
+                                <TableRow key={slotting.org_id}>
                                 <TableCell>{index + 1}</TableCell>
-                                <TableCell>{slotting.psu_psb}</TableCell>
-                                <TableCell>{slotting.ministry}</TableCell>
+                                <TableCell>{slotting.org_name}</TableCell>
+                                <TableCell>{slotting.ministry_name}</TableCell>
                                 <TableCell>{slotting.vacant}</TableCell>
-                                <TableCell>{slotting.assigned_to_state}</TableCell>
-                                <TableCell>{slotting.psu_listed}</TableCell>
-                                <TableCell>{slotting.last_updated}</TableCell>
+                                <TableCell>{slotting.slotted}</TableCell>
+                                <TableCell>{slotting.is_listed}</TableCell>
+                                <TableCell>{slotting.last_updated_at}</TableCell>
                                     <TableCell className="text-center"><Button aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
-                                                                                   handleDrawerOpen(slotting.id)
+                                                                                   handleDrawerOpen(slotting.org_id)
                                                                                }}
-                                                                               sx={{ ...(open && { display: 'none' }) }}>{slotting.assigned_to_state === 0 ? 'Assign' : 'Update'}</Button></TableCell>
+                                                                               sx={{ ...(open && { display: 'none' }) }}>{slotting.slotted === 0 ? 'Assign' : 'Update'}</Button></TableCell>
                             </TableRow>)}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <div className="mt-3">
-                    <p className="d-flex justify-content-center">{currentPage + 1}</p>
+                    <p className="d-flex justify-content-center">{currentPage + 1} &nbsp; of &nbsp; { slottingTableData?.count ? Math.ceil(slottingTableData?.count / limit ) : ''}</p>
                     <ReactPaginate
                         previousLabel={"Previous"}
                         nextLabel={"Next"}
                         breakLabel={"...."}
-                        // pageCount={ limit}
+                        pageCount={Math.ceil(slottingTableData?.count / limit)}
                         marginPagesDisplayed={1}
                         pageRangeDisplayed={5}
                         onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}

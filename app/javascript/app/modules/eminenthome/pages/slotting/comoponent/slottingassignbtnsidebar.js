@@ -6,8 +6,8 @@ import {
     Divider,
     Typography,
     TextField,
-    Button
-
+    Button,
+    MenuItem
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -34,31 +34,25 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
     const [slottingPsuDetail, setSlottingPsuDetail] = useState([])
-    const slottingPsuData=()=>{
-        getSlottingPsuData().then(res=>{
-            const psuArray=[];
-            for (const key in res.data) {
-                psuArray.push({
-                    id: key,
-                    ...res.data[key]
-                })
-            }
-            setSlottingPsuDetail(psuArray)
+    const [vacancyCount, setVacancyCount] = useState(null)
+    const slottingPsuData = ()=>{
+        getSlottingPsuData(psuId).then(res => {
+            setSlottingPsuDetail(res.data.data.stats)
         })
     }
     useEffect(() => {
         slottingPsuData()
     }, []);
+    const handleDecreaseCount = ()=>{
+        setVacancyCount(vacancyCount - 1)
+    }
+    const handleIncreaseCount = ()=>{
+        setVacancyCount(vacancyCount + 1)
+    }
     return (
         <Box sx={{ display: 'flex' }}>
             <Drawer
-                // sx={{
-                //     width: drawerWidth,
-                //     flexShrink: 0,
-                //     '& .MuiDrawer-paper': {
-                //         width: drawerWidth,
-                //     },
-                // }}
+
                 variant="persistent"
                 anchor="right"
                 open={open}
@@ -84,8 +78,8 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                         <TableBody>
                             {slottingPsuDetail.map((pusDetail, index) =>
                                 <TableRow key={pusDetail.id}>
-                                    <TableCell>{pusDetail.psuName}</TableCell>
-                                    <TableCell>{pusDetail.total_position}</TableCell>
+                                    <TableCell>{pusDetail.name}</TableCell>
+                                    <TableCell>{pusDetail.total}</TableCell>
                                     <TableCell>{pusDetail.occupied}</TableCell>
                                     <TableCell>{pusDetail.vacant}</TableCell>
                                 </TableRow>)}
@@ -93,18 +87,33 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                     </Table>
                 </TableContainer>
                 <div className="vacancytostate">
-                    <div>
-                        <Typography>
-                            Vacancy Count
-                        </Typography>
+                    <div className="d-flex justify-content-between">
                         <div>
-                            <Button><MinimizeIcon/></Button>
-                            <TextField type="number" name="count"/>
-                            <Button><AddIcon/></Button>
+                            <Typography>
+                                Vacancy Count
+                            </Typography>
+                            <div>
+                                <Button onClick={handleDecreaseCount}><MinimizeIcon/></Button>
+                                <Typography>
+                                    {vacancyCount}
+                                </Typography>
+                                <Button onClick={handleIncreaseCount}><AddIcon/></Button>
+                            </div>
                         </div>
-                    </div>
-                    <div>
+                        <div>
+                            <Typography>
+                                Vacancy Count
+                            </Typography>
+                            <TextField
+                                id="outlined-select-currency"
+                                select
+                                >
+                                    <MenuItem>
+                                        Test
+                                    </MenuItem>
 
+                            </TextField>
+                        </div>
                     </div>
                 </div>
             </Drawer>

@@ -97,7 +97,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
             </Table>
         </TableContainer>
             <div>
-                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{ psuTableData?.count ?  Math.ceil(psuTableData?.count / limit) : ''}</p>
+                <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { psuTableData?.count ?  Math.ceil(psuTableData?.count / limit) : ''}</p>
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
