@@ -607,6 +607,7 @@ button.cancelbtn{
 
 .details-edit-list {
   position: absolute;
+  z-index: 1;
 }
 
 .start-year-NA {
@@ -628,4 +629,14 @@ margin-right: 1rem;
 display: flex;
 margin-top: auto;
 margin-bottom: auto;
+}
+
+.edit-buttons {
+  font-size: 1rem !important;
+  gap: 0.3rem !important;
+  display: flex;
+}
+
+.div.MuiOutlinedInput-root {
+  overflow: hidden;
 }

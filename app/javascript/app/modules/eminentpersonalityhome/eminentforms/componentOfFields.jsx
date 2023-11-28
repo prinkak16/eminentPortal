@@ -96,7 +96,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 fieldsData.start_year = '';
                 fieldsData.course = 'NA';
             } else if (value === '12th Pass') {
-                fields.push('course')
+                fields.push('start_year')
                 fieldsData.start_year = '';
             } else {
                 fieldsData.start_year = '';
@@ -144,8 +144,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 value = !disabledFields.includes('start_year')
             }
 
-            if (key === 'end_year') {
-               value = !isValuePresent(fieldsData.start_year)
+            if (key === 'end_year' && !value) {
+               value = isValuePresent(fieldsData.start_year)
             }
         return value
     }
@@ -241,13 +241,11 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         { !resetYear &&
                             f.type === "date" &&
                                 <Grid item xs={4} className='d-grid'>
-                                    {f.key === 'end_year' && console.log(disabledField(f.key), 'end_year')}
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%', marginTop: '-5px'}}>
                                         <DemoContainer components={['DatePicker']} style={{width: '100%'}} sx={{width: '100%'}}>
                                             <DatePicker
                                                 label={f.name}
-
                                                 isRequired={isValuePresent(f?.isRequired)}
                                                 disabled={disabledField(f.key)}
                                                 value={isValuePresent(fieldValue(f.key)) ? dayjs(`${fieldValue(f.key)}-01-01`) : null}

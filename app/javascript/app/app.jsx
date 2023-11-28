@@ -16,6 +16,7 @@ import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
 import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
 import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/AllotAssign";
 import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
+import Header from "./modules/eminentpersonalityhome/header/header";
 
 const beforeLoginRoutes = (
   <Routes>
@@ -52,6 +53,7 @@ function App() {
     document.getElementById("app").getAttribute("data-candidate-login")
   );
   const [backDropToggle, setBackDropToggle] = useState(false);
+  const [userData, setUserData] = useState()
   const config = {
     headers: {
       Authorization: authToken,
@@ -71,8 +73,9 @@ function App() {
       <ToastContainer />
       <BackDrop toggle={backDropToggle} />
       <ApiContext.Provider
-        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle}}
+        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle, userData, setUserData}}
       >
+          {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={userData}/>: null :     <Header userData={userData}/>}
         {routesOfProjects()}
       </ApiContext.Provider>
     </>

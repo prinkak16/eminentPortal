@@ -16,7 +16,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/GOM/GomPage/GomPage";
 import Allotment from "../../../eminenthome/pages/allotment/Allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import UploadIcon from "../../../../../../../public/images/upload.svg";
+import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
+import UploadFile from "../../../../../../../public/images/upload_file.svg";
 import {useParams} from 'react-router-dom';
+
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -40,8 +44,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [show, setShow] = useState(false);
     const [userData, setUserData] = useState();
+    const [wantToUpload, setWantToUpload] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const hiddenFileInput = useRef(null);
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
     const [email, setEmail] = useState();
@@ -61,6 +67,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const validateEmail = (email) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
+    };
+
+    const handleClick = event => {
+        setWantToUpload(true);
     };
 
     const uploadExcel = (event) => {
@@ -92,7 +102,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             setIsValidEmail(false);
         }
     }
-    const fileUrl="https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
+    const fileUrl= "https://storage.googleapis.com/public-saral/mapping_vacancy.csv"
     const downloadSampleVacancy=()=>{
         window.open(fileUrl,'_blank')
     }
@@ -100,6 +110,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         const regex = /^[5-9]\d{9}$/;
         return regex.test(number);
 
+    }
+
+    const uploadFile = () => {
+        hiddenFileInput.current.click();
     }
     const changeInputNumber = (number) => {
         setInputNumber(number.replace(/[^0-9]/g, ''));
@@ -126,6 +140,15 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         onSwitchTab(newValue);
     };
 
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = 'url';
+        link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const  navigateForm = () => {
         localStorage.setItem('eminent_number', userData.phone);
         navigate({
@@ -143,6 +166,16 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         setInputNumber('')
         setEminentMsg((''))
     }
+
+    const handleChangeUpload = event => {
+        const fileUploaded = event.target.files[0];
+        handleFile(fileUploaded);
+    };
+
+    const handleFile = (file) => {
+        setSelectedFile(file);
+    };
+
 
     let buttonContent;
     if (value === 'home_table') {
@@ -213,6 +246,53 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 </Modal>
             </>
     } else if (value === 'file_status') {
+    }
+    else if (value === '6'){
+        buttonContent=
+           <>
+        <button className="button-upload" onClick={handleClick}>
+            <UploadIcon/> PA/OSD mapping
+        </button>
+               <input
+                   type="file"
+                   accept=".csv, .xlsx"
+                   onChange={handleChangeUpload}
+                   ref={hiddenFileInput}
+                   style={{display: 'none'}}
+               />
+               <Modal
+                   // contentClassName="deleteModal"
+                   aria-labelledby="contained-modal-title-vcenter"
+                   centered
+                   show={wantToUpload}
+               >
+                   <Modal.Body>
+                       <div>
+                           <div className="d-flex justify-content-between">
+                               <h6 >Upload .csv or Excel file</h6>
+                               <p style={{cursor: "pointer"}} onClick={()=> setWantToUpload(false)}><CloseIcon/></p>
+                           </div>
+                           <div >
+                               <div className="uploadBox">
+                                   <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
+
+                                       <UploadFile onClick={()=> uploadFile()}/>
+                                   </div>
+                                   <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center">or</p>
+                                   <p className="d-flex justify-content-center">Click here to upload</p>
+                                   <input placeholder="Enter Email" type="email"/>
+                                   <button className="Submit" >
+                                       Submit
+                                   </button>
+                               </div>
+                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload("url from api")}>Download sample file</p>
+                           </div>
+                       </div>
+                   </Modal.Body>
+               </Modal>
+               </>
+    } else if (value === '3') {
         buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
@@ -258,8 +338,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 <TabPanel value="slotting">
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
-                <TabPanel value="gom_management">
-                    <GomPage tabId={value}/>
+                <TabPanel value="6">
+                    <GomPage filterString={filterString} tabId={value}/>
                 </TabPanel>
 
             </TabContext>
