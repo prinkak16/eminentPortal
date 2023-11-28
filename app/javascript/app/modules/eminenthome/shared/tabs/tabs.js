@@ -153,15 +153,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         document.body.removeChild(link);
     };
 
-    const handleDownload = (url) => {
-        const link = document.createElement('a');
-        link.href = 'url';
-        link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     const  navigateForm = () => {
         localStorage.setItem('eminent_number', userData.phone);
         navigate({
