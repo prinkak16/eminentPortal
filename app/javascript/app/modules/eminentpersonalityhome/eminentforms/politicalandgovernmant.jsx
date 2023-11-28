@@ -339,6 +339,7 @@ const PolticalandGovrnform =(props)=>{
                         <NumberField
                             type="number"
                             name="bjp_years"
+                            value={props.formValues.bjp_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
@@ -350,6 +351,7 @@ const PolticalandGovrnform =(props)=>{
                         <NumberField
                             type="number"
                             name="rss_years"
+                            value={props.formValues.rss_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
