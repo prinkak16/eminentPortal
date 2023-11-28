@@ -35,6 +35,7 @@ const FormWrap=({userData, stateId})=>{
         }
     }, []);
 
+
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
 
@@ -85,9 +86,15 @@ const FormWrap=({userData, stateId})=>{
         if (!isError) {
             getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
                 if (response) {
-                    if (activeStep + 1 === 6) {
+                    if (isCandidateLogin) {
+                        if (activeStep + 1 === 5) {
+                            navigate({
+                                pathname: '/form_submitted'
+                            });
+                        }
+                    } else if (activeStep + 1 === 6) {
                         navigate({
-                            pathname: '/'
+                            pathname: '/form_submitted'
                         });
                     }
                     handleNext();
@@ -135,12 +142,10 @@ const FormWrap=({userData, stateId})=>{
 
     const checkValidationsElectoral = (electoralDetails) => {
         let isError = false;
-        console.log(electoralDetails)
         if (isValuePresent(electoralDetails)) {
             for (const item in electoralDetails) {
                 if (!isError) {
                     if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
-                        console.log(electoralDetails[item].election_details,'electoralDetails[item].election_details')
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
                             for (const index in fields) {

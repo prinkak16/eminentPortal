@@ -71,9 +71,8 @@ export default function PersistentDrawerLeft() {
     const [inputNumber, setInputNumber] = useState('');
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [userData, setUserData] = useState(true);
-    const [tabId, setTabId] = useState('1');
-    const [movTabId, setMovTabId] = useState('1');
-    const [ministrySwitchPsu, setMinistrySwitchPsu] = useState('');
+    const [tabId, setTabId] = useState('home_table');
+    const [movTabId, setMovTabId] = useState('ministry_wise');
     const navigate = useNavigate();
 
     const {type} = useParams();

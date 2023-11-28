@@ -95,10 +95,12 @@ const Educationform = (props) => {
         setTimeout(function() {
             if (title === 'Education Details') {
                 educationSave(formData, id)
+                setEducationEditField({})
             }
 
             if (title === 'Profession Profile') {
                 professionSave(formData, id)
+                setProfessionEditField({})
             }
         }, 50)
 
@@ -150,6 +152,7 @@ const Educationform = (props) => {
     }, [professionDetails]);
 
     const editEducationForm = (type,id) => {
+        setShowList('')
         if (type === 'education') {
             const form = educationDetails.find((item) => item.id === id);
             if (form) {
@@ -173,6 +176,7 @@ const Educationform = (props) => {
 
 
     const deleteFields = (type, id) => {
+        setShowList('')
         if (type === 'education') {
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
@@ -258,11 +262,12 @@ const Educationform = (props) => {
                                             </Button>
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
-                                                    <Typography sx={{p: 2}}
-                                                                onClick={() => editEducationForm('education', data.id)}><Edit/></Typography>
+                                                    <Typography className='edit-buttons' sx={{p: 2}}
+                                                                onClick={() => editEducationForm('education', data.id)}><Edit/>Edit</Typography>
                                                     <Typography
+                                                        className='edit-buttons'
                                                         onClick={() => deleteFields('education', data.id)}
-                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                        sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                 </Paper>
                                             )}
                                         </div>
@@ -277,6 +282,13 @@ const Educationform = (props) => {
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
                                        isEditable={educationEditField} educationsList={educationsList}/>
                 }
+
+                <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
+                    <Typography variant="h5" content="h5">
+                        <Box className="detailnumbers" component="div"
+                             sx={{display: 'inline-block'}}>2</Box> Professional Profile
+                    </Typography>
+                </Grid>
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
@@ -306,11 +318,12 @@ const Educationform = (props) => {
                                             {showList === data.id &&
                                                 (
                                                     <Paper className='details-edit-list'>
-                                                        <Typography sx={{p: 2}}
-                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/></Typography>
+                                                        <Typography className='edit-buttons' sx={{p: 2}}
+                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/>Edit</Typography>
                                                         <Typography
+                                                            className='edit-buttons'
                                                             onClick={() => deleteFields('profession', data.id)}
-                                                            sx={{p: 2}}><DeleteIcon/></Typography>
+                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                     </Paper>
                                                 )
                                             }
@@ -322,22 +335,16 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                <Grid container sx={{my: 5}} className="grid-wrap">
-                    <Grid item sx={{mb: 2}} xs={12}>
-                        <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div"
-                                 sx={{display: 'inline-block'}}>2</Box> Professional Profile
-                        </Typography>
-                    </Grid>
-                    {!backDropToggle &&
-                        <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                           isEditable={professionEditField}/>
-                    }
-                </Grid>
-                <Grid container sx={{spacing: 0}}>
+                {!backDropToggle &&
+                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
+                                       isEditable={professionEditField}/>
+                }
+                {/*<Grid container sx={{my: 5}} className="grid-wrap">*/}
+                {/*</Grid>*/}
+                <Grid container sx={{spacing: 0}} className='mt-4'>
                     <Grid item xs={8}>
-                        <div>
-                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                        <div className=''>
+                            <FormLabel>Description<InfoOutlinedIcon/></FormLabel>
                             <TextField
                                 className="profession-description"
                                 fullWidth
@@ -350,7 +357,6 @@ const Educationform = (props) => {
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
-                            <ErrorMessage name={`profession_description`} style={{color:'red'}} component="p" />
                         </div>
 
                     </Grid>
@@ -372,7 +378,6 @@ Educationform.initialValues = {
 };
 Educationform.validationSchema = Yup.object().shape({
     education_level: Yup.string().required('Please select your high qualification'),
-    profession_description: Yup.string().required('Please enter your profession description'),
 
 });
 export default Educationform

@@ -515,6 +515,7 @@ button.cancelbtn{
 
 .upload-resume-button .css-sghohy-MuiButtonBase-root-MuiButton-root {
   background: #61BE7A !important;
+  border-radius: 0.8rem;
 }
 
 .pdf-icon-name {
@@ -606,8 +607,36 @@ button.cancelbtn{
 
 .details-edit-list {
   position: absolute;
+  z-index: 1;
 }
 
 .start-year-NA {
   margin-top: -2.4rem !important;
+}
+
+.pdf-msg {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.pdf-msg-text {
+  margin-top: 0.5rem;
+}
+
+.election-contest-count {
+font-size: 1.5rem;
+margin-right: 1rem;
+display: flex;
+margin-top: auto;
+margin-bottom: auto;
+}
+
+.edit-buttons {
+  font-size: 1rem !important;
+  gap: 0.3rem !important;
+  display: flex;
+}
+
+.div.MuiOutlinedInput-root {
+  overflow: hidden;
 }

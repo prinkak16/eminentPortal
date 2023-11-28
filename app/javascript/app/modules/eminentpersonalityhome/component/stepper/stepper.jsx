@@ -49,6 +49,15 @@ const FormStepper = ({
     const closeNotiocation = () => {
         setNotification(false)
     }
+
+    useEffect(() => {
+        for (const key in userData) {
+            if (values.hasOwnProperty(key)) {
+                values[key] = userData[key]
+            }
+        }
+        values.mobiles = userData.mobiles
+    }, []);
     return (
         <>
             <div className="stepperwrap">

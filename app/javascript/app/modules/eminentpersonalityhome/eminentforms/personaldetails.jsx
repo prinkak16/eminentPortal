@@ -41,14 +41,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 const PersonalDetails = (props) => {
     const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
-    useEffect(() => {
-        for (const key in props.userData) {
-                if (props.formValues.hasOwnProperty(key)) {
-                    props.formValues[key] = props.userData[key]
-                }
-        }
-        props.formValues.mobiles = props.userData.mobiles
-    }, []);
+
 
 
 
@@ -386,11 +379,11 @@ PersonalDetails.initialValues = {
 };
 PersonalDetails.validationSchema = Yup.object().shape({
     name: Yup.string().required('Please enter your first name'),
-    religion: Yup.string().required('Please select your Religion'),
-    gender: Yup.string().required('Please select your Gender'),
-    category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please Enter your Caste'),
-    dob: Yup.string().required('Please select your Date Of Birth'),
+    religion: Yup.string().required('Please select your religion'),
+    gender: Yup.string().required('Please select your gender'),
+    category: Yup.string().required('Please select your category'),
+    caste: Yup.string().required('Please enter your caste'),
+    dob: Yup.string().required('Please select your date of birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
     languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),

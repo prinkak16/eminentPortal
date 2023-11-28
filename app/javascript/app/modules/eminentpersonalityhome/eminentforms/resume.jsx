@@ -24,7 +24,14 @@ import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress, saveProgressButton, showErrorToast, VisuallyHiddenInput} from "../../utils";
+import {
+    formFilledValues,
+    isValuePresent,
+    saveProgress,
+    saveProgressButton,
+    showErrorToast,
+    VisuallyHiddenInput
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
@@ -36,19 +43,22 @@ const Resumeform = (props) => {
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [children, setChildren] = useState(props.formValues?.children || [''])
+    const [children, setChildren] = useState(isValuePresent(props.formValues?.children) ? props.formValues?.children : [''])
     const [PdfFileName, setPdfFileName] = useState(props.formValues?.attachment_name)
     const [pdfFile, setPdfFile] = useState(props.formValues?.attachment);
     const [politicalLegacyProfile, sePoliticalLegacyProfile] = useState(props.formValues?.political_legacy[0]?.profile)
     const addChildren = () => {
         setChildren([...children, '']);
     };
-    const deleteChild = (index) => {
-        const updatedChildren = [...children];
+
+    const deleteChild = (index, event) => {
+        event.preventDefault();
+        const updatedChildren = [...props.formValues.children];
         updatedChildren.splice(index, 1);
         setChildren(updatedChildren);
         props.formValues.children = updatedChildren;
-    }
+    };
+
 
 
     const uploadResume = (event) => {
@@ -119,10 +129,9 @@ const Resumeform = (props) => {
                                 labelId="relationship"
                                 className="custom-select"
                                 fullWidth
-                                displayEmpty
                                 inputProps={{'aria-label': 'Without label'}}
                             >
-                                <MenuItem value="0">
+                                <MenuItem value="0" disabled={true}>
                                     <em>Select Relationship</em>
                                 </MenuItem>
                                 <MenuItem value="Father">
@@ -191,7 +200,7 @@ const Resumeform = (props) => {
                         </Grid>
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
-                                <FormLabel>Children Name</FormLabel>
+                                <FormLabel>Child Name</FormLabel>
                                 <Inputfield type="text"
                                             name={`children.${index}`}
                                             value={props.formValues.children[index]}
@@ -202,10 +211,10 @@ const Resumeform = (props) => {
                         ))}
                         <Grid item xs={12}>
                             <Primarybutton addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>}
-                                           buttonlabel="Add another Field" handleclick={addChildren}/>
-                            {children.length >= 0 ? (
+                                           buttonlabel="Add Child" handleclick={addChildren}/>
+                            {children.length > 0 ? (
                                 <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>}
-                                               handleclick={() => deleteChild(children.length - 1)}/>
+                                               handleclick={(e) => deleteChild(children.length - 1,e)}/>
                             ) : null}
                         </Grid>
                     </Grid>
@@ -278,7 +287,7 @@ const Resumeform = (props) => {
                         <Grid item sx={{mb: 2}} xs={12}>
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
-                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
+                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <mark>*</mark>
 
                             </Typography>
                         </Grid>
@@ -296,6 +305,9 @@ const Resumeform = (props) => {
                                     </Button>
                                 </div>
                             </div>
+                        </div>
+                        <div className='pdf-msg'>
+                            <span className='pdf-msg-text'><mark>*</mark> Only PDF file allowed.</span>
                         </div>
                     </Grid>
                 </Grid>

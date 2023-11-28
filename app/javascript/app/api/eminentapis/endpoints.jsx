@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {apiBaseUrl} from "../api_endpoints";
+import slotting from "../../modules/eminenthome/pages/slotting/slotting";
 
 
 export const getFilters = ()  => {
@@ -51,11 +52,12 @@ export const fetchUser = (config) => {
         headers: config?.headers
     });
 }
-export  const getSlottingTable =()=>{
-    return axios.get('https://slottingpage-default-rtdb.firebaseio.com/slottingTable.json')
+export  const getSlottingTable =(params)=>{
+    return axios.get(apiBaseUrl + 'slotting/list', {params})
 }
-export const getSlottingPsuData=()=> {
-    return axios.get('https://psudetails-default-rtdb.asia-southeast1.firebasedatabase.app/psudetail.json')
+export const getSlottingPsuData = (params ) => {
+    return axios.get(apiBaseUrl + 'slotting/stats/' + params, );
+
 }
 
 export const getMinistryWiseData = (params, queryParams) => {
@@ -77,6 +79,16 @@ export const getMinistry = () => {
 export const getMinisters = () => {
     return axios.get(apiBaseUrl + 'gom/minister_list');
 }
+
+export const getMinistryByFilters = (filterParams) => {
+    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters', {
+        params: filterParams,
+    })
+}
+export const getSlottingAnalytics=()=>{
+    return axios.get(apiBaseUrl + 'slotting/position_analytics');
+}
+
 export const getGOMTableData = () => {
     return axios.get(apiBaseUrl + 'gom/assigned_ministries')
         .then(response => {

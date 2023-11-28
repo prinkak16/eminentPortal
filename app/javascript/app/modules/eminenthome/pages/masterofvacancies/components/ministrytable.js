@@ -9,8 +9,9 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [ministryTableData, setMinistryTableData] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
-    const limit = 10;
+    const limit = 4;
     const displayMinistryData = ()=>{
+        debugger
         const params = {
             search_by: 'ministry_wise',
             limit: limit,
@@ -57,7 +58,7 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                     {ministryTableData?.value.map((ministry, index) => <TableRow key={ministry.ministry_id}>
 
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell className="element" onClick={() => onSwitchTab('psuwise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
+                        <TableCell className="element" onClick={() => onSwitchTab('psu_wise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
                         <TableCell>{ministry.total}</TableCell>
                         <TableCell>{ministry.occupied}</TableCell>
                         <TableCell>{ministry.vacant}</TableCell>

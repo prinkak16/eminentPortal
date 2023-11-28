@@ -17,7 +17,7 @@ import {
     isValuePresent,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress, saveProgressButton, toSnakeCase
+    saveProgress, saveProgressButton, showErrorToast, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -152,18 +152,28 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.political_not_applicable = event.target.checked
     }
 
-    const enterSocialFields = (field,index) => (event) => {
-        setSocialFields((preSocialField) => {
-            return preSocialField.map((form, i) => {
-                if (i === index) {
-                    return {
-                        ...form,
-                        [field]: event.target.value,
-                    };
-                }
-                return form;
+    const enterSocialFields = (field, index) => (event) => {
+        let canEnterValue = true
+        if (field === 'description') {
+            if (event.target.value.length > 500) {
+                canEnterValue = false
+                return showErrorToast('Description can not be greater than 500 character')
+            }
+        }
+
+        if (canEnterValue) {
+            setSocialFields((preSocialField) => {
+                return preSocialField.map((form, i) => {
+                    if (i === index) {
+                        return {
+                            ...form,
+                            [field]: event.target.value,
+                        };
+                    }
+                    return form;
+                });
             });
-        });
+        }
     }
 
     const handleFieldChange = (value, name, valueType, index) => {
@@ -198,7 +208,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
 
-console.log(electoralDetails)
+
     const saveElectoralData = (data,index) => {
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
@@ -229,7 +239,7 @@ console.log(electoralDetails)
         props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
 
-    console.log(electoralDetails)
+
 
     useEffect(() => {
         props.formValues.political_profile =  politicalProfileDetails
@@ -292,9 +302,11 @@ console.log(electoralDetails)
                                         {showList === data.id && (
                                             <Paper className='details-edit-list'>
                                                 <Typography sx={{p: 2}}
-                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/></Typography>
+                                                            className='edit-buttons'
+                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/>Edit</Typography>
                                                 <Typography onClick={() => deleteFormFields('Political Profile',data.id)}
-                                                    sx={{p: 2}}><DeleteIcon/></Typography>
+                                                            className='edit-buttons'
+                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                             </Paper>
                                         )}
                                     </div>
@@ -327,6 +339,7 @@ console.log(electoralDetails)
                         <NumberField
                             type="number"
                             name="bjp_years"
+                            value={props.formValues.bjp_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
@@ -338,6 +351,7 @@ console.log(electoralDetails)
                         <NumberField
                             type="number"
                             name="rss_years"
+                            value={props.formValues.rss_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
@@ -377,9 +391,11 @@ console.log(electoralDetails)
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
                                                     <Typography sx={{p: 2}}
-                                                                onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
+                                                                className='edit-buttons'
+                                                                onClick={() => editForm('Other Party Profile',data.id)}><Edit/>Edit</Typography>
                                                     <Typography onClick={() => deleteFormFields('Other Party Profile',data.id)}
-                                                                sx={{p: 2}}><DeleteIcon/></Typography>
+                                                                className='edit-buttons'
+                                                                sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                 </Paper>
                                             )}
                                         </div>
@@ -460,6 +476,7 @@ console.log(electoralDetails)
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
+                                                {/*<span className='election-contest-count'>{index+1}</span>*/}
                                                 <AutoCompleteDropdown
                                                     classes={'election-dropdown'}
                                                     name={'Election Type'}
