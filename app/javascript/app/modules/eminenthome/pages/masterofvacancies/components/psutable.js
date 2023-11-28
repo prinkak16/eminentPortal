@@ -18,7 +18,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
     const [isFetching, setIsFetching] = useState(false);
     const [currentPage, setCurrentPage] = useState(0)
     const [error, setError] = useState(null);
-    const limit= 10;
+    const limit= 4;
 
 
     const displayPsuData = ()=>{
@@ -81,9 +81,9 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                                 return (
                                     <TableRow key={organization.org_id}>
                                         {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
+                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry_wise', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
                                         {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
-                                        <TableCell onClick={() => onSwitchTab('vacancywise', null, organization.org_id)}>{organization.org_name}</TableCell>
+                                        <TableCell onClick={() => onSwitchTab('vacancy_wise', null, organization.org_id)}>{organization.org_name}</TableCell>
                                         <TableCell className="text-center">{organization.is_listed ? (organization.is_listed) : '---'}</TableCell>
                                         <TableCell>{organization.total}</TableCell>
                                         <TableCell>{organization.occupied}</TableCell>
@@ -97,7 +97,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
             </Table>
         </TableContainer>
             <div>
-                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{ psuTableData?.count ?  Math.ceil(psuTableData?.count / limit) : ''}</p>
+                <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { psuTableData?.count ?  Math.ceil(psuTableData?.count / limit) : ''}</p>
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
