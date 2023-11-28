@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
-import {useState, useContext} from "react";
+import {useState, useContext, useRef} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
@@ -20,6 +20,7 @@ import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
 import UploadFile from "../../../../../../../public/images/upload_file.svg";
 import {useParams} from 'react-router-dom';
+
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -141,6 +142,15 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             setValue(newValue);
             onSwitchTab(newValue);
         }
+    };
+
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = 'url';
+        link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const handleDownload = (url) => {
