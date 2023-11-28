@@ -343,7 +343,7 @@ const Educationform = (props) => {
                 {/*</Grid>*/}
                 <Grid container sx={{spacing: 0}} className='mt-4'>
                     <Grid item xs={8}>
-                        <div>
+                        <div className=''>
                             <FormLabel>Description<InfoOutlinedIcon/></FormLabel>
                             <TextField
                                 className="profession-description"

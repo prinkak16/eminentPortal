@@ -1,4 +1,4 @@
-    import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./hometable.scss"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
@@ -33,6 +33,7 @@ const HomeTable = (props) => {
     const [currStatus,setCurrStatus] = useState('');
     const [currId, setCurrId] = useState('');
     const [open, setOpen] = useState(true);
+    const [openList, setOpenList] = useState(null);
     const navigate = useNavigate();
     const offset = 0;
     const limit = 10;
@@ -62,20 +63,20 @@ const HomeTable = (props) => {
         setCurrId(id);
         setCurrStatus(status);
     }
-     const updateCurrentStatus = () => {
+    const updateCurrentStatus = () => {
         const newState ={
             "id": currId,
             "aasm_state": currStatus=== 'freeze' ? 'approve' : 'reject',
             "rejection_reason": reasonToUpdateState
         }
-      updateState(newState).then(res=>{
-          setWantToChangeStatus(false);
-          prepareToGetDisplayData();
-        console.log(res);
-      }).catch(err=>{
-          console.log(err);
-      })
-     }
+        updateState(newState).then(res=>{
+            setWantToChangeStatus(false);
+            prepareToGetDisplayData();
+            console.log(res);
+        }).catch(err=>{
+            console.log(err);
+        })
+    }
     const deleteMem = () => {
         let deleteString = `id=${deleteMemberId}`;
         if (reasonToDelete && reasonToDelete.length > 0) {
@@ -126,14 +127,6 @@ const HomeTable = (props) => {
         window.open(filePath);
     }
 
-    const handleClickAway = () => {
-        setOpen(false);
-    };
-
-    const handleClick = () => {
-        setOpen(true);
-    };
-
     const handleDownload = (url) => {
         const link = document.createElement('a');
         link.href = url;
@@ -162,9 +155,9 @@ const HomeTable = (props) => {
     const getUserEducation = (educations) => {
         let education = ''
         for (const item in educations) {
-                if (educations[item].highest_qualification) {
-                 return educations[item].qualification
-                }
+            if (educations[item].highest_qualification) {
+                return educations[item].qualification
+            }
         }
         return education
     }
@@ -180,6 +173,10 @@ const HomeTable = (props) => {
         return isValuePresent(field) ? `${field}${ isValuePresent(isLastEntry) ? '' : ','}` : ''
     }
 
+    const showList = (id) => {
+        const value = openList === null ? id : null
+        setOpenList(value)
+    }
     return (
         <>
             <Analytics tabId={props.tabId}/>
@@ -275,62 +272,53 @@ const HomeTable = (props) => {
                                         <p>{member.data.reference?.mobile}</p>
 
                                     </div>
-                                    <ClickAwayListener onClickAway={handleClickAway}>
-                                        <PopupState variant="popper" popupId="demo-popup-popper">
-                                        {(popupState) => (
-                                            <div className="edit-box-container">
-                                                <p variant="contained" {...bindToggle(popupState)}
-                                                   className="popupicon">
-                                                    <Icon/>
-                                                </p>
-                                                {open ? (
-                                                <Popper {...bindPopper(popupState)} transition>
-                                                    {({TransitionProps}) => (
-                                                        <Fade {...TransitionProps} timeout={350}>
-                                                            <Paper>
-                                                                <div className='edit-user-container'>
-                                                                    <Typography sx={{p: 2}} className="tableiconlist">
-                                                                        {  (member.aasm_state !== 'approved') &&
-                                                                            <p onClick={() => editUser( member.phone, member)}>Edit</p>
-                                                                        }
-                                                                        <p onClick={() => editUser(member.phone, member)}>View</p>
-                                                                        {member.data.attachment && <p onClick={() => openDocument(member.data.attachment)}>View Documents</p>}
-                                                                        <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
-                                                                        { (member.aasm_state === 'submitted') &&
-                                                                            <div className="btn-group dropstart">
-                                                                                <p type="button" className="dropdown-toggle"
-                                                                                   data-bs-toggle="dropdown"
-                                                                                   data-mdb-toggle="dropdown"
-                                                                                   aria-expanded="false">
-                                                                                    Freeze/ Re-edit
-                                                                                </p>
-                                                                                <ul className="dropdown-menu">
-                                                                                    <li
-                                                                                        className="ms-4"
-                                                                                        onClick={()=>updateCurrentState(member.id, 'freeze')}>
-                                                                                        Freeze
-                                                                                    </li>
-                                                                                    <li
-                                                                                        className="ms-4"
-                                                                                        onClick={()=>updateCurrentState(member.id, 're-edit')}
-                                                                                    >
-                                                                                        Re-edit
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        }
-                                                                        {member.data.attachment &&  <p onClick={()=>handleDownload(member.data.attachment)}>Download</p> }
-                                                                    </Typography>
-                                                                </div>
-                                                            </Paper>
-                                                        </Fade>
-                                                    )}
-                                                </Popper>):null}
+                                    <div className="edit-box-container">
+                                        <p
+                                            className="popupicon">
+                                            <Icon onClick={() => showList(member.id)}/>
+                                        </p>
+                                        {openList === member.id &&
+                                        <Paper className='details-edit-list'>
+                                            <div className='edit-user-container'>
+                                                <Typography sx={{p: 2}} className="tableiconlist">
+                                                    {(member.aasm_state !== 'approved') &&
+                                                        <p onClick={() => editUser(member.phone, member)}>Edit</p>
+                                                    }
+                                                    <p onClick={() => editUser(member.phone, member)}>View</p>
+                                                    {member.data.attachment &&
+                                                        <p onClick={() => openDocument(member.data.attachment)}>View
+                                                            Documents</p>}
+                                                    <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
+                                                    {(member.aasm_state === 'submitted') &&
+                                                        <div className="btn-group dropstart">
+                                                            <p type="button" className="dropdown-toggle"
+                                                               data-bs-toggle="dropdown"
+                                                               data-mdb-toggle="dropdown"
+                                                               aria-expanded="false">
+                                                                Freeze/ Re-edit
+                                                            </p>
+                                                            <ul className="dropdown-menu">
+                                                                <li
+                                                                    className="ms-4"
+                                                                    onClick={() => updateCurrentState(member.id, 'freeze')}>
+                                                                    Freeze
+                                                                </li>
+                                                                <li
+                                                                    className="ms-4"
+                                                                    onClick={() => updateCurrentState(member.id, 're-edit')}
+                                                                >
+                                                                    Re-edit
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    }
+                                                    {member.data.attachment &&
+                                                        <p onClick={() => handleDownload(member.data.attachment)}>Download</p>}
+                                                </Typography>
                                             </div>
-                                        )}
-                                    </PopupState>
-                                    </ClickAwayListener>
-
+                                        </Paper>
+                                        }
+                                    </div>
                                 </div>
                             </Grid>
 
@@ -400,4 +388,3 @@ const HomeTable = (props) => {
     )
 }
 export default HomeTable;
-
