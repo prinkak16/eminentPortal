@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Route, Routes, redirect, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.scss";
@@ -17,6 +17,7 @@ import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backD
 import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/AllotAssign";
 import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
 import Header from "./modules/eminentpersonalityhome/header/header";
+import {eminentAdminDetails, getLocationsData} from "./api/stepperApiEndpoints/stepperapiendpoints";
 
 const beforeLoginRoutes = (
   <Routes>
@@ -54,6 +55,7 @@ function App() {
   );
   const [backDropToggle, setBackDropToggle] = useState(false);
   const [userData, setUserData] = useState()
+    const [eminentData, setEminentData] = useState()
   const config = {
     headers: {
       Authorization: authToken,
@@ -68,14 +70,21 @@ function App() {
       : adminRoutes;
   };
 
+    useEffect(() => {
+        if (!isCandidateLogin) {
+            eminentAdminDetails().then((res) => {
+                setUserData(res.data.data)
+            })
+        }
+    }, []);
   return (
     <>
       <ToastContainer />
       <BackDrop toggle={backDropToggle} />
       <ApiContext.Provider
-        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle, userData, setUserData}}
+        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle, userData, setUserData, eminentData, setEminentData}}
       >
-          {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={userData}/>: null :     <Header userData={userData}/>}
+          {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/>: null :  <Header userData={userData}/>}
         {routesOfProjects()}
       </ApiContext.Provider>
     </>
