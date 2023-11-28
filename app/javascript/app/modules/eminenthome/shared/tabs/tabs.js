@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Button,Tab, Box, TextField, styled, InputLabel,Alert } from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext, useRef} from "react";
+import {useEffect} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
 import  './tabs.css'
 import Modal from "react-bootstrap/Modal";
