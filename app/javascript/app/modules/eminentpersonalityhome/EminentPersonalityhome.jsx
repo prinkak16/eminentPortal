@@ -9,9 +9,8 @@ import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
 import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
 
-    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle,userData, setUserData} = useContext(ApiContext)
     let location = useLocation();
-    const [userData, setUserData] = useState()
     const [userStateId, setUserStateId] = useState(location.state?.state_id)
     const fetchUserDetails = () => {
         setBackDropToggle(true)
@@ -54,7 +53,6 @@ const EminentPersonality=()=> {
 
     return(
         <>
-            <Header userData={userData}/>
                 <Grid className="detailHeading d-flex justify-content-center" sx={{textAlign:'center', mb:8, mt:15 }}>
                     <div className="detailHeading-dashed dashed-1"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="456" height="48" viewBox="0 0 456 48" fill="none">

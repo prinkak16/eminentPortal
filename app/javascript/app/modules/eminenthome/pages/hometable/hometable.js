@@ -341,7 +341,7 @@ const HomeTable = (props) => {
 
             </div>
             <div>
-                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp; { tableData?.data?.data.length ?  Math.ceil(tableData?.data?.data.length / limit) : ''}</p>
+                <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp; { tableData?.data?.data.length ?  Math.ceil(tableData?.data?.data.length / limit) : 1}</p>
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
