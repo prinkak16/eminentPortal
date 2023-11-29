@@ -351,7 +351,6 @@ module CustomMemberFormHelper
       address
       educations
       professions
-      profession_description
     ]
   )
 
