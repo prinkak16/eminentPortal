@@ -291,7 +291,7 @@ export const electionWiseJson =
                 ...afterElectionFields,
             ]
         },
-        legislative_council_vidhan_sabha: {
+        legislative_council_vidhan_parishad: {
             fields: [
                 {
                     type: 'dropdown',
