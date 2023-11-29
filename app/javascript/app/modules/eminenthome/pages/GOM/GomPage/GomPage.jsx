@@ -43,12 +43,19 @@ function GomPage({ tabId, filterString }) {
                 const ministerIds = params.get('minister_ids');
                 const ministryIds = params.get('ministry_ids');
 
-                if (ministerIds || ministryIds) {
+                const ministerIdsArray = Array.isArray(ministerIds) ? ministerIds : [ministerIds];
+                const ministryIdsArray = Array.isArray(ministryIds) ? ministryIds : [ministryIds];
+
+                console.log(ministryIdsArray, 'ministryids');
+        console.log(ministerIdsArray, 'ministerids');
+
+        if (ministerIds || ministryIds) {
                     // API call with filter parameters
-                    getMinistryByFilters({ minister_ids: ministerIds, ministry_ids: ministryIds })
+                    getMinistryByFilters({ minister_ids: ministerIdsArray, ministry_ids: ministryIdsArray })
                         .then((res) => {
-                            console.log("api response", res.data);
-                            setMinistryData(res.data.data.ministries);
+                            console.log("api responseafdfsd", res.data.data.value);
+                            setGomTableData(res.data.data.value);
+                            console.log('aprie response123', res.value);
                             // Handle other data or state updates as needed
                         })
                         .catch((error) => {
@@ -60,6 +67,8 @@ function GomPage({ tabId, filterString }) {
                     getMinistry().then((res) => {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
+                        fetchData();
+
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -67,7 +76,6 @@ function GomPage({ tabId, filterString }) {
                     // Handle other data or state updates as needed
                 });
 
-            fetchData();
 
             },  [filterString, ministerSearch, ministrySearch]);
 
