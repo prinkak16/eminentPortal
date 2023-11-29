@@ -148,33 +148,54 @@ const FormWrap=({userData, stateId})=>{
                     if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
+                            const ministriesKey = ['designation','ministry_name', 'ministry_duration']
                             for (const index in fields) {
-                                if (!isValuePresent(electoralDetails[item].election_details[fields[index].key])) {
-                                    if (!isError) {
-                                        if (isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
-                                            if (electoralDetails[item].election_details[fields[index]?.condition_key] === 'Yes') {
-                                                showErrorToast(`Please fill ${fields[index].name} Details`);
+                                if (ministriesKey.includes(fields[index].key)) {
+                                    if (electoralDetails[item].election_details.minister_portfolio === 'Yes') {
+                                        const portfolio = electoralDetails[item].election_details.minister_portfolio_array
+                                        for (const pI in portfolio) {
+                                            if (!isValuePresent(portfolio[pI][fields[index].key])) {
                                                 isError = true
-                                            } else {
-                                                isError = false
-                                            }
-                                        } else if (fields[index].hasOwnProperty('condition_key')) {
-                                            if (!isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
-                                                isError = false
-                                            } else {
                                                 showErrorToast(`Please fill ${fields[index].name} Details`);
                                             }
-                                        } else {
-                                            showErrorToast(`Please fill ${fields[index].name} Details`);
-                                            isError = true
+
+                                            if (!isError) {
+                                                if (fields[index].hasOwnProperty('combo_fields')) {
+                                                    if (!isValuePresent(portfolio[pI][fields[index].combo_fields[0].key])) {
+                                                        showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
+                                                        isError = true
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-                                } else if (fields[index].hasOwnProperty('combo_fields') && !isValuePresent(electoralDetails[item].election_details[fields[index].combo_fields[0].key])) {
-                                    showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
-                                    isError = true
                                 } else {
-                                    isError = false
+                                    if (!isValuePresent(electoralDetails[item].election_details[fields[index].key])) {
+                                        if (!isError) {
+                                            if (isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
+                                                if (electoralDetails[item].election_details[fields[index]?.condition_key] === 'Yes') {
+                                                    showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                    isError = true
+                                                } else {
+                                                    isError = false
+                                                }
+                                            } else if (fields[index].hasOwnProperty('condition_key')) {
+                                                if (!isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
+                                                    isError = false
+                                                } else {
+                                                    showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                }
+                                            } else {
+                                                showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                isError = true
+                                            }
+                                        }
+                                    } else if (fields[index].hasOwnProperty('combo_fields') && !isValuePresent(electoralDetails[item].election_details[fields[index].combo_fields[0].key])) {
+                                        showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
+                                        isError = true
+                                    }
                                 }
+
                             }
                         } else {
                             showErrorToast(`Please fill election Details`);

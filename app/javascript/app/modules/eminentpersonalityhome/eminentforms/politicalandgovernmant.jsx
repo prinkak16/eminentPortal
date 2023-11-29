@@ -272,8 +272,6 @@ const PolticalandGovrnform =(props)=>{
         }
     }
 
-
-    console.log(electoralDetails)
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>

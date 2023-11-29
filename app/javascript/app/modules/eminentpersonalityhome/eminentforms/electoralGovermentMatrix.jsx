@@ -186,6 +186,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
     },[electionTypeChange])
 
+
+    console.log()
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
