@@ -94,7 +94,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             if (disabledFields.includes(value)) {
                 fields.push('start_year','course')
                 fieldsData.start_year = '';
-                fieldsData.course = 'NA';
+                fieldsData.course = '';
             } else if (value === '12th Pass') {
                 fields.push('start_year')
                 fieldsData.start_year = '';
@@ -144,9 +144,11 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 value = !disabledFields.includes('start_year')
             }
 
-            if (key === 'end_year' && !value) {
-               value = isValuePresent(fieldsData.start_year)
+            if (key === 'end_year' && value) {
+               value = !isValuePresent(fieldsData.start_year)
             }
+
+
         return value
     }
 

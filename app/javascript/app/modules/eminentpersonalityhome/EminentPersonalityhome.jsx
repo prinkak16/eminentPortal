@@ -9,14 +9,15 @@ import {fetchMobile, fetchUser} from "../../api/eminentapis/endpoints";
 import {ApiContext} from "../ApiContext";
 const EminentPersonality=()=> {
 
-    const {config, isCandidateLogin, setBackDropToggle,userData, setUserData} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle, eminentData, setEminentData} = useContext(ApiContext)
     let location = useLocation();
     const [userStateId, setUserStateId] = useState(location.state?.state_id)
+
     const fetchUserDetails = () => {
         setBackDropToggle(true)
         fetchUser(config).then(res => {
             setBackDropToggle(false)
-            setUserData(res.data.data.data)
+            setEminentData(res.data.data.data)
             setUserStateId(res.data.data.country_state_id)
         }).catch(err => {
             setBackDropToggle(false)
@@ -30,7 +31,7 @@ const EminentPersonality=()=> {
         if (phoneNumber) {
             setBackDropToggle(true)
             fetchMobile(phoneNumber, setBackDropToggle).then(res => {
-                setUserData(res.data.data.data)
+                setEminentData(res.data.data.data)
                 setUserStateId(res.data.data.country_state_id)
                 setBackDropToggle(false)
             }).catch(err => {
@@ -42,7 +43,7 @@ const EminentPersonality=()=> {
 
     useEffect(() => {
         if (isValuePresent(location.state?.user_data)) {
-            setUserData(location.state?.user_data.data)
+            setEminentData(location.state?.user_data.data)
             setUserStateId(location.state?.user_data.country_state_id)
         } else {
             isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
@@ -79,7 +80,7 @@ const EminentPersonality=()=> {
                     </svg>
                     <div className="detailHeading-dashed dashed-2"></div>
                 </Grid>
-            {userData && <FormWrap userData={userData} stateId={ userStateId}/>}
+            {eminentData && <FormWrap userData={eminentData} stateId={userStateId}/>}
         </>
     )
 }

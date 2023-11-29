@@ -1,0 +1,32 @@
+.drawer-img-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.drawer-img {
+    height: 20rem;
+    width: 20rem;
+    border-radius: 1rem;
+}
+
+.css-bdhsul-MuiTypography-root-MuiDialogTitle-root {
+    display: flex !important;
+    gap: 1rem !important;
+    width: 30rem !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+    max-width: 45rem!important;
+}
+
+.MuiTypography-h6 {
+    justify-content: flex-start !important;
+}
+
+.css-ypiqx9-MuiDialogContent-root::-webkit-scrollbar {
+    display: none;
+}
