@@ -77,7 +77,8 @@ function GomPage({ tabId, filterString }) {
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
                     setMinisterData(res.data.data.ministries);
-                    // Handle other data or state updates as needed
+                    // Handle other data or state updates as n
+                    console.log(res.data.data.ministries, ' checking');
                 });
 
 
@@ -101,6 +102,7 @@ function GomPage({ tabId, filterString }) {
             console.error(error);
         }
     };
+
 
             const handleAssignedMinistryChange = (ministryIds) => {
             setAssignedMinistryIds(ministryIds);
@@ -150,12 +152,12 @@ function GomPage({ tabId, filterString }) {
             link.click();
             document.body.removeChild(link);
         };
-        const test=()=>{
-            getGOMTableData().then((response) => {
-                setGomTableData(response.data.value);
-                console.log('test', gomTableData)
-            })
-        }
+        // const test=()=>{
+        //     getGOMTableData().then((response) => {
+        //         setGomTableData(response.data.value);
+        //         console.log('test', gomTableData)
+        //     })
+        // }
         // useEffect(() => {
         //     test()
         // }, []);
