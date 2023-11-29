@@ -95,7 +95,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             const formData = new FormData();
             formData.append('file', selectedFile);
 
-            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${encodeURIComponent(email)}`, {
+            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
                 method: 'POST',
                 body: formData,
             })

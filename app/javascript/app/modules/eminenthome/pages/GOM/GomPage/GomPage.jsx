@@ -67,28 +67,28 @@ function GomPage({ tabId, filterString }) {
                     // Handle other data or state updates as needed
                 });
 
-            const fetchData = async () => {
-                try {
-                    const response = await axios.get('/api/v1/gom/assigned_ministries', {
-                        params: {
-                            minister_name: ministerSearch,
-                            ministry_name: ministrySearch,
-                            limit: 10,
-                            offset: 0,
-                        },
-                    });
-
-                    // Update the search results
-                    // setSearchResults(response.data);
-                } catch (error) {
-                    // Handle errors
-                    // console.error(error);
-                }
-            };
-
             fetchData();
 
             },  [filterString, ministerSearch, ministrySearch]);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('/api/v1/gom/assigned_ministries', {
+                params: {
+                    minister_name: ministerSearch,
+                    ministry_name: ministrySearch,
+                    limit: 10,
+                    offset: 0,
+                },
+            });
+            console.log('api response', response.data.data.value);
+            // Update the search results
+            setGomTableData(response.data.data.value);
+        } catch (error) {
+            // Handle errors
+            console.error(error);
+        }
+    };
 
             const handleAssignedMinistryChange = (ministryIds) => {
             setAssignedMinistryIds(ministryIds);
@@ -127,27 +127,6 @@ function GomPage({ tabId, filterString }) {
         };
 
 
-
-        const handleMinisterSearch = async () => {
-            try {
-                const response = await axios.get('/api/v1/gom/assigned_ministries', {
-                    params: {
-                        minister_names: ministerSearch,
-                        ministry_names: ministrySearch,
-                        limit: 10,
-                        offset: 0,
-                    },
-                });
-
-                setGomTableData(response.data);
-                // Handle the API response as needed
-                console.log(response.data);
-            } catch (error) {
-                // Handle errors
-                console.error(error);
-            }
-        };
-
         const handleDownload = (url) => {
             const link = document.createElement('a');
             link.href = 'url';
@@ -162,9 +141,9 @@ function GomPage({ tabId, filterString }) {
                 console.log('test', gomTableData)
             })
         }
-        useEffect(() => {
-            test()
-        }, []);
+        // useEffect(() => {
+        //     test()
+        // }, []);
 
         const handleClick = event => {
             setWantToUpload(true);
@@ -278,7 +257,7 @@ function GomPage({ tabId, filterString }) {
                                     <th style={{backgroundColor: "#F8F8F8"}}>Assigned States</th>
                                     <th style={{backgroundColor: "#F8F8F8"}}>Action</th>
                                 </tr>
-                                {gomTableData.map((data, index) => {
+                                {gomTableData.length && gomTableData.map((data, index) => {
                                     return (
                                         <tr key={data.user_id} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
                                             <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
