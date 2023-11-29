@@ -286,7 +286,19 @@ module CustomMemberFormHelper
           }
         },
         'required': %w[qualification course university college start_year end_year highest_qualification]
-      }
+      },
+      'minItems': 1,  # Ensure at least one object in the array
+      'anyOf': [
+        {
+          'contains': {
+            'type': 'object',
+            'name': 'highest_qualification',
+            'properties': {
+              'highest_qualification': { 'const': true }
+            }
+          }
+        }
+      ]
     },
     'professions': {
       'type': 'array',
