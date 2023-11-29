@@ -16,7 +16,7 @@ import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
-const FormWrap=({userData, stateId})=>{
+const FormWrap=({userData, stateId, viewMode})=>{
     const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -27,6 +27,13 @@ const FormWrap=({userData, stateId})=>{
     }));
     const navigate = useNavigate();
     const [steps, setSteps] = useState([PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform, Refferedform])
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+    },[viewMode])
 
     useEffect(() => {
         if (isValuePresent(isCandidateLogin)) {
@@ -37,7 +44,7 @@ const FormWrap=({userData, stateId})=>{
 
 
     const [stepValues, setStepValues]=useState([])
-    const [activeStep, setActiveStep] = useState(3);
+    const [activeStep, setActiveStep] = useState(0);
 
     const isLastStep = () => {
         return activeStep === steps.length - 1;
@@ -66,42 +73,46 @@ const FormWrap=({userData, stateId})=>{
 
 
     const onSubmit = (values, formikBag) => {
-        setBackDropToggle(true)
-        const {setSubmitting} = formikBag;
-        const newStepValues = [...stepValues];
-        newStepValues[activeStep] = values;
-        setStepValues(newStepValues)
-        const activeStepData = mergeObjectsUpToIndex(newStepValues, activeStep);
-        setSubmitting(false);
-        let isError = false
-        if (activeStep + 1 === 3) {
-            const fieldsToValidate = ['educations', 'professions'];
-            isError = validateFields(activeStepData, fieldsToValidate);
-        }
-        if (activeStep + 1 === 4) {
-            if (activeStepData.election_contested) {
-             isError = checkValidationsElectoral(activeStepData.election_fought)
+        if (!isViewDisabled) {
+            setBackDropToggle(true)
+            const {setSubmitting} = formikBag;
+            const newStepValues = [...stepValues];
+            newStepValues[activeStep] = values;
+            setStepValues(newStepValues)
+            const activeStepData = mergeObjectsUpToIndex(newStepValues, activeStep);
+            setSubmitting(false);
+            let isError = false
+            if (activeStep + 1 === 3) {
+                const fieldsToValidate = ['educations', 'professions'];
+                isError = validateFields(activeStepData, fieldsToValidate);
             }
-        }
-        if (!isError) {
-            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
-                if (response) {
-                    if (isCandidateLogin) {
-                        if (activeStep + 1 === 5) {
+            if (activeStep + 1 === 4) {
+                if (activeStepData.election_contested) {
+                    isError = checkValidationsElectoral(activeStepData.election_fought)
+                }
+            }
+            if (!isError) {
+                getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
+                    if (response) {
+                        if (isCandidateLogin) {
+                            if (activeStep + 1 === 5) {
+                                navigate({
+                                    pathname: '/form_submitted'
+                                });
+                            }
+                        } else if (activeStep + 1 === 6) {
                             navigate({
                                 pathname: '/form_submitted'
                             });
                         }
-                    } else if (activeStep + 1 === 6) {
-                        navigate({
-                            pathname: '/form_submitted'
-                        });
+                        handleNext();
                     }
-                    handleNext();
-                }
-            });
+                });
+            } else {
+                setBackDropFalse()
+            }
         } else {
-            setBackDropFalse()
+            handleNext();
         }
     };
 
@@ -234,6 +245,7 @@ const FormWrap=({userData, stateId})=>{
                                     <FormStepper
                                         stateId={stateId}
                                         userData={userData}
+                                        viewMode={viewMode}
                                         activeStep={activeStep}
                                         handlePrev={handlePrev}
                                         handleNext={handleNext}

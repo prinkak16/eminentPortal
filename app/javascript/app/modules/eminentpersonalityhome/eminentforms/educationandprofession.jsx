@@ -22,7 +22,7 @@ import {
     isValuePresent,
     saveProgress,
     formFilledValues,
-    saveProgressButton, showErrorToast
+    saveProgressButton, showErrorToast, disabledSaveProgressButton
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
@@ -40,6 +40,14 @@ const Educationform = (props) => {
     const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -189,10 +197,11 @@ const Educationform = (props) => {
     };
 
     const saveProgress = () => {
-        setBackDropToggle(true)
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
 
@@ -236,7 +245,11 @@ const Educationform = (props) => {
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -261,7 +274,7 @@ const Educationform = (props) => {
                                     <td>
                                         <div className='qualification-name'>
                                             <span className='highest-qualification-radio'>
-                                               <input type='radio' checked={data.highest_qualification}
+                                               <input disabled={isViewDisabled} type='radio' checked={data.highest_qualification}
                                                        onClick={(e) => setHighestQualification(data.id)}/>
                                              </span>
                                             {data.qualification}
@@ -296,7 +309,7 @@ const Educationform = (props) => {
                 )}
                 {!backDropToggle &&
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
-                                       isEditable={educationEditField} educationsList={EducationData}/>
+                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>
                 }
 
                 <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
@@ -353,7 +366,7 @@ const Educationform = (props) => {
                 )}
                 {!backDropToggle &&
                     <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                       isEditable={professionEditField}/>
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled}/>
                 }
                 {/*<Grid container sx={{my: 5}} className="grid-wrap">*/}
                 {/*</Grid>*/}
@@ -367,6 +380,7 @@ const Educationform = (props) => {
                                 name="profession_description"
                                 onChange={changeProfessionDescription}
                                 value={professionDescription}
+                                disabled={isViewDisabled}
                                 max
                                 multiline
                                 minRows={2}

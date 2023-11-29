@@ -40,3 +40,16 @@
     background: #FF9559;
     border: 0.1px solid #FF9559;
 }
+
+.radio-outer-component-disabled-true {
+    border: 0.1px solid darkgray !important;
+}
+
+.radio-btn-inner-component-disabled-true {
+    background: darkgray !important;
+    border: 0.1px solid darkgray !important;
+}
+
+.disabled-true {
+    border: 0.1px solid darkgray !important;
+}

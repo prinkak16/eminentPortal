@@ -499,11 +499,18 @@ export const calculateAge = (dob) => {
 };
 
 export const saveProgressButton=
-    <Button>Save Progress
+    <Button >Save Progress
         <Tooltip title="Save form till the current progress. Until submitted, form will not be counted as complete.">
             <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
         </Tooltip>
     </Button>
+
+export const disabledSaveProgressButton =
+    <Tooltip title="In view mode, data saving is not available.">
+        <Button>Save Progress
+            <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{color: "#3f96fd"}}/>
+        </Button>
+    </Tooltip>
 
 
 export const VisuallyHiddenInput = styled('input')({

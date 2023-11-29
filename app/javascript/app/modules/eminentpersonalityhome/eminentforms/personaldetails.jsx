@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from "react"
 import {Box, Button, FormLabel, Grid, Paper, Stack, TextField, Typography,} from '@mui/material';
 import {ErrorMessage, Field, useFormikContext} from 'formik';
 import {styled} from '@mui/material/styles';
-import ImageUpload from '../component/imageupload/imageupload';
 import './allfroms.scss'
 import Age from '../../../../../../public/images/age.svg'
 import Formheading from "../component/formheading/formheading";
@@ -23,7 +22,7 @@ import {
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {
-    calculateAge,
+    calculateAge, disabledSaveProgressButton,
     dobFormat,
     formFilledValues,
     isValuePresent,
@@ -38,7 +37,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Tooltip from '@mui/material/Tooltip';
 import UserIcon from '../../../../../../public/images/userIcon.svg'
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 const PersonalDetails = (props) => {
     const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     useEffect(() => {
@@ -59,6 +58,14 @@ const PersonalDetails = (props) => {
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
     const [userPhoto, setUserPhoto] = useState(props.formValues.photo)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     useEffect(() => {
         setEminentAge(props.formValues.dob)
@@ -110,9 +117,11 @@ const PersonalDetails = (props) => {
     }
 
     const saveProgress = () => {
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
 
@@ -137,8 +146,10 @@ const PersonalDetails = (props) => {
     }
 
     const openLangDrawer = () => {
-        setLangDrawer(!langDrawer)
-        setCustomSelectedLanguages(selectedLanguages)
+        if (!isViewDisabled) {
+            setLangDrawer(!langDrawer)
+            setCustomSelectedLanguages(selectedLanguages)
+        }
     }
 
     const saveLanguages = () => {
@@ -148,10 +159,12 @@ const PersonalDetails = (props) => {
     }
 
     const removeLanguage = (selLang) => {
-        let languages = selectedLanguages.filter(item => item !== selLang)
-        setCustomSelectedLanguages(languages)
-        setSelectedLanguages(languages)
-        props.formValues.languages = languages
+        if (!isViewDisabled) {
+            let languages = selectedLanguages.filter(item => item !== selLang)
+            setCustomSelectedLanguages(languages)
+            setSelectedLanguages(languages)
+            props.formValues.languages = languages
+        }
     }
 
     const handleDateChange = (event)    => {
@@ -173,7 +186,11 @@ const PersonalDetails = (props) => {
                     <Item><Formheading number="1" heading="Personal Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                disabledSaveProgressButton :
+                                saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -182,7 +199,7 @@ const PersonalDetails = (props) => {
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
                             <Grid item xs={12}>
                                 <FormLabel>Name <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Full Name (As per PAN Card)"
+                                <Inputfield disabled={isViewDisabled} type="text" name="name" placeholder="Full Name (As per PAN Card)"
                                             value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z\s]+$/.test(key)) {
@@ -193,7 +210,7 @@ const PersonalDetails = (props) => {
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Religion <mark>*</mark></FormLabel>
-                                <SelectField name="religion" selectedvalues={selectedOption}
+                                <SelectField disabled={isViewDisabled} name="religion" selectedvalues={selectedOption}
                                              value={props.formValues.religion}
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
@@ -203,7 +220,9 @@ const PersonalDetails = (props) => {
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Gender <mark>*</mark></FormLabel>
-                                <SelectField name="gender" selectedvalues={selectedOption}
+                                <SelectField
+                                            disabled={isViewDisabled}
+                                            name="gender" selectedvalues={selectedOption}
                                              value={props.formValues.gender}
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
@@ -212,7 +231,7 @@ const PersonalDetails = (props) => {
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
-                                <SelectField name="category" selectedvalues={selectedOption}
+                                <SelectField disabled={isViewDisabled} name="category" selectedvalues={selectedOption}
                                              value={props.formValues.category}
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
@@ -222,6 +241,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={6}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
                                 <Inputfield
+                                    disabled={isViewDisabled}
                                     type="text"
                                     name="caste"
                                     value={props.formValues.caste}
@@ -237,10 +257,15 @@ const PersonalDetails = (props) => {
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
-                                <Inputfield type="text" name="sub_caste" value={props.formValues.sub_caste} placeholder="Enter Sub Caste"
+                                <Inputfield
+                                    disabled={isViewDisabled}
+                                    type="text"
+                                    name="sub_caste"
+                                    value={props.formValues.sub_caste}
+                                    placeholder="Enter Sub Caste"
                                             onKeyPress={(e) => {
                                                 const key = e.key;
-                                                if (!/^[A-Za-z]+$/.test(key)) {
+                                                if (!/^[A-Za-z\s]*$/.test(key)) {
                                                     e.preventDefault();
                                                 }
                                             }}/>
@@ -250,6 +275,7 @@ const PersonalDetails = (props) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            disabled={isViewDisabled}
                                             maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
@@ -314,6 +340,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
+                                    disabled={isViewDisabled}
                                     name="aadhaar"
                                     value={props.formValues.aadhaar}
                                     placeholder='Enter Aadhaar number'
@@ -328,6 +355,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
+                                    disabled={isViewDisabled}
                                     value={props.formValues.voter_id}
                                     type="text"
                                     id="voter_id"
@@ -349,7 +377,7 @@ const PersonalDetails = (props) => {
                             </div>
                         </div>
                         <div className='photo-btn'>
-                            <Button component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
+                            <Button disabled={isViewDisabled} component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
                                 Add Photo
                                 <VisuallyHiddenInput accept="image/*"  type="file"/>
                             </Button>

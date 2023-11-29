@@ -20,7 +20,8 @@ import {
 import NumberField from "../component/numberfield/numberfield";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange}) => {
+import DeleteIcon from "@mui/icons-material/Delete";
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [ministriesField, setMinistriesField] = useState([]);
     const [editField, setEditField] = useState(0);
@@ -46,12 +47,13 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         })
     }
 
+
     useEffect(() => {
         getStates()
     }, []);
 
     useEffect(() => {
-        if (isValuePresent(isEditable)) {
+        if (isValuePresent(isEditable) && editField === 0) {
             const updatedFieldsData = { ...fieldsData };
             for (const key in isEditable) {
                 if (Object.prototype.hasOwnProperty.call(isEditable, key)) {
@@ -60,6 +62,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             }
             setEditField(1)
             setFieldsData(updatedFieldsData);
+            const portFolio = updatedFieldsData.minister_portfolio_array
+            if (isValuePresent(portFolio) && portFolio.length > 1) {
+              for (let i = 0; i < portFolio.length -1; i++) {
+                  addMinistries()
+              }
+            }
         }
     }, [isEditable]);
 
@@ -116,11 +124,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
 
         if (fieldKey === 'minister_portfolio') {
+            debugger
             if (value === 'Yes') {
                 fieldsData['minister_portfolio_array'] = [ministryPortfolioObject]
                 setMinistriesField([])
             } else {
-                fieldsData['minister_portfolio_array'] = [{}]
+                fieldsData['minister_portfolio_array'] = []
             }
 
         }
@@ -166,15 +175,32 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     }
 
     const addMinistries = () => {
-        setFieldsData((prevFieldsData) => ({
-            ...prevFieldsData,
-            minister_portfolio_array: [
-                ...prevFieldsData.minister_portfolio_array,
-                ministryPortfolioObject,
-            ],
-        }));
-        setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+        if (!isViewDisabled) {
+            setFieldsData((prevFieldsData) => ({
+                ...prevFieldsData,
+                minister_portfolio_array: [
+                    ...prevFieldsData.minister_portfolio_array,
+                    ministryPortfolioObject,
+                ],
+            }));
+            setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+        }
     }
+
+    const deleteMinistry = (e) => {
+        if (!isViewDisabled) {
+            e.preventDefault();
+            const updatedMinisterPortfolioArray = [...fieldsData.minister_portfolio_array];
+            updatedMinisterPortfolioArray.pop();
+            setFieldsData((prevFieldsData) => ({
+                ...prevFieldsData,
+                minister_portfolio_array: updatedMinisterPortfolioArray,
+            }));
+            const updatedMinistries = ministriesField.slice(0, -1);
+            setMinistriesField(updatedMinistries);
+        }
+    };
+
 
     const getFieldsValue = (key, index) => {
        return  ministriesKey.includes(key) ? fieldsData.minister_portfolio_array[index][key] : fieldsData[key]
@@ -186,8 +212,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
     },[electionTypeChange])
 
-
-    console.log()
+console.log(ministriesField,'ministriesField')
+console.log(fieldsData ,'fieldsData')
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
@@ -202,6 +228,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                             <mark>*</mark>
                                         </FormLabel>
                                         <AutoCompleteDropdown
+                                            disabled={isViewDisabled}
                                             name={f.name}
                                             selectedValue={fieldsData[f.key] || null}
                                             listArray={getList(f.key)}
@@ -217,6 +244,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                             <mark>*</mark>
                                         </FormLabel>
                                         <OtherInputField
+                                            disabled={isViewDisabled}
                                             type="text"
                                             fieldIndex={0}
                                             value={getFieldsValue(f.key, 0) || null}
@@ -232,9 +260,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                             <mark>*</mark>
                                         </FormLabel>
                                         <Field
+                                            disabled={isViewDisabled}
                                             style={{width: '22rem'}}
                                             type="text"
-                                            value={fieldsData[f.key] || null}
+                                            value={getFieldsValue(f.key, 0) || null}
                                             as={TextField}
                                             className='elec-number-field'
                                             placeholder={f.placeholder}
@@ -254,7 +283,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         <FormLabel>{f.name}
                                             <mark>*</mark>
                                         </FormLabel>
-                                        <RadioButton radioList={f.list} selectedValue={fieldsData[f.key] || null}
+                                        <RadioButton disabled={isViewDisabled} radioList={f.list} selectedValue={fieldsData[f.key] || null}
                                                      onClicked={contestedElection} fieldKey={f.key}/>
                                     </Grid>
                                 }
@@ -267,6 +296,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     <mark>*</mark>
                                                 </FormLabel>
                                                 <AutoCompleteDropdown
+                                                    disabled={isViewDisabled}
                                                     name={fi.name}
                                                     selectedValue={fieldsData[fi.key] || null}
                                                     listArray={getList(fi.key)}
@@ -283,6 +313,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     <mark>*</mark>
                                                 </FormLabel>
                                                 <OtherInputField
+                                                    disabled={isViewDisabled}
                                                     type="text"
                                                     value={getFieldsValue(fi.key, 0, ) || null}
                                                     onChange={handleFieldChange}
@@ -302,6 +333,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                         <mark>*</mark>
                                                     </FormLabel>
                                                     <Field
+                                                        disabled={isViewDisabled}
                                                         style={{width: '22rem'}}
                                                         type="text"
                                                         defaultValue={dayjs('2022-04-17')}
@@ -326,7 +358,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                 <FormLabel>{fi.name}
                                                     <mark>*</mark>
                                                 </FormLabel>
-                                                <RadioButton radioList={fi.list}
+                                                <RadioButton   disabled={isViewDisabled} radioList={fi.list}
                                                              selectedValue={fieldsData[fi.key] || null}
                                                              onClicked={contestedElection} fieldKey={f.key}/>
                                             </Grid>
@@ -351,6 +383,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     <mark>*</mark>
                                                 </FormLabel>
                                                 <OtherInputField
+                                                    disabled={isViewDisabled}
                                                     type="text"
                                                     fieldIndex={minIndex+1}
                                                     value={getFieldsValue(f.key, minIndex+1) || null}
@@ -366,6 +399,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     <mark>*</mark>
                                                 </FormLabel>
                                                 <Field
+                                                    disabled={isViewDisabled}
                                                     style={{width: '22rem'}}
                                                     type="text"
                                                     value={getFieldsValue(f.key, minIndex+1) || null}
@@ -391,6 +425,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                             <mark>*</mark>
                                                         </FormLabel>
                                                         <OtherInputField
+                                                            disabled={isViewDisabled}
                                                             type="text"
                                                             value={getFieldsValue(fi.key, minIndex+1, ) || null}
                                                             onChange={handleFieldChange}
@@ -411,7 +446,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
                 {fieldsData?.minister_portfolio === 'Yes' &&
                     <div className='add-ministry-container' onClick={addMinistries}>
-                        <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
+                       <span className='add-ministry'>
+                            <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
+                       </span>
+                        <span className='delete-ministry' onClick={(e) => deleteMinistry(e)}>
+                            <DeleteIcon/> Delete
+                       </span>
                     </div>
                 }
             </Grid>

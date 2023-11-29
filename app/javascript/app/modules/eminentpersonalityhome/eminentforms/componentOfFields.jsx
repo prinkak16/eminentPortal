@@ -15,7 +15,7 @@ import './componentOfFIelds.scss'
 
 import dayjs from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
-const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
+const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList, isViewDisabled}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [resetYear, setResetYear] = useState(false)
     const [isNaButtonExist, setIsNaButtonExist] = useState(false)
@@ -217,6 +217,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                 <Grid item xs={4}>
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <AutoCompleteDropdown
+                                        disabled={isViewDisabled}
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
                                         listArray={jsonForm.title === 'Education Details' ? educationsList : f.list}
@@ -230,7 +231,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <div style={{marginTop:'7px'}}>
                                         <OtherInputField
-                                            disabled={disabledField(f.key)}
+                                            disabled={disabledField(f.key) || isViewDisabled}
                                             type="text"
                                             value={fieldValue(f.key) || null}
                                             onChange={handleFieldChange}
@@ -249,7 +250,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                             <DatePicker
                                                 label={f.name}
                                                 isRequired={isValuePresent(f?.isRequired)}
-                                                disabled={disabledField(f.key)}
+                                                disabled={disabledField(f.key) || isViewDisabled}
                                                 value={isValuePresent(fieldValue(f.key)) && fieldValue(f.key) !== '-' ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
                                                 maxDate={maxDate(f.key)}
                                                 onChange={handleEduStartDateChange(f.key)}
@@ -262,7 +263,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         <div className='date-na-button' style={{visibility: isNaButtonExist === true && f.key === 'start_year' ? 'hidden' : ''}}>
                                             {!isNaButtonExist ? setIsNaButtonExist(true): null }
                                             <span className='na-check-box'>
-                                                <input type="checkbox" onClick={notApplicableFields(f.na_type, f.key)}/>
+                                                <input disabled={isViewDisabled} type="checkbox" onClick={notApplicableFields(f.na_type, f.key)}/>
                                              </span>
                                             <span className='na-check-msg'>
                                                 {f.na_massage}
@@ -278,13 +279,13 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     jsonForm.title === 'Education Details' &&
                     <Grid item xs={4} style={{minWidth: '27rem'}}>
                         <FormLabel>Please Select if this is your Highest Qualification <mark>*</mark></FormLabel>
-                        <input type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
+                        <input disabled={isViewDisabled} type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>
                 }
                 <Grid item xs={12}>
-                    <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel" handleclick={() => resetFieldsToBlank()} />
-                    <Primarybutton addclass="nextbtn" handleclick={() => handleSave(fieldsData.id)}
+                    <Primarybutton disabled={isViewDisabled} addclass="cancelbtn cancel" buttonlabel="Cancel" handleclick={() => resetFieldsToBlank()} />
+                    <Primarybutton disabled={isViewDisabled} addclass="nextbtn" handleclick={() => handleSave(fieldsData.id)}
                                    buttonlabel="Save"/>
                 </Grid>
 
