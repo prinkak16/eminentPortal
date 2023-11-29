@@ -11,7 +11,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
     const [error, setError] = useState(null);
     const limit = 4;
     const displayMinistryData = ()=>{
-        debugger
         const params = {
             search_by: 'ministry_wise',
             limit: limit,
@@ -56,7 +55,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                 </TableHead>
                 <TableBody>
                     {ministryTableData?.value.map((ministry, index) => <TableRow key={ministry.ministry_id}>
-
                         <TableCell>{index + 1}</TableCell>
                         <TableCell className="element" onClick={() => onSwitchTab('psu_wise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
                         <TableCell>{ministry.total}</TableCell>
