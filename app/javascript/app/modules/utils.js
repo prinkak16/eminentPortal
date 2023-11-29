@@ -200,8 +200,6 @@ const electionWin =  {
     list:['Yes', 'No']
 }
 
-const ministerPortfolioArray = [ministerPortfolio, ministryName, ministryDuration]
-
 const ministerPortfolio = {
     is_conditional: true,
     condition_key: 'election_win',
@@ -229,6 +227,7 @@ const ministryName = {
     }
 ]
 }
+
 const ministryDuration = {
     is_conditional: true,
     condition_key: 'minister_portfolio',
@@ -238,6 +237,8 @@ const ministryDuration = {
     key: 'ministry_duration',
     placeholder: 'Enter Duration (in Months)'
 }
+
+export const ministerPortfolioArray = [ministryName, ministryDuration]
 
 const afterElectionFields = [electionWin, ministerPortfolio, ministryName, ministryDuration];
 

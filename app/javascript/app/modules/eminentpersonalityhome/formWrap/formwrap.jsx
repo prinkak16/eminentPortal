@@ -37,7 +37,7 @@ const FormWrap=({userData, stateId})=>{
 
 
     const [stepValues, setStepValues]=useState([])
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState(3);
 
     const isLastStep = () => {
         return activeStep === steps.length - 1;

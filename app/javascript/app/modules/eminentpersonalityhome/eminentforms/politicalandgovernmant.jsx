@@ -14,7 +14,7 @@ import {Edit} from "@mui/icons-material";
 import {
     electionTypeList,
     electionWiseJson, formFilledValues,
-    isValuePresent,
+    isValuePresent, ministerPortfolioArray,
     otherPartyJson,
     politicalProfileJson,
     saveProgress, saveProgressButton, showErrorToast, toSnakeCase
@@ -265,8 +265,6 @@ const PolticalandGovrnform =(props)=>{
             setShowList(id)
         }
     }
-
-
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
