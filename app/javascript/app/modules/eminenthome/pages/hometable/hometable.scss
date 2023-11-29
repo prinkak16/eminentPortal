@@ -269,3 +269,12 @@ font-size: 1rem !important;
   position: absolute;
   z-index: 1;
 }
+
+.blank-eminent-container {
+  min-height: 10rem;
+  margin: auto;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+}
