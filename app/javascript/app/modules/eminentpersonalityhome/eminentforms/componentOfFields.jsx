@@ -93,11 +93,11 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
                 fields.push('start_year','course')
-                fieldsData.start_year = '';
-                fieldsData.course = '';
+                fieldsData.start_year = '-';
+                fieldsData.course = '-';
             } else if (value === '12th Pass') {
                 fields.push('start_year')
-                fieldsData.start_year = '';
+                fieldsData.start_year = '-';
             } else {
                 fieldsData.start_year = '';
                 fieldsData.course = '';
@@ -118,7 +118,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     const minDate = (key) =>  {
         let date = new Date(1900, 0, 1)
         if (key === 'end_year') {
-            if (isValuePresent(fieldsData.start_year) && fieldsData.start_year !== 'NA') {
+            if (isValuePresent(fieldsData.start_year) && fieldsData.start_year !== '-') {
                 date = new Date(parseInt(fieldsData.start_year), 0, 1)
             }
         }
@@ -130,7 +130,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         if (key === 'start_year') {
             date = new Date()
         }
-        if (fieldsData.start_year === 'NA') {
+        if (fieldsData.start_year === '-') {
             date = new Date()
         }
 
@@ -168,7 +168,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     }
                 }
 
-                if (key === 'end_year' && fieldsData.end_year !== 'NA') {
+                if (key === 'end_year' && fieldsData.end_year !== '-') {
                     if (fieldsData.start_year > fieldsData.end_year) {
                         return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
                     }
@@ -180,7 +180,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }
 
     const notApplicableFields = (naType, key) => (event) => {
-        const valueToSet = event.target.checked ? naType === 'all' ? 'NA' : 'Current Working' : '';
+        const valueToSet = event.target.checked ? naType === 'all' ? '-' : 'Current Working' : '';
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
@@ -250,7 +250,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                                 label={f.name}
                                                 isRequired={isValuePresent(f?.isRequired)}
                                                 disabled={disabledField(f.key)}
-                                                value={isValuePresent(fieldValue(f.key)) ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
+                                                value={isValuePresent(fieldValue(f.key)) && fieldValue(f.key) !== '-' ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
                                                 maxDate={maxDate(f.key)}
                                                 onChange={handleEduStartDateChange(f.key)}
                                                 minDate={minDate(f.key)}
@@ -276,7 +276,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 ))}
                 {
                     jsonForm.title === 'Education Details' &&
-                    <Grid item xs={4}>
+                    <Grid item xs={4} style={{minWidth: '27rem'}}>
                         <FormLabel>Please Select if this is your Highest Qualification <mark>*</mark></FormLabel>
                         <input type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
