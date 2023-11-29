@@ -36,6 +36,12 @@ function GomPage({ tabId, filterString }) {
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
+    const [editMinisterData, setEditMinisterData] = useState({
+        name: '',
+        assigned_ministries: [],
+        allocated_ministries: [],
+        assigned_states: [],
+    });
 
 
     useEffect(() => {
@@ -46,16 +52,14 @@ function GomPage({ tabId, filterString }) {
                 const ministerIdsArray = Array.isArray(ministerIds) ? ministerIds : [ministerIds];
                 const ministryIdsArray = Array.isArray(ministryIds) ? ministryIds : [ministryIds];
 
-                console.log(ministryIdsArray, 'ministryids');
-        console.log(ministerIdsArray, 'ministerids');
 
         if (ministerIds || ministryIds) {
                     // API call with filter parameters
                     getMinistryByFilters({ minister_ids: ministerIdsArray, ministry_ids: ministryIdsArray })
                         .then((res) => {
-                            console.log("api responseafdfsd", res.data.data.value);
+
                             setGomTableData(res.data.data.value);
-                            console.log('aprie response123', res.value);
+
                             // Handle other data or state updates as needed
                         })
                         .catch((error) => {
@@ -108,18 +112,21 @@ function GomPage({ tabId, filterString }) {
            };
 
         const handleUpdateClick = () => {
+
+            const ministerId = editMinisterData.ministerId;
+
             try {
                 // Make API call for assigned ministries
                 const assignedMinistriesResponse =  axios.post(
-                    `/api/v1/user/16550/assign_ministries`,
-                    { ministry_ids: assignedMinistryIds }
+                    `/api/v1/user/${ministerId}/assign_ministries`,
+                    { ministry_ids: assignedMinistryIds}
 
                 );
                 console.log('Assigned Ministries API Response:', assignedMinistriesResponse.data);
 
                 // Make API call for own ministries after the first call is complete
                 const ownMinistriesResponse =  axios.post(
-                    `/api/v1/user/16550/allocate_ministries`,
+                    `/api/v1/user/${ministerId}/allocate_ministries`,
                     { ministry_ids: ownMinistryIds }
                 );
                 console.log('Allocate Ministries API Response:', ownMinistriesResponse.data);
@@ -175,7 +182,18 @@ function GomPage({ tabId, filterString }) {
             }
         };
 
-
+    const handleEditClick = (data) => {
+        console.log(data, 'editdkjwvnvo');
+        setEditMinisterData({
+            ministerId: data.user_id,
+            name: data.name,
+            assigned_ministries: data.assigned_ministries,
+            allocated_ministries: data.allocated_ministries,
+            assigned_states: data.assigned_states,
+        });
+        setWantToEdit(true);
+    };
+  console.log(editMinisterData,'id');
         const uploadFile = () => {
             hiddenFileInput.current.click();
         }
@@ -267,13 +285,16 @@ function GomPage({ tabId, filterString }) {
                                 </tr>
                                 {gomTableData.length && gomTableData.map((data, index) => {
                                     return (
-                                        <tr key={data.user_id} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
+                                        <tr key={data} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
                                             <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
                                             <td>{data.name}</td>
                                             <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={()=> setWantToEdit(true)}><EditIcon/></td>
+                                            <td onClick={() => handleEditClick(data)}>
+                                                <EditIcon />
+                                            </td>
+
                                         </tr>
                                     )
                                 })}
@@ -358,15 +379,19 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} style={{width:"200px",margin:1 }} />
+                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}  style={{width:"200px",margin:1 }} />
                             <div style={{display:"flex"}}>
                                 <div>
                                     <p>Assigned Ministries</p>
-                                    <MultipleSelectCheckmarks data={ministryData} onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
+                                    <MultipleSelectCheckmarks data={ministryData}
+                                                              selectedMinistries={editMinisterData.assigned_ministries}
+                                                              onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
                                 </div>
                                 <div>
                                     <p>Own Ministry</p>
-                                    <MultipleSelectCheckmarks data={ministryData} onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
+                                    <MultipleSelectCheckmarks data={ministryData}
+                                                              selectedMinistries={editMinisterData.allocated_ministries}
+                                                              onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
                                 </div>
                             </div>
                         </div>
