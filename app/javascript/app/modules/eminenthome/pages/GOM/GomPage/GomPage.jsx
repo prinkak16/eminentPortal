@@ -21,6 +21,7 @@ import {
 import axios from "axios";
 function GomPage({ tabId, filterString }) {
     const [gomTableData, setGomTableData] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
     const hiddenFileInput = useRef(null);
     const [currentPage, setCurrentPage] = useState('');
     const [wantToUpload, setWantToUpload] = useState(false);
@@ -36,6 +37,7 @@ function GomPage({ tabId, filterString }) {
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
+    const itemsPerPage = 2; // Number of items you want to display per page
     const [editMinisterData, setEditMinisterData] = useState({
         name: '',
         assigned_ministries: [],
@@ -80,9 +82,9 @@ function GomPage({ tabId, filterString }) {
                     // Handle other data or state updates as n
                     console.log(res.data.data.ministries, ' checking');
                 });
+             setPageCount(Math.ceil(gomTableData.length / itemsPerPage));
 
-
-            },  [filterString, ministerSearch, ministrySearch]);
+            },  [filterString, ministerSearch, ministrySearch,gomTableData]);
 
     const fetchData = async () => {
         try {
@@ -94,7 +96,6 @@ function GomPage({ tabId, filterString }) {
                     offset: 0,
                 },
             });
-            console.log('api response', response.data.data.value);
             // Update the search results
             setGomTableData(response.data.data.value);
         } catch (error) {
@@ -163,7 +164,8 @@ function GomPage({ tabId, filterString }) {
         // }, []);
 
         const handleClick = event => {
-            setWantToUpload(true);
+            const itemsPerPage = 5;
+            setPageCount(Math.ceil(apiData.length / itemsPerPage));
         };
 
         const handleSubmit = () => {
@@ -211,15 +213,16 @@ function GomPage({ tabId, filterString }) {
         };
 
 
-        const AssignUpdate = () =>{
-            assignMinistriesAndMinister(ministryIds, ministerId).then(res => {
-                // console.log(res);
-                // alert("You have successfully assign the ministry to the minister.")
-            })
-        }
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
+
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = gomTableData.slice(startIndex, endIndex);
 
 
-        console.log(gomTableData);
+    console.log(gomTableData);
         return (
             <>
                 <div className="mainDiv">
@@ -285,7 +288,7 @@ function GomPage({ tabId, filterString }) {
                                     <th style={{backgroundColor: "#F8F8F8"}}>Assigned States</th>
                                     <th style={{backgroundColor: "#F8F8F8"}}>Action</th>
                                 </tr>
-                                {gomTableData.length && gomTableData.map((data, index) => {
+                                {currentItems.length && currentItems.map((data, index) => {
                                     return (
                                         <tr key={data} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
                                             <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
@@ -305,27 +308,30 @@ function GomPage({ tabId, filterString }) {
                         </div>
 
                     </div>
-                    <div >
-                        <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;10</span>
-                        <ReactPaginate
-                            breakLabel="..."
-                            nextLabel="next >"
-                            containerClassName={'pagination justify-content-end'}
-                            onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
-                            pageLinkClassName={'page-link'}
-                            pageClassName={'page-item'}
-                            previousClassName={'page-item'}
-                            previousLinkClassName={'page-link'}
-                            nextClassName={'page-item'}
-                            nextLinkClassName={'page-link'}
-                            breakClassName={'page-item'}
-                            breakLinkClassName={'page-link'}
-                            activeClassName={'active'}// onPageChange={handlePageClick}
-                            pageRangeDisplayed={3}
-                            pageCount={10}
-                            previousLabel="< previous"
-                        />
-                    </div>
+                        <div>
+                            <div>
+
+                            <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
+                            </div>
+                            <ReactPaginate
+                                breakLabel="..."
+                                nextLabel="next >"
+                                containerClassName={'pagination justify-content-end'}
+                                onPageChange={handlePageChange}
+                                pageLinkClassName={'page-link'}
+                                pageClassName={'page-item'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                activeClassName={'active'}
+                                pageRangeDisplayed={3}
+                                pageCount={pageCount}
+                                previousLabel="< previous"
+                            />
+                        </div>
                     </div>
                 </div>
 
