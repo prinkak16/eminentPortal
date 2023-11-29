@@ -10,12 +10,17 @@ import FaceIcon from '@mui/icons-material/Face';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {useNavigate} from 'react-router-dom';
 import {ApiContext} from "../../ApiContext";
+import {eminentAdminDetails, eminentAdminLogout} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 function Header({userData}){
     const {isCandidateLogin, setAuthToken} = useContext(ApiContext)
     const clearCacheData = () => {
       if (isCandidateLogin) {
           localStorage.setItem('auth_token', '')
           setAuthToken('')
+      } else {
+          eminentAdminLogout().then((res) => {
+              window.location.reload()
+          })
       }
     };
     const navigate = useNavigate();

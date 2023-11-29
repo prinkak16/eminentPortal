@@ -221,13 +221,18 @@ const PersonalDetails = (props) => {
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="caste" value={props.formValues.caste} Z
-                                            placeholder="Enter Caste" onKeyPress={(e) => {
-                                    const key = e.key;
-                                    if (!/^[A-Za-z]+$/.test(key)) {
-                                        e.preventDefault();
-                                    }
-                                }}/>
+                                <Inputfield
+                                    type="text"
+                                    name="caste"
+                                    value={props.formValues.caste}
+                                    placeholder="Enter Caste"
+                                    onKeyPress={(e) => {
+                                        const key = e.key;
+                                        if (!/^[A-Za-z\s]*$/.test(key)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                />
                                 <ErrorMessage name="caste" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">

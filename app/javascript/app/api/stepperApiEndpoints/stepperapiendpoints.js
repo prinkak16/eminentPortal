@@ -77,6 +77,14 @@ export const getAssemblyData = (assembly) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + assembly)
 }
 
+export const eminentAdminLogout = () => {
+    return axios.delete(apiBaseUrl + 'auth_user/logout')
+}
+
+export const eminentAdminDetails = () => {
+    return axios.get(apiBaseUrl + 'auth_user/details')
+}
+
 export const getLocationsData = (params) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + params)
 }

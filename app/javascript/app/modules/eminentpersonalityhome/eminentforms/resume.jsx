@@ -212,7 +212,7 @@ const Resumeform = (props) => {
                         <Grid item xs={12}>
                             <Primarybutton addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>}
                                            buttonlabel="Add Child" handleclick={addChildren}/>
-                            {children.length > 0 ? (
+                            {children.length > 1 ? (
                                 <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>}
                                                handleclick={(e) => deleteChild(children.length - 1,e)}/>
                             ) : null}

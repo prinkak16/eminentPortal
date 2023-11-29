@@ -134,7 +134,6 @@ export default function PersistentDrawerLeft() {
 
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
-            <Header/>
             <Box sx={{display: 'flex'}} className="mt-5">
                 <Drawer
                     sx={{
