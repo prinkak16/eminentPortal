@@ -26,6 +26,7 @@ import {
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
+import RadioButton from "./radioButton";
 
 const Educationform = (props) => {
     const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
@@ -58,9 +59,22 @@ const Educationform = (props) => {
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
 
-    const setHighestQualification = (value) => {
-        setEducationLevel(value);
-        props.formValues.education_level = value;
+    const setHighestQualification = (id) => {
+        setEducationDetails((prevFormValues) => {
+            return prevFormValues.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['highest_qualification']: true,
+                    };
+                } else {
+                    return {
+                        ...form,
+                        ['highest_qualification']: false,
+                    };
+                }
+            });
+        });
     };
 
     useEffect(() => {
@@ -117,12 +131,17 @@ const Educationform = (props) => {
             end_year: formData.end_year,
             highest_qualification: formData.highest_qualification,
         };
+
+
         setEducationDetails((prevData) =>
             isValuePresent(id)
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
         setBackDropToggle(false)
+        if (formData.highest_qualification) {
+            setHighestQualification(newFormData.id)
+        }
     }
 
     const professionSave = (formData, id) => {
@@ -154,11 +173,13 @@ const Educationform = (props) => {
     const editEducationForm = (type,id) => {
         setShowList('')
         if (type === 'education') {
+            setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
             if (form) {
                 setEducationEditField(form)
             }
         } else {
+            setProfessionEditField({})
             const form = professionDetails.find((item) => item.id === id);
             if (form) {
                 setProfessionEditField(form)
@@ -220,19 +241,6 @@ const Educationform = (props) => {
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
-                    <Grid item xs={6} className='education-field pb-3'>
-                        <Grid item xs={7}>
-                            <FormLabel>Education Level ( Highest ) <mark>*</mark></FormLabel>
-                            <AutoCompleteDropdown
-                                name='Education Level ( Highest )'
-                                selectedValue={educationLevel}
-                                listArray={EducationData}
-                                placeholder={"Select Highest Education"}
-                                onChangeValue={setHighestQualification}
-                            />
-                            <ErrorMessage name="education_level" style={{color:'red'}} component="p" />
-                        </Grid>
-                    </Grid>
                 </Grid>
                 {educationDetails.length > 0 && (
                     <div className="data-table">
@@ -250,7 +258,15 @@ const Educationform = (props) => {
                             <tbody>
                             {educationDetails.map((data, index) => (
                                 <tr>
-                                    <td>{data.qualification}</td>
+                                    <td>
+                                        <div className='qualification-name'>
+                                            <span className='highest-qualification-radio'>
+                                               <input type='radio' checked={data.highest_qualification}
+                                                       onClick={(e) => setHighestQualification(data.id)}/>
+                                             </span>
+                                            {data.qualification}
+                                        </div>
+                                    </td>
                                     <td>{data.course}</td>
                                     <td>{data.university}</td>
                                     <td>{data.college}</td>
@@ -280,7 +296,7 @@ const Educationform = (props) => {
                 )}
                 {!backDropToggle &&
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
-                                       isEditable={educationEditField} educationsList={educationsList}/>
+                                       isEditable={educationEditField} educationsList={EducationData}/>
                 }
 
                 <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
@@ -371,13 +387,10 @@ const Educationform = (props) => {
 }
 Educationform.label = 'Education and Profession'
 Educationform.initialValues = {
-    education_level: "",
     profession_description:"",
     educations: [],
     professions: [],
 };
 Educationform.validationSchema = Yup.object().shape({
-    education_level: Yup.string().required('Please select your high qualification'),
-
 });
 export default Educationform

@@ -6,6 +6,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
 import {getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
+import Tooltip from "@mui/material/Tooltip";
 const Analytics = (props) => {
     const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
@@ -34,6 +35,13 @@ const Analytics = (props) => {
                 break;
         }
     },[])
+
+    const tooltipTitle =
+        {
+            'Total Eminent Personality': 'Total count of eminents.',
+            'Total Completed Form': 'Forms which are submitted.',
+            'Total Incompleted Form': 'Forms with empty mandatory fields.'
+        }
 
     const createAnalyticCard = () => {
         return Object.keys(homeStats).map(value=>{
@@ -134,22 +142,26 @@ const Analytics = (props) => {
             }
             return <div className="col" key={value}>
                <div className="card">
-                   <div className="card-body d-flex p-0">
-                       <div> {iconType === 'svg' ?
-                           <p className="align-middle">{icon}</p>
-                           :
-                           <img className={`analytics-icon-image ${label}`}src={icon} alt={label}/>
-                       }
+                   <Tooltip title={tooltipTitle[label]} placement="top" arrow>
+                       <div className="card-body d-flex p-0">
+                           <div> {iconType === 'svg' ?
+                               <p className="align-middle">{icon}</p>
+                               :
+                               <img className={`analytics-icon-image ${label}`} src={icon} alt={label}/>
+                           }
+                           </div>
+                           <div className="ms-4">
+                               <p className="cardlabel mb-0">{label}</p>
+                               <p className="cardvalue">{homeStats[value]}</p>
+                           </div>
                        </div>
-                       <div className="ms-4">
-                           <p className="cardlabel mb-0">{label}</p>
-                           <p className="cardvalue">{homeStats[value]}</p>
-                       </div>
-                   </div>
+                   </Tooltip>
                </div>
            </div>
         })
     }
+
+
 
     return (
         <>

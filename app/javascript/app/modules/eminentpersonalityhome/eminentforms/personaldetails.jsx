@@ -41,10 +41,6 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 const PersonalDetails = (props) => {
     const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
-
-
-
-
     useEffect(() => {
     },[props.formValues.dob])
     const Item = styled(Paper)(({theme}) => ({
@@ -67,6 +63,10 @@ const PersonalDetails = (props) => {
     useEffect(() => {
         setEminentAge(props.formValues.dob)
     },[props.formValues.dob])
+
+    useEffect(() => {
+        props.formValues.mobiles = props.userData.mobiles
+    },[])
 
     useEffect(() => {
         setUserPhoto(props.formValues.photo)
@@ -182,7 +182,7 @@ const PersonalDetails = (props) => {
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
                             <Grid item xs={12}>
                                 <FormLabel>Name <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Enter Name"
+                                <Inputfield type="text" name="name" placeholder="Full Name (As per PAN Card)"
                                             value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z\s]+$/.test(key)) {
