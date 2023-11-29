@@ -8,7 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 import ComponentOfFields from './componentOfFields'
 import {
     getEducationData,
-    getFormData,
+    getFormData, getProfessionData,
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 
@@ -33,6 +33,7 @@ const Educationform = (props) => {
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
+    const [professionData, setProfessionData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
     const [educationsList, setEducationsList] = useState([]);
@@ -85,6 +86,24 @@ const Educationform = (props) => {
         });
     };
 
+    const setCurrentWorking = (id) => {
+        setProfessionDetails((prevFormValues) => {
+            return prevFormValues.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['end_year']: 'Current Working',
+                    };
+                } else {
+                    return {
+                        ...form,
+                        ['end_year']: '',
+                    };
+                }
+            });
+        });
+    }
+
     useEffect(() => {
         const filteredItems = EducationData.filter((item) => item === educationLevel);
         const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
@@ -108,8 +127,16 @@ const Educationform = (props) => {
         })
     }
 
+      const getProfession = () => {
+        getProfessionData.then((response) => {
+            const data = response.data.data.map(item => item.name)
+            setProfessionData(data)
+        })
+    }
+
     useEffect(() => {
         getEducation()
+        getProfession()
     },[])
 
     const handleSave = ( title, formData, id) => {
@@ -133,10 +160,10 @@ const Educationform = (props) => {
             id: uuidv4(),
             qualification: formData.qualification,
             college: formData.college,
-            course: formData.course,
+            course: isValuePresent(formData.course) ? formData.course : '-',
             university: formData.university,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
             highest_qualification: formData.highest_qualification,
         };
 
@@ -146,20 +173,20 @@ const Educationform = (props) => {
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
-        setBackDropToggle(false)
         if (formData.highest_qualification) {
             setHighestQualification(newFormData.id)
         }
+        setBackDropToggle(false)
     }
 
     const professionSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
             profession: formData.profession,
-            position: formData.position,
-            organization: formData.organization,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            position: isValuePresent(formData.position) ? formData.position : '-',
+            organization: isValuePresent(formData.organization) ? formData.organization : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setProfessionDetails((prevData) =>
@@ -167,6 +194,9 @@ const Educationform = (props) => {
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        if (formData.end_year === 'Current Working') {
+            setCurrentWorking(newFormData.id)
+        }
         setBackDropToggle(false)
     }
 
@@ -179,14 +209,16 @@ const Educationform = (props) => {
     }, [professionDetails]);
 
     const editEducationForm = (type,id) => {
-        setShowList('')
+        setShowList(null)
         if (type === 'education') {
+            scrollToBottom(500)
             setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
             if (form) {
                 setEducationEditField(form)
             }
         } else {
+            scrollToBottom(1300)
             setProfessionEditField({})
             const form = professionDetails.find((item) => item.id === id);
             if (form) {
@@ -206,7 +238,7 @@ const Educationform = (props) => {
 
 
     const deleteFields = (type, id) => {
-        setShowList('')
+        setShowList(null)
         if (type === 'education') {
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
@@ -237,6 +269,14 @@ const Educationform = (props) => {
             setShowList(id)
         }
     }
+
+    const scrollToBottom = (scroll) => {
+        window.scrollTo({
+            top: scroll, // Scroll to the bottom
+            behavior: 'smooth', // Optional: Add smooth scrolling animation
+        });
+    };
+
 
     return (
         <>
@@ -366,7 +406,7 @@ const Educationform = (props) => {
                 )}
                 {!backDropToggle &&
                     <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                       isEditable={professionEditField} isViewDisabled={isViewDisabled}/>
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData}/>
                 }
                 {/*<Grid container sx={{my: 5}} className="grid-wrap">*/}
                 {/*</Grid>*/}

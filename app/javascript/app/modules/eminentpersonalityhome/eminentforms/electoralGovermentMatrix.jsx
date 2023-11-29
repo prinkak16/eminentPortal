@@ -65,7 +65,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             const portFolio = updatedFieldsData.minister_portfolio_array
             if (isValuePresent(portFolio) && portFolio.length > 1) {
               for (let i = 0; i < portFolio.length -1; i++) {
-                  addMinistries()
+                  setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
               }
             }
         }
@@ -124,14 +124,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
 
         if (fieldKey === 'minister_portfolio') {
-            debugger
             if (value === 'Yes') {
                 fieldsData['minister_portfolio_array'] = [ministryPortfolioObject]
                 setMinistriesField([])
             } else {
                 fieldsData['minister_portfolio_array'] = []
             }
-
         }
 
         setData(fieldKey, value)
@@ -187,9 +185,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
     }
 
-    const deleteMinistry = (e) => {
+    const deleteMinistry = () => {
         if (!isViewDisabled) {
-            e.preventDefault();
             const updatedMinisterPortfolioArray = [...fieldsData.minister_portfolio_array];
             updatedMinisterPortfolioArray.pop();
             setFieldsData((prevFieldsData) => ({
@@ -198,6 +195,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             }));
             const updatedMinistries = ministriesField.slice(0, -1);
             setMinistriesField(updatedMinistries);
+            setIsDataSet(true)
         }
     };
 
@@ -212,8 +210,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         }
     },[electionTypeChange])
 
-console.log(ministriesField,'ministriesField')
-console.log(fieldsData ,'fieldsData')
+
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
@@ -449,9 +446,11 @@ console.log(fieldsData ,'fieldsData')
                        <span className='add-ministry'>
                             <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
                        </span>
-                        <span className='delete-ministry' onClick={(e) => deleteMinistry(e)}>
-                            <DeleteIcon/> Delete
-                       </span>
+                        {ministriesField.length > 0 &&
+                            <span className='delete-ministry' onClick={deleteMinistry}>
+                                <DeleteIcon/> Delete
+                          </span>
+                        }
                     </div>
                 }
             </Grid>

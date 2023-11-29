@@ -106,6 +106,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
                             });
                         }
                         handleNext();
+                        scrollToTop()
                     }
                 });
             } else {
@@ -113,6 +114,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
             }
         } else {
             handleNext();
+            scrollToTop()
         }
     };
 
@@ -230,7 +232,15 @@ const FormWrap=({userData, stateId, viewMode})=>{
         setBackDropToggle(false)
     }
 
-    return(
+        const scrollToTop = () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth', // Optional: Add smooth scrolling animation
+            });
+        };
+
+
+        return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid className='detailFrom' container spacing={2}>

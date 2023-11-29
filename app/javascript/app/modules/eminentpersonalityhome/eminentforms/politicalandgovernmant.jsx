@@ -97,7 +97,9 @@ const PolticalandGovrnform =(props)=>{
     };
 
     const editForm = (type,id) => {
+        setShowList(null)
         if (type === 'Political Profile') {
+            scrollToBottom(400)
             setEditableProfileField({})
             const form = politicalProfileDetails.find((item) => item.id === id);
             if (form) {
@@ -105,6 +107,7 @@ const PolticalandGovrnform =(props)=>{
             }
         }
         else {
+            scrollToBottom(1200)
             setEditableOtherPartyField({})
             const form = otherPartyDetails.find((item) => item.id === id);
             if (form) {
@@ -115,6 +118,7 @@ const PolticalandGovrnform =(props)=>{
     };
 
     const deleteFormFields = (type, id) => {
+        setShowList(null)
         if (type === 'Political Profile') {
             const form = politicalProfileDetails.filter((item) => item.id !== id);
             if (form) {
@@ -132,10 +136,10 @@ const PolticalandGovrnform =(props)=>{
         const newFormData = {
             id: uuidv4(),
             party_level: formData.party_level,
-            unit: formData.unit,
-            designation: formData.designation,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            unit: isValuePresent(formData.unit) ? formData.unit : '-',
+            designation: isValuePresent(formData.designation) ? formData.designation : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setPoliticalProfileDetails((prevData) =>
@@ -150,9 +154,9 @@ const PolticalandGovrnform =(props)=>{
         const newFormData = {
             id: uuidv4(),
             party: formData.party,
-            position: formData.position,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            position: isValuePresent(formData.position) ? formData.position : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setOtherPartyDetails((prevData) =>
@@ -285,7 +289,14 @@ const PolticalandGovrnform =(props)=>{
         }
     }
 
-console.log(electoralDetails, 'electoralDetails123')
+    const scrollToBottom = (scroll) => {
+        window.scrollTo({
+            top: scroll, // Scroll to the bottom
+            behavior: 'smooth', // Optional: Add smooth scrolling animation
+        });
+    };
+
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>

@@ -28,7 +28,7 @@ export const educationDetailsJson = {
         {
             type: 'dropdown',
             na_button: false,
-            list: ['Less than 10th', '10th Pass', 'Diploma/ITI', '12th Pass', 'Graduate', 'Post Graduate', 'PhD and Above'],
+            list: [],
             name: 'Qualification',
             key: 'qualification',
             placeholder: 'Select Party level',
@@ -77,11 +77,12 @@ export const ProfessionJson = {
     title: 'Profession Profile',
     fields: [
         {
+            list: [],
             key: 'profession',
             na_button: false,
             name: "Profession",
             placeholder: 'Enter profession',
-            type: 'textField',
+            type: 'dropdown',
             isRequired: true
         },
         {
@@ -120,6 +121,7 @@ export const politicalProfileJson = {
     title: 'Political Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party_level',
             na_button: false,
             name: "Party Level",
@@ -160,6 +162,7 @@ export const otherPartyJson = {
     title: 'Other Party Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party',
             na_button: false,
             name: "Party",
