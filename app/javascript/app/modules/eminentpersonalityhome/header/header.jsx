@@ -10,10 +10,11 @@ import FaceIcon from '@mui/icons-material/Face';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {useNavigate} from 'react-router-dom';
 import {ApiContext} from "../../ApiContext";
+import UserIcon from '../../../../../../public/images/user-profile-icon1.svg';
 import {eminentAdminDetails, eminentAdminLogout} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 function Header({userData}){
     const {isCandidateLogin, setAuthToken} = useContext(ApiContext)
-    const clearCacheData = () => {
+    const logout = () => {
       if (isCandidateLogin) {
           localStorage.setItem('auth_token', '')
           setAuthToken('')
@@ -46,10 +47,11 @@ function Header({userData}){
 
             <div className='header-right-part'>
                 <div className='navbar-profile'>
+                    <UserIcon />
                     <span>
                         <span className="d-block">{userData?.name}</span><br/>
                     </span>
-                    <HeaderArrowDown onClick={handleOpen}/>
+                    <HeaderArrowDown className='profile-arrow-svg' onClick={handleOpen}/>
                 </div>
                 <Menu
                     className='logout-navbar'
@@ -69,8 +71,8 @@ function Header({userData}){
                         horizontal: 'right',
                     }}
                 >
-                    <MenuItem className='logout-navbar-text' onClick={() => clearCacheData()}>{<><FaceIcon/>&emsp;Profile</>}</MenuItem>
-                    <MenuItem className='logout-navbar-text' onClick={() => clearCacheData()}>{<><LogoutIcon/>&emsp;Logout</>}</MenuItem>
+                    <MenuItem className='logout-navbar-text' >{<><FaceIcon/>&emsp;Profile</>}</MenuItem>
+                    <MenuItem className='logout-navbar-text' onClick={() => logout()}>{<><LogoutIcon/>&emsp;Logout</>}</MenuItem>
                 </Menu>
             </div>
         </div>

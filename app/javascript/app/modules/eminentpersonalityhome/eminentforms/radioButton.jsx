@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import './radioButton.css'
 
-const RadioButton = ({radioList, onClicked, fieldKey, selectedValue}) => {
+const RadioButton = ({radioList, onClicked, fieldKey, selectedValue, isNameHide}) => {
     const [value, setValue] = useState('')
     const clicked = (newValue) => {
         if (typeof onClicked === 'function') {
@@ -22,7 +22,7 @@ const RadioButton = ({radioList, onClicked, fieldKey, selectedValue}) => {
                         <span className={`radio-btn-inner-component${value === button ? '-active' : ''}`}></span>
                     </div>
                     <span>
-                        {button}
+                        {isNameHide ? '' : button}
                      </span>
                 </div>
             ))}
