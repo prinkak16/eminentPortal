@@ -20,7 +20,7 @@ import {
 import NumberField from "../component/numberfield/numberfield";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex, setBackDropToggle}) => {
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [ministriesField, setMinistriesField] = useState([]);
     const [editField, setEditField] = useState(0);
@@ -118,6 +118,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         if (fieldKey === 'minister_portfolio') {
             if (value === 'Yes') {
                 fieldsData['minister_portfolio_array'] = [ministryPortfolioObject]
+                setMinistriesField([])
             } else {
                 fieldsData['minister_portfolio_array'] = [{}]
             }
@@ -178,6 +179,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     const getFieldsValue = (key, index) => {
        return  ministriesKey.includes(key) ? fieldsData.minister_portfolio_array[index][key] : fieldsData[key]
     }
+
+    useEffect(() => {
+        if (isValuePresent(electionTypeChange)) {
+            setFieldsData({})
+        }
+    },[electionTypeChange])
 
     return (
         <div>

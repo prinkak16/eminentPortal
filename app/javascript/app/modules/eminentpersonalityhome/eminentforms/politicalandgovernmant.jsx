@@ -50,6 +50,7 @@ const PolticalandGovrnform =(props)=>{
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
+    const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
 
 
     const addSocialFields = () => {
@@ -205,9 +206,14 @@ const PolticalandGovrnform =(props)=>{
 
 
     const changeElectionType = (value,name ,type, formIndex) => {
+        setIsElectionTypeChange(true)
         const updatedElectoralData = [...electoralDetails];
         updatedElectoralData[formIndex].election_type = value;
+        updatedElectoralData[formIndex].election_details = {}
         setElectoralDetails(updatedElectoralData);
+        setTimeout(function() {
+            setIsElectionTypeChange(false)
+        },100)
     }
 
 
@@ -265,6 +271,9 @@ const PolticalandGovrnform =(props)=>{
             setShowList(id)
         }
     }
+
+
+    console.log(electoralDetails)
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -504,6 +513,7 @@ const PolticalandGovrnform =(props)=>{
                                                         isEditable={field.election_details}
                                                         formIndex={index}
                                                         setBackDropToggle={setBackDropToggle}
+                                                        electionTypeChange={isElectionTypeChange}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
                                                     <Primarybutton
