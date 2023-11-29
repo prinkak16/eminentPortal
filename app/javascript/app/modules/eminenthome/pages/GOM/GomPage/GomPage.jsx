@@ -43,7 +43,7 @@ function GomPage({ tabId, filterString }) {
                 const ministerIds = params.get('minister_ids');
                 const ministryIds = params.get('ministry_ids');
 
-                if (ministerIds && ministryIds) {
+                if (ministerIds || ministryIds) {
                     // API call with filter parameters
                     getMinistryByFilters({ minister_ids: ministerIds, ministry_ids: ministryIds })
                         .then((res) => {
@@ -71,18 +71,18 @@ function GomPage({ tabId, filterString }) {
                 try {
                     const response = await axios.get('/api/v1/gom/assigned_ministries', {
                         params: {
-                            minister_names: ministerSearch,
-                            ministry_names: ministrySearch,
+                            minister_name: ministerSearch,
+                            ministry_name: ministrySearch,
                             limit: 10,
                             offset: 0,
                         },
                     });
 
                     // Update the search results
-                    setSearchResults(response.data);
+                    // setSearchResults(response.data);
                 } catch (error) {
                     // Handle errors
-                    console.error(error);
+                    // console.error(error);
                 }
             };
 

@@ -81,7 +81,7 @@ export const getMinisters = () => {
 }
 
 export const getMinistryByFilters = (filterParams) => {
-    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters', {
+    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filtersfilterParams?minister_ids=11917&ministry_ids=1,2&limit=10&offset=0', {
         params: filterParams,
     })
 }

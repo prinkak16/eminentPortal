@@ -47,6 +47,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const [wantToUpload, setWantToUpload] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [selectedFile, setSelectedFile] = useState();
+    const {type} = useParams();
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
     const [email, setEmail] = useState();
@@ -87,6 +89,35 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
             }
         }
     };
+
+    const handleSubmitUpload = () => {
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${encodeURIComponent(email)}`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the server, e.g., show a success message
+                    console.log('File uploaded successfully', data);
+                })
+                .catch(error => {
+                    // Handle errors, e.g., show an error message
+                    console.error('Error uploading file', error);
+                })
+                .finally(() => {
+                    // Close the modal or perform any cleanup
+                    setWantToUpload(false);
+                });
+        } else {
+            // Handle the case where no file is selected (optional)
+            console.error('No file selected for upload');
+        }
+    };
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -233,7 +264,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                             Cancel
                         </button>
                         <button
-                            className="btn addNewSubmit" onClick={handleSubmit}>
+                            className="btn addNewSubmit" onClick={()  => handleSubmit()}>
                             Submit
                         </button>
                         <button
@@ -280,8 +311,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                    <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
                                    <p className="d-flex justify-content-center">or</p>
                                    <p className="d-flex justify-content-center">Click here to upload</p>
-                                   <input placeholder="Enter Email" type="email"/>
-                                   <button className="Submit" >
+                                   <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
+                                   <button className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
                                </div>
