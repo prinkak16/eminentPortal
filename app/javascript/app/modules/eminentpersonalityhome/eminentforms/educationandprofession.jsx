@@ -179,6 +179,7 @@ const Educationform = (props) => {
                 setEducationEditField(form)
             }
         } else {
+            setProfessionEditField({})
             const form = professionDetails.find((item) => item.id === id);
             if (form) {
                 setProfessionEditField(form)

@@ -28,6 +28,7 @@ import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
+import Tooltip from "@mui/material/Tooltip";
 
 const PolticalandGovrnform =(props)=>{
     const {config, isCandidateLogin, setBackDropToggle,backDropToggle} = useContext(ApiContext)
@@ -84,12 +85,14 @@ const PolticalandGovrnform =(props)=>{
 
     const editForm = (type,id) => {
         if (type === 'Political Profile') {
+            setEditableProfileField({})
             const form = politicalProfileDetails.find((item) => item.id === id);
             if (form) {
                 setEditableProfileField(form)
             }
         }
         else {
+            setEditableOtherPartyField({})
             const form = otherPartyDetails.find((item) => item.id === id);
             if (form) {
                 setEditableOtherPartyField(form)
@@ -434,7 +437,11 @@ const PolticalandGovrnform =(props)=>{
                                         placeholder="Enter Organization "/>
                                 </Grid>
                                 <Grid item xs={12} className='organization-description-grid'>
-                                    <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                                    <FormLabel>Description
+                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
+                                            <InfoOutlinedIcon/>
+                                        </Tooltip>
+                                    </FormLabel>
                                     <TextField
                                         className='p-0'
                                         fullWidth
