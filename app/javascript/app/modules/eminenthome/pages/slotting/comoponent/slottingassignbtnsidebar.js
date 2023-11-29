@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import {getSlottingPsuData} from "../../../../../api/eminentapis/endpoints";
+import {assignSlottingVacancy, getSlottingPsuData} from "../../../../../api/eminentapis/endpoints";
 import {useEffect, useState} from "react";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
@@ -24,6 +24,7 @@ import './slottingassignbtnsidebar.css'
 import AddIcon  from '@mui/icons-material/Add'
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
+import {value} from "lodash/seq";
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -33,35 +34,79 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-start',
 }));
 
-const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
-    const [slottingPsuDetail, setSlottingPsuDetail] = useState([])
-    const [vacancyCount, setVacancyCount] = useState(null)
+const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> {
+    const [slottingPsuDetail, setSlottingPsuDetail] = useState({})
+    const [slottingVacancyDetail, setSlottingVacancyDetail] = useState([])
+    const [vacancyCount, setVacancyCount] = useState(0)
     const [slottingStateData, setSlottingStateData] = useState([])
     const [addMore, setAddMore] = useState(false)
+    const [stateId, setStateId] = useState()
+    const [remarks, setRemarks] = useState()
+
+    const customFunction = () => {
+        getSlottingPsuData(psuId).then(response => {
+            setSlottingPsuDetail(response.data.data.stats[0]);
+            // setSlottingVacancyDetail(response.data.data.slotting);
+            // console.log('res', response.data.data.slotting)
+        })
+    }
     const slottingPsuData = ()=>{
-        getSlottingPsuData(psuId).then(res => {
+            getSlottingPsuData(psuId).then(res => {
             setSlottingPsuDetail(res.data.data.stats)
         })
     }
-    const handleDecreaseCount = ()=>{
-        setVacancyCount(vacancyCount - 1)
+    const assignVacancyStateData = ()=>{
+        getSlottingPsuData(psuId).then(res => {
+            setSlottingVacancyDetail(res.data.data.slotting.value)
+        })
     }
-    const handleIncreaseCount = ()=>{
-        setVacancyCount(vacancyCount + 1)
+    const handleDecreaseCount = ()=> {
+        if(vacancyCount  >= 1){
+            setVacancyCount(vacancyCount - 1)
+        }
+
+    }
+    const handleIncreaseCount = ()=> {
+        if(vacancyCount + 1 <= slottingPsuDetail.vacant){
+            setVacancyCount(vacancyCount + 1)
+            console.log(vacancyCount)
+        }
     }
     const slottingState = () => {
         getStateData.then((res) => {
             setSlottingStateData(res.data.data)
         })
     }
-    const handleSave = () =>{
-        console.log('save')
+    const handleStateChange = (event) => {
+        setStateId(event.target.value)
     }
+    const handleRemarksChange = (event) =>{
+        setRemarks(event.target.value)
+    }
+    const handleAddMore = () => {
+        setAddMore(!addMore)
+    }
+    const handleSave = () =>{
+        if(addMore === true) {
+            const vacancyData = {
+                ministry_id: slottingMinistryId,
+                organization_id: psuId,
+                vacancy_count: vacancyCount,
+                state_id: stateId,
+                remarks: remarks,
+            }
+            assignSlottingVacancy(vacancyData).then((res) => res.json())
+            setAddMore(false)
+        }
+        else {
+            handleAddMore()
+            assignVacancyStateData()
+        }}
     useEffect(() => {
-        slottingPsuData()
+        customFunction();
         slottingState()
-        setAddMore(true)
     }, []);
+
     return (
         <Box sx={{ display: 'flex' }}>
             <Drawer
@@ -89,13 +134,12 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {slottingPsuDetail.map((pusDetail, index) =>
-                                <TableRow key={pusDetail.id}>
-                                    <TableCell>{pusDetail.name}</TableCell>
-                                    <TableCell>{pusDetail.total}</TableCell>
-                                    <TableCell>{pusDetail.occupied}</TableCell>
-                                    <TableCell>{pusDetail.vacant}</TableCell>
-                                </TableRow>)}
+                            <TableRow key={slottingPsuDetail.id}>
+                                <TableCell>{slottingPsuDetail.name}</TableCell>
+                                <TableCell>{slottingPsuDetail.total}</TableCell>
+                                <TableCell>{slottingPsuDetail.occupied}</TableCell>
+                                <TableCell>{slottingPsuDetail.vacant}</TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -123,21 +167,34 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                                     id="outlined-select-currency"
                                     select
                                     fullWidth
+                                    name="state"
+                                    onChange={handleStateChange}
                                 >
                                     <MenuItem>test</MenuItem>
                                     {slottingStateData?.map((item, index) => (
-                                        <MenuItem key={index.id}  value={item.name}>
+                                        <MenuItem key={index.id}  value={item.id}>
                                             {item.name}
                                         </MenuItem>
                                     ) )}
                                 </TextField>
                             </div>
+                                <Button className="savebtn mt-3 " onClick={handleSave}>Save</Button>
+
                         </div>
                             <div>
                             <Typography className="mb-2">
                                 Remarks
                             </Typography>
-                            <TextField className="p-2" fullWidth multiline rows={3} id="outlined-basic"  variant="outlined" placeholder="E.g. requirement of 1 woman director, requirement of 1 financial background." />
+                            <TextField
+                                className="p-2"
+                                fullWidth
+                                multiline
+                                rows={3}
+                                name="remarks"
+                                id="outlined-basic"
+                                variant="outlined"
+                                onChange={handleRemarksChange}
+                                placeholder="E.g. requirement of 1 woman director, requirement of 1 financial background." />
                         </div>
                         </div>
                     )}
@@ -153,19 +210,27 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {/*{slottingPsuDetail.map((pusDetail, index) =>*/}
-                                    <TableRow >
-                                        <TableCell>1</TableCell>
-                                        <TableCell>10</TableCell>
-                                        <TableCell>Rajasthan</TableCell>
-                                        <TableCell> 1 woman required</TableCell>
-                                    </TableRow>
-                                {/*)}*/}
+                                {/*{(slottingVacancyDetail.value !== []) ? slottingVacancyDetail.value.map((vacancy, index) =>*/}
+                                {/*    <TableRow>*/}
+                                {/*        <TableCell>{vacancy.vacancy_count}</TableCell>*/}
+                                {/*        <TableCell>{vacancy.country_state_name}</TableCell>*/}
+                                {/*        <TableCell>{vacancy.slotting_remarks}</TableCell>*/}
+                                {/*        <TableCell> {vacancy.country_state_name}</TableCell>*/}
+                                {/*    </TableRow>*/}
+                                {/*)*/}
+                                {/*:*/}
+                                {/*    <TableRow>*/}
+                                {/*        <TableCell></TableCell>*/}
+                                {/*        <TableCell></TableCell>*/}
+                                {/*        <TableCell></TableCell>*/}
+                                {/*        <TableCell></TableCell>*/}
+                                {/*    </TableRow>*/}
+                                {/*}*/}
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {(addMore === false) ? ( <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>): ''}
 
-                    <Button className="savebtn" onClick={handleSave}>Save</Button>
                 </div>
             </Drawer>
         </Box>
