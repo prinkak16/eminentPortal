@@ -23,6 +23,7 @@ import TableBody from "@mui/material/TableBody";
 import './slottingassignbtnsidebar.css'
 import AddIcon  from '@mui/icons-material/Add'
 import MinimizeIcon from '@mui/icons-material/Minimize';
+import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -35,20 +36,32 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
     const [slottingPsuDetail, setSlottingPsuDetail] = useState([])
     const [vacancyCount, setVacancyCount] = useState(null)
+    const [slottingStateData, setSlottingStateData] = useState([])
+    const [addMore, setAddMore] = useState(false)
     const slottingPsuData = ()=>{
         getSlottingPsuData(psuId).then(res => {
             setSlottingPsuDetail(res.data.data.stats)
         })
     }
-    useEffect(() => {
-        slottingPsuData()
-    }, []);
     const handleDecreaseCount = ()=>{
         setVacancyCount(vacancyCount - 1)
     }
     const handleIncreaseCount = ()=>{
         setVacancyCount(vacancyCount + 1)
     }
+    const slottingState = () => {
+        getStateData.then((res) => {
+            setSlottingStateData(res.data.data)
+        })
+    }
+    const handleSave = () =>{
+        console.log('save')
+    }
+    useEffect(() => {
+        slottingPsuData()
+        slottingState()
+        setAddMore(true)
+    }, []);
     return (
         <Box sx={{ display: 'flex' }}>
             <Drawer
@@ -86,45 +99,76 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId})=> {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div className="vacancytostate">
-                    <div className="d-flex justify-content-between">
+                <div className="vacancytostate mt-3">
+                    {addMore && (
                         <div>
-                            <Typography>
-                                Vacancy Count
-                            </Typography>
-                            <div>
-                                <Button onClick={handleDecreaseCount}><MinimizeIcon/></Button>
-                                <Typography>
-                                    {vacancyCount}
+                            <div className="d-flex">
+                            <div className="me-3">
+                                <Typography className="mb-2">
+                                    Vacancy Count
                                 </Typography>
-                                <Button onClick={handleIncreaseCount}><AddIcon/></Button>
+                                <div className="d-flex">
+                                    <Button onClick={handleDecreaseCount}><MinimizeIcon/></Button>
+                                    <Typography className="countnumber mx-2" >
+                                        {vacancyCount}
+                                    </Typography>
+                                    <Button onClick={handleIncreaseCount}><AddIcon/></Button>
+                                </div>
+                            </div>
+                            <div>
+                                <Typography className="mb-2">
+                                    Vacancy Count
+                                </Typography>
+                                <TextField
+                                    id="outlined-select-currency"
+                                    select
+                                    fullWidth
+                                >
+                                    <MenuItem>test</MenuItem>
+                                    {slottingStateData?.map((item, index) => (
+                                        <MenuItem key={index.id}  value={item.name}>
+                                            {item.name}
+                                        </MenuItem>
+                                    ) )}
+                                </TextField>
                             </div>
                         </div>
-                        <div>
-                            <Typography>
-                                Vacancy Count
+                            <div>
+                            <Typography className="mb-2">
+                                Remarks
                             </Typography>
-                            <TextField
-                                id="outlined-select-currency"
-                                select
-                                >
-                                    <MenuItem>
-                                        Test
-                                    </MenuItem>
-
-                            </TextField>
+                            <TextField className="p-2" fullWidth multiline rows={3} id="outlined-basic"  variant="outlined" placeholder="E.g. requirement of 1 woman director, requirement of 1 financial background." />
                         </div>
-                    </div>
+                        </div>
+                    )}
+                    <TableContainer component={Paper} className="slottingassigntable">
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Sr. no</TableCell>
+                                    <TableCell>Vacancy Count</TableCell>
+                                    <TableCell>State</TableCell>
+                                    <TableCell>Remarks</TableCell>
+                                    <TableCell>Action</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {/*{slottingPsuDetail.map((pusDetail, index) =>*/}
+                                    <TableRow >
+                                        <TableCell>1</TableCell>
+                                        <TableCell>10</TableCell>
+                                        <TableCell>Rajasthan</TableCell>
+                                        <TableCell> 1 woman required</TableCell>
+                                    </TableRow>
+                                {/*)}*/}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                    <Button className="savebtn" onClick={handleSave}>Save</Button>
                 </div>
             </Drawer>
         </Box>
     );
 }
 export default AssignBtnSidebar;
-
-// const psudetails={
-//     psuName:"Balmer Lawrie",
-//     total_position:12,
-//     occupied:9,
-//     vacant:10,
-// }
