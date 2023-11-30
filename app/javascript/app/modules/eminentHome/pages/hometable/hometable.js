@@ -23,7 +23,7 @@ import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 import {ApiContext} from "../../../ApiContext";
 const HomeTable = (props) => {
-    const {resetFilter} = useContext(ApiContext)
+    const {resetFilter, setEminentData} = useContext(ApiContext)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');
