@@ -274,7 +274,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     else if (value === 'gom_management'){
         buttonContent=
            <>
-        <button className="button-upload" onClick={handleClick}>
+        <button style={{marginBottom: "50px", marginRight: "30px"}} className="button-upload" onClick={handleClick}>
             <UploadIcon/> PA/OSD mapping
         </button>
                <input
