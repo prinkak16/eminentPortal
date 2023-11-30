@@ -88,8 +88,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         }
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
