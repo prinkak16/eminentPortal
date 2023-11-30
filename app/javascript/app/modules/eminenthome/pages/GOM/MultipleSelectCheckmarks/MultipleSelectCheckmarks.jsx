@@ -1,5 +1,4 @@
-
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,9 +6,10 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import './MultipleSelectCheckmarks.scss'
-import {getMinistry} from "../../../../../api/eminentapis/endpoints"
-import SearchIcon from "../../../../../../../../public/images/SearchOutline.svg";
+import './MultipleSelectCheckmarks.scss';
+import { getMinistry } from '../../../../../api/eminentapis/endpoints';
+import SearchIcon from '../../../../../../../../public/images/SearchOutline.svg';
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -21,41 +21,47 @@ const MenuProps = {
     },
 };
 
-export default function MultipleSelectCheckmarks({style, onSelectMinistries, data}) {
-
-    // console.log('style is ',style)
+export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data, initialValue}) {
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
 
-    const getMinistryData=()=>{
-        getMinistry().then((res)=>{
+    const getMinistryData = () => {
+        getMinistry().then((res) => {
             setMinistryData(res.data.data.ministries);
-        })
-    }
+        });
+    };
+
     useEffect(() => {
         getMinistryData();
     }, []);
+
+    useEffect(() => {
+
+        if (initialValue && initialValue.length > 0) {
+            setPersonName(initialValue);
+            const temp = [];
+            for (const name of initialValue) {
+                const id = ministryData.find(ministry => ministry.name === name)?.id;
+                temp.push(id);
+            }
+            setMinistryIds(temp);
+        }
+    },[initialValue, ministryData]);
+
     const handleChange = (event) => {
         setPersonName(event.target.value);
         const temp = [];
         for (const name of event.target.value) {
-            const id = ministryData.find(ministry => ministry.name === name)?.id
+            const id = ministryData.find((ministry) => ministry.name === name)?.id;
             temp.push(id);
         }
         setMinistryIds(temp);
+        onSelectMinistries(temp);
     };
-    const selectHandler = (identifier) => {
-        if (identifier === 'DONE') {
-            onSelectMinistries(ministryIds)
-            console.log('Done button clicked');
-        } else if (identifier === 'CANCEL') {
-            console.log('cancel button clicked');
-        }
-    }
 
     return (
-        <FormControl sx={!style? {m:1,width: 400} :style} >
+        <FormControl sx={!style ? { m: 1, width: 400 } : style}>
             <InputLabel id="demo-multiple-checkbox-label">Select Ministry</InputLabel>
             <Select
                 labelId="demo-multiple-checkbox-label"
@@ -67,42 +73,12 @@ export default function MultipleSelectCheckmarks({style, onSelectMinistries, dat
                 renderValue={(selected) => selected.join(', ')}
                 MenuProps={MenuProps}
             >
-                <div style={{
-                    display: "flex",
-                    gap: "10px",
-                    // border: '1px solid black',
-                    // borderRadius: '10px',
-                    backgroundColor: "#F8F8F8",
-                    padding: '5px 15px',
-                    marginLeft: '20px'
-                }}>
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="input-field"
-                        style={{width: '90%', border: 'none', color: 'black'}}
-                    />
-                    {/*<img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>*/}
-                    <SearchIcon width={'20px'} height={'30px'} />
-
-                </div>
-
                 {data.map((ministry) => (
                     <MenuItem key={ministry.id} value={ministry.name}>
                         <Checkbox checked={personName.indexOf(ministry.name) > -1} />
                         <ListItemText primary={ministry.name} />
                     </MenuItem>
                 ))}
-                <div>
-                    <button id="btn-1" onClick={() => {
-                        selectHandler('DONE')
-                    }}>Done</button>
-                    <button id="btn-2" style={{cursor: "pointer"}}
-                            onClick={() => {
-                                setSelectOpen(false)
-                        selectHandler('CANCEL')
-                    }}>Cancel</button>
-                </div>
             </Select>
         </FormControl>
     );

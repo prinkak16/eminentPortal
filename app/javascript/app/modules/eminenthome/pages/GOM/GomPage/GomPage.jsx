@@ -32,12 +32,12 @@ function GomPage({ tabId, filterString }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
+    const itemsPerPage= 4
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
-    const itemsPerPage = 2; // Number of items you want to display per page
     const [editMinisterData, setEditMinisterData] = useState({
         name: '',
         assigned_ministries: [],
@@ -74,7 +74,7 @@ function GomPage({ tabId, filterString }) {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
                         fetchData();
-                    //
+                        setPageCount(Math.ceil(gomTableData.length / itemsPerPage));
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -82,7 +82,7 @@ function GomPage({ tabId, filterString }) {
                     // Handle other data or state updates as n
                     console.log(res.data.data.ministries, ' checking');
                 });
-             setPageCount(Math.ceil(gomTableData.length / itemsPerPage));
+
 
             },  [filterString, ministerSearch, ministrySearch]);
 
@@ -96,7 +96,8 @@ function GomPage({ tabId, filterString }) {
                     offset: 0,
                 },
             });
-            // Update the search results
+            // Update the srch results
+
             setGomTableData(response.data.data.value);
         } catch (error) {
             // Handle errors
@@ -187,7 +188,6 @@ function GomPage({ tabId, filterString }) {
         };
 
     const handleEditClick = (data) => {
-        console.log(data, 'editdkjwvnvo');
         setEditMinisterData({
             ministerId: data.user_id,
             name: data.name,
@@ -387,19 +387,34 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}  style={{width:"200px",margin:1 }} />
+                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}   onSelectMinistries={(ministryIds) => {
+                                setEditMinisterData((prevData) => ({
+                                    ...prevData,
+                                    ministry_ids: ministryIds, // Change here
+                                }));
+                            }}  style={{width:"200px",margin:1 }} />
                             <div style={{display:"flex"}}>
                                 <div>
                                     <p>Assigned Ministries</p>
                                     <MultipleSelectCheckmarks data={ministryData}
                                                               selectedMinistries={editMinisterData.assigned_ministries}
-                                                              onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
+                                                              onSelectMinistries={(ministryIds) => {
+                                                                  setEditMinisterData((prevData) => ({
+                                                                      ...prevData,
+                                                                      ministry_ids: ministryIds, // Change here
+                                                                  }));
+                                                              }} style={{width:"200px",margin:1 }} />
                                 </div>
                                 <div>
                                     <p>Own Ministry</p>
                                     <MultipleSelectCheckmarks data={ministryData}
                                                               selectedMinistries={editMinisterData.allocated_ministries}
-                                                              onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
+                                                              onSelectMinistries={(ministryIds) => {
+                                        setEditMinisterData((prevData) => ({
+                                            ...prevData,
+                                            ministry_ids: ministryIds, // Change here
+                                        }));
+                                    }} style={{width:"200px" ,margin:1}} />
                                 </div>
                             </div>
                         </div>
