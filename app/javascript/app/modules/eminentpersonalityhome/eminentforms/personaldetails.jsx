@@ -119,7 +119,7 @@ const PersonalDetails = (props) => {
     const saveProgress = () => {
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
-            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId,setBackDropToggle).then(response => {
             });
         }
     }
