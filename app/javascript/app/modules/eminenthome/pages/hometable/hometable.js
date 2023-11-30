@@ -198,7 +198,7 @@ const HomeTable = (props) => {
 
     const getAddress = (address) => {
         const customAddress = isValuePresent(address) ? address[0] : ''
-        if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
+x           if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
         if (isValuePresent(customAddress)) return `${presentFields(customAddress.flat)}
          ${presentFields(customAddress.street)} ${presentFields(customAddress.district)}
           ${presentFields(customAddress.state)} ${presentFields(customAddress.pincode, true)}`
@@ -216,7 +216,7 @@ const HomeTable = (props) => {
         setProfilePhotoUrl('')
     }
     return (
-        <>
+        <Analytics>
             <Analytics tabId={props.tabId}/>
             <div className=" hometable mt-4 mb-4">
                 <div className="mt-4 d-flex justify-content-between ">
@@ -279,190 +279,11 @@ const HomeTable = (props) => {
                                         <p className="text-labels">Education</p>
                                         <p>{getUserEducation(member.data.educations)}</p>
                                     </div>
-                {tableData?.data?.data?.members.length > 0 ?
-                    <div>
-                        {tableData?.data?.data?.members && tableData?.data?.data?.members.map((member) => (
-                            <div className="table-container mt-4" key={member.id}>
-                                <Grid container className="single-row">
-                                    <Grid item xs={3} className="gridItem min-width-24rem">
-                                        <div className="row">
-                                            <div className="col-md-4 pe-0" onClick={() => setProfilePhotoUrl(member.data.photo)}>
-                                                <div className='imgdiv circle'>
-                                                    <img className='img' src={member.data.photo}/>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-8">
-                                                <h2 className="headingName">{member.data.name}</h2>
-                                                <div className="row d-flex">
-                                                    {member.data?.mobiles && member.data?.mobiles?.slice(0, 2).map((number, index) => (
-                                                        <div className="col-md-6 text-container pe-0 ps-2.5"
-                                                             key={member.id}>
-                                                            {index === 0 && <Phone/>}
-                                                            <p className={`ml-2 label-text ${index === 0 ? 'br-label first-number' : 'br-label2 pt-5'}`}>{number}</p>
-                                                        </div>
-                                                    ))}
-                                                    <div/>
-                                                    <div className="d-flex">
-                                                        <IdBadge/>
-                                                        <p className="id-text">ID No. - {member.id}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs className="gridItem education-profession-container">
-                                        <div className="row">
-                                            <div className="col-md-6 data-display">
-                                                <p className="text-labels">Age</p>
-                                                <p>{member.data.dob ? `${calculateAge(dobFormat(member.data.dob))} Years` : ''}</p>
-                                            </div>
-                                            <div className="col-md-6 data-display">
-                                                <p className="text-labels">Profession</p>
-                                                <p>{getUserProfession(member.data.professions)}</p>
-                                            </div>
-                                            <div className="col-md-6 data-display">
-                                                <p className="text-labels">Education</p>
-                                                <p>{getUserEducation(member.data.educations)}</p>
-                                            </div>
-
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs className="gridItem">
-                                        <div className="row data-display">
-                                            <p className="text-labels">Address</p>
-                                            <p>{getAddress(member.data.address)}</p>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs className="gridItem">
-                                        <div className="row data-display">
-                                            <p className="text-labels">Form Status:</p>
-                                            <p>{member.aasm_state}</p>
-                                        </div>
-                                        <div className="row data-display">
-                                            <p className="text-labels">Channel:</p>
-                                            <p>{member.channel}</p>
-                                        </div>
-
-                                    </Grid>
-                                    <Grid item xs className="gridItemLast">
-                                        <div className="d-flex">
-                                            <div className="row data-display">
-                                                <p className="text-labels">Referred by</p>
-                                                <p>{member.data.reference?.name}</p>
-                                                <p>{member.data.reference?.mobile}</p>
-
-                                            </div>
-                                            <div className="edit-box-container">
-                                                <p
-                                                    className="popupicon">
-                                                    <Icon onClick={() => showList(member.id)}/>
-                                                </p>
-                                                {open ? (
-                                                <Popper {...bindPopper(popupState)} transition>
-                                                    {({TransitionProps}) => (
-                                                        <Fade {...TransitionProps} timeout={350}>
-                                                            <Paper>
-                                                                <div className='edit-user-container'>
-                                                                    <Typography sx={{p: 2}} className="tableiconlist">
-                                                                        {  (member.aasm_state !== 'approved') &&
-                                                                            <p onClick={() => editUser(member.phone)}>Edit</p>
-                                                                        }
-                                                                        <p onClick={() => editUser(member.phone)}>View</p>
-                                                                        {member.data.attachment && <p onClick={() => openDocument(member.data.attachment)}>View Documents</p>}
-                                                                        <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
-                                                                        { (member.aasm_state === 'submitted') &&
-                                                                            <div className="btn-group dropstart">
-                                                                                <p type="button" className="dropdown-toggle"
-                                                                                   data-bs-toggle="dropdown"
-                                                                                   data-mdb-toggle="dropdown"
-                                                                                   aria-expanded="false">
-                                                                                    Freeze/ Re-edit
-                                                                                </p>
-                                                                                <ul className="dropdown-menu">
-                                                                                    <li
-                                                                                        className="ms-4"
-                                                                                        onClick={()=>updateCurrentState(member.id, 'freeze')}>
-                                                                                        Freeze
-                                                                                    </li>
-                                                                                    <li
-                                                                                        className="ms-4"
-                                                                                        onClick={()=>updateCurrentState(member.id, 're-edit')}
-                                                                                    >
-                                                                                        Re-edit
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        }
-                                                                        {member.data.attachment &&  <p onClick={()=>handleDownload(member.data.attachment)}>Download</p> }
-                                                                    </Typography>
-                                                                </div>
-                                                            </Paper>
-                                                        </Fade>
-                                                    )}
-                                                </Popper>):null}
-                                                {openList === member.id &&
-                                                    <Paper className='home-edit-list'>
-                                                        <div className='edit-user-container'>
-                                                            <Typography sx={{p: 2}} className="tableiconlist">
-                                                                {(member.aasm_state !== 'approved') &&
-                                                                    <p onClick={() => editUser(member.phone, member)}>Edit</p>
-                                                                }
-                                                                <p onClick={() => viewUser(member.phone, member)}>View</p>
-                                                                {member.data.attachment &&
-                                                                    <p onClick={() => openDocument(member.data.attachment)}>View
-                                                                        Documents</p>}
-                                                                <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
-                                                                {(member.aasm_state === 'submitted') &&
-                                                                    <div className="btn-group dropstart">
-                                                                        <p type="button" className="dropdown-toggle"
-                                                                           data-bs-toggle="dropdown"
-                                                                           data-mdb-toggle="dropdown"
-                                                                           aria-expanded="false">
-                                                                            Freeze/ Re-edit
-                                                                        </p>
-                                                                        <ul className="dropdown-menu">
-                                                                            <li
-                                                                                className="ms-4"
-                                                                                onClick={() => updateCurrentState(member.id, 'freeze')}>
-                                                                                Freeze
-                                                                            </li>
-                                                                            <li
-                                                                                className="ms-4"
-                                                                                onClick={() => updateCurrentState(member.id, 're-edit')}
-                                                                            >
-                                                                                Re-edit
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                }
-                                                                {member.data.attachment &&
-                                                                    <p onClick={() => handleDownload(member.data.attachment)}>Download</p>}
-                                                            </Typography>
-                                                        </div>
-                                                    </Paper>
-                                                }
-                                            </div>
-                                        </div>
-                                    </Grid>
-
-                                </Grid>
-                            </div>
-
-                        ))}
-                    </div>
-                    :
-                    <div className='blank-eminent-container'>
-                        {searchValue ?
-                            <span>
-                        Your search - {searchValue} did not match any eminent {searchType}
-                    </span> :
-                            <span>
-                        No eminent found
-                    </span>
-                        }
-                    </div>
+                                    </div>
+                
+            </Grid>
+            </Grid>
                 }
-            </div>
             <div>
                 <p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp; { tableData?.data?.data.length ?  Math.ceil(tableData?.data?.data.length / limit) : 1}</p>
                 <ReactPaginate
@@ -485,6 +306,7 @@ const HomeTable = (props) => {
                     activeClassName={'active'}/>
 
             </div>
+            
             <Modal
                 contentClassName="addModal"
                 aria-labelledby="contained-modal-title-vcenter"
@@ -517,6 +339,7 @@ const HomeTable = (props) => {
                     </button>
                 </Modal.Footer>
             </Modal>
+</div>
 
         </>
 
