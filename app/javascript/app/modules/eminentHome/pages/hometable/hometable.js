@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import "./hometable.scss"
+import "./hometable.css"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"

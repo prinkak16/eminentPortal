@@ -90,7 +90,7 @@ function    AllotmentTable({setAssignShow}) {
                             {tableData.map((data, index) => (
                                 <TableRow key={index + 1}>
                                     <TableCell>{index + 1}</TableCell>
-                         vscode-file://vscode-app/usr/share/code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html           <TableCell>{data.psu_psb}</TableCell>
+                                    <TableCell>{data.psu_psb}</TableCell>
                                     <TableCell>{data.ministry}</TableCell>
                                     <TableCell>{data.vacancy}</TableCell>
                                     <TableCell>{data.department}</TableCell>
