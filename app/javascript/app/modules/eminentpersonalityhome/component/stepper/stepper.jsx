@@ -15,6 +15,7 @@ import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FormStepper = ({
+                         viewMode,
                         stateId,
                         userData,
                          activeStep,
@@ -53,7 +54,7 @@ const FormStepper = ({
     useEffect(() => {
         for (const key in userData) {
             if (values.hasOwnProperty(key)) {
-                values[key] = userData[key]
+                    values[key] = userData[key]
             }
         }
         values.mobiles = userData.mobiles
@@ -109,7 +110,12 @@ const FormStepper = ({
                         </div>
                     }
                     <DeviceInfo/>
-                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData} activeStep={activeStep} userData={userData} stateId={stateId} formValues={values} onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
+                    <ActiveStep onSave={handleSaveClick} onChange={handleChange} stepDataFlag={stepDataFlag} setStepData={setStepData}
+                                activeStep={activeStep}
+                                userData={userData} stateId={stateId}
+                                formValues={values}
+                                viewMode={viewMode}
+                                onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
                     <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between">
                         <Button
                             disabled={activeStep === 0 || isSubmitting}
