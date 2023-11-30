@@ -33,7 +33,7 @@ class Api::V1::FilterController < BaseApiController
       ]
     }
 
-    render json: { success: true, data: result, message: 'GOM filters.' }, status: 200
+    render json: { success: true, data: result, message: 'gom filters.' }, status: 200
   end
 
   def vacancy_ministry_wise

@@ -1,0 +1,41 @@
+.css-1ex1afd-MuiTableCell-root{
+    vertical-align: top !important;
+}
+.psutable{
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 9px !important;
+box-shadow: none !important ;
+}
+
+.psutable>table>thead{
+    background: #F8F8F8;
+}
+.psutable td, .psutable th{
+    font-size:0.8rem;
+    font-weight: 600;
+    color: #343434;
+}
+.psutable th{
+    font-weight: 600;
+}
+.psutable td{
+    font-weight: 500;
+}
+.psutable table>tbody>tr>td, table>tbody>tr{
+    width: auto;
+}
+.psutable>table>tbody>tr>td{
+    border-right: 1px solid rgba(224, 224, 224, 1);
+    border-bottom: 1px solid rgba(0,0,0,0.6)
+}
+.psutable>table>tbody>tr:last-child td{
+    border-bottom: transparent;
+}
+.psutable>table td table td{
+    border-right: 1px solid transparent;
+    padding: 10px;
+}
+.psutable .css-13xfq8m-MuiTabPanel-roo{
+    padding: 0;
+}
+
