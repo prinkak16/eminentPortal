@@ -9,21 +9,31 @@ import React, {useEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
-import {isValuePresent} from "../../utils";
+import {isValuePresent, ministerPortfolioArray} from "../../utils";
 import RadioButton from "./radioButton";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {
     getAssemblyData,
     getLocationsData,
     getStateData
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable, formIndex, setBackDropToggle}) => {
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
+import DeleteIcon from "@mui/icons-material/Delete";
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled}) => {
     const [fieldsData, setFieldsData] = useState({});
+    const [ministriesField, setMinistriesField] = useState([]);
     const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
     const [isDataSet, setIsDataSet] = useState(false)
-
+    const ministriesKey = ['designation','ministry_name', 'ministry_duration']
+    const ministryPortfolioObject = {
+        designation: '', // Set your default values or leave them empty
+        ministry_name: '',
+        ministry_duration: '',
+    };
     const getStates = () => {
         setBackDropToggle(true)
         getStateData.then((res) => {
@@ -37,12 +47,13 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         })
     }
 
+
     useEffect(() => {
         getStates()
     }, []);
 
     useEffect(() => {
-        if (isValuePresent(isEditable)) {
+        if (isValuePresent(isEditable) && editField === 0) {
             const updatedFieldsData = { ...fieldsData };
             for (const key in isEditable) {
                 if (Object.prototype.hasOwnProperty.call(isEditable, key)) {
@@ -51,11 +62,17 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
             }
             setEditField(1)
             setFieldsData(updatedFieldsData);
+            const portFolio = updatedFieldsData.minister_portfolio_array
+            if (isValuePresent(portFolio) && portFolio.length > 1) {
+              for (let i = 0; i < portFolio.length -1; i++) {
+                  setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+              }
+            }
         }
     }, [isEditable]);
 
 
-    const handleFieldChange = (value, name, valueType) => {
+    const handleFieldChange = (value, name, valueType, index) => {
         if (valueType === 'State') {
             let field = jsonForm?.fields?.find((item) => item.key === 'State')
             let state = states.find((item) => item.name === value)
@@ -64,7 +81,21 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 getLocations(state.id, field.combo_fields[0])
             }
         }
-      setData(valueType, value)
+
+        if (ministriesKey.includes(valueType)) {
+            setArrayData('minister_portfolio_array', valueType, value, index)
+        } else {
+            setData(valueType, value)
+        }
+    };
+
+    const setArrayData = (type, key, value, index) => {
+        setFieldsData((prevFieldsData) => {
+            const updatedFieldsData = { ...prevFieldsData };
+            updatedFieldsData[type][index][key] = value;
+            return updatedFieldsData;
+        });
+        setIsDataSet(true);
     };
 
     const setData = (valueType, value) => {
@@ -93,14 +124,11 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         }
 
         if (fieldKey === 'minister_portfolio') {
-            const filteredItems = jsonForm.fields.filter((item) => item.key === 'ministry_name');
-            resetLocationFields(filteredItems[0])
-            if (filteredItems[0]?.hasOwnProperty('combo_fields')[0]) {
-                resetLocationFields(filteredItems[0].combo_fields[0])
-            }
-            const minDuration = jsonForm.fields.find((item) => item.key === 'ministry_duration');
-            if (isValuePresent(minDuration)) {
-                resetLocationFields(minDuration)
+            if (value === 'Yes') {
+                fieldsData['minister_portfolio_array'] = [ministryPortfolioObject]
+                setMinistriesField([])
+            } else {
+                fieldsData['minister_portfolio_array'] = []
             }
         }
 
@@ -111,18 +139,18 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
         return isConditional ? fieldsData[key] === value : true
     }
 
-   const getLocations = (stateId,field) => {
-       if (stateId) {
-           setBackDropToggle(true)
-           let dataAssembly = `?location_type=State&location_id=${stateId}&required_location_type=${field.key}`;
-           getLocationsData(dataAssembly).then((res) => {
-               setLocationsArray((prevFieldsData) => ({
-                   ...prevFieldsData,
-                   [field.key]: res.data.data.locations.map(item => item.name),
-               }));
-               setBackDropToggle(false)
-           })
-       }
+    const getLocations = (stateId, field) => {
+        if (stateId) {
+            setBackDropToggle(true)
+            let dataAssembly = `?location_type=State&location_id=${stateId}&required_location_type=${field.key}`;
+            getLocationsData(dataAssembly).then((res) => {
+                setLocationsArray((prevFieldsData) => ({
+                    ...prevFieldsData,
+                    [field.key]: res.data.data.locations.map(item => item.name),
+                }));
+                setBackDropToggle(false)
+            })
+        }
     }
 
     const resetLocationFields = (field) => {
@@ -141,8 +169,47 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
     }, [fieldsData?.State]);
 
     const getList = (key) => {
-        return  isValuePresent(locationsArray[key]) ? locationsArray[key] : []
+        return isValuePresent(locationsArray[key]) ? locationsArray[key] : []
     }
+
+    const addMinistries = () => {
+        if (!isViewDisabled) {
+            setFieldsData((prevFieldsData) => ({
+                ...prevFieldsData,
+                minister_portfolio_array: [
+                    ...prevFieldsData.minister_portfolio_array,
+                    ministryPortfolioObject,
+                ],
+            }));
+            setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+        }
+    }
+
+    const deleteMinistry = () => {
+        if (!isViewDisabled) {
+            const updatedMinisterPortfolioArray = [...fieldsData.minister_portfolio_array];
+            updatedMinisterPortfolioArray.pop();
+            setFieldsData((prevFieldsData) => ({
+                ...prevFieldsData,
+                minister_portfolio_array: updatedMinisterPortfolioArray,
+            }));
+            const updatedMinistries = ministriesField.slice(0, -1);
+            setMinistriesField(updatedMinistries);
+            setIsDataSet(true)
+        }
+    };
+
+
+    const getFieldsValue = (key, index) => {
+       return  ministriesKey.includes(key) ? fieldsData.minister_portfolio_array[index][key] : fieldsData[key]
+    }
+
+    useEffect(() => {
+        if (isValuePresent(electionTypeChange)) {
+            setFieldsData({})
+        }
+    },[electionTypeChange])
+
 
     return (
         <div>
@@ -150,104 +217,193 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                 {jsonForm.fields && jsonForm.fields.map((f) => (
                     <>
                         {showField(f.is_conditional, f.condition_key, f.condition_value) &&
-                        <div className='electoral-form-fields'>
-                            {
-                                f.type === 'dropdown' &&
-                                <Grid item xs={4}>
-                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <AutoCompleteDropdown
-                                        name={f.name}
-                                        selectedValue={fieldsData[f.key] || null}
-                                        listArray={getList(f.key)}
-                                        onChangeValue={handleFieldChange}
-                                        dropDownType={f.key}/>
-                                    <ErrorMessage name="qualification" style={{color:'red'}} component="p" />
-                                </Grid>
-                            }
-                            {
-                                f.type === "textField" &&
-                                <Grid item xs={4}>
-                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <OtherInputField
-                                        type="text"
-                                        value={fieldsData[f.key] || null}
-                                        onChange={handleFieldChange}
-                                        textType={f.key}
-                                        placeholder={f.placeholder}/>
-                                </Grid>
-                            }
-                            {
-                                f.type === "numField" &&
-                                <Grid item xs={4} className='d-grid'>
-                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <Field
-                                        style={{width: '22rem'}}
-                                        type="text"
-                                        value={fieldsData[f.key] || null}
-                                        as={TextField}
-                                        className='elec-number-field'
-                                        placeholder={f.placeholder}
-                                        onChange={(e) => handleFieldChange(e.target.value, f.name ,f.key)}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        onInput={(event) => {
-                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
-                                        }}
-                                    />
-                                </Grid>
-                            }
-                            {
-                                f.type === "radio" &&
-                                <Grid item xs={4}>
-                                    <FormLabel>{f.name} <mark>*</mark></FormLabel>
-                                    <RadioButton radioList={f.list} selectedValue={fieldsData[f.key] || null} onClicked={contestedElection}  fieldKey={f.key}/>
-                                </Grid>
-                            }
-                            {isValuePresent(f.combo_fields) && f.combo_fields.map((fi, index) => (
-                                <>
-                                    {
-                                        fi.type === 'dropdown' &&
-                                        <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
-                                            <AutoCompleteDropdown
-                                                name={fi.name}
-                                                selectedValue={fieldsData[fi.key] || null}
-                                                listArray={getList(fi.key)}
-                                                onChangeValue={handleFieldChange}
-                                                dropDownType={fi.key}/>
-                                            <ErrorMessage name="qualification" style={{color:'red'}} component="p" />
-                                        </Grid>
-                                    }
-                                    {
-                                        fi.type === "textField" &&
-                                        <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
-                                            <OtherInputField
-                                                type="text"
-                                                value={fieldsData[fi.key] || null}
-                                                onChange={handleFieldChange}
-                                                textType={fi.key}
-                                                placeholder={fi.placeholder}/>
-                                        </Grid>
-                                    }
-                                    {
-                                        fi.type === "numField" &&
-                                        <Grid className='d-grid'>
-                                            <FormLabel>{fi.name}
-                                                <mark>*</mark>
-                                            </FormLabel>
+                            <div className='electoral-form-fields'>
+                                {
+                                    f.type === 'dropdown' &&
+                                    <Grid item xs={4}>
+                                        <FormLabel>{f.name}
+                                            <mark>*</mark>
+                                        </FormLabel>
+                                        <AutoCompleteDropdown
+                                            disabled={isViewDisabled}
+                                            name={f.name}
+                                            selectedValue={fieldsData[f.key] || null}
+                                            listArray={getList(f.key)}
+                                            onChangeValue={handleFieldChange}
+                                            dropDownType={f.key}/>
+                                        <ErrorMessage name="qualification" style={{color: 'red'}} component="p"/>
+                                    </Grid>
+                                }
+                                {
+                                    f.type === "textField" &&
+                                    <Grid item xs={4}>
+                                        <FormLabel>{f.name === 'Name Of Ministry' ? '1. ' :''} {f.name}
+                                            <mark>*</mark>
+                                        </FormLabel>
+                                        <OtherInputField
+                                            disabled={isViewDisabled}
+                                            type="text"
+                                            fieldIndex={0}
+                                            value={getFieldsValue(f.key, 0) || null}
+                                            onChange={handleFieldChange}
+                                            textType={f.key}
+                                            placeholder={f.placeholder}/>
+                                    </Grid>
+                                }
+                                {
+                                    f.type === "numField" &&
+                                    <Grid item xs={4} className='d-grid'>
+                                        <FormLabel>{f.name}
+                                            <mark>*</mark>
+                                        </FormLabel>
+                                        <Field
+                                            disabled={isViewDisabled}
+                                            style={{width: '22rem'}}
+                                            type="text"
+                                            value={getFieldsValue(f.key, 0) || null}
+                                            as={TextField}
+                                            className='elec-number-field'
+                                            placeholder={f.placeholder}
+                                            onChange={(e) => handleFieldChange(e.target.value, f.name, f.key, 0)}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            onInput={(event) => {
+                                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                            }}
+                                        />
+                                    </Grid>
+                                }
+                                {
+                                    f.type === "radio" &&
+                                    <Grid item xs={4}>
+                                        <FormLabel>{f.name}
+                                            <mark>*</mark>
+                                        </FormLabel>
+                                        <RadioButton disabled={isViewDisabled} radioList={f.list} selectedValue={fieldsData[f.key] || null}
+                                                     onClicked={contestedElection} fieldKey={f.key}/>
+                                    </Grid>
+                                }
+                                {isValuePresent(f.combo_fields) && f.combo_fields.map((fi) => (
+                                    <>
+                                        {
+                                            fi.type === 'dropdown' &&
+                                            <Grid item xs={4}>
+                                                <FormLabel>{fi.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
+                                                <AutoCompleteDropdown
+                                                    disabled={isViewDisabled}
+                                                    name={fi.name}
+                                                    selectedValue={fieldsData[fi.key] || null}
+                                                    listArray={getList(fi.key)}
+                                                    onChangeValue={handleFieldChange}
+                                                    dropDownType={fi.key}/>
+                                                <ErrorMessage name="qualification" style={{color: 'red'}}
+                                                              component="p"/>
+                                            </Grid>
+                                        }
+                                        {
+                                            fi.type === "textField" &&
+                                            <Grid item xs={4}>
+                                                <FormLabel>{fi.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
+                                                <OtherInputField
+                                                    disabled={isViewDisabled}
+                                                    type="text"
+                                                    value={getFieldsValue(fi.key, 0, ) || null}
+                                                    onChange={handleFieldChange}
+                                                    textType={fi.key}
+                                                    fieldIndex={0}
+                                                    placeholder={fi.placeholder}/>
+                                            </Grid>
+                                        }
+                                        {
+                                            fi.type === "numField" &&
+                                            <Grid className='d-grid'>
+                                                <FormLabel>{fi.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
+                                                <Grid item xs={4} className='d-grid'>
+                                                    <FormLabel>{fi.name}
+                                                        <mark>*</mark>
+                                                    </FormLabel>
+                                                    <Field
+                                                        disabled={isViewDisabled}
+                                                        style={{width: '22rem'}}
+                                                        type="text"
+                                                        defaultValue={dayjs('2022-04-17')}
+                                                        value={fieldsData[fi.key] || null}
+                                                        as={TextField}
+                                                        className='elec-number-field'
+                                                        placeholder={fi.placeholder}
+                                                        onChange={(e) => handleFieldChange(e.target.value, fi.name, fi.key)}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        onInput={(event) => {
+                                                            event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        }
+                                        {
+                                            fi.type === "radio" &&
+                                            <Grid item xs={4}>
+                                                <FormLabel>{fi.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
+                                                <RadioButton   disabled={isViewDisabled} radioList={fi.list}
+                                                             selectedValue={fieldsData[fi.key] || null}
+                                                             onClicked={contestedElection} fieldKey={f.key}/>
+                                            </Grid>
+                                        }
+                                    </>
+                                ))}
+                            </div>
+                        }
+                    </>
+                ))}
+
+                {ministriesField && ministriesField.map((field, minIndex) => (
+                    <>
+                        {field.ministerPortfolioArray && field.ministerPortfolioArray.map((f) => (
+                            <>
+                                {showField(f.is_conditional, f.condition_key, f.condition_value) &&
+                                    <div className='electoral-form-fields'>
+                                        {
+                                            f.type === "textField" &&
+                                            <Grid item xs={4}>
+                                                <FormLabel>{f.name === 'Name Of Ministry' ? `${minIndex + 2}. `  :''} {f.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
+                                                <OtherInputField
+                                                    disabled={isViewDisabled}
+                                                    type="text"
+                                                    fieldIndex={minIndex+1}
+                                                    value={getFieldsValue(f.key, minIndex+1) || null}
+                                                    onChange={handleFieldChange}
+                                                    textType={f.key}
+                                                    placeholder={f.placeholder}/>
+                                            </Grid>
+                                        }
+                                        {
+                                            f.type === "numField" &&
                                             <Grid item xs={4} className='d-grid'>
-                                                <FormLabel>{fi.name} <mark>*</mark></FormLabel>
+                                                <FormLabel>{f.name}
+                                                    <mark>*</mark>
+                                                </FormLabel>
                                                 <Field
+                                                    disabled={isViewDisabled}
                                                     style={{width: '22rem'}}
                                                     type="text"
-                                                    defaultValue={dayjs('2022-04-17')}
-                                                    value={fieldsData[fi.key] || null}
+                                                    value={getFieldsValue(f.key, minIndex+1) || null}
                                                     as={TextField}
                                                     className='elec-number-field'
-                                                    placeholder={fi.placeholder}
-                                                    onChange={(e) => handleFieldChange(e.target.value, fi.name ,fi.key)}
+                                                    placeholder={f.placeholder}
+                                                    onChange={(e) => handleFieldChange(e.target.value, f.name, f.key, minIndex+1)}
                                                     InputLabelProps={{
                                                         shrink: true,
                                                     }}
@@ -256,21 +412,47 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable,notApplicable,
                                                     }}
                                                 />
                                             </Grid>
-                                        </Grid>
-                                    }
-                                    {
-                                        fi.type === "radio" &&
-                                        <Grid item xs={4}>
-                                            <FormLabel>{fi.name} <mark>*</mark></FormLabel>
-                                            <RadioButton radioList={fi.list}  selectedValue={fieldsData[fi.key] || null} onClicked={contestedElection} fieldKey={f.key} />
-                                        </Grid>
-                                    }
-                                </>
-                            ))}
-                        </div>
-                        }
+                                        }
+                                        {isValuePresent(f.combo_fields) && f.combo_fields.map((fi) => (
+                                            <>
+                                                {
+                                                    fi.type === "textField" &&
+                                                    <Grid item xs={4}>
+                                                        <FormLabel>{fi.name}
+                                                            <mark>*</mark>
+                                                        </FormLabel>
+                                                        <OtherInputField
+                                                            disabled={isViewDisabled}
+                                                            type="text"
+                                                            value={getFieldsValue(fi.key, minIndex+1, ) || null}
+                                                            onChange={handleFieldChange}
+                                                            textType={fi.key}
+                                                            fieldIndex={minIndex+1}
+                                                            placeholder={fi.placeholder}/>
+                                                    </Grid>
+                                                }
+                                            </>
+                                        ))}
+                                    </div>
+                                }
+                            </>
+                        ))}
+
                     </>
                 ))}
+
+                {fieldsData?.minister_portfolio === 'Yes' &&
+                    <div className='add-ministry-container' onClick={addMinistries}>
+                       <span className='add-ministry'>
+                            <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
+                       </span>
+                        {ministriesField.length > 0 &&
+                            <span className='delete-ministry' onClick={deleteMinistry}>
+                                <DeleteIcon/> Delete
+                          </span>
+                        }
+                    </div>
+                }
             </Grid>
         </div>
     )

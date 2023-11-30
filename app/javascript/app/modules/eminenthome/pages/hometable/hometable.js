@@ -157,12 +157,28 @@ const HomeTable = (props) => {
 
     const  editUser = (number, userData) => {
         localStorage.setItem('eminent_number', number);
+        localStorage.setItem('view_mode', 'edit');
         navigate({
             pathname: '/eminent_form'
         }, {
             state: {
                 eminent_number: number,
                 user_data: userData,
+                view_mode:'edit'
+            }
+        });
+    }
+
+    const  viewUser = (number, userData) => {
+        localStorage.setItem('eminent_number', number);
+        localStorage.setItem('view_mode', 'view');
+        navigate({
+            pathname: '/eminent_form'
+        }, {
+            state: {
+                eminent_number: number,
+                user_data: userData,
+                view_mode:'view'
             }
         });
     }
@@ -193,8 +209,7 @@ const HomeTable = (props) => {
     }
 
     const showList = (id) => {
-        const value = openList === null ? id : null
-        setOpenList(value)
+        openList === id ?  setOpenList(null) : setOpenList(id)
     }
 
     const clearPhotoUrl = () => {
@@ -304,13 +319,13 @@ const HomeTable = (props) => {
                                                     <Icon onClick={() => showList(member.id)}/>
                                                 </p>
                                                 {openList === member.id &&
-                                                    <Paper className='details-edit-list'>
+                                                    <Paper className='home-edit-list'>
                                                         <div className='edit-user-container'>
                                                             <Typography sx={{p: 2}} className="tableiconlist">
                                                                 {(member.aasm_state !== 'approved') &&
                                                                     <p onClick={() => editUser(member.phone, member)}>Edit</p>
                                                                 }
-                                                                <p onClick={() => editUser(member.phone, member)}>View</p>
+                                                                <p onClick={() => viewUser(member.phone, member)}>View</p>
                                                                 {member.data.attachment &&
                                                                     <p onClick={() => openDocument(member.data.attachment)}>View
                                                                         Documents</p>}

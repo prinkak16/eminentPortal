@@ -2,6 +2,7 @@ require 'sidekiq/web'
 require 'sidekiq/cron/web'
 Rails.application.routes.draw do
   root "home#index"
+
   # Define your application modules per the DSL in https://guides.rubyonrails.org/routing.html
   mount Sidekiq::Web => "/sidekiq"
 
@@ -9,6 +10,7 @@ Rails.application.routes.draw do
 
   get "candidate_login", to: "home#candidate_login"
   get "eminent_personality", to: "home#candidate_login"
+  get "status", to: "home#status"
   namespace :admin do
     get 'manual_upload', to: 'admin#manual_upload'
     post 'manual_upload', to: 'admin#manual_upload_data'
