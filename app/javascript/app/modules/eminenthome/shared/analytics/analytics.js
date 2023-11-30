@@ -5,6 +5,9 @@ import TotalEminent from '../../../../../../../public/images/totalEminent.svg'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Incompletefile from './../../../../../../../public/images/incomplete.svg';
 import iconUrl from './../../../../../../../public/images/plus.svg';
+import TotalVacancy from './../../../../../../../public/images/total-mov.svg'
+import OccupiedVacancy from './../../../../../../../public/images/occupied-mov.svg'
+import VacantVacancy from './../../../../../../../public/images/vacant_mov.svg'
 import {getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
 import Tooltip from "@mui/material/Tooltip";
 const Analytics = (props) => {
@@ -105,17 +108,17 @@ const Analytics = (props) => {
                         switch (value) {
                             case'total': {
                                 label = 'Total Position';
-                                icon = <Incompletefile/>;
+                                icon = <TotalVacancy/>;
                                 break;
                             }
                             case'occupied': {
                                 label = 'Occupied';
-                                icon = <Incompletefile/>;
+                                icon = <OccupiedVacancy/>;
                                 break;
                             }
                             case'vacant': {
                                 label = 'Vacant';
-                                icon = <Usergroup/>;
+                                icon = <VacantVacancy/>;
                                 break;
                             }
                         }
@@ -124,17 +127,17 @@ const Analytics = (props) => {
                         switch (value) {
                             case'total': {
                                 label = 'Total Position';
-                                icon = <Incompletefile/>;
+                                icon = <TotalVacancy/>;
                                 break;
                             }
                             case'slotted': {
                                 label = 'Slotted';
-                                icon = <Incompletefile/>;
+                                icon = <OccupiedVacancy/>;
                                 break;
                             }
                             case'unslotted': {
                                 label = 'Unslotted';
-                                icon = <Usergroup/>;
+                                icon = <VacantVacancy/>;
                                 break;
                             }
                         }

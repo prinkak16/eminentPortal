@@ -67,10 +67,10 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                             return (
                                 <TableRow>
                                     {vacancyIndex === 0 && <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                    {vacancyIndex === 0 && <TableCell onClick={()=>onSwitchTab('ministry_wise')} rowSpan={ministryRowSpan}>{ministry.ministry_name}</TableCell>}
+                                    {vacancyIndex === 0 && <TableCell className="element" onClick={()=>onSwitchTab('ministry_wise')} rowSpan={ministryRowSpan}>{ministry.ministry_name}</TableCell>}
                                     <TableCell>{vacancy.org_name}</TableCell>
                                     <TableCell>{vacancy.designation}</TableCell>
-                                    <TableCell>{vacancy.status }</TableCell>
+                                    <TableCell>{vacancy.status}</TableCell>
                                     <TableCell className="text-center">----</TableCell>
                                     <TableCell className="text-center">----</TableCell>
                                     <TableCell className="text-center">{vacancy.tenure_started_at ? (vacancy.tenure_started_at):'----'}</TableCell>
