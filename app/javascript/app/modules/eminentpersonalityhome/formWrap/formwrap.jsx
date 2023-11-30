@@ -11,7 +11,7 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-import {electionWiseJson, isValuePresent, showErrorToast, toSnakeCase} from "../../utils";
+import {electionWiseJson, isValuePresent, showErrorToast, showNotification, toSnakeCase} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
@@ -73,9 +73,9 @@ const FormWrap=({userData, stateId, viewMode})=>{
 
 
     const onSubmit = (values, formikBag) => {
+        const {setSubmitting} = formikBag;
         if (!isViewDisabled) {
             setBackDropToggle(true)
-            const {setSubmitting} = formikBag;
             const newStepValues = [...stepValues];
             newStepValues[activeStep] = values;
             setStepValues(newStepValues)
@@ -113,6 +113,8 @@ const FormWrap=({userData, stateId, viewMode})=>{
                 setBackDropFalse()
             }
         } else {
+            setSubmitting(false)
+            showNotification()
             handleNext();
             scrollToTop()
         }
