@@ -24,7 +24,15 @@ import Primarybutton from '../component/primarybutton/primarybutton';
 import {getFileUpload, getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
-import {formFilledValues, saveProgress, saveProgressButton, showErrorToast, VisuallyHiddenInput} from "../../utils";
+import {
+    disabledSaveProgressButton,
+    formFilledValues,
+    isValuePresent,
+    saveProgress,
+    saveProgressButton,
+    showErrorToast,
+    VisuallyHiddenInput
+} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Resumeform = (props) => {
@@ -36,19 +44,30 @@ const Resumeform = (props) => {
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-    const [children, setChildren] = useState(props.formValues?.children || [''])
+    const [children, setChildren] = useState(isValuePresent(props.formValues?.children) ? props.formValues?.children : [''])
     const [PdfFileName, setPdfFileName] = useState(props.formValues?.attachment_name)
     const [pdfFile, setPdfFile] = useState(props.formValues?.attachment);
     const [politicalLegacyProfile, sePoliticalLegacyProfile] = useState(props.formValues?.political_legacy[0]?.profile)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
     const addChildren = () => {
         setChildren([...children, '']);
     };
-    const deleteChild = (index) => {
-        const updatedChildren = [...children];
+
+    const deleteChild = (index, event) => {
+        event.preventDefault();
+        const updatedChildren = [...props.formValues.children];
         updatedChildren.splice(index, 1);
         setChildren(updatedChildren);
         props.formValues.children = updatedChildren;
-    }
+    };
+
 
 
     const uploadResume = (event) => {
@@ -71,16 +90,19 @@ const Resumeform = (props) => {
     };
 
     const openPdfInBrowser = (file) => {
-        if (file) {
-            window.open(file, '_blank');
+        if (!isViewDisabled) {
+            if (file) {
+                window.open(file, '_blank');
+            }
         }
     };
 
     const saveProgress = () => {
-        setBackDropToggle(true)
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
     const onChangePolLegProfile = (e) => {
@@ -98,7 +120,11 @@ const Resumeform = (props) => {
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -106,24 +132,24 @@ const Resumeform = (props) => {
                     <Grid item xs={6}>
                         <FormLabel>Name</FormLabel>
                         <Inputfield type="text"
+                                    disabled={isViewDisabled}
                                     value={props.formValues.political_legacy[0].name}
                                     name={`political_legacy.${0}.name`}
                                     placeholder="Enter full name"/>
-                        <ErrorMessage name={`political_legacy.${0}.name`} component="div"/>
                     </Grid>
                     <Grid item xs={6}>
                         <FormLabel>Relationship </FormLabel>
                         <FormControl>
                             <Field
+                                disabled={isViewDisabled}
                                 as={Select}
                                 name={`political_legacy.${0}.relationship`}
                                 labelId="relationship"
                                 className="custom-select"
                                 fullWidth
-                                displayEmpty
                                 inputProps={{'aria-label': 'Without label'}}
                             >
-                                <MenuItem value="0">
+                                <MenuItem value="0" disabled={true}>
                                     <em>Select Relationship</em>
                                 </MenuItem>
                                 <MenuItem value="Father">
@@ -140,11 +166,12 @@ const Resumeform = (props) => {
                                 </MenuItem>
                             </Field>
                         </FormControl>
-                        <ErrorMessage  name={`political_legacy.${0}.relationship`} component="div"/>
+
                     </Grid>
                     <Grid item xs={12}>
                         <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
                         <TextField
+                            disabled={isViewDisabled}
                             className='p-0'
                             fullWidth
                             name="political_legacy_profile"
@@ -155,7 +182,6 @@ const Resumeform = (props) => {
                             maxRows={4}
                             placeholder="Tell me about your profile..."
                         />
-                        <ErrorMessage  name={`political_legacy.${0}.profile`} component="div"/>
                     </Grid>
                 </Grid>
                 <Grid container sx={{my: 3}} className="grid-wrap">
@@ -169,47 +195,49 @@ const Resumeform = (props) => {
                         <Grid item xs={6}>
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
+                                        disabled={isViewDisabled}
                                         name="father"
                                         value={props.formValues.father}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="father" component="div"/>
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Mother's Name</FormLabel>
                             <Inputfield type="text"
+                                        disabled={isViewDisabled}
                                         name="mother"
                                         value={props.formValues.mother}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="mother" component="div"/>
                         </Grid>
                         <Grid item xs={6}>
                             <FormLabel>Spouse Name</FormLabel>
                             <Inputfield type="text"
+                                        disabled={isViewDisabled}
                                         name="spouse"
                                         value={props.formValues.spouse}
                                         placeholder="Enter name"
                             />
-                            <ErrorMessage name="spouse" component="div"/>
+
                         </Grid>
                         {children && children.map((field, index) => (
                             <Grid item xs={6}>
-                                <FormLabel>Children Name</FormLabel>
+                                <FormLabel>Child Name</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             name={`children.${index}`}
                                             value={props.formValues.children[index]}
                                             placeholder="Enter child name"
                                 />
-                                <ErrorMessage name={`child.${index}`} component="div"/>
+                                <ErrorMessage name={`child.${index}`} style={{color:'red'}} component="p" />
                             </Grid>
                         ))}
                         <Grid item xs={12}>
-                            <Primarybutton addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>}
-                                           buttonlabel="Add another Field" handleclick={addChildren}/>
-                            {children.length >= 0 ? (
-                                <Primarybutton addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>}
-                                               handleclick={() => deleteChild(children.length - 1)}/>
+                            <Primarybutton disabled={isViewDisabled} addclass="addanotherfieldsbtn me-3" starticon={<AddIcon/>}
+                                           buttonlabel="Add Child" handleclick={addChildren}/>
+                            {children.length > 1 ? (
+                                <Primarybutton disabled={isViewDisabled} addclass="deletebtn mt-3" buttonlabel={<DeleteIcon/>}
+                                               handleclick={(e) => deleteChild(children.length - 1,e)}/>
                             ) : null}
                         </Grid>
                     </Grid>
@@ -226,22 +254,22 @@ const Resumeform = (props) => {
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Website</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             name="website"
                                             value={props.formValues.website}
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="website" component="div"/>
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             name="twitter"
                                             value={props.formValues.twitter}
                                             placeholder="Enter your twitter Url"
                                             inputprop={{endAdornment: <InputAdornment position="end">
                                                     <HelpOutlineOutlinedIcon/>
                                                 </InputAdornment>}}/>
-                                <ErrorMessage name="twitter" component="div"/>
                             </Grid>
                         </Grid>
 
@@ -249,20 +277,22 @@ const Resumeform = (props) => {
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Linkedin</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             name="linkedin"
                                             value={props.formValues.linkedin}
                                             placeholder="Enter your linkedin Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="linkedin" component="div"/>
+
                             </Grid>
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             name="facebook"
                                             value={props.formValues.facebook}
                                             placeholder="Enter your facebook Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="facebook" component="div"/>
+
                             </Grid>
                         </Grid>
 
@@ -270,11 +300,12 @@ const Resumeform = (props) => {
                             <Grid item xs={3} sx={{mb: 2}}>
                                 <FormLabel>Instagram</FormLabel>
                                 <Inputfield type="text"
+                                            disabled={isViewDisabled}
                                             value={props.formValues.instagram}
                                             name="instagram"
                                             placeholder="Enter your instagram Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
-                                <ErrorMessage name="instagram" component="div"/>
+
                             </Grid>
                         </Grid>
                     </Grid>
@@ -284,11 +315,11 @@ const Resumeform = (props) => {
                         <Grid item sx={{mb: 2}} xs={12}>
                             <Typography variant="h5" content="h5">
                                 <Box className="detailnumbers" component="div"
-                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <sup>*</sup>
-                                <ErrorMessage name="pdf_url" component="div"/>
+                                     sx={{display: 'inline-block'}}>4</Box> Upload your Resume/Biodata <mark>*</mark>
+
                             </Typography>
                         </Grid>
-
+                        <ErrorMessage name='attachment' style={{color:'red'}} component="p" />
                         <div>
                             <div className="pdf-upload-div d-flex align-items-center w-100">
                                 <div className='pdf-icon-name'>
@@ -296,12 +327,15 @@ const Resumeform = (props) => {
                                     <div id="pdf-file-name" onClick={() => openPdfInBrowser(pdfFile)}>{PdfFileName}</div>
                                 </div>
                                 <div className='upload-resume-button'>
-                                    <Button component="label" variant="contained" startIcon={<CloudUploadIcon/>}>
+                                    <Button   disabled={isViewDisabled} component="label" variant="contained" startIcon={<CloudUploadIcon/>}>
                                         Upload
                                         <VisuallyHiddenInput accept="application/pdf" onChange={uploadResume} type="file"/>
                                     </Button>
                                 </div>
                             </div>
+                        </div>
+                        <div className='pdf-msg'>
+                            <span className='pdf-msg-text'><mark>*</mark> Only PDF file allowed.</span>
                         </div>
                     </Grid>
                 </Grid>
@@ -322,7 +356,7 @@ Resumeform.initialValues = {
     father:"",
     mother:"",
     spouse:"",
-    children:[],
+    children:[''],
     website:"",
     twitter:"",
     linkedin:"",
@@ -332,14 +366,6 @@ Resumeform.initialValues = {
     attachment_name:"",
 };
 Resumeform.validationSchema = Yup.object().shape({
-    father: Yup.string().required('Please enter father name'),
-    mother: Yup.string().required('Please enter mother name'),
-    spouse: Yup.string().required('Please enter spouse name'),
-    children: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),
-    website: Yup.string().required('Please enter website link'),
-    twitter: Yup.string().required('Please enter twitter id'),
-    linkedin: Yup.string().required('Please enter linkedin id'),
-    facebook:Yup.string().required('Please enter facebook id'),
-    instagram:Yup.string().required('Please enter instagram id'),
+    attachment:Yup.string().required('Please Upload resume'),
 });
 export default Resumeform

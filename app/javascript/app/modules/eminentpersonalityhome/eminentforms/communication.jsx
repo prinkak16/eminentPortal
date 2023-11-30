@@ -14,6 +14,7 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
 import {
+    disabledSaveProgressButton,
     formFilledValues,
     isValuePresent,
     saveProgress,
@@ -40,6 +41,14 @@ const Communicationform =(props)=>{
     const [otherPinData, setOtherPinData] = useState([])
     const [mobileFields, setMobileFields] =useState([])
     const [sameAddress, setSameAddress] = useState(props.formValues.check || false)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     useEffect(() => {
         const mobiles = props.formValues.mobiles
@@ -82,7 +91,7 @@ const Communicationform =(props)=>{
     }
 
 
-    const handlePinCodeChange = (pinCode, pincodeType) => {
+    const handlePinCodeChange = (pinCode, pincodeType, index) => {
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             setBackDropToggle(true)
@@ -93,7 +102,7 @@ const Communicationform =(props)=>{
                         showSuccessToast(responseData.Message)
                         const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
                         const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        setPincodes(districts, state, pincodeType)
+                        setPincodes(districts, state, pincodeType, index)
                         setBackDropToggle(false)
                     } else {
                         setBackDropToggle(false)
@@ -107,13 +116,19 @@ const Communicationform =(props)=>{
         }
     };
 
-    const setPincodes = (districts, state, pincodeType) => {
+    const setPincodes = (districts, state, pincodeType, index) => {
         let totalData = otherPinData.filter((item) => item.id !== pincodeType);
         setOtherPinData(totalData.concat({ id: pincodeType, district: districts, state: state }));
+        otherAddressChange('state', index, pincodeType)(state[0])
+        if (sameAddress) {
+            otherAddressChange('state', 1, pincodeType)(state[0])
+        }
     }
 
     const addMobileField = () => {
-        setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
+        if (!isViewDisabled) {
+            setMobileFields([...mobileFields, {id:uuidv4(),number:'' }])
+        }
     }
 
     useEffect(() => {
@@ -142,8 +157,10 @@ const Communicationform =(props)=>{
     }
 
     const deleteMobileNumber = (id) => {
-        const updatedMobileFields = mobileFields.filter((field) => field.id !== id)
-        setMobileFields(updatedMobileFields)
+        if (!isViewDisabled) {
+            const updatedMobileFields = mobileFields.filter((field) => field.id !== id)
+            setMobileFields(updatedMobileFields)
+        }
     }
 
 
@@ -165,7 +182,7 @@ const Communicationform =(props)=>{
         if (name === 'pincode') {
             otherAddressChange('district', index)('')
             otherAddressChange('state', index)('')
-            handlePinCodeChange(value,  formType)
+            handlePinCodeChange(value,  formType, index)
         }
 
         setFormValues((prevFormValues) => {
@@ -207,10 +224,11 @@ const Communicationform =(props)=>{
 
 
     const saveProgress = () => {
-        setBackDropToggle(true)
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId, setBackDropToggle).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
     return(
@@ -220,7 +238,11 @@ const Communicationform =(props)=>{
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -233,7 +255,7 @@ const Communicationform =(props)=>{
                                         <FormLabel className="mobile-label">{i+1}. Mobile Number <mark>*</mark></FormLabel>
                                         <input
                                             maxLength={10}
-                                            disabled={i === 0}
+                                            disabled={i === 0 || isViewDisabled}
                                             placeholder='Enter Mobile Number'
                                             value={field.number}
                                             onChange={enterMobileNumber(field.id)}
@@ -250,9 +272,9 @@ const Communicationform =(props)=>{
                                                 </span> : null
                                             }
                                             {i > 0 &&
-                                                <span className='delete-button'
+                                                <span  className='delete-button'
                                                       onClick={() => deleteMobileNumber(field.id)}>
-                                                     <FontAwesomeIcon icon={faTrash}/>
+                                                     <FontAwesomeIcon disabled={isViewDisabled} icon={faTrash}/>
                                                  </span>
                                             }
                                         </div>
@@ -265,6 +287,7 @@ const Communicationform =(props)=>{
                                     <Grid className='detailFrom' container spacing={2}>
                                         <Grid item xs={3}>
                                             <NumberField
+                                                disabled={isViewDisabled}
                                                 className='std-code-input'
                                                 value={props.formValues.std_code}
                                                 name="std_code"
@@ -274,10 +297,11 @@ const Communicationform =(props)=>{
 
                                                 }}
                                             />
-                                            <ErrorMessage name="std_code" style={{color:'red'}} component="p" />
+                                            <ErrorMessage name="std_code" style={{color:'red', marginBottom: '0px'}} component="p" />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <NumberField
+                                                disabled={isViewDisabled}
                                                 name="landline"
                                                 value={props.formValues.landline}
                                                 placeholder='Landline Number'
@@ -287,17 +311,18 @@ const Communicationform =(props)=>{
                                                 }}
                                             />
 
-                                            <ErrorMessage name="landline" style={{color:'red'}} component="p" />
+                                            <ErrorMessage name="landline" style={{color:'red', marginBottom: '0px'}} component="p" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <FormLabel className='mobile-label'>Email Id  <mark>*</mark></FormLabel>
                                     <Inputfield type="text"
+                                                disabled={isViewDisabled}
                                                 name="email"
                                                 value={props.formValues.email}
                                                 placeholder="XYZ@gmail.com"/>
-                                    <ErrorMessage name="email" component="div" />
+                                    <ErrorMessage name="email" style={{color:'red', marginBottom: '0px'}} component="p"  />
                                 </Grid>
                             </Grid>
                             <Grid container spacing={2} sx={{mb:3}} class='mt-4'>
@@ -324,7 +349,7 @@ const Communicationform =(props)=>{
                                                                 <FormLabel>Home town address is same as current? Yes
                                                                     <mark>*</mark>
                                                                 </FormLabel>
-                                                                <Field onClick={() => setSameAddress(!sameAddress)} type="checkbox"
+                                                                <Field disabled={isViewDisabled} onClick={() => setSameAddress(!sameAddress)} type="checkbox"
                                                                        name="check"/>
                                                             </Grid>
                                                         }
@@ -335,27 +360,35 @@ const Communicationform =(props)=>{
                                                             <FormLabel>Type of Address
                                                                 <mark>*</mark>
                                                             </FormLabel>
-                                                            <OtherInputField type="text"
-                                                                             disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                            <OtherInputField
+                                                                             type="text"
+                                                                             disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                                              value={fieldValue(index, 'address_type')}
                                                                              onChange={otherAddressChange('address_type', index)}
                                                                              placeholder="Example Offce Address Capital Address...Etc. "/>
-                                                            <ErrorMessage name={`address.${index}.address_type`} component="div"/>
+                                                            {formValues[index].address_type === '' ?
+                                                            <ErrorMessage name={`address.${index}.address_type`}  style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                                : null
+                                                            }
                                                         </Grid>
                                                     }
                                                     <Grid item xs={12}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
-                                                        <OtherInputField type="text"
-                                                                    disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                        <OtherInputField
+                                                                    type="text"
+                                                                    disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                                     value={fieldValue(index,'flat')}
                                                                     onChange={otherAddressChange('flat', index)}
                                                                     placeholder="Example Offce Address Capital Address...Etc. "/>
-                                                        <ErrorMessage name={`address.${index}.flat`} component="div" />
+                                                        {formValues[index].flat === '' ?
+                                                            <ErrorMessage name={`address.${index}.flat`} style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6} className='d-grid'>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
-                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                            disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                             className=''
                                                             name="other_pincode"
                                                             value={fieldValue(index,'pincode')}
@@ -366,45 +399,60 @@ const Communicationform =(props)=>{
 
                                                             }}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.pincode`} component="div" />
+                                                        {formValues[index].pincode === '' ?
+                                                            <ErrorMessage name={`address.${index}.pincode`} style={{color:'red', marginBottom: '0px'}} component="p" />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                                         <OtherInputField type="text"
-                                                                         disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                                         disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                                          value={fieldValue(index,'street')}
                                                                          onChange={otherAddressChange('street', index)}
                                                                          placeholder="Enter Area, Street, Etc.s"
                                                         />
-                                                        <ErrorMessage name={`address.${index}.street`} component="div" />
+                                                        {formValues[index].street === '' ?
+                                                            <ErrorMessage name={`address.${index}.street`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
-                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                            disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                             name={'District'}
                                                             selectedValue={fieldValue(index,'district')}
                                                             listArray={otherDistrictStateArray('district', element.address_type)}
                                                             onChangeValue={otherAddressChange('district', index)}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.district`} component="div" />
+                                                        {formValues[index].district === '' ?
+                                                            <ErrorMessage name={`address.${index}.district`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
                                                     </Grid>
                                                     <Grid item xs={6}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
-                                                            disabled={element.address_type === 'Home Town Address' ? sameAddress : false}
+                                                            disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
                                                             name={'State'}
                                                             selectedValue={fieldValue(index,'state')}
                                                             listArray={otherDistrictStateArray('state', element.address_type)}
                                                             onChangeValue={otherAddressChange('state', index)}
                                                         />
-                                                        <ErrorMessage name={`address.${index}.state`} component="div" />
+                                                        {formValues[index].state === '' ?
+                                                            <ErrorMessage name={`address.${index}.state`} style={{color:'red', marginBottom: '0px'}} component="p"  />
+                                                            : null
+                                                        }
+
                                                     </Grid>
                                                 </Grid>
                                                     <Grid item xs={12} className="d-flex align-items-center">
                                                         {formValues.length === index + 1 &&
                                                             <div>
-                                                                <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                                                <Primarybutton
+                                                                               disabled={isViewDisabled}
+                                                                               addclass="addanotherfieldsbtn me-1 mb-1"
                                                                                starticon={<AddIcon/>}
                                                                                buttonlabel="Add another Address"
                                                                                handleclick={() => addFormFields()}/>
@@ -414,6 +462,7 @@ const Communicationform =(props)=>{
                                                         }
                                                         {index > 1 && formValues?.length === index + 1? (
                                                             <Primarybutton addclass="deletebtn"
+                                                                           disabled={isViewDisabled}
                                                                            buttonlabel={<DeleteIcon/>}
                                                                            handleclick={() => removeFormFields(index)}/>
 
@@ -485,6 +534,7 @@ Communicationform.validationSchema = Yup.object().shape({
 
     address: Yup.array().of(
         Yup.object().shape({
+            address_type: Yup.string().required('Please enter Address Type'),
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),
             district: Yup.string().required('Please Select your District'),

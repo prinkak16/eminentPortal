@@ -60,47 +60,48 @@ class Api::V1::Gom::GomController < BaseApiController
       ministry_ids = params[:ministry_ids].present? ? params[:ministry_ids] : ''
 
       sql = "SELECT
-        um.user_id,
-        au.name,
-        array_remove(
-            array_agg(
-                CASE
-                WHEN um.is_minister IS false THEN mi.name
-                ELSE null
-                END
-            ), null
-          ) AS assigned_ministries,
+          au.id,
+          au.name,
           array_remove(
-            array_agg(
-                CASE
-                WHEN um.is_minister THEN mi.name
-                ELSE null
-                END
-            ), null
-           ) AS allocated_ministries,
-         MAX(um.created_at) as latest_created_at
-      FROM public.user_ministries AS um
-      LEFT JOIN public.ministries AS mi
-      ON um.ministry_id = mi.id
-      LEFT JOIN public.auth_users AS au
-      ON um.user_id = au.id"
+              array_agg(
+                  CASE
+                  WHEN um.is_minister IS false THEN mi.name
+                  ELSE null
+                  END
+              ), null
+            ) AS assigned_ministries,
+          array_remove(
+              array_agg(
+                  CASE
+                  WHEN um.is_minister THEN mi.name
+                  ELSE null
+                  END
+              ), null
+             ) AS allocated_ministries
+        FROM public.auth_users AS au
+        LEFT JOIN public.user_ministries AS um
+        ON au.id = um.user_id
+        LEFT JOIN public.ministries AS mi
+        ON um.ministry_id = mi.id
+        WHERE assist_to_id is null"
+
       if minister_ids.length.positive? && ministry_ids.length.positive?
-        sql += " WHERE um.user_id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
+        sql += " AND um.user_id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
       else
         if minister_ids.length.positive?
-          sql += " WHERE um.user_id IN (#{minister_ids})"
+          sql += " AND um.user_id IN (#{minister_ids})"
         end
 
         if ministry_ids.length.positive?
-          sql += " WHERE um.ministry_id IN (#{ministry_ids})"
+          sql += " AND um.ministry_id IN (#{ministry_ids})"
         end
       end
-      sql += ' GROUP BY um.user_id, au.name'
-
+      sql += ' GROUP BY au.id, au.name'
+      puts sql
       user_ministries = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset}")
 
       # fetch all the user ids
-      user_ids = user_ministries.map { |row| row['user_id'] }
+      user_ids = user_ministries.map { |row| row['id'] }
 
       # fetch all the user information
       user_information = fetch_user_information(user_ids)
@@ -112,15 +113,11 @@ class Api::V1::Gom::GomController < BaseApiController
 
       user_ministries.each do |user_ministry|
         assigned_ministries << {
-          user_id: user_ministry.user_id.present? ? user_ministry.user_id : nil,
-          name: user_information[user_ministry.user_id].present? ?
-                  user_information[user_ministry.user_id].name :
-                  auth_user_information[user_ministry.user_id].present? ?
-                    auth_user_information[user_ministry.user_id].name :
-                    nil,
+          user_id: user_ministry.id.present? ? user_ministry.id : nil,
+          name: user_ministry.name.present? ? user_ministry.name : nil,
           allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
           assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
-          assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
+          assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
         }
       end
 
@@ -159,25 +156,32 @@ class Api::V1::Gom::GomController < BaseApiController
       ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
 
       sql = "SELECT
-        au.id,
-        au.name,
-        array_remove(
-         array_agg(
-          CASE
-          WHEN um.is_minister IS false THEN mi.name
-          ELSE null
-          END
-         ), null
-         ) AS assigned_ministries,
-         array_remove(
-         array_agg(
-          CASE
-          WHEN um.is_minister THEN mi.name
-          ELSE null
-          END
-         ), null
-         ) AS allocated_ministries,
-         MAX(um.created_at) as latest_created_at "
+          info.user_id,
+          info.minister_name,
+          array_remove(
+            array_agg(
+              CASE
+              WHEN info.is_minister IS false THEN info.ministry_name
+              ELSE null
+              END
+            ), null
+          ) AS assigned_ministries,
+          array_remove(
+            array_agg(
+              CASE
+              WHEN info.is_minister THEN info.ministry_name
+              ELSE null
+              END
+            ), null
+           ) AS allocated_ministries
+        FROM
+        (
+          SELECT
+            au.id as user_id,
+            au.name AS minister_name,
+            mi.name AS ministry_name,
+            um.is_minister AS is_minister
+      "
       sql += ", word_similarity(au.name, '#{minister_name}') AS ms_minister " if minister_name.length > 2
       sql += ", word_similarity(mi.name, '#{ministry_name}') AS ms_ministry " if ministry_name.length > 2
       sql += "FROM public.auth_users AS au
@@ -188,17 +192,18 @@ class Api::V1::Gom::GomController < BaseApiController
       WHERE au.assist_to_id IS null "
       sql += " AND au.name % '#{minister_name}' " if minister_name.length > 2
       sql += " AND mi.name % '#{ministry_name}' " if ministry_name.length > 2
-      sql += 'GROUP BY au.id, au.name'
+      sql += 'GROUP BY au.id, au.name, mi.name, um.is_minister'
       sql += ' ,mi.name' if ministry_name.length > 2
       sql += ' ORDER BY '
       sql += ' ms_minister DESC, ' if minister_name.length > 2
       sql += ' ms_ministry DESC, ' if ministry_name.length > 2
       sql += 'MAX(um.created_at) IS null, MAX(um.created_at) DESC'
-
+      sql += ') AS info
+        GROUP BY info.user_id, info.minister_name'
       user_ministries = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
       # fetch all the user ids
-      user_ids = user_ministries.map { |row| row['id'] }
+      user_ids = user_ministries.map { |row| row['user_id'] }
 
       # fetch all the user information
       user_information = fetch_user_information(user_ids)
@@ -210,15 +215,11 @@ class Api::V1::Gom::GomController < BaseApiController
 
       user_ministries.each do |user_ministry|
         assigned_ministries << {
-          user_id: user_ministry.id.present? ? user_ministry.id : nil,
-          name: user_information[user_ministry[:id]].present? ?
-                  user_information[user_ministry[:id]].name :
-                  auth_user_information[user_ministry[:id]].present? ?
-                    auth_user_information[user_ministry[:id]].name :
-                    nil,
+          user_id: user_ministry.user_id.present? ? user_ministry.user_id : nil,
+          name: user_ministry.minister_name.present? ? user_ministry.minister_name : nil,
           allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
           assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
-          assigned_states: user_information[user_ministry[:id]].present? ? user_information[user_ministry[:id]][:user_alloted_states] : []
+          assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
         }
       end
 

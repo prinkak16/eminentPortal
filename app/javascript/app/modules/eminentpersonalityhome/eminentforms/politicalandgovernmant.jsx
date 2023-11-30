@@ -12,12 +12,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PopupState, {bindPopper, bindToggle} from 'material-ui-popup-state';
 import {Edit} from "@mui/icons-material";
 import {
+    disabledSaveProgressButton,
     electionTypeList,
     electionWiseJson, formFilledValues,
-    isValuePresent,
+    isValuePresent, ministerPortfolioArray,
     otherPartyJson,
     politicalProfileJson,
-    saveProgress, saveProgressButton, toSnakeCase
+    saveProgress, saveProgressButton, showErrorToast, toSnakeCase
 } from "../../utils";
 import ComponentOfFields from "./componentOfFields";
 import {v4 as uuidv4} from "uuid";
@@ -28,9 +29,10 @@ import ElectoralGovermentMatrix from "./electoralGovermentMatrix";
 import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
+import Tooltip from "@mui/material/Tooltip";
 
 const PolticalandGovrnform =(props)=>{
-    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle,backDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -45,11 +47,23 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
-    const [electoralDetails, setElectoralDetails] = useState(props.formValues.election_fought)
+    const [electoralDetails, setElectoralDetails] = useState()
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
+    const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
 
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
+
+    useEffect(() => {
+        setElectoralDetails(props.userData.election_fought)
+    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -68,24 +82,35 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const handleSave = ( title, formData, id) => {
-        if (title === 'Political Profile') {
-            politicalProfileSave(formData, id)
-        }
+        setBackDropToggle(true)
+        setTimeout(function() {
+            if (title === 'Political Profile') {
+                politicalProfileSave(formData, id)
+                setEditableProfileField({})
+            }
 
-        if (title === 'Other Party Profile') {
-            otherPartiProfileSave(formData, id)
-        }
+            if (title === 'Other Party Profile') {
+                setEditableProfileField(form)
+                otherPartiProfileSave(formData, id)
+            }
+        }, 50)
+
 
     };
 
     const editForm = (type,id) => {
+        setShowList(null)
         if (type === 'Political Profile') {
+            scrollToBottom(400)
+            setEditableProfileField({})
             const form = politicalProfileDetails.find((item) => item.id === id);
             if (form) {
                 setEditableProfileField(form)
             }
         }
         else {
+            scrollToBottom(1200)
+            setEditableOtherPartyField({})
             const form = otherPartyDetails.find((item) => item.id === id);
             if (form) {
                 setEditableOtherPartyField(form)
@@ -94,14 +119,29 @@ const PolticalandGovrnform =(props)=>{
 
     };
 
+    const deleteFormFields = (type, id) => {
+        setShowList(null)
+        if (type === 'Political Profile') {
+            const form = politicalProfileDetails.filter((item) => item.id !== id);
+            if (form) {
+                setPoliticalProfileDetails(form)
+            }
+        } else {
+            const form = otherPartyDetails.filter((item) => item.id !== id);
+            if (form) {
+                setOtherPartyDetails(form)
+            }
+        }
+    }
+
     const politicalProfileSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
             party_level: formData.party_level,
-            unit: formData.unit,
-            designation: formData.designation,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            unit: isValuePresent(formData.unit) ? formData.unit : '-',
+            designation: isValuePresent(formData.designation) ? formData.designation : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setPoliticalProfileDetails((prevData) =>
@@ -109,15 +149,16 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const otherPartiProfileSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
             party: formData.party,
-            position: formData.position,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            position: isValuePresent(formData.position) ? formData.position : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setOtherPartyDetails((prevData) =>
@@ -125,6 +166,7 @@ const PolticalandGovrnform =(props)=>{
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        setBackDropToggle(false)
     }
 
     const NotApplicableFields = (event) => {
@@ -132,18 +174,28 @@ const PolticalandGovrnform =(props)=>{
         props.formValues.political_not_applicable = event.target.checked
     }
 
-    const enterSocialFields = (field,index) => (event) => {
-        setSocialFields((preSocialField) => {
-            return preSocialField.map((form, i) => {
-                if (i === index) {
-                    return {
-                        ...form,
-                        [field]: event.target.value,
-                    };
-                }
-                return form;
+    const enterSocialFields = (field, index) => (event) => {
+        let canEnterValue = true
+        if (field === 'description') {
+            if (event.target.value.length > 500) {
+                canEnterValue = false
+                return showErrorToast('Description can not be greater than 500 character')
+            }
+        }
+
+        if (canEnterValue) {
+            setSocialFields((preSocialField) => {
+                return preSocialField.map((form, i) => {
+                    if (i === index) {
+                        return {
+                            ...form,
+                            [field]: event.target.value,
+                        };
+                    }
+                    return form;
+                });
             });
-        });
+        }
     }
 
     const handleFieldChange = (value, name, valueType, index) => {
@@ -163,12 +215,23 @@ const PolticalandGovrnform =(props)=>{
     const contestedElection = (value) => {
         setElectionContested(value)
         props.formValues.election_contested = value === 'Yes'
+        if (value !== 'Yes') {
+            setElectoralDetails([{
+                election_type: '', election_details: {}
+            }])
+        }
     }
 
+
     const changeElectionType = (value,name ,type, formIndex) => {
+        setIsElectionTypeChange(true)
         const updatedElectoralData = [...electoralDetails];
         updatedElectoralData[formIndex].election_type = value;
+        updatedElectoralData[formIndex].election_details = {}
         setElectoralDetails(updatedElectoralData);
+        setTimeout(function() {
+            setIsElectionTypeChange(false)
+        },100)
     }
 
 
@@ -188,10 +251,11 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const saveProgress = () => {
-        setBackDropToggle(true)
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin,props.stateId, setBackDropToggle).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
 
@@ -202,6 +266,8 @@ const PolticalandGovrnform =(props)=>{
     useEffect(() => {
         props.formValues.election_fought = electoralDetails
     }, [electoralDetails]);
+
+
 
     useEffect(() => {
         props.formValues.political_profile =  politicalProfileDetails
@@ -216,16 +282,6 @@ const PolticalandGovrnform =(props)=>{
         setElectoralDetails(fields)
     }
 
-    useEffect(() => {
-        if (props.formValues.election_contested) {
-            if (!isValuePresent(props.formValues?.election_fought)) {
-                setElectoralDetails([{
-                    election_type: '', election_details: {}
-                }])
-            }
-        }
-
-    },[props.formValues.election_contested])
 
     const openList = (id) => {
         if (showList === id) {
@@ -235,6 +291,14 @@ const PolticalandGovrnform =(props)=>{
         }
     }
 
+    const scrollToBottom = (scroll) => {
+        window.scrollTo({
+            top: scroll, // Scroll to the bottom
+            behavior: 'smooth', // Optional: Add smooth scrolling animation
+        });
+    };
+
+
     return(
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -242,7 +306,11 @@ const PolticalandGovrnform =(props)=>{
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -273,9 +341,11 @@ const PolticalandGovrnform =(props)=>{
                                         {showList === data.id && (
                                             <Paper className='details-edit-list'>
                                                 <Typography sx={{p: 2}}
-                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
-                                                <Typography
-                                                    sx={{p: 2}}><DeleteIcon/></Typography>
+                                                            className='edit-buttons'
+                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/>Edit</Typography>
+                                                <Typography onClick={() => deleteFormFields('Political Profile',data.id)}
+                                                            className='edit-buttons'
+                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                             </Paper>
                                         )}
                                     </div>
@@ -294,27 +364,35 @@ const PolticalandGovrnform =(props)=>{
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
                 }
-                {!NAFields &&
-                <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave} isEditable={editableProfileField} notApplicable={NAFields}/>
+                {!backDropToggle &&
+                    <>
+                        {!NAFields &&
+                            <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave}
+                                               isEditable={editableProfileField}
+                                               notApplicable={NAFields} isViewDisabled={isViewDisabled}/>}
+                    </>
                 }
                 <Grid container sx={{my:3}} spacing={2}>
                     <Grid item xs={2}>
                         <FormLabel>Years with BJP</FormLabel>
                         <NumberField
+                            disabled={isViewDisabled}
                             type="number"
                             name="bjp_years"
+                            value={props.formValues.bjp_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
                             }}
                         />
-                        <ErrorMessage name="bjp" component="div" />
                     </Grid>
                     <Grid item xs={2}>
                         <FormLabel>Years with RSS</FormLabel>
                         <NumberField
+                            disabled={isViewDisabled}
                             type="number"
                             name="rss_years"
+                            value={props.formValues.rss_years}
                             placeholder='00'
                             onInput={(event) => {
                                 event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
@@ -323,6 +401,12 @@ const PolticalandGovrnform =(props)=>{
                         <ErrorMessage name="rss" component="div" />
                     </Grid>
                 </Grid>
+                <Grid item sx={{mb:2}} xs={12}>
+                    <Typography variant="h5" content="h5">
+                        <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
+                    </Typography>
+                </Grid>
+
                 {otherPartyDetails.length > 0 && (
                     <div className="data-table">
                         <table className="w-100 table-responsive text-center">
@@ -336,42 +420,43 @@ const PolticalandGovrnform =(props)=>{
                             </thead>
                             <tbody>
                             {otherPartyDetails.map((data, index) => (
-                            <tr key={index}>
-                                <td>{data.party}</td>
-                                <td>{data.position}</td>
-                                <td>{data.start_year}</td>
-                                <td className='end-date-td'>{data.end_year}
-                                    <div className='edit-button-logo' ref={componentRef}>
-                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                            <MoreVertIcon/>
-                                        </Button>
-                                        {showList === data.id && (
-                                            <Paper>
-                                                <Typography sx={{p: 2}}
-                                                            onClick={() => editForm('Other Party Profile',data.id)}><Edit/></Typography>
-                                                <Typography
-                                                    sx={{p: 2}}><DeleteIcon/></Typography>
-                                            </Paper>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                <tr key={index}>
+                                    <td>{data.party}</td>
+                                    <td>{data.position}</td>
+                                    <td>{data.start_year}</td>
+                                    <td className='end-date-td'>{data.end_year}
+                                        <div className='edit-button-logo' ref={componentRef}>
+                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon/>
+                                            </Button>
+                                            {showList === data.id && (
+                                                <Paper className='details-edit-list'>
+                                                    <Typography sx={{p: 2}}
+                                                                className='edit-buttons'
+                                                                onClick={() => editForm('Other Party Profile',data.id)}><Edit/>Edit</Typography>
+                                                    <Typography onClick={() => deleteFormFields('Other Party Profile',data.id)}
+                                                                className='edit-buttons'
+                                                                sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                </Paper>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
                 )}
-                <Grid container sx={{my:3}} className="grid-wrap">
-                    <Grid item sx={{mb:2}} xs={12}>
-                        <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div" sx={{ display: 'inline-block' }}>2</Box> Other Party Profile ( If any )
-                        </Typography>
-                    </Grid>
-
-                    <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave} isEditable={editableOtherPartyField}/>
+                <Grid  className="grid-wrap">
+                    {!backDropToggle &&
+                        <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
+                                           isEditable={editableOtherPartyField} isViewDisabled={isViewDisabled}/>
+                    }
                 </Grid>
+
+
                 <Grid container className="grid-wrap">
-                    <Grid item  xs={12}>
+                    <Grid item  container sx={{my:3}} spacing={2}>
                         {socialFields && socialFields.map((field, index) => (
                             <Grid container className='mb-5'>
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
@@ -382,6 +467,7 @@ const PolticalandGovrnform =(props)=>{
                                 <Grid item xs={4} sx={{mb:2}} className='organization-grid'>
                                     <FormLabel>Organization </FormLabel>
                                     <OtherInputField
+                                        disabled={isViewDisabled}
                                         type="text"
                                         value={field?.organization || null}
                                         onChange={handleFieldChange}
@@ -390,8 +476,13 @@ const PolticalandGovrnform =(props)=>{
                                         placeholder="Enter Organization "/>
                                 </Grid>
                                 <Grid item xs={12} className='organization-description-grid'>
-                                    <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                                    <FormLabel>Description
+                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
+                                            <InfoOutlinedIcon/>
+                                        </Tooltip>
+                                    </FormLabel>
                                     <TextField
+                                        disabled={isViewDisabled}
                                         className='p-0'
                                         fullWidth
                                         value={field.description}
@@ -406,9 +497,9 @@ const PolticalandGovrnform =(props)=>{
                         ))}
                     </Grid>
                     <Grid item  xs={12}>
-                        <Primarybutton addclass="addanotherfieldsbtn me-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={()=>addSocialFields()}/>
+                        <Primarybutton disabled={isViewDisabled} addclass="addanotherfieldsbtn me-2" starticon={<AddIcon/>} buttonlabel="Add Another" handleclick={()=>addSocialFields()}/>
                         {socialFields.length > 1 ?(
-                            <Primarybutton addclass="deletebtn mt-3" starticon={<DeleteIcon/>} handleclick={()=>deleteSocialFields(socialFields.length-1)}/>
+                            <Primarybutton disabled={isViewDisabled} addclass="deletebtn mt-3" starticon={<DeleteIcon/>} handleclick={()=>deleteSocialFields(socialFields.length-1)}/>
                         ):null}
                     </Grid>
 
@@ -423,16 +514,18 @@ const PolticalandGovrnform =(props)=>{
                     <Grid item xs={4} sx={{mt:2, ml:3}}>
                         <FormLabel fullwidth>Have you contested any election?</FormLabel>
                         <div className='d-flex mt-2'>
-                            <RadioButton radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
+                            <RadioButton disabled={isViewDisabled} radioList={['Yes', 'No']} selectedValue={electionContested} onClicked={contestedElection} />
                         </div>
                     </Grid>
-                    {electionContested === 'Yes' && electoralDetails.map((field,index) => (
+                    {electionContested === 'Yes' && electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
                                 <Grid container spacing={2} className='px-5 py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
+                                                {/*<span className='election-contest-count'>{index+1}</span>*/}
                                                 <AutoCompleteDropdown
+                                                    disabled={isViewDisabled}
                                                     classes={'election-dropdown'}
                                                     name={'Election Type'}
                                                     selectedValue={field.election_type}
@@ -441,7 +534,7 @@ const PolticalandGovrnform =(props)=>{
                                                     formIndex={index}
                                                 />
                                                 {electoralDetails.length > 1 &&
-                                                <Primarybutton addclass="deletebtn delete-btn" starticon={<DeleteIcon/>} handleclick={()=>deleteElectoralFields(index)}/>
+                                                <Primarybutton disabled={isViewDisabled} addclass="deletebtn delete-btn" starticon={<DeleteIcon/>} handleclick={()=>deleteElectoralFields(index)}/>
                                                 }
                                             </div>
                                     </Grid>
@@ -449,14 +542,17 @@ const PolticalandGovrnform =(props)=>{
                                         {isValuePresent(field.election_type) &&
                                             <>
                                                     <ElectoralGovermentMatrix
+                                                        isViewDisabled={isViewDisabled}
                                                         jsonForm={electionWiseJson[toSnakeCase(field.election_type)]}
                                                         saveData={saveElectoralData}
                                                         isEditable={field.election_details}
                                                         formIndex={index}
                                                         setBackDropToggle={setBackDropToggle}
+                                                        electionTypeChange={isElectionTypeChange}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
                                                     <Primarybutton
+                                                        isViewDisabled={isViewDisabled}
                                                         addclass="addanotherfieldsbtn me-2"
                                                         starticon={<AddIcon/>}
                                                         buttonlabel="Add Another"

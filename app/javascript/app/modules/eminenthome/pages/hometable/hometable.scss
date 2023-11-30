@@ -269,4 +269,17 @@ font-size: 1rem !important;
 
 .border-bottom{
   border-bottom: 1px solid #E6E6E6 !important;
+.home-edit-list {
+  position: absolute;
+  z-index: 5;
+  right: 30px !important;
+}
+
+.blank-eminent-container {
+  min-height: 10rem;
+  margin: auto;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
 }

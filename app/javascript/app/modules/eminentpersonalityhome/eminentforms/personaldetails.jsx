@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from "react"
 import {Box, Button, FormLabel, Grid, Paper, Stack, TextField, Typography,} from '@mui/material';
 import {ErrorMessage, Field, useFormikContext} from 'formik';
 import {styled} from '@mui/material/styles';
-import ImageUpload from '../component/imageupload/imageupload';
 import './allfroms.scss'
 import Age from '../../../../../../public/images/age.svg'
 import Formheading from "../component/formheading/formheading";
@@ -23,7 +22,7 @@ import {
 import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {
-    calculateAge,
+    calculateAge, disabledSaveProgressButton,
     dobFormat,
     formFilledValues,
     isValuePresent,
@@ -38,20 +37,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Tooltip from '@mui/material/Tooltip';
 import UserIcon from '../../../../../../public/images/userIcon.svg'
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 const PersonalDetails = (props) => {
     const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
-    useEffect(() => {
-        for (const key in props.userData) {
-                if (props.formValues.hasOwnProperty(key)) {
-                    props.formValues[key] = props.userData[key]
-                }
-        }
-        props.formValues.mobiles = props.userData.mobiles
-    }, []);
-
-
-
     useEffect(() => {
     },[props.formValues.dob])
     const Item = styled(Paper)(({theme}) => ({
@@ -70,10 +58,22 @@ const PersonalDetails = (props) => {
     const [langDrawer, setLangDrawer] = useState(false);
     const [eminentAge, setEminentAge] = useState(props.formValues.dob)
     const [userPhoto, setUserPhoto] = useState(props.formValues.photo)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     useEffect(() => {
         setEminentAge(props.formValues.dob)
     },[props.formValues.dob])
+
+    useEffect(() => {
+        props.formValues.mobiles = props.userData.mobiles
+    },[])
 
     useEffect(() => {
         setUserPhoto(props.formValues.photo)
@@ -117,9 +117,11 @@ const PersonalDetails = (props) => {
     }
 
     const saveProgress = () => {
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
 
@@ -144,8 +146,10 @@ const PersonalDetails = (props) => {
     }
 
     const openLangDrawer = () => {
-        setLangDrawer(!langDrawer)
-        setCustomSelectedLanguages(selectedLanguages)
+        if (!isViewDisabled) {
+            setLangDrawer(!langDrawer)
+            setCustomSelectedLanguages(selectedLanguages)
+        }
     }
 
     const saveLanguages = () => {
@@ -155,10 +159,12 @@ const PersonalDetails = (props) => {
     }
 
     const removeLanguage = (selLang) => {
-        let languages = selectedLanguages.filter(item => item !== selLang)
-        setCustomSelectedLanguages(languages)
-        setSelectedLanguages(languages)
-        props.formValues.languages = languages
+        if (!isViewDisabled) {
+            let languages = selectedLanguages.filter(item => item !== selLang)
+            setCustomSelectedLanguages(languages)
+            setSelectedLanguages(languages)
+            props.formValues.languages = languages
+        }
     }
 
     const handleDateChange = (event)    => {
@@ -180,7 +186,11 @@ const PersonalDetails = (props) => {
                     <Item><Formheading number="1" heading="Personal Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                disabledSaveProgressButton :
+                                saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -189,70 +199,83 @@ const PersonalDetails = (props) => {
                         <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
                             <Grid item xs={12}>
                                 <FormLabel>Name <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="name" placeholder="Enter Name"
+                                <Inputfield disabled={isViewDisabled} type="text" name="name" placeholder="Full Name (As per PAN Card)"
                                             value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z\s]+$/.test(key)) {
                                         e.preventDefault();
                                     }
                                 }}/>
-                                <ErrorMessage name="name" component="div"/>
+                                <ErrorMessage name="name" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Religion <mark>*</mark></FormLabel>
-                                <SelectField name="religion" selectedvalues={selectedOption}
+                                <SelectField disabled={isViewDisabled} name="religion" selectedvalues={selectedOption}
                                              value={props.formValues.religion}
                                              handleSelectChange={selectChange}
                                              defaultOption="Select Religion"
                                              optionList={ReligionData}
                                 />
-                                <ErrorMessage name="religion" component="div"/>
+                                <ErrorMessage name="religion" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Gender <mark>*</mark></FormLabel>
-                                <SelectField name="gender" selectedvalues={selectedOption}
+                                <SelectField
+                                            disabled={isViewDisabled}
+                                            name="gender" selectedvalues={selectedOption}
                                              value={props.formValues.gender}
                                              defaultOption="Select Gender"
                                              handleSelectChange={selectChange}
                                              optionList={GenderData}/>
-                                <ErrorMessage name="gender" component="div"/>
+                                <ErrorMessage name="gender" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
-                                <SelectField name="category" selectedvalues={selectedOption}
+                                <SelectField disabled={isViewDisabled} name="category" selectedvalues={selectedOption}
                                              value={props.formValues.category}
                                              defaultOption="Select Category"
                                              handleSelectChange={selectChange}
                                              optionList={dropDownDataCategory}/>
-                                <ErrorMessage name="category" component="div"/>
+                                <ErrorMessage name="category" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
-                                <Inputfield type="text" name="caste" value={props.formValues.caste} Z
-                                            placeholder="Enter Caste" onKeyPress={(e) => {
-                                    const key = e.key;
-                                    if (!/^[A-Za-z]+$/.test(key)) {
-                                        e.preventDefault();
-                                    }
-                                }}/>
-                                <ErrorMessage name="caste" component="div"/>
+                                <Inputfield
+                                    disabled={isViewDisabled}
+                                    type="text"
+                                    name="caste"
+                                    value={props.formValues.caste}
+                                    placeholder="Enter Caste"
+                                    onKeyPress={(e) => {
+                                        const key = e.key;
+                                        if (!/^[A-Za-z\s]*$/.test(key)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                />
+                                <ErrorMessage name="caste" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
-                                <Inputfield type="text" name="sub_caste" value={props.formValues.sub_caste} placeholder="Enter Sub Caste"
+                                <Inputfield
+                                    disabled={isViewDisabled}
+                                    type="text"
+                                    name="sub_caste"
+                                    value={props.formValues.sub_caste}
+                                    placeholder="Enter Sub Caste"
                                             onKeyPress={(e) => {
                                                 const key = e.key;
-                                                if (!/^[A-Za-z]+$/.test(key)) {
+                                                if (!/^[A-Za-z\s]*$/.test(key)) {
                                                     e.preventDefault();
                                                 }
                                             }}/>
-                                <ErrorMessage name="sub_caste" component="div"/>
                             </Grid>
                             <Grid item xs={6} className="mb-md-0">
                                 <FormLabel>Date of birth <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
                                         <DatePicker
+                                            disabled={isViewDisabled}
                                             maxDate={maxDate()}
                                             onChange={handleDateChange}
                                             className='report-date-picker-container'
@@ -267,10 +290,11 @@ const PersonalDetails = (props) => {
                                     </DemoContainer>
                                 </LocalizationProvider>
                                 <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
+                                <ErrorMessage name="dob" style={{color:'red'}} component="p" />
                             </Grid>
                             <Grid item xs={4}>
                                 <FormLabel>Languages known <mark>*</mark></FormLabel>
-                                <ErrorMessage name="languages" component="div" className="error"/>
+                                <ErrorMessage name="languages" style={{color:'red'}} component="p" />
                                 <div className="language-container" onClick={() => openLangDrawer()}>
                                     <span>Select Languages</span>
                                     <span
@@ -316,6 +340,7 @@ const PersonalDetails = (props) => {
                             <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
+                                    disabled={isViewDisabled}
                                     name="aadhaar"
                                     value={props.formValues.aadhaar}
                                     placeholder='Enter Aadhaar number'
@@ -324,12 +349,13 @@ const PersonalDetails = (props) => {
 
                                     }}
                                 />
-                                <ErrorMessage name="aadhaar" component="div"/>
+                                <ErrorMessage name="aadhaar" style={{color:'red'}} component="p" />
 
                             </Grid>
                             <Grid item xs={6} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
+                                    disabled={isViewDisabled}
                                     value={props.formValues.voter_id}
                                     type="text"
                                     id="voter_id"
@@ -337,7 +363,7 @@ const PersonalDetails = (props) => {
                                     placeholder="XXYYZZ1234"
                                     as={TextField}
                                 />
-                                <ErrorMessage name="voter_id" component="div" className="error"/>
+                                <ErrorMessage name="voter_id" style={{color:'red'}} component="p" />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -351,7 +377,7 @@ const PersonalDetails = (props) => {
                             </div>
                         </div>
                         <div className='photo-btn'>
-                            <Button component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
+                            <Button disabled={isViewDisabled} component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
                                 Add Photo
                                 <VisuallyHiddenInput accept="image/*"  type="file"/>
                             </Button>
@@ -386,11 +412,11 @@ PersonalDetails.initialValues = {
 };
 PersonalDetails.validationSchema = Yup.object().shape({
     name: Yup.string().required('Please enter your first name'),
-    religion: Yup.string().required('Please select your Religion'),
-    gender: Yup.string().required('Please select your Gender'),
-    category: Yup.string().required('Please select your Category'),
-    caste: Yup.string().required('Please Enter your Caste'),
-    // dob: Yup.string().required('Please select your Date Of Birth'),
+    religion: Yup.string().required('Please select your religion'),
+    gender: Yup.string().required('Please select your gender'),
+    category: Yup.string().required('Please select your category'),
+    caste: Yup.string().required('Please enter your caste'),
+    dob: Yup.string().required('Please select your date of birth'),
     aadhaar: Yup.string().matches(/^\d{12}$/, 'Aadhaar must be a 12-digit number'),
     voter_id: Yup.string().matches(/^[A-Za-z]{3}\d{7}$/, 'Voter ID format is not valid. It should start with 3 letters followed by 7 digits'),
     languages: Yup.array().of(Yup.string().min(1)).required(' languages minimum item should be of 1 count.'),

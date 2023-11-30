@@ -84,7 +84,7 @@ const LoginPage = () => {
                                onChange={(e)=> inputMobileNumber(e, !otpSent)}/>
                     </div>
                     <div className="row h-100 justify-content-center align-items-center pt-2">
-                        <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit Otp' : 'Send Otp'}</button>
+                        <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit OTP' : 'Send OTP'}</button>
                     </div>
                 </div>
             </div>

@@ -71,8 +71,8 @@ export default function PersistentDrawerLeft() {
     const [inputNumber, setInputNumber] = useState('');
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const [userData, setUserData] = useState(true);
-    const [tabId, setTabId] = useState('1');
-    const [movTabId, setMovTabId] = useState('1');
+    const [tabId, setTabId] = useState('home_table');
+    const [movTabId, setMovTabId] = useState('ministry_wise');
     const navigate = useNavigate();
 
     const {type} = useParams();
@@ -91,7 +91,6 @@ export default function PersistentDrawerLeft() {
                 setExistingData(res);
                 setSubmitDisabled(false);
             }).catch(err => {
-                console.log(err);
             });
             setSubmitDisabled(true);
         } else if (number && number.length === 10 && !isValidNumber(number)) {
@@ -132,9 +131,9 @@ export default function PersistentDrawerLeft() {
         setMovTabId(newValue)
     }   
 
+
     return (<>
             <HomeContext.Provider value={{movTabId, handleMovTabsFilter}}>
-            <Header/>
             <Box sx={{display: 'flex'}} className="mt-5">
                 <Drawer
                     sx={{
@@ -176,7 +175,7 @@ export default function PersistentDrawerLeft() {
                                 Eminent Personalities</p>
                         </div>
 
-                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler} openFilter={open}/>
+                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open}/>
                         {/*<>*/}
                         {/*    <Analytics toggle={toggle}/>*/}
                         {/*    <HomeTable filterString={filterString}/>*/}

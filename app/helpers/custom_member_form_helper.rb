@@ -286,19 +286,18 @@ module CustomMemberFormHelper
           }
         },
         'required': %w[qualification course university college start_year end_year highest_qualification]
-      }
-    },
-    'education_level': {
-      'type': [nil,'string'],
-      'enum': [
-        nil,
-        'Less than 10th',
-        '10th Pass',
-        '12th Pass',
-        'Graduate',
-        'Post Graduate',
-        'Diploma/ITI',
-        'PhD and Above'
+      },
+      'minItems': 1,  # Ensure at least one object in the array
+      'anyOf': [
+        {
+          'contains': {
+            'type': 'object',
+            'name': 'highest_qualification',
+            'properties': {
+              'highest_qualification': { 'const': true }
+            }
+          }
+        }
       ]
     },
     'professions': {
@@ -363,9 +362,7 @@ module CustomMemberFormHelper
       email
       address
       educations
-      education_level
       professions
-      profession_description
     ]
   )
 
@@ -544,7 +541,6 @@ module CustomMemberFormHelper
       email
       address
       educations
-      education_level
       professions
       profession_description
       political_not_applicable
@@ -654,7 +650,6 @@ module CustomMemberFormHelper
       email
       address
       educations
-      education_level
       professions
       profession_description
       political_not_applicable
@@ -730,7 +725,6 @@ module CustomMemberFormHelper
       email
       address
       educations
-      education_level
       professions
       profession_description
       political_not_applicable

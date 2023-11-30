@@ -299,6 +299,7 @@ button.cancelbtn{
   border-radius: 10px;
   color: darkgrey;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .save-btn {
@@ -515,6 +516,7 @@ button.cancelbtn{
 
 .upload-resume-button .css-sghohy-MuiButtonBase-root-MuiButton-root {
   background: #61BE7A !important;
+  border-radius: 0.8rem;
 }
 
 .pdf-icon-name {
@@ -539,8 +541,8 @@ button.cancelbtn{
 
 .reff-mobile {
   width: 100% !important;
-  height: 3.4rem !important;
-  border-radius: 13px;
+  height: 3.3rem !important;
+  border-radius: 9px;
   border: 1px solid grey;
   background: #f8f9fa;
   padding-left: 1.2rem;
@@ -606,4 +608,76 @@ button.cancelbtn{
 
 .details-edit-list {
   position: absolute;
+  z-index: 1;
+}
+
+.start-year-NA {
+  margin-top: -2.4rem !important;
+}
+
+.pdf-msg {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.pdf-msg-text {
+  margin-top: 0.5rem;
+}
+
+.election-contest-count {
+font-size: 1.5rem;
+margin-right: 1rem;
+display: flex;
+margin-top: auto;
+margin-bottom: auto;
+}
+
+.edit-buttons {
+  font-size: 1rem !important;
+  gap: 0.3rem !important;
+  display: flex;
+}
+
+.div.MuiOutlinedInput-root {
+  overflow: hidden;
+}
+
+.qualification-name {
+  display: flex;
+  width: 100%;
+}
+
+.highest-qualification-radio {
+  width: 3rem;
+}
+
+.add-ministry-container {
+  display: flex;
+  margin-top: 2rem;
+  width: 20rem;
+  font-size: 1.1rem;
+}
+
+.add-ministry {
+  cursor: pointer;
+  color: #FF9559 !important;
+}
+
+.delete-ministry {
+  cursor: pointer;
+  margin-left: 2rem;
+  color: gray;
+  justify-content: center;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  gap: 7px;
+}
+
+.width-22rem {
+  width: 22rem;
+}
+
+.margin-left-3-rem {
+  margin-left: 3rem;
 }

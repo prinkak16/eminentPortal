@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Route, Routes, redirect, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.scss";
@@ -15,6 +15,9 @@ import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
 import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
 import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/AllotAssign";
+import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
+import Header from "./modules/eminentpersonalityhome/header/header";
+import {eminentAdminDetails, getLocationsData} from "./api/stepperApiEndpoints/stepperapiendpoints";
 
 const beforeLoginRoutes = (
   <Routes>
@@ -26,6 +29,7 @@ const afterLoginRoutes = (
   <Routes>
     <Route path="/eminent_personality" element={<EminentPersonality />} />
     <Route path="/*" element={<Navigate to="/eminent_personality" />} />
+      <Route path="/form_submitted" element={<AfterFormSubmit />} />
   </Routes>
 );
 
@@ -37,7 +41,7 @@ const adminRoutes = (
     <Route path="/masterofvacancies" element={<MasterVacancies />} />
     <Route path="/gom" element={<GomPage />} />
     <Route path="/allotment/assign" element={<AllotAssign />} />
-
+    <Route path="/form_submitted" element={<AfterFormSubmit />} />
     <Route path="/*" element={<Navigate to="/" />} />
   </Routes>
 );
@@ -50,6 +54,8 @@ function App() {
     document.getElementById("app").getAttribute("data-candidate-login")
   );
   const [backDropToggle, setBackDropToggle] = useState(false);
+  const [userData, setUserData] = useState()
+    const [eminentData, setEminentData] = useState()
   const config = {
     headers: {
       Authorization: authToken,
@@ -64,13 +70,21 @@ function App() {
       : adminRoutes;
   };
 
+    useEffect(() => {
+        if (!isCandidateLogin) {
+            eminentAdminDetails().then((res) => {
+                setUserData(res.data.data)
+            })
+        }
+    }, []);
   return (
     <>
       <ToastContainer />
       <BackDrop toggle={backDropToggle} />
       <ApiContext.Provider
-        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle }}
+        value={{ config, setAuthToken, isCandidateLogin, setBackDropToggle , backDropToggle, userData, setUserData, eminentData, setEminentData}}
       >
+          {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/>: null :  <Header userData={userData}/>}
         {routesOfProjects()}
       </ApiContext.Provider>
     </>

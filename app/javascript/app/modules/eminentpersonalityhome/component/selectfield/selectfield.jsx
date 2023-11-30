@@ -3,12 +3,13 @@ import { Formik, Field, ErrorMessage } from 'formik';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import './selectfield.scss';
 const Selectfield=(props)=>{
-    const {name, optionList, defaultOption, heading, handleSelectChange, placeholder, value} = props;
+    const {name, optionList, defaultOption, heading, handleSelectChange, placeholder, value, disabled} = props;
 
     return(
         <>
             <FormControl>
                 <Field
+                    disabled={disabled}
                     key={name}
                     placeholde={placeholder}
                     as={Select}

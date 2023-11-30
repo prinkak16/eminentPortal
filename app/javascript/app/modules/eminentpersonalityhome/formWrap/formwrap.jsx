@@ -11,12 +11,12 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-import {electionWiseJson, isValuePresent, showErrorToast, toSnakeCase} from "../../utils";
+import {electionWiseJson, isValuePresent, showErrorToast, showNotification, toSnakeCase} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
-const FormWrap=({userData, stateId})=>{
+const FormWrap=({userData, stateId, viewMode})=>{
     const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
@@ -27,6 +27,13 @@ const FormWrap=({userData, stateId})=>{
     }));
     const navigate = useNavigate();
     const [steps, setSteps] = useState([PersonalDetails, Communicationform, Educationform, PolticalandGovrnform, Resumeform, Refferedform])
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+    },[viewMode])
 
     useEffect(() => {
         if (isValuePresent(isCandidateLogin)) {
@@ -34,6 +41,7 @@ const FormWrap=({userData, stateId})=>{
                   setSteps(updatedSteps)
         }
     }, []);
+
 
     const [stepValues, setStepValues]=useState([])
     const [activeStep, setActiveStep] = useState(0);
@@ -65,34 +73,50 @@ const FormWrap=({userData, stateId})=>{
 
 
     const onSubmit = (values, formikBag) => {
-        setBackDropToggle(true)
         const {setSubmitting} = formikBag;
-        const newStepValues = [...stepValues];
-        newStepValues[activeStep] = values;
-        setStepValues(newStepValues)
-        const activeStepData = mergeObjectsUpToIndex(newStepValues, activeStep);
-        setSubmitting(false);
-        let isError = false
-        if (activeStep + 1 === 4) {
-            const fieldsToValidate = ['educations', 'professions'];
-            isError = validateFields(activeStepData, fieldsToValidate);
-        }
-        if (activeStep + 1 === 4) {
-            if (activeStepData.election_contested) {
-             isError = checkValidationsElectoral(activeStepData.election_fought)
+        if (!isViewDisabled) {
+            setBackDropToggle(true)
+            const newStepValues = [...stepValues];
+            newStepValues[activeStep] = values;
+            setStepValues(newStepValues)
+            const activeStepData = mergeObjectsUpToIndex(newStepValues, activeStep);
+            setSubmitting(false);
+            let isError = false
+            if (activeStep + 1 === 3) {
+                const fieldsToValidate = ['educations', 'professions'];
+                isError = validateFields(activeStepData, fieldsToValidate);
             }
-        }
-        if (!isError) {
-            getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
-                if (response) {
-                    if (activeStep + 1 === 6) {
-                        navigate({
-                            pathname: '/'
-                        });
-                    }
-                    handleNext();
+            if (activeStep + 1 === 4) {
+                if (activeStepData.election_contested) {
+                    isError = checkValidationsElectoral(activeStepData.election_fought)
                 }
-            });
+            }
+            if (!isError) {
+                getFormData(activeStepData, activeStep + 1, config, false, isCandidateLogin, stateId, setBackDropToggle).then(response => {
+                    if (response) {
+                        if (isCandidateLogin) {
+                            if (activeStep + 1 === 5) {
+                                navigate({
+                                    pathname: '/form_submitted'
+                                });
+                            }
+                        } else if (activeStep + 1 === 6) {
+                            navigate({
+                                pathname: '/form_submitted'
+                            });
+                        }
+                        handleNext();
+                        scrollToTop()
+                    }
+                });
+            } else {
+                setBackDropFalse()
+            }
+        } else {
+            setSubmitting(false)
+            showNotification()
+            handleNext();
+            scrollToTop()
         }
     };
 
@@ -139,33 +163,54 @@ const FormWrap=({userData, stateId})=>{
                     if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
+                            const ministriesKey = ['designation','ministry_name', 'ministry_duration']
                             for (const index in fields) {
-                                if (!isValuePresent(electoralDetails[item].election_details[fields[index].key])) {
-                                    if (!isError) {
-                                        if (isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
-                                            if (electoralDetails[item].election_details[fields[index]?.condition_key] === 'Yes') {
-                                                showErrorToast(`Please fill ${fields[index].name} Details`);
+                                if (ministriesKey.includes(fields[index].key)) {
+                                    if (electoralDetails[item].election_details.minister_portfolio === 'Yes') {
+                                        const portfolio = electoralDetails[item].election_details.minister_portfolio_array
+                                        for (const pI in portfolio) {
+                                            if (!isValuePresent(portfolio[pI][fields[index].key])) {
                                                 isError = true
-                                            } else {
-                                                isError = false
-                                            }
-                                        } else if (fields[index].hasOwnProperty('condition_key')) {
-                                            if (!isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
-                                                isError = false
-                                            } else {
                                                 showErrorToast(`Please fill ${fields[index].name} Details`);
                                             }
-                                        } else {
-                                            showErrorToast(`Please fill ${fields[index].name} Details`);
-                                            isError = true
+
+                                            if (!isError) {
+                                                if (fields[index].hasOwnProperty('combo_fields')) {
+                                                    if (!isValuePresent(portfolio[pI][fields[index].combo_fields[0].key])) {
+                                                        showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
+                                                        isError = true
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-                                } else if (fields[index].hasOwnProperty('combo_fields') && !isValuePresent(electoralDetails[item].election_details[fields[index].combo_fields[0].key])) {
-                                    showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
-                                    isError = true
                                 } else {
-                                    isError = false
+                                    if (!isValuePresent(electoralDetails[item].election_details[fields[index].key])) {
+                                        if (!isError) {
+                                            if (isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
+                                                if (electoralDetails[item].election_details[fields[index]?.condition_key] === 'Yes') {
+                                                    showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                    isError = true
+                                                } else {
+                                                    isError = false
+                                                }
+                                            } else if (fields[index].hasOwnProperty('condition_key')) {
+                                                if (!isValuePresent(electoralDetails[item].election_details[fields[index].condition_key])) {
+                                                    isError = false
+                                                } else {
+                                                    showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                }
+                                            } else {
+                                                showErrorToast(`Please fill ${fields[index].name} Details`);
+                                                isError = true
+                                            }
+                                        }
+                                    } else if (fields[index].hasOwnProperty('combo_fields') && !isValuePresent(electoralDetails[item].election_details[fields[index].combo_fields[0].key])) {
+                                        showErrorToast(`Please fill ${fields[index].combo_fields[0].name} Details`);
+                                        isError = true
+                                    }
                                 }
+
                             }
                         } else {
                             showErrorToast(`Please fill election Details`);
@@ -185,8 +230,19 @@ const FormWrap=({userData, stateId})=>{
     }
 
 
+    const setBackDropFalse = () => {
+        setBackDropToggle(false)
+    }
 
-    return(
+        const scrollToTop = () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth', // Optional: Add smooth scrolling animation
+            });
+        };
+
+
+        return(
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid className='detailFrom' container spacing={2}>
@@ -201,6 +257,7 @@ const FormWrap=({userData, stateId})=>{
                                     <FormStepper
                                         stateId={stateId}
                                         userData={userData}
+                                        viewMode={viewMode}
                                         activeStep={activeStep}
                                         handlePrev={handlePrev}
                                         handleNext={handleNext}

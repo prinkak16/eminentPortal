@@ -10,22 +10,48 @@ import {useEffect, useState} from "react";
 import  './movtable.css'
 import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
+import {Backdrop, CircularProgress} from "@mui/material";
 
 
 const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
-    const [psuTableData, setPsuTableData] = useState([])
-    useEffect(() => {
+    const [psuTableData, setPsuTableData] = useState(null)
+    const [isFetching, setIsFetching] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0)
+    const [error, setError] = useState(null);
+    const limit= 10;
+
+
+    const displayPsuData = ()=>{
         const params = {
             search_by: 'organization_wise',
             order_by: 'total',
             order_type: 'DESC',
-            ministry_id: ministryId
+            ministry: ministryId,
+            limit: limit,
+            offset: currentPage * limit
         };
-        getMinistryWiseData(params).then(res=>
-            setPsuTableData(res.data.data.value))
-    }, []);
+        getMinistryWiseData(params, filterString)
+            .then((res)=>{
+                setIsFetching(false)
+                setPsuTableData(res.data.data)
+            })
+            .catch((error)=>{
+                setIsFetching(false);
+                setError(error);
+            })
+    }
+    useEffect(() => {
+        setIsFetching(true);
+        displayPsuData()
+    }, [filterString, currentPage]);
     return (
         <>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={isFetching}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         <TableContainer component={Paper} className="psutable mb-3">
             <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                 <TableHead>
@@ -41,7 +67,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {psuTableData.map((ministry, ministryIndex) => {
+                    {psuTableData?.value.map((ministry, ministryIndex) => {
                         let ministryCount = 0;
                         let ministryRowSpan = 0;
                         ministry.dept_info.forEach(department => {
@@ -50,18 +76,18 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                         return ministry.dept_info.map((department, departmentIndex) => {
                             ministryCount += departmentIndex;
                             const departmentRowSpan = department.org_info.length;
-                            return department.org_info.map((psu, psuIndex) => {
+                            return department.org_info.map((organization, psuIndex) => {
                                 ministryCount += psuIndex;
                                 return (
-                                    <TableRow key={psu.org_id}>
+                                    <TableRow key={organization.org_id}>
                                         {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
-                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('1')}>{ministry.ministry_name}</TableCell>}
+                                        {ministryCount ===0 && <TableCell rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry_wise', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
                                         {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
-                                        <TableCell onClick={()=>onSwitchTab('3', ministry.ministryId, department.departmentId)}>{psu.org_name}</TableCell>
-                                        <TableCell >{psu.is_listed}</TableCell>
-                                        <TableCell>{psu.total}</TableCell>
-                                        <TableCell>{psu.occupied}</TableCell>
-                                        <TableCell>{psu.vacant}</TableCell>
+                                        <TableCell onClick={() => onSwitchTab('vacancy_wise', null, organization.org_id)}>{organization.org_name}</TableCell>
+                                        <TableCell className="text-center">{organization.is_listed ? 'Yes' : 'No'}</TableCell>
+                                        <TableCell>{organization.total}</TableCell>
+                                        <TableCell>{organization.occupied}</TableCell>
+                                        <TableCell>{organization.vacant}</TableCell>
                                     </TableRow>
                                 )
                             })
@@ -71,15 +97,15 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
             </Table>
         </TableContainer>
             <div>
-                {/*<p className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{Math.ceil(tableData?.data?.data.length / limit)}</p>*/}
+                <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { psuTableData?.count ?  Math.ceil(psuTableData?.count / limit) : ''}</p>
                 <ReactPaginate
-                    previousLabel={"<Previous"}
+                    previousLabel={"Previous"}
                     nextLabel={"Next"}
                     breakLabel={"...."}
-                    // pageCount={Math.ceil(tableData?.data?.data.length / limit)}
+                    pageCount={Math.ceil(psuTableData?.count / limit)}
                     marginPagesDisplayed={1}
                     pageRangeDisplayed={5}
-                    // onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                    onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
                     containerClassName={'pagination justify-content-end'}
                     pageClassName={'page-item'}
                     pageLinkClassName={'page-link'}

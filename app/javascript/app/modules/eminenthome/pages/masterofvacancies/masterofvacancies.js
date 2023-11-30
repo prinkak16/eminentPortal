@@ -1,4 +1,5 @@
-import React, {createContext, useContext} from 'react';
+import React, {createContext, useContext, useState, useEffect} from 'react';
+import {useNavigate, useLocation, useSearchParams} from 'react-router-dom';
 import {
     Box,
     Tab,
@@ -11,64 +12,73 @@ import Analytics from '../../shared/analytics/analytics'
 import MinistryTable from "./components/ministrytable";
 import PSUTable from "./components/psutable";
 import VacancyTable from "./components/vacancytable";
-import {useEffect, useState} from "react";
 import './masterofvacancies.css'
-import axios from "axios";
+
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
 
-const DUMMY_DATA = []
 const MasterVacancies = ({ tabId, filterString }) => {
+    const [masterTabName, setMasterTabName] = useSearchParams({basicTabId: '4', masterOfVacancies: 'ministry_wise'});
     const homeContext = useContext(HomeContext);
-
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = React.useState(masterTabName.get('masterOfVacancies'));
     const [tabData, setTabData] = useState([]);
     const [ministryId, setMinistryId] = useState(null);
+    const [organizationId, setOrganizationId] = useState(null)
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
-        homeContext.handleMovTabsFilter(newValue);
+        handleValueChange(newValue);
+        handleMasterTabName(newValue);
     };
-    const switchTabDataHandler = (tabId, ministryId, departmentId = null) => {
-        if(tabId === '1') {
-            setValue(tabId);
+    const handleValueChange = (value) => {
+        setValue(value);
+        homeContext.handleMovTabsFilter(value);
+    }
+    const switchTabDataHandler = (tabId, ministryId, organizationId) => {
+        if(tabId === 'ministry_wise') {
+            handleValueChange(tabId);
         }
-        else if(tabId === '2') {
-            setValue(tabId);
+        else if(tabId === 'psu_wise') {
+            handleValueChange(tabId);
             setMinistryId(ministryId);
         }
-        else if(tabId === '3'){
-            setValue(tabId);
-            const ministryData= DUMMY_DATA.find(data=>data.ministryId===ministryId);
-            const departmentData = ministryData.departments.filter(department=>department.departmentId === departmentId)
-            const data = [{...ministryData, departments: departmentData}]
-            setTabData(data)
+        else if(tabId === 'vacancy_wise'){
+            handleValueChange(tabId);
+            setOrganizationId(organizationId)
         }
     };
+
+    useEffect(() => {
+        homeContext.handleMovTabsFilter('ministry_wise');
+    }, []);
+
+    const handleMasterTabName = (tabValue) => {
+        setMasterTabName({basicTabId: masterTabName.get('basicTabId'), masterOfVacancies: tabValue})
+    }
+
     return (
         <>
-        <Analytics tabId={tabId}/>
-        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
-            <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="mastertabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} aria-label="lab API tabs example">
-                        <Tab label="Ministry Wise" value="1" />
-                        <Tab label="PSU wise" value="2" />
-                        <Tab label="Vacancy Wise" value="3" />
-                    </TabList>
-                    <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
-                </Box>
-                <TabPanel value="1"  className="p-0">
-                    <MinistryTable filterString={filterString} onSwitchTab={switchTabDataHandler} />
-                </TabPanel>
-                <TabPanel value="2" className="p-0">
-                    <PSUTable ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
-                </TabPanel>
-                <TabPanel value="3" className="p-0">
-                    <VacancyTable data={tabData} onSwitchTab={switchTabDataHandler}/>
-                </TabPanel>
-            </TabContext>
-        </Box>
+            <Analytics tabId={tabId}/>
+            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                <TabContext value={value}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="mastertabs d-flex justify-content-between align-items-center">
+                        <TabList onChange={handleChange}  aria-label="lab API tabs example">
+                            <Tab label="Ministry Wise" value="ministry_wise" />
+                            <Tab label="PSU wise" value="psu_wise" />
+                            <Tab label="Vacancy Wise" value="vacancy_wise" />
+                        </TabList>
+                        <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
+                    </Box>
+                    <TabPanel value="ministry_wise"  className="p-0">
+                        <MinistryTable filterString={filterString} ministryId={ministryId} onSwitchTab={switchTabDataHandler} />
+                    </TabPanel>
+                    <TabPanel value="psu_wise" className="p-0">
+                        <PSUTable filterString={filterString} ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    </TabPanel>
+                    <TabPanel value="vacancy_wise" className="p-0">
+                        <VacancyTable filterString={filterString} organizationId={organizationId} data={tabData} onSwitchTab={switchTabDataHandler}/>
+                    </TabPanel>
+                </TabContext>
+            </Box>
         </>
     );
 }

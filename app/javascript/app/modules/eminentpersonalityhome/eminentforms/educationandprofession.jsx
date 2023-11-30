@@ -8,7 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 import ComponentOfFields from './componentOfFields'
 import {
     getEducationData,
-    getFormData,
+    getFormData, getProfessionData,
 } from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
 
@@ -22,16 +22,18 @@ import {
     isValuePresent,
     saveProgress,
     formFilledValues,
-    saveProgressButton, showErrorToast
+    saveProgressButton, showErrorToast, disabledSaveProgressButton
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
+import RadioButton from "./radioButton";
 
 const Educationform = (props) => {
-    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
     const [educationEditField, setEducationEditField] = useState({})
     const [professionEditField, setProfessionEditField] = useState({})
     const [EducationData, setEducationData] = useState([])
+    const [professionData, setProfessionData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
     const [educationsList, setEducationsList] = useState([]);
@@ -39,6 +41,14 @@ const Educationform = (props) => {
     const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -58,10 +68,41 @@ const Educationform = (props) => {
         isValuePresent(props.formValues.professions) ? setProfessionDetails(props.formValues.professions) : null
     }, []);
 
-    const setHighestQualification = (value) => {
-        setEducationLevel(value);
-        props.formValues.education_level = value;
+    const setHighestQualification = (id) => {
+        setEducationDetails((prevFormValues) => {
+            return prevFormValues.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['highest_qualification']: true,
+                    };
+                } else {
+                    return {
+                        ...form,
+                        ['highest_qualification']: false,
+                    };
+                }
+            });
+        });
     };
+
+    const setCurrentWorking = (id) => {
+        setProfessionDetails((prevFormValues) => {
+            return prevFormValues.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['end_year']: 'Current Working',
+                    };
+                } else {
+                    return {
+                        ...form,
+                        ['end_year']: '',
+                    };
+                }
+            });
+        });
+    }
 
     useEffect(() => {
         const filteredItems = EducationData.filter((item) => item === educationLevel);
@@ -86,18 +127,31 @@ const Educationform = (props) => {
         })
     }
 
+      const getProfession = () => {
+        getProfessionData.then((response) => {
+            const data = response.data.data.map(item => item.name)
+            setProfessionData(data)
+        })
+    }
+
     useEffect(() => {
         getEducation()
+        getProfession()
     },[])
 
     const handleSave = ( title, formData, id) => {
-       if (title === 'Education Details') {
-           educationSave(formData, id)
-       }
+        setBackDropToggle(true)
+        setTimeout(function() {
+            if (title === 'Education Details') {
+                educationSave(formData, id)
+                setEducationEditField({})
+            }
 
-        if (title === 'Profession Profile') {
-            professionSave(formData, id)
-        }
+            if (title === 'Profession Profile') {
+                professionSave(formData, id)
+                setProfessionEditField({})
+            }
+        }, 50)
 
     };
 
@@ -106,27 +160,33 @@ const Educationform = (props) => {
             id: uuidv4(),
             qualification: formData.qualification,
             college: formData.college,
-            course: formData.course,
+            course: isValuePresent(formData.course) ? formData.course : '-',
             university: formData.university,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
             highest_qualification: formData.highest_qualification,
         };
+
+
         setEducationDetails((prevData) =>
             isValuePresent(id)
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        if (formData.highest_qualification) {
+            setHighestQualification(newFormData.id)
+        }
+        setBackDropToggle(false)
     }
 
     const professionSave = (formData, id) => {
         const newFormData = {
             id: uuidv4(),
             profession: formData.profession,
-            position: formData.position,
-            organization: formData.organization,
-            start_year: formData.start_year,
-            end_year: formData.end_year,
+            position: isValuePresent(formData.position) ? formData.position : '-',
+            organization: isValuePresent(formData.organization) ? formData.organization : '-',
+            start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
+            end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
         };
 
         setProfessionDetails((prevData) =>
@@ -134,6 +194,10 @@ const Educationform = (props) => {
                 ? prevData.map((form) => (form.id === id ? { ...form, ...newFormData } : form))
                 : [...prevData, newFormData]
         );
+        if (formData.end_year === 'Current Working') {
+            setCurrentWorking(newFormData.id)
+        }
+        setBackDropToggle(false)
     }
 
     useEffect(() => {
@@ -145,12 +209,17 @@ const Educationform = (props) => {
     }, [professionDetails]);
 
     const editEducationForm = (type,id) => {
+        setShowList(null)
         if (type === 'education') {
+            scrollToBottom(500)
+            setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
             if (form) {
                 setEducationEditField(form)
             }
         } else {
+            scrollToBottom(1300)
+            setProfessionEditField({})
             const form = professionDetails.find((item) => item.id === id);
             if (form) {
                 setProfessionEditField(form)
@@ -160,14 +229,16 @@ const Educationform = (props) => {
     };
 
     const saveProgress = () => {
-        setBackDropToggle(true)
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
 
     const deleteFields = (type, id) => {
+        setShowList(null)
         if (type === 'education') {
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
@@ -199,6 +270,13 @@ const Educationform = (props) => {
         }
     }
 
+    const scrollToBottom = (scroll) => {
+        window.scrollTo({
+            top: scroll, // Scroll to the bottom
+            behavior: 'smooth', // Optional: Add smooth scrolling animation
+        });
+    };
+
 
     return (
         <>
@@ -207,24 +285,15 @@ const Educationform = (props) => {
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
                 <Grid container sx={{mb: 5}}>
-                    <Grid item xs={6} className='education-field pb-3'>
-                        <Grid item xs={7}>
-                            <FormLabel>Education Level ( Highest ) <mark>*</mark></FormLabel>
-                            <AutoCompleteDropdown
-                                name='Education Level ( Highest )'
-                                selectedValue={educationLevel}
-                                listArray={EducationData}
-                                placeholder={"Select Highest Education"}
-                                onChangeValue={setHighestQualification}
-                            />
-                            <ErrorMessage name="education_level" component="div"/>
-                        </Grid>
-                    </Grid>
                 </Grid>
                 {educationDetails.length > 0 && (
                     <div className="data-table">
@@ -242,7 +311,15 @@ const Educationform = (props) => {
                             <tbody>
                             {educationDetails.map((data, index) => (
                                 <tr>
-                                    <td>{data.qualification}</td>
+                                    <td>
+                                        <div className='qualification-name'>
+                                            <span className='highest-qualification-radio'>
+                                               <input disabled={isViewDisabled} type='radio' checked={data.highest_qualification}
+                                                       onClick={(e) => setHighestQualification(data.id)}/>
+                                             </span>
+                                            {data.qualification}
+                                        </div>
+                                    </td>
                                     <td>{data.course}</td>
                                     <td>{data.university}</td>
                                     <td>{data.college}</td>
@@ -254,11 +331,12 @@ const Educationform = (props) => {
                                             </Button>
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
-                                                    <Typography sx={{p: 2}}
-                                                                onClick={() => editEducationForm('education', data.id)}><Edit/></Typography>
+                                                    <Typography className='edit-buttons' sx={{p: 2}}
+                                                                onClick={() => editEducationForm('education', data.id)}><Edit/>Edit</Typography>
                                                     <Typography
+                                                        className='edit-buttons'
                                                         onClick={() => deleteFields('education', data.id)}
-                                                        sx={{p: 2}}><DeleteIcon/></Typography>
+                                                        sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                 </Paper>
                                             )}
                                         </div>
@@ -269,7 +347,17 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave} isEditable={educationEditField} educationsList={educationsList}/>
+                {!backDropToggle &&
+                    <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
+                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>
+                }
+
+                <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
+                    <Typography variant="h5" content="h5">
+                        <Box className="detailnumbers" component="div"
+                             sx={{display: 'inline-block'}}>2</Box> Professional Profile
+                    </Typography>
+                </Grid>
                 {professionDetails.length > 0 && (
                     <div className="data-table mt-5">
                         <table className="w-100 table-responsive text-center">
@@ -299,11 +387,12 @@ const Educationform = (props) => {
                                             {showList === data.id &&
                                                 (
                                                     <Paper className='details-edit-list'>
-                                                        <Typography sx={{p: 2}}
-                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/></Typography>
+                                                        <Typography className='edit-buttons' sx={{p: 2}}
+                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/>Edit</Typography>
                                                         <Typography
+                                                            className='edit-buttons'
                                                             onClick={() => deleteFields('profession', data.id)}
-                                                            sx={{p: 2}}><DeleteIcon/></Typography>
+                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                     </Paper>
                                                 )
                                             }
@@ -315,32 +404,29 @@ const Educationform = (props) => {
                         </table>
                     </div>
                 )}
-                <Grid container sx={{my: 5}} className="grid-wrap">
-                    <Grid item sx={{mb: 2}} xs={12}>
-                        <Typography variant="h5" content="h5">
-                            <Box className="detailnumbers" component="div"
-                                 sx={{display: 'inline-block'}}>2</Box> Professional Profile
-                        </Typography>
-                    </Grid>
-                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave} isEditable={professionEditField}/>
-                </Grid>
-                <Grid container sx={{spacing: 0}}>
+                {!backDropToggle &&
+                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData}/>
+                }
+                {/*<Grid container sx={{my: 5}} className="grid-wrap">*/}
+                {/*</Grid>*/}
+                <Grid container sx={{spacing: 0}} className='mt-4'>
                     <Grid item xs={8}>
-                        <div>
-                            <FormLabel>Description <InfoOutlinedIcon/></FormLabel>
+                        <div className=''>
+                            <FormLabel>Description<InfoOutlinedIcon/></FormLabel>
                             <TextField
                                 className="profession-description"
                                 fullWidth
                                 name="profession_description"
                                 onChange={changeProfessionDescription}
                                 value={professionDescription}
+                                disabled={isViewDisabled}
                                 max
                                 multiline
                                 minRows={2}
                                 maxRows={2}
                                 placeholder="Please enter your professional description only, anything related to  Sangathan not to be entered here"
                             />
-                            <ErrorMessage name={`profession_description`} component="div" />
                         </div>
 
                     </Grid>
@@ -355,16 +441,10 @@ const Educationform = (props) => {
 }
 Educationform.label = 'Education and Profession'
 Educationform.initialValues = {
-    education_level: "",
     profession_description:"",
     educations: [],
     professions: [],
 };
 Educationform.validationSchema = Yup.object().shape({
-    education_level: Yup.string().required('Please select your high qualification'),
-    profession_description: Yup.string().required('Please enter your profession description'),
-
-
-
 });
 export default Educationform

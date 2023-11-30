@@ -2,6 +2,7 @@ require 'sidekiq/web'
 require 'sidekiq/cron/web'
 Rails.application.routes.draw do
   root "home#index"
+
   # Define your application modules per the DSL in https://guides.rubyonrails.org/routing.html
   mount Sidekiq::Web => "/sidekiq"
 
@@ -9,6 +10,7 @@ Rails.application.routes.draw do
 
   get "candidate_login", to: "home#candidate_login"
   get "eminent_personality", to: "home#candidate_login"
+  get "status", to: "home#status"
   namespace :admin do
     get 'manual_upload', to: 'admin#manual_upload'
     post 'manual_upload', to: 'admin#manual_upload_data'
@@ -16,6 +18,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'auth_user/details' => 'auth_user#fetch_details'
+      delete 'auth_user/logout' => 'auth_user#logout'
+
       post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
       post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
 
@@ -33,7 +38,6 @@ Rails.application.routes.draw do
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/select_member', to: 'custom_member_form#select_member'
       delete 'custom_member_forms/delete_member', to: 'custom_member_form#delete_member'
-      delete 'custom_member_forms/logout' => 'custom_member_form#destroy_session'
       post 'custom_member_forms/add', to: 'custom_member_form#add'
       post 'custom_member_forms/add_file', to: 'custom_member_form#add_file'
       post 'custom_member_forms/update_aasm_state', to: 'custom_member_form#update_aasm_state'
@@ -44,6 +48,7 @@ Rails.application.routes.draw do
       get 'filters/vacancy_ministry_wise', to: 'filter#vacancy_ministry_wise'
       get 'filters/vacancy_organization_wise', to: 'filter#vacancy_organization_wise'
       get 'filters/vacancy_wise', to: 'filter#vacancy_wise'
+      get 'filters/slotting', to: 'filter#slotting'
 
       get 'stats/home', to: 'stats#home'
 
@@ -77,7 +82,16 @@ Rails.application.routes.draw do
         post '/manual_upload', to: 'upload#manual_upload'
         get '/position_analytics', to: 'vacancy#position_analytics'
         get '/vacant_overview/by_state', to: 'vacancy#vacant_overview_by_state'
-        get '/list', to: 'vacancy#list_ministry_wise'
+        get '/list', to: 'vacancy#list'
+      end
+
+      namespace :slotting, path: 'slotting' do
+        get '/position_analytics', to: 'slotting#position_analytics'
+        get '/list', to: 'slotting#list'
+        post '/slot', to: 'slotting#slot'
+        post '/unslot', to: 'slotting#unslot'
+        post '/reslot', to: 'slotting#reslot'
+        get '/stats/:organization_id', to: 'slotting#stats'
       end
 
       namespace :user, path: 'user/:user_id' do

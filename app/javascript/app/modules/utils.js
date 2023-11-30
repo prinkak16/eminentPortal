@@ -28,7 +28,7 @@ export const educationDetailsJson = {
         {
             type: 'dropdown',
             na_button: false,
-            list: ['Less than 10th', '10th Pass', 'Diploma/ITI', '12th Pass', 'Graduate', 'Post Graduate', 'PhD and Above'],
+            list: [],
             name: 'Qualification',
             key: 'qualification',
             placeholder: 'Select Party level',
@@ -77,11 +77,12 @@ export const ProfessionJson = {
     title: 'Profession Profile',
     fields: [
         {
+            list: [],
             key: 'profession',
             na_button: false,
             name: "Profession",
             placeholder: 'Enter profession',
-            type: 'textField',
+            type: 'dropdown',
             isRequired: true
         },
         {
@@ -120,6 +121,7 @@ export const politicalProfileJson = {
     title: 'Political Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party_level',
             na_button: false,
             name: "Party Level",
@@ -160,6 +162,7 @@ export const otherPartyJson = {
     title: 'Other Party Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party',
             na_button: false,
             name: "Party",
@@ -191,7 +194,7 @@ export const otherPartyJson = {
     ]
 }
 
-export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (Vidhan Sabha)", "Legislative Council (Vidhan Parishad)", "Urban Local body", "Rural Local body", "Other"]
+export const electionTypeList = ["Lok sabha", "Rajya sabha", "Legislative Assembly (Vidhan Sabha)", "Legislative Council (Vidhan Parishad)", "Urban Local body", "Rural Local body"]
 
 const electionWin =  {
     type: 'radio',
@@ -227,6 +230,7 @@ const ministryName = {
     }
 ]
 }
+
 const ministryDuration = {
     is_conditional: true,
     condition_key: 'minister_portfolio',
@@ -236,6 +240,8 @@ const ministryDuration = {
     key: 'ministry_duration',
     placeholder: 'Enter Duration (in Months)'
 }
+
+export const ministerPortfolioArray = [ministryName, ministryDuration]
 
 const afterElectionFields = [electionWin, ministerPortfolio, ministryName, ministryDuration];
 
@@ -288,7 +294,7 @@ export const electionWiseJson =
                 ...afterElectionFields,
             ]
         },
-        legislative_council_vidhan_sabha: {
+        legislative_council_vidhan_parishad: {
             fields: [
                 {
                     type: 'dropdown',
@@ -415,7 +421,7 @@ export const formFilledValues = (formValues) => {
     const fieldsWithValues = {};
     for (const fieldName of Object.keys(formValues)) {
         const fieldValue = formValues[fieldName];
-        if (fieldValue) {
+        if (isValuePresent(fieldValue)) {
             if (formValues[fieldName] === 'mobile') {
                 fieldsWithValues[fieldName] = [fieldValue];
             } else {
@@ -427,6 +433,11 @@ export const formFilledValues = (formValues) => {
 }
 
 export const showSuccessToast = (massage) => {
+    const isContainerPresent = document.querySelector('.Toastify__toast--success');
+    if (isContainerPresent) {
+        isContainerPresent.remove();
+    }
+
     toast.success(massage, {
         position: 'top-right',
         autoClose: 3000, // milliseconds
@@ -439,13 +450,30 @@ export const showSuccessToast = (massage) => {
 }
 
 export const showErrorToast = (massage) => {
-    toast.error(massage, {
-        position: 'top-right',
-        autoClose: false, // milliseconds
-        hideProgressBar: false,
+    const isContainerPresent = document.querySelector('.Toastify__toast-theme--light.Toastify__toast--error.Toastify__toast--close-on-click');
+
+    if (!isContainerPresent) {
+        toast.error(massage, {
+            position: 'top-right',
+            autoClose: 3000, // milliseconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+    }
+}
+
+export const showNotification = () => {
+    toast.info('In view mode, data is not saving.', {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
         closeOnClick: true,
-        pauseOnHover: true,
+        pauseOnHover: false,
         draggable: true,
+        progress: undefined,
+        theme: "light",
     });
 }
 
@@ -487,11 +515,18 @@ export const calculateAge = (dob) => {
 };
 
 export const saveProgressButton=
-    <Button>Save Progress
-        <Tooltip title="">
+    <Button >Save Progress
+        <Tooltip title="Save form till the current progress. Until submitted, form will not be counted as complete.">
             <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
         </Tooltip>
     </Button>
+
+export const disabledSaveProgressButton =
+    <Tooltip title="In view mode, data saving is not available.">
+        <Button>Save Progress
+            <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{color: "#3f96fd"}}/>
+        </Button>
+    </Tooltip>
 
 
 export const VisuallyHiddenInput = styled('input')({
