@@ -90,6 +90,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
+
     const handleSubmitUpload = () => {
         if (selectedFile) {
             const formData = new FormData();
@@ -115,9 +116,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
