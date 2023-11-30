@@ -139,6 +139,7 @@ function GomPage({ tabId, filterString }) {
                 );
                 console.log('Allocate Ministries API Response:', ownMinistriesResponse.data);
 
+                fetchData();
                 // Update state or perform any other actions if needed
                 // For example:
                 // setAssignedMinistryIds([]);
