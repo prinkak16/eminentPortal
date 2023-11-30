@@ -1,0 +1,65 @@
+button.assignButton, button.assignButton:hover{
+    border-radius: 30px;
+    background: #FF9559;
+    color:#fff;
+    padding: 5px 14px;
+    border: 1px solid #FF9559;
+}
+.slotting-sidebar .css-18sg6k4-MuiPaper-root-MuiDrawer-paper{
+    padding:2rem;
+}
+.slottingassigntable {
+    box-shadow: none !important;
+    background: transparent;
+    border-bottom: 1px dashed #8C8989;
+}
+.slottingassigntable th, .slottingassigntable td {
+    border: 1px solid transparent !important;
+    padding: 5px;
+}
+.countnumber{
+    width: 40%;
+    border: 1px solid #8C8989;
+    padding: 5px 8px;
+}
+.addremark textarea{
+    padding: 1rem;
+}
+.edit-popup{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+.vacancytostate h5{
+    font-size: 20px;
+    font-weight: 600;
+    margin: 1.8rem 0  1.3rem;
+}
+button.savebtn, button.savebtn:hover{
+    border-radius: 8px;
+    border: 1px solid #C2C2C2;
+    padding: 10px 50px 11px 50px;
+    color: #1D1D1D;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+}
+.counterbutton button, .counterbutton button:hover{
+    border-radius: 20px;
+    background: #F6F6F6;
+    border:1px solid #F6F6F6;
+    color: #343434;
+    font-size: 16px;
+    font-weight: 500;
+}
+.counterbutton p{
+    border-radius: 10px;
+    border: 1px solid #EDEDED;
+    width: 78px;
+    height: 40px;
+    color: #343434;
+    font-size: 16px;
+    font-weight: 500;
+}

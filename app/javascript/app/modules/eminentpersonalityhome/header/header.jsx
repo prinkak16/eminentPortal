@@ -37,7 +37,7 @@ function Header({userData}){
 
 
     return(
-
+  
 
         <div className='saral-notify-header'>
             <div className='header-left-part' onClick={() =>  navigate('/')} >

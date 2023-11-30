@@ -13,8 +13,13 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+<<<<<<< HEAD:app/javascript/app/modules/eminenthome/shared/tabs/tabs.js
 import GomPage from "../../pages/GOM/GomPage/GomPage";
 import Allotment from "../../../eminenthome/pages/allotment/allotment"
+=======
+import GomPage from "../../pages/gom/gomPage/gomPage";
+import Allotment from "../../pages/allotment/Allotment"
+>>>>>>> staging:app/javascript/app/modules/eminentHome/shared/tabs/tabs.js
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
@@ -34,8 +39,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
-    const [basicTabId, setBasicTabId] = useSearchParams({basicTabId: 'home_table'});
+export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
+    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -47,6 +52,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
     const [wantToUpload, setWantToUpload] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [selectedFile, setSelectedFile] = useState();
+    const {type} = useParams();
     const [fileName, setFileName] = useState()
     const [excelFile, setExcelFile] = useState()
     const [email, setEmail] = useState();
@@ -88,8 +95,33 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         }
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+
+    const handleSubmitUpload = () => {
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the server, e.g., show a success message
+                })
+                .catch(error => {
+                    // Handle errors, e.g., show an error message
+                })
+                .finally(() => {
+                    // Close the modal or perform any cleanup
+                    setWantToUpload(false);
+                });
+        } else {
+            // Handle the case where no file is selected (optional)
+        }
+    };
+
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
@@ -140,14 +172,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         onSwitchTab(newValue);
     };
 
-    const handleDownload = (url) => {
-        const link = document.createElement('a');
-        link.href = 'url';
-        link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleDownload = () => {
+        const url = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
+        window.location.href = url;
     };
+
 
     const  navigateForm = () => {
         localStorage.setItem('eminent_number', userData.phone);
@@ -233,7 +262,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                             Cancel
                         </button>
                         <button
-                            className="btn addNewSubmit" onClick={handleSubmit}>
+                            className="btn addNewSubmit" onClick={()  => handleSubmit()}>
                             Submit
                         </button>
                         <button
@@ -280,12 +309,12 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                    <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
                                    <p className="d-flex justify-content-center">or</p>
                                    <p className="d-flex justify-content-center">Click here to upload</p>
-                                   <input placeholder="Enter Email" type="email"/>
-                                   <button className="Submit" >
+                                   <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
+                                   <button className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
                                </div>
-                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload("url from api")}>Download sample file</p>
+                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload()}>Download sample file</p>
                            </div>
                        </div>
                    </Modal.Body>
@@ -322,7 +351,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                     {buttonContent}
                 </Box>
                 <TabPanel value="home_table">
-                    <HomeTable filterString={filterString} tabId={value}/>
+                    <HomeTable filterString={filterString} tabId={value} clearFilter={clearFilter}/>
                 </TabPanel>
 
                 <TabPanel value="allotment">

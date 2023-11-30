@@ -1,5 +1,10 @@
+<<<<<<< HEAD:app/javascript/app/modules/eminenthome/pages/hometable/hometable.js
 import React, {useEffect, useState} from "react";
 import "./hometable.css"
+=======
+import React, {useContext, useEffect, useState} from "react";
+import "./hometable.scss"
+>>>>>>> staging:app/javascript/app/modules/eminentHome/pages/hometable/hometable.js
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"
@@ -21,7 +26,9 @@ import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
+import {ApiContext} from "../../../ApiContext";
 const HomeTable = (props) => {
+    const {resetFilter} = useContext(ApiContext)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');
@@ -94,7 +101,10 @@ const HomeTable = (props) => {
     }
 
     const prepareToGetDisplayData = () => {
-        let searched = props?.filterString;
+        let searched = ''
+        if (!resetFilter) {
+            searched = props?.filterString;
+        }
         if (searchedName && searchedName.length > 0) {
             searched += `&query=${searchedName}`;
         }
@@ -109,7 +119,7 @@ const HomeTable = (props) => {
 
     useEffect(() => {
         prepareToGetDisplayData();
-    }, [searchedName, props.filterString, searchId, currentPage]);
+    }, [searchedName, props.filterString, searchId, currentPage, resetFilter]);
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
