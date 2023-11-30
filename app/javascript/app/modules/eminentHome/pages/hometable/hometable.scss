@@ -1,0 +1,281 @@
+.search{
+  padding: 14px 259px 14px 20px;
+  align-items: center;
+  gap: 8px;
+  width: 289px;
+  border-radius: 12px;
+  border: 1px solid #E1E0E0;
+  background: #FFF;
+}
+
+.hometable{
+  border-top: solid 1px rgba(0,0,0,0.1);
+  margin-top: 2.5%;
+
+}
+
+.form-control{
+  //max-width: 26.5%;
+
+  border-radius: 12px !important;
+  font-size: 14px;
+  color: #8C8989 !important;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.056px;
+}
+
+.card{
+  border-radius: 15px !important;
+}
+
+.downloadBtn{
+  display: flex;
+  padding: 10px 13px 11px 21px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #61BE7A;
+  color: #FFF;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+
+}
+
+.input-field{
+  display: flex;
+  width: 300px !important;
+  align-items: center;
+  gap: 8px;
+  border: none !important;
+  margin-right: 10px;
+}
+.search-icon{
+  margin-top: 12px;
+  margin-left: 20px !important;
+  margin-right: 10px !important;
+}
+.search-field{
+  width: 400px;
+border: solid 1px rgba(0,0,0,0.3);
+  border-radius: 12px;
+}
+
+.search-field input:focus{
+  outline: none ;
+}
+.filestatusfield{
+  display: flex;
+  width: 400px !important;
+  align-items: center;
+  gap: 8px;
+  border: solid 1px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding-left: 20px;
+
+}
+
+.filestatusfield:focus{
+  outline: none;
+}
+.headingName{
+  color: #000;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.data-display > p {
+  color: #000;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.text-labels{
+  color: #000;
+  font-size: 10px !important;
+  font-weight: 400;
+  opacity: 0.5;
+}
+
+.divider{
+  border-color: #000 !important ;
+}
+
+.gridItem{
+  padding-right: 0.5rem;
+  margin-left: 1.5% !important;
+  border-right: solid 1px rgba(0,0,0,0.1);
+}
+
+.gridItemLast{
+  margin-left: 1.5% !important;
+  flex: 1;
+}
+
+.data-display {
+  margin-bottom: 10px;
+}
+
+.data-display > p {
+  margin-bottom: 0px;
+}
+
+.tableiconlist> p{
+  cursor: pointer;
+}
+.homecontent{
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.MuiPopper-root{
+  z-index: 10 !important;
+}
+
+.single-row {
+  border-bottom: solid 1px rgba(0,0,0,0.1);
+  padding-bottom: 20px;
+}
+
+.br-label {
+  border-right: solid 1px rgba(0,0,0,0.45);
+
+}
+
+.br-label2{
+  margin-left: 0 !important;
+}
+.popupicon{
+  cursor: pointer;
+}
+
+.label-text {
+  color: #000;
+  font-family: Barlow;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.065px;
+}
+
+.text-container {
+  margin-bottom: 0px;
+}
+
+.id-text {
+  color: #000;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  opacity: 0.7;
+  margin-left: 10px !important;
+}
+
+.text-container > p {
+  margin-bottom: 0px;
+}
+
+.first-number {
+  display: inline-block;
+  padding-right: 20%;
+  margin-left: 10px;
+}
+
+.pt-5 {
+  padding-top: 5px !important;
+}
+
+.imgdiv{
+ width: 80%;
+}
+.img{
+  height: 5rem;
+  width: 5rem;
+  border-radius: 5rem;
+  flex-shrink: 0;
+  background: lightgray 50%;
+}
+
+.dropdown-menu>li{
+  cursor: pointer;
+}
+
+.customModal{
+  display: block !important;
+}
+
+.addModal{
+  height: 50%;
+  width: 80%;
+}
+
+.cancelbtn{
+  cursor: pointer;
+}
+
+.reasontext{
+  width: 100%;
+  border-color: red;
+  padding-top:3%;
+
+}
+
+.deletereasontext:focus{
+  outline-color: red;
+}
+
+page-item.active a {
+  background: #4861AA;
+  border: 1px solid #4861AA;
+}
+page-item:first-child .page-link{
+  border-radius: 0;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: #FFF;
+  color: #4861AA;
+}
+page-item:first-child .page-link{
+  border-radius: 5px 0px 0px 5px;
+}
+
+.edit-user-container .css-17ffvgn-MuiTypography-root{
+font-size: 1rem !important;
+}
+
+.edit-box-container {
+  margin-left: auto;
+}
+
+.min-width-24rem {
+  min-width: 24rem;
+}
+
+.education-profession-container {
+  min-width: 10rem;
+}
+
+.home-edit-list {
+  position: absolute;
+  z-index: 5;
+  right: 30px !important;
+}
+
+.blank-eminent-container {
+  min-height: 10rem;
+  margin: auto;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+}

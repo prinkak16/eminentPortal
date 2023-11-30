@@ -6,12 +6,15 @@ import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 const AfterFormSubmit = () => {
-    const {isCandidateLogin, setAuthToken} = useContext(ApiContext)
+    const {isCandidateLogin, setAuthToken,setEminentData} = useContext(ApiContext)
     const navigate = useNavigate();
     const goBack = () => {
         if (isCandidateLogin) {
             localStorage.setItem('auth_token', '')
+            localStorage.setItem('eminent_number', '')
+            localStorage.setItem('view_mode', '')
             setAuthToken('')
+            setEminentData({})
         } else {
             navigate({
                 pathname: '/'

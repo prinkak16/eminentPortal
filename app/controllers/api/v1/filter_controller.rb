@@ -14,7 +14,7 @@ class Api::V1::FilterController < BaseApiController
         get_aasm_state_filter,
         get_qualification_filter,
         get_gender_filter,
-        get_profession_filter,
+        # get_profession_filter,
         get_category_filter
       ]
     }
@@ -33,7 +33,7 @@ class Api::V1::FilterController < BaseApiController
       ]
     }
 
-    render json: { success: true, data: result, message: 'GOM filters.' }, status: 200
+    render json: { success: true, data: result, message: 'gom filters.' }, status: 200
   end
 
   def vacancy_ministry_wise

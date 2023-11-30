@@ -15,11 +15,12 @@ import './componentOfFIelds.scss'
 
 import dayjs from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
-const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList}) => {
+const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList = [], isViewDisabled, professionList = []}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [resetYear, setResetYear] = useState(false)
     const [isNaButtonExist, setIsNaButtonExist] = useState(false)
     const [disabledFields, setDisabledFields] = useState([])
+    const [currentlyWorking, setCurrentlyWorking] = useState(false)
 
     useEffect(() => {
         if (jsonForm.fields.length > 0) {
@@ -64,6 +65,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 }
             }
             setFieldsData(updatedFieldsData);
+            if (jsonForm.title === 'Profession Profile') {
+                setCurrentlyWorking(updatedFieldsData.end_year === 'Current Working')
+            }
             setResetYear(false)
         }
     }, [isEditable]);
@@ -88,16 +92,21 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
 
     const handleFieldChange = (value, name, valueType) => {
+        if (valueType === 'profession') {
+            setFieldsData({})
+        }
+
         if (valueType === 'qualification') {
+            setFieldsData({})
             const fields = []
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
                 fields.push('start_year','course')
-                fieldsData.start_year = '';
-                fieldsData.course = '';
+                fieldsData.start_year = '-';
+                fieldsData.course = '-';
             } else if (value === '12th Pass') {
                 fields.push('start_year')
-                fieldsData.start_year = '';
+                fieldsData.start_year = '-';
             } else {
                 fieldsData.start_year = '';
                 fieldsData.course = '';
@@ -118,7 +127,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     const minDate = (key) =>  {
         let date = new Date(1900, 0, 1)
         if (key === 'end_year') {
-            if (isValuePresent(fieldsData.start_year) && fieldsData.start_year !== 'NA') {
+            if (isValuePresent(fieldsData.start_year) && fieldsData.start_year !== '-') {
                 date = new Date(parseInt(fieldsData.start_year), 0, 1)
             }
         }
@@ -130,7 +139,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         if (key === 'start_year') {
             date = new Date()
         }
-        if (fieldsData.start_year === 'NA') {
+        if (fieldsData.start_year === '-') {
             date = new Date()
         }
 
@@ -140,14 +149,19 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
     const disabledField = (key) => {
         let value = disabledFields.includes(key)
-            if (key === 'end_year') {
-                value = !disabledFields.includes('start_year')
-            }
+        if (key === 'end_year') {
+            value = !disabledFields.includes('start_year')
+        }
 
-            if (key === 'end_year' && value) {
-               value = !isValuePresent(fieldsData.start_year)
-            }
+        if (key === 'end_year' && value) {
+            value = !isValuePresent(fieldsData.start_year)
+        }
 
+        if (key === 'end_year') {
+            if (jsonForm.title === 'Profession Profile') {
+                value = currentlyWorking
+            }
+        }
 
         return value
     }
@@ -168,9 +182,11 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     }
                 }
 
-                if (key === 'end_year' && fieldsData.end_year !== 'NA') {
-                    if (fieldsData.start_year > fieldsData.end_year) {
-                        return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
+                if (key === 'end_year' && fieldsData.end_year !== '-') {
+                    if (isValuePresent(fieldsData.end_year)) {
+                        if (fieldsData.start_year > fieldsData.end_year) {
+                            return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
+                        }
                     }
                 }
             }
@@ -180,7 +196,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }
 
     const notApplicableFields = (naType, key) => (event) => {
-        const valueToSet = event.target.checked ? naType === 'all' ? 'NA' : 'Current Working' : '';
+        const valueToSet = event.target.checked ? naType === 'all' ? '-' : 'Current Working' : '';
+        setCurrentlyWorking(event.target.checked)
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
@@ -199,6 +216,15 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return isValuePresent(state) ? <mark>*</mark> : ''
     }
 
+    const getList = () => {
+        let list = []
+        if (jsonForm.title === 'Education Details') {
+            list = educationsList
+        } else if (jsonForm.title === 'Profession Profile') {
+            list = professionList
+        }
+        return list
+    }
 
     return (
         <div>
@@ -215,11 +241,13 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         {
                             f.type === 'dropdown' &&
                                 <Grid item xs={4}>
+
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <AutoCompleteDropdown
+                                        disabled={isViewDisabled}
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
-                                        listArray={jsonForm.title === 'Education Details' ? educationsList : f.list}
+                                        listArray={isValuePresent(getList()) ? getList() : f.list}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
                                 </Grid>
@@ -230,7 +258,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <div style={{marginTop:'7px'}}>
                                         <OtherInputField
-                                            disabled={disabledField(f.key)}
+                                            disabled={disabledField(f.key) || isViewDisabled}
                                             type="text"
                                             value={fieldValue(f.key) || null}
                                             onChange={handleFieldChange}
@@ -249,8 +277,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                             <DatePicker
                                                 label={f.name}
                                                 isRequired={isValuePresent(f?.isRequired)}
-                                                disabled={disabledField(f.key)}
-                                                value={isValuePresent(fieldValue(f.key)) ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
+                                                disabled={disabledField(f.key) || isViewDisabled}
+                                                value={isValuePresent(fieldValue(f.key)) && fieldValue(f.key) !== '-' && fieldValue(f.key) !== 'Current Working' ? dayjs(`${fieldValue(f.key)}-01-01`) : null}
                                                 maxDate={maxDate(f.key)}
                                                 onChange={handleEduStartDateChange(f.key)}
                                                 minDate={minDate(f.key)}
@@ -262,7 +290,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         <div className='date-na-button' style={{visibility: isNaButtonExist === true && f.key === 'start_year' ? 'hidden' : ''}}>
                                             {!isNaButtonExist ? setIsNaButtonExist(true): null }
                                             <span className='na-check-box'>
-                                                <input type="checkbox" onClick={notApplicableFields(f.na_type, f.key)}/>
+                                                <input disabled={isViewDisabled} type="checkbox" checked={currentlyWorking} onClick={notApplicableFields(f.na_type, f.key)}/>
                                              </span>
                                             <span className='na-check-msg'>
                                                 {f.na_massage}
@@ -276,15 +304,15 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 ))}
                 {
                     jsonForm.title === 'Education Details' &&
-                    <Grid item xs={4}>
-                        <FormLabel>Please Select if this is your Highest Qualification <mark>*</mark></FormLabel>
-                        <input type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
+                    <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
+                        <FormLabel className='mr-1'>Please Select if this is your Highest Qualification </FormLabel>
+                        <input disabled={isViewDisabled} type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>
                 }
                 <Grid item xs={12}>
-                    <Primarybutton addclass="cancelbtn cancel" buttonlabel="Cancel" handleclick={() => resetFieldsToBlank()} />
-                    <Primarybutton addclass="nextbtn" handleclick={() => handleSave(fieldsData.id)}
+                    <Primarybutton disabled={isViewDisabled} addclass="cancelbtn cancel" buttonlabel="Cancel" handleclick={() => resetFieldsToBlank()} />
+                    <Primarybutton disabled={isViewDisabled} addclass="nextbtn" handleclick={() => handleSave(fieldsData.id)}
                                    buttonlabel="Save"/>
                 </Grid>
 
