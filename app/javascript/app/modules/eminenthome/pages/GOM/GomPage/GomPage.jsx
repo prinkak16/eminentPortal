@@ -32,7 +32,7 @@ function GomPage({ tabId, filterString }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
-    const itemsPerPage= 4
+    const itemsPerPage= 2
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
@@ -74,7 +74,6 @@ function GomPage({ tabId, filterString }) {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
                         fetchData();
-                        setPageCount(Math.ceil(gomTableData.length / itemsPerPage));
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -92,13 +91,16 @@ function GomPage({ tabId, filterString }) {
                 params: {
                     minister_name: ministerSearch,
                     ministry_name: ministrySearch,
-                    limit: 10,
-                    offset: 0,
+                    limit: itemsPerPage,
+                    offset: itemsPerPage*currentPage,
                 },
             });
             // Update the srch results
 
-            setGomTableData(response.data.data.value);
+            setGomTableData(response?.data?.data?.value);
+            setPageCount(Math.ceil( response?.data?.data?.count/ itemsPerPage));
+
+
         } catch (error) {
             // Handle errors
             console.error(error);
@@ -212,14 +214,14 @@ function GomPage({ tabId, filterString }) {
             }
         };
 
-
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
     };
 
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentItems = gomTableData.slice(startIndex, endIndex);
+
+    useEffect(() => {
+        fetchData();
+    }, [currentPage]);
 
 
     console.log(gomTableData);
@@ -288,7 +290,7 @@ function GomPage({ tabId, filterString }) {
                                     <th style={{backgroundColor: "#F8F8F8"}}>Assigned States</th>
                                     <th style={{backgroundColor: "#F8F8F8"}}>Action</th>
                                 </tr>
-                                {currentItems.length && currentItems.map((data, index) => {
+                                {gomTableData.length && gomTableData.map((data, index) => {
                                     return (
                                         <tr key={data} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
                                             <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
@@ -387,34 +389,19 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}   onSelectMinistries={(ministryIds) => {
-                                setEditMinisterData((prevData) => ({
-                                    ...prevData,
-                                    ministry_ids: ministryIds, // Change here
-                                }));
-                            }}  style={{width:"200px",margin:1 }} />
+                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}  style={{width:"200px",margin:1 }} />
                             <div style={{display:"flex"}}>
                                 <div>
                                     <p>Assigned Ministries</p>
                                     <MultipleSelectCheckmarks data={ministryData}
-                                                              selectedMinistries={editMinisterData.assigned_ministries}
-                                                              onSelectMinistries={(ministryIds) => {
-                                                                  setEditMinisterData((prevData) => ({
-                                                                      ...prevData,
-                                                                      ministry_ids: ministryIds, // Change here
-                                                                  }));
-                                                              }} style={{width:"200px",margin:1 }} />
+                                                              intialValue={editMinisterData.assigned_ministries}
+                                                              onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
                                 </div>
                                 <div>
                                     <p>Own Ministry</p>
                                     <MultipleSelectCheckmarks data={ministryData}
-                                                              selectedMinistries={editMinisterData.allocated_ministries}
-                                                              onSelectMinistries={(ministryIds) => {
-                                        setEditMinisterData((prevData) => ({
-                                            ...prevData,
-                                            ministry_ids: ministryIds, // Change here
-                                        }));
-                                    }} style={{width:"200px" ,margin:1}} />
+                                                              intialValue={editMinisterData.assigned_ministries}
+                                                              onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
                                 </div>
                             </div>
                         </div>

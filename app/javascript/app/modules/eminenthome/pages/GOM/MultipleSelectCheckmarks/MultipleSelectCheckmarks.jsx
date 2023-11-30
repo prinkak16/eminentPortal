@@ -22,6 +22,7 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data, initialValue}) {
+    debugger
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
@@ -36,18 +37,18 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
         getMinistryData();
     }, []);
 
-    useEffect(() => {
 
-        if (initialValue && initialValue.length > 0) {
+    useEffect(() => {
+        if (initialValue && initialValue.length > 0 && ministryData.length > 0) {
             setPersonName(initialValue);
             const temp = [];
             for (const name of initialValue) {
-                const id = ministryData.find(ministry => ministry.name === name)?.id;
+                const id = ministryData.find((ministry) => ministry.name === name)?.id;
                 temp.push(id);
             }
             setMinistryIds(temp);
         }
-    },[initialValue, ministryData]);
+    }, [initialValue, ministryData]);
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
