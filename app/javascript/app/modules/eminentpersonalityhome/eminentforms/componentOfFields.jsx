@@ -73,6 +73,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }, [isEditable]);
 
     const resetFieldsToBlank = () => {
+        setCurrentlyWorking(false)
         setFieldsData((prevFieldsData) => {
             const updatedFieldsData = { ...prevFieldsData };
             for (const key in updatedFieldsData) {

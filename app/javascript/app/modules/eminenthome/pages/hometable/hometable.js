@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "./hometable.scss"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
@@ -21,7 +21,9 @@ import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
+import {ApiContext} from "../../../ApiContext";
 const HomeTable = (props) => {
+    const {resetFilter} = useContext(ApiContext)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');
@@ -110,7 +112,8 @@ const HomeTable = (props) => {
 
     useEffect(() => {
         prepareToGetDisplayData();
-    }, [searchedName, props.filterString, searchId, currentPage]);
+        console.log(resetFilter,'props.clearFilter')
+    }, [searchedName, props.filterString, searchId, currentPage, resetFilter]);
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;

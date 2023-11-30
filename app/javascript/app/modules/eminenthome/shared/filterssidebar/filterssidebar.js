@@ -23,9 +23,11 @@ import {
 import {HomeContext} from "../../../../context/tabdataContext";
 import {debounce} from "lodash";
 import {string} from "yup";
+import {ApiContext} from "../../../ApiContext";
 
 export default function FiltersSidebar(props) {
     const homeContext = useContext(HomeContext);
+    const {setResetFilter} = useContext(ApiContext)
     const [filtersList, setFiltersList] = useState([]);
     const [expandedFilter, setExpandedFilter] = useState('');
     const [appliedFilters, setAppliedFilters] = useState([]);
@@ -134,6 +136,7 @@ export default function FiltersSidebar(props) {
     }
 
     const handleClearFilter = () => {
+        setResetFilter(true)
         setAppliedFilters([]);
         setInputSearch('');
         setSearchMinisterName('');
