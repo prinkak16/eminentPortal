@@ -171,14 +171,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         onSwitchTab(newValue);
     };
 
-    const handleDownload = (url) => {
-        const link = document.createElement('a');
-        link.href = 'url';
-        link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleDownload = () => {
+        const url = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
+        window.location.href = url;
     };
+
 
     const  navigateForm = () => {
         localStorage.setItem('eminent_number', userData.phone);
@@ -316,7 +313,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                        Submit
                                    </button>
                                </div>
-                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload("url from api")}>Download sample file</p>
+                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload()}>Download sample file</p>
                            </div>
                        </div>
                    </Modal.Body>

@@ -21,7 +21,7 @@ const MenuProps = {
     },
 };
 
-export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data, initialValue}) {
+export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data,initialValue}) {
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
@@ -37,17 +37,6 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
     }, []);
 
 
-    useEffect(() => {
-        if (initialValue && initialValue.length > 0 && ministryData.length > 0) {
-            setPersonName(initialValue);
-            const temp = [];
-            for (const name of initialValue) {
-                const id = ministryData.find((ministry) => ministry.name === name)?.id;
-                temp.push(id);
-            }
-            setMinistryIds(temp);
-        }
-    }, [initialValue, ministryData]);
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -67,7 +56,7 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
-                value={initialValue}
+                value={personName}
                 onChange={handleChange}
                 input={<OutlinedInput label="Select Ministry" />}
                 renderValue={(selected) => selected.join(', ')}

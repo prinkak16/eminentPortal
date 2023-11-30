@@ -19,6 +19,8 @@ import {
     getMinistryByFilters
 } from "../../../../../api/eminentapis/endpoints"
 import axios from "axios";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from '@mui/material/TextField';
 function GomPage({ tabId, filterString }) {
     const [gomTableData, setGomTableData] = useState([]);
     const [pageCount, setPageCount] = useState(0);
@@ -141,6 +143,7 @@ function GomPage({ tabId, filterString }) {
                 // For example:
                 // setAssignedMinistryIds([]);
                 // setOwnMinistryIds([]);
+
             } catch (error) {
                 console.error('Error updating ministries:', error);
                 // Handle errors as needed
@@ -389,21 +392,42 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.assigned_ministries}  style={{width:"200px",margin:1 }} />
-                            <div style={{display:"flex"}}>
-                                <div>
+                            <Autocomplete
+                                id="minister-autocomplete"
+                                options={ministerData}
+                                getOptionLabel={(option) => option.name}
+                                value={ministerData.find((minister) => minister.id === editMinisterData.ministerId) || null}
+                                disabled
+                                sx={{ width: '200px'}}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        InputProps={{ endAdornment: <></> }}  // Set endAdornment to an empty fragment
+                                    />
+                                )}
+                            />
+
+                            <div style={{ display: "flex" }}>
+                                <div style={{ marginTop: "10px" }}>
                                     <p>Assigned Ministries</p>
-                                    <MultipleSelectCheckmarks data={ministryData}
-                                                              intialValue={editMinisterData.assigned_ministries}
-                                                              onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
+                                    <MultipleSelectCheckmarks
+                                        data={ministryData}
+                                        intialValue={editMinisterData.assigned_ministries}
+                                        onSelectMinistries={handleAssignedMinistryChange}
+                                        style={{ width: "200px", margin: 1 }}
+                                    />
                                 </div>
-                                <div>
+                                <div style={{ marginTop: "10px" }}>
                                     <p>Own Ministry</p>
-                                    <MultipleSelectCheckmarks data={ministryData}
-                                                              intialValue={editMinisterData.allocated_ministries}
-                                                              onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
+                                    <MultipleSelectCheckmarks
+                                        data={ministryData}
+                                        intialValue={editMinisterData.allocated_ministries}
+                                        onSelectMinistries={handleOwnMinistryChange}
+                                        style={{ width: "200px", margin: 1 }}
+                                    />
                                 </div>
                             </div>
+
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
