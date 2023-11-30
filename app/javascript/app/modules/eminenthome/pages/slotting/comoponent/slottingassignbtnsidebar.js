@@ -24,7 +24,7 @@ import './slottingassignbtnsidebar.css'
 import AddIcon  from '@mui/icons-material/Add'
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
-import {value} from "lodash/seq";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -46,20 +46,16 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
     const customFunction = () => {
         getSlottingPsuData(psuId).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
-            // setSlottingVacancyDetail(response.data.data.slotting);
-            // console.log('res', response.data.data.slotting)
+            setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
-    const slottingPsuData = ()=>{
-            getSlottingPsuData(psuId).then(res => {
-            setSlottingPsuDetail(res.data.data.stats)
+
+    const addVacancyTableData = () => {
+        getSlottingPsuData(psuId).then(response => {
+            setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
-    const assignVacancyStateData = ()=>{
-        getSlottingPsuData(psuId).then(res => {
-            setSlottingVacancyDetail(res.data.data.slotting.value)
-        })
-    }
+
     const handleDecreaseCount = ()=> {
         if(vacancyCount  >= 1){
             setVacancyCount(vacancyCount - 1)
@@ -97,11 +93,14 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
             }
             assignSlottingVacancy(vacancyData).then((res) => res.json())
             setAddMore(false)
+            addVacancyTableData()
         }
         else {
             handleAddMore()
-            assignVacancyStateData()
         }}
+    const handleEdit = () => {
+
+    }
     useEffect(() => {
         customFunction();
         slottingState()
@@ -209,23 +208,19 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
                                     <TableCell>Action</TableCell>
                                 </TableRow>
                             </TableHead>
+
                             <TableBody>
-                                {/*{(slottingVacancyDetail.value !== []) ? slottingVacancyDetail.value.map((vacancy, index) =>*/}
-                                {/*    <TableRow>*/}
-                                {/*        <TableCell>{vacancy.vacancy_count}</TableCell>*/}
-                                {/*        <TableCell>{vacancy.country_state_name}</TableCell>*/}
-                                {/*        <TableCell>{vacancy.slotting_remarks}</TableCell>*/}
-                                {/*        <TableCell> {vacancy.country_state_name}</TableCell>*/}
-                                {/*    </TableRow>*/}
-                                {/*)*/}
-                                {/*:*/}
-                                {/*    <TableRow>*/}
-                                {/*        <TableCell></TableCell>*/}
-                                {/*        <TableCell></TableCell>*/}
-                                {/*        <TableCell></TableCell>*/}
-                                {/*        <TableCell></TableCell>*/}
-                                {/*    </TableRow>*/}
-                                {/*}*/}
+                                {slottingVacancyDetail.value && slottingVacancyDetail.value.length > 0 ? (
+                                    slottingVacancyDetail.value.map((vacancy, index) =>
+                                        (<TableRow>
+                                                <TableCell>{index + 1}</TableCell>
+                                                <TableCell>{vacancy.vacancy_count}</TableCell>
+                                                <TableCell>{vacancy.country_state_name}</TableCell>
+                                                <TableCell>{vacancy.slotting_remarks}</TableCell>
+                                                <TableCell><Button onClick={() => handleEdit(vacancy.country_state_name)}><MoreVertIcon/></Button></TableCell>
+                                            </TableRow>)
+                                        )
+                                ) : (<p className="text-center">No data found</p>)}
                             </TableBody>
                         </Table>
                     </TableContainer>
