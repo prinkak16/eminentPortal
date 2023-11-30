@@ -13,7 +13,7 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import GomPage from "../../pages/gom/GomPage/GomPage";
+import GomPage from "../../pages/gom/gomPage/gomPage";
 import Allotment from "../../../eminenthome/pages/allotment/Allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";

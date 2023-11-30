@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactPaginate from 'react-paginate';
-import './GomPage.scss'
+import './gomPage.scss'
 // import {SearchOffOutlined, Upload} from "@mui/icons-material";
-import MultipleSelectCheckmarks from "../MultipleSelectCheckmarks/MultipleSelectCheckmarks";
-import RadioSelect from "../RadioSelect/RadioSelect";
+import MultipleSelectCheckmarks from "../multipleSelectCheckmarks/multipleSelectCheckmarks";
+import RadioSelect from "../radioSelect/radioSelect";
 import UploadIcon from '../../../../../../../../public/images/upload.svg'
 import UploadFile from '../../../../../../../../public/images/upload_file.svg'
 import Modal from "react-bootstrap/Modal";

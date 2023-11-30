@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import './MultipleSelectCheckmarks.scss';
+import './multipleSelectCheckmarks.scss';
 import { getMinistry } from '../../../../../api/eminentapis/endpoints';
 import SearchIcon from '../../../../../../../../public/images/SearchOutline.svg';
 
