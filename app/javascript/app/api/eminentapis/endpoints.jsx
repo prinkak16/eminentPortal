@@ -81,7 +81,7 @@ export const getMinisters = () => {
 }
 
 export const getMinistryByFilters = (filterParams) => {
-    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters?ministry_id=' + filterParams.ministry_ids + '&minister_id=' + filterParams.minister_ids)
+    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters?ministry_ids=' + filterParams.ministry_ids + '&minister_ids=' + filterParams.minister_ids)
 }
 export const getSlottingAnalytics=()=>{
     return axios.get(apiBaseUrl + 'slotting/position_analytics');
