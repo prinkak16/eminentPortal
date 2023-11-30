@@ -237,7 +237,6 @@ const PolticalandGovrnform =(props)=>{
 
 
     const saveElectoralData = (data,index) => {
-        debugger
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
                 if (i === index) {
@@ -299,7 +298,6 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
-    console.log(electoralDetails)
 
     return(
         <>

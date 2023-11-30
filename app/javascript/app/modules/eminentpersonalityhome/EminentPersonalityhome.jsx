@@ -24,7 +24,6 @@ const EminentPersonality = () => {
             if (['approved', 'rejected'].includes(res.data.data.aasm_state)) {
                 setViewMode('view')
             }
-            console.log()
             setUserStateId(res.data.data.country_state_id)
         }).catch(err => {
             setBackDropToggle(false)
