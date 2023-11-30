@@ -14,7 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
 import Allotment from "./modules/eminenthome/pages/allotment/allotment";
 import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
-import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/allotAssign";
+import AllotAssign from "./modules/eminenthome/pages/allotment/components/assign/allotAssign";
 import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
 import Header from "./modules/eminentpersonalityhome/header/header";
 import {eminentAdminDetails, getLocationsData} from "./api/stepperApiEndpoints/stepperapiendpoints";
