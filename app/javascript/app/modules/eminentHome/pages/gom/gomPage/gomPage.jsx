@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactPaginate from 'react-paginate';
-import './GomPage.scss'
+import './gomPage.scss'
 // import {SearchOffOutlined, Upload} from "@mui/icons-material";
-import MultipleSelectCheckmarks from "../MultipleSelectCheckmarks/MultipleSelectCheckmarks";
-import RadioSelect from "../RadioSelect/RadioSelect";
+import MultipleSelectCheckmarks from "../multipleSelectCheckmarks/multipleSelectCheckmarks";
+import RadioSelect from "../radioSelect/radioSelect";
 import UploadIcon from '../../../../../../../../public/images/upload.svg'
 import UploadFile from '../../../../../../../../public/images/upload_file.svg'
 import Modal from "react-bootstrap/Modal";
@@ -19,8 +19,11 @@ import {
     getMinistryByFilters
 } from "../../../../../api/eminentapis/endpoints"
 import axios from "axios";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from '@mui/material/TextField';
 function GomPage({ tabId, filterString }) {
     const [gomTableData, setGomTableData] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
     const hiddenFileInput = useRef(null);
     const [currentPage, setCurrentPage] = useState('');
     const [wantToUpload, setWantToUpload] = useState(false);
@@ -31,11 +34,18 @@ function GomPage({ tabId, filterString }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
+    const itemsPerPage= 5
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
+    const [editMinisterData, setEditMinisterData] = useState({
+        name: '',
+        assigned_ministries: [],
+        allocated_ministries: [],
+        assigned_states: [],
+    });
 
 
     useEffect(() => {
@@ -43,16 +53,20 @@ function GomPage({ tabId, filterString }) {
                 const ministerIds = params.get('minister_ids');
                 const ministryIds = params.get('ministry_ids');
 
-                if (ministerIds && ministryIds) {
+                const ministerIdsArray = Array.isArray(ministerIds) ? ministerIds : [ministerIds];
+                const ministryIdsArray = Array.isArray(ministryIds) ? ministryIds : [ministryIds];
+
+
+        if (ministerIds || ministryIds) {
                     // API call with filter parameters
-                    getMinistryByFilters({ minister_ids: ministerIds, ministry_ids: ministryIds })
+                    getMinistryByFilters({ minister_ids: ministerIdsArray, ministry_ids: ministryIdsArray })
                         .then((res) => {
-                            console.log("api response", res.data);
-                            setMinistryData(res.data.data.ministries);
+
+                            setGomTableData(res.data.data.value);
+
                             // Handle other data or state updates as needed
                         })
                         .catch((error) => {
-                            console.error('Error fetching ministry data by filters:', error);
                             // Handle errors as needed
                         });
                 } else {
@@ -60,35 +74,38 @@ function GomPage({ tabId, filterString }) {
                     getMinistry().then((res) => {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
+                        fetchData();
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
                     setMinisterData(res.data.data.ministries);
-                    // Handle other data or state updates as needed
+                    // Handle other data or state updates as n
                 });
 
-            const fetchData = async () => {
-                try {
-                    const response = await axios.get('/api/v1/gom/assigned_ministries', {
-                        params: {
-                            minister_names: ministerSearch,
-                            ministry_names: ministrySearch,
-                            limit: 10,
-                            offset: 0,
-                        },
-                    });
-
-                    // Update the search results
-                    setSearchResults(response.data);
-                } catch (error) {
-                    // Handle errors
-                    console.error(error);
-                }
-            };
-
-            fetchData();
 
             },  [filterString, ministerSearch, ministrySearch]);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('/api/v1/gom/assigned_ministries', {
+                params: {
+                    minister_name: ministerSearch,
+                    ministry_name: ministrySearch,
+                    limit: itemsPerPage,
+                    offset: itemsPerPage*currentPage,
+                },
+            });
+            // Update the srch results
+
+            setGomTableData(response?.data?.data?.value);
+            setPageCount(Math.ceil( response?.data?.data?.count/ itemsPerPage));
+
+
+        } catch (error) {
+            // Handle errors
+        }
+    };
+
 
             const handleAssignedMinistryChange = (ministryIds) => {
             setAssignedMinistryIds(ministryIds);
@@ -100,53 +117,34 @@ function GomPage({ tabId, filterString }) {
            };
 
         const handleUpdateClick = () => {
+
+            const ministerId = editMinisterData.ministerId;
+
             try {
                 // Make API call for assigned ministries
                 const assignedMinistriesResponse =  axios.post(
-                    `/api/v1/user/16550/assign_ministries`,
-                    { ministry_ids: assignedMinistryIds }
+                    `/api/v1/user/${ministerId}/assign_ministries`,
+                    { ministry_ids: assignedMinistryIds}
 
                 );
-                console.log('Assigned Ministries API Response:', assignedMinistriesResponse.data);
 
                 // Make API call for own ministries after the first call is complete
                 const ownMinistriesResponse =  axios.post(
-                    `/api/v1/user/16550/allocate_ministries`,
+                    `/api/v1/user/${ministerId}/allocate_ministries`,
                     { ministry_ids: ownMinistryIds }
                 );
-                console.log('Allocate Ministries API Response:', ownMinistriesResponse.data);
 
+                fetchData();
                 // Update state or perform any other actions if needed
                 // For example:
                 // setAssignedMinistryIds([]);
                 // setOwnMinistryIds([]);
+
             } catch (error) {
-                console.error('Error updating ministries:', error);
                 // Handle errors as needed
             }
         };
 
-
-
-        const handleMinisterSearch = async () => {
-            try {
-                const response = await axios.get('/api/v1/gom/assigned_ministries', {
-                    params: {
-                        minister_names: ministerSearch,
-                        ministry_names: ministrySearch,
-                        limit: 10,
-                        offset: 0,
-                    },
-                });
-
-                setGomTableData(response.data);
-                // Handle the API response as needed
-                console.log(response.data);
-            } catch (error) {
-                // Handle errors
-                console.error(error);
-            }
-        };
 
         const handleDownload = (url) => {
             const link = document.createElement('a');
@@ -156,18 +154,19 @@ function GomPage({ tabId, filterString }) {
             link.click();
             document.body.removeChild(link);
         };
-        const test=()=>{
-            getGOMTableData().then((response) => {
-                setGomTableData(response.data.value);
-                console.log('test', gomTableData)
-            })
-        }
-        useEffect(() => {
-            test()
-        }, []);
+        // const test=()=>{
+        //     getGOMTableData().then((response) => {
+        //         setGomTableData(response.data.value);
+        //         console.log('test', gomTableData)
+        //     })
+        // }
+        // useEffect(() => {
+        //     test()
+        // }, []);
 
         const handleClick = event => {
-            setWantToUpload(true);
+            const itemsPerPage = 5;
+            setPageCount(Math.ceil(apiData.length / itemsPerPage));
         };
 
         const handleSubmit = () => {
@@ -182,13 +181,21 @@ function GomPage({ tabId, filterString }) {
                         setMinisterData(res.data);
                     })
                     .catch(error => {
-                        console.error("Error fetching minister list:", error);
                         // Handle errors as needed
                     });
             }
         };
 
-
+    const handleEditClick = (data) => {
+        setEditMinisterData({
+            ministerId: data.user_id,
+            name: data.name,
+            assigned_ministries: data.assigned_ministries,
+            allocated_ministries: data.allocated_ministries,
+            assigned_states: data.assigned_states,
+        });
+        setWantToEdit(true);
+    };
         const uploadFile = () => {
             hiddenFileInput.current.click();
         }
@@ -203,16 +210,16 @@ function GomPage({ tabId, filterString }) {
             }
         };
 
-
-        const AssignUpdate = () =>{
-            assignMinistriesAndMinister(ministryIds, ministerId).then(res => {
-                // console.log(res);
-                // alert("You have successfully assign the ministry to the minister.")
-            })
-        }
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
 
 
-        console.log(gomTableData);
+    useEffect(() => {
+        fetchData();
+    }, [currentPage]);
+
+
         return (
             <>
                 <div className="mainDiv">
@@ -278,15 +285,18 @@ function GomPage({ tabId, filterString }) {
                                     <th style={{backgroundColor: "#F8F8F8"}}>Assigned States</th>
                                     <th style={{backgroundColor: "#F8F8F8"}}>Action</th>
                                 </tr>
-                                {gomTableData.map((data, index) => {
+                                {gomTableData.length && gomTableData.map((data, index) => {
                                     return (
-                                        <tr key={data.user_id} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
+                                        <tr key={data} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
                                             <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
                                             <td>{data.name}</td>
                                             <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={()=> setWantToEdit(true)}><EditIcon/></td>
+                                            <td onClick={() => handleEditClick(data)}>
+                                                <EditIcon />
+                                            </td>
+
                                         </tr>
                                     )
                                 })}
@@ -295,27 +305,30 @@ function GomPage({ tabId, filterString }) {
                         </div>
 
                     </div>
-                    <div >
-                        <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;10</span>
-                        <ReactPaginate
-                            breakLabel="..."
-                            nextLabel="next >"
-                            containerClassName={'pagination justify-content-end'}
-                            onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
-                            pageLinkClassName={'page-link'}
-                            pageClassName={'page-item'}
-                            previousClassName={'page-item'}
-                            previousLinkClassName={'page-link'}
-                            nextClassName={'page-item'}
-                            nextLinkClassName={'page-link'}
-                            breakClassName={'page-item'}
-                            breakLinkClassName={'page-link'}
-                            activeClassName={'active'}// onPageChange={handlePageClick}
-                            pageRangeDisplayed={3}
-                            pageCount={10}
-                            previousLabel="< previous"
-                        />
-                    </div>
+                        <div>
+                            <div>
+
+                            <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
+                            </div>
+                            <ReactPaginate
+                                breakLabel="..."
+                                nextLabel="next >"
+                                containerClassName={'pagination justify-content-end'}
+                                onPageChange={handlePageChange}
+                                pageLinkClassName={'page-link'}
+                                pageClassName={'page-item'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                activeClassName={'active'}
+                                pageRangeDisplayed={3}
+                                pageCount={pageCount}
+                                previousLabel="< previous"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -371,17 +384,42 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} style={{width:"200px",margin:1 }} />
-                            <div style={{display:"flex"}}>
-                                <div>
+                            <Autocomplete
+                                id="minister-autocomplete"
+                                options={ministerData}
+                                getOptionLabel={(option) => option.name}
+                                value={ministerData.find((minister) => minister.id === editMinisterData.ministerId) || null}
+                                disabled
+                                sx={{ width: '200px'}}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        InputProps={{ endAdornment: <></> }}  // Set endAdornment to an empty fragment
+                                    />
+                                )}
+                            />
+
+                            <div style={{ display: "flex" }}>
+                                <div style={{ marginTop: "10px" }}>
                                     <p>Assigned Ministries</p>
-                                    <MultipleSelectCheckmarks data={ministryData} onSelectMinistries={handleAssignedMinistryChange} style={{width:"200px",margin:1 }} />
+                                    <MultipleSelectCheckmarks
+                                        data={ministryData}
+                                        intialValue={editMinisterData.assigned_ministries}
+                                        onSelectMinistries={handleAssignedMinistryChange}
+                                        style={{ width: "200px", margin: 1 }}
+                                    />
                                 </div>
-                                <div>
+                                <div style={{ marginTop: "10px" }}>
                                     <p>Own Ministry</p>
-                                    <MultipleSelectCheckmarks data={ministryData} onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
+                                    <MultipleSelectCheckmarks
+                                        data={ministryData}
+                                        intialValue={editMinisterData.allocated_ministries}
+                                        onSelectMinistries={handleOwnMinistryChange}
+                                        style={{ width: "200px", margin: 1 }}
+                                    />
                                 </div>
                             </div>
+
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

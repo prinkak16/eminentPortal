@@ -47,7 +47,7 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
-    const [electoralDetails, setElectoralDetails] = useState()
+    const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
@@ -58,12 +58,8 @@ const PolticalandGovrnform =(props)=>{
         if (props.viewMode === 'view') {
             setIsViewDisabled(true)
         }
-
     },[props.viewMode])
 
-    useEffect(() => {
-        setElectoralDetails(props.userData.election_fought)
-    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -86,9 +82,11 @@ const PolticalandGovrnform =(props)=>{
         setTimeout(function() {
             if (title === 'Political Profile') {
                 politicalProfileSave(formData, id)
+                setEditableProfileField({})
             }
 
             if (title === 'Other Party Profile') {
+                setEditableProfileField({})
                 otherPartiProfileSave(formData, id)
             }
         }, 50)
@@ -251,7 +249,7 @@ const PolticalandGovrnform =(props)=>{
     const saveProgress = () => {
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
-            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
             });
         }
     }

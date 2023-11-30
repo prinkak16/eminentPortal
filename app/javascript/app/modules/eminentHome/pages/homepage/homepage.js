@@ -74,8 +74,14 @@ export default function PersistentDrawerLeft() {
     const [tabId, setTabId] = useState('home_table');
     const [movTabId, setMovTabId] = useState('ministry_wise');
     const navigate = useNavigate();
+    const [clearFilter, setClearFilter] = useState(false)
 
     const {type} = useParams();
+
+    useEffect(() => {
+       localStorage.setItem('eminent_number', '')
+        localStorage.setItem('view_mode', '')
+    },[])
 
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
@@ -129,7 +135,14 @@ export default function PersistentDrawerLeft() {
     }
     const handleMovTabsFilter = (newValue)=>{
         setMovTabId(newValue)
-    }   
+    }
+
+    const filterClear = () => {
+        setClearFilter(true)
+        setTimeout(function() {
+            setClearFilter(false)
+        },200)
+    }
 
 
     return (<>
@@ -152,7 +165,7 @@ export default function PersistentDrawerLeft() {
                                 {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                             </IconButton>
                         </DrawerHeader>
-                        <FiltersSidebar setFilterString={setFilterString} tabId={tabId} />
+                        <FiltersSidebar setFilterString={setFilterString} tabId={tabId} filterClear={filterClear} />
 
                     </div>
                 </Drawer>
@@ -175,7 +188,7 @@ export default function PersistentDrawerLeft() {
                                 Eminent Personalities</p>
                         </div>
 
-                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open}/>
+                    <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open} filterClear={clearFilter}/>
                         {/*<>*/}
                         {/*    <Analytics toggle={toggle}/>*/}
                         {/*    <HomeTable filterString={filterString}/>*/}

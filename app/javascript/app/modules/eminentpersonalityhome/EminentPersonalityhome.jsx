@@ -24,7 +24,6 @@ const EminentPersonality = () => {
             if (['approved', 'rejected'].includes(res.data.data.aasm_state)) {
                 setViewMode('view')
             }
-            console.log()
             setUserStateId(res.data.data.country_state_id)
         }).catch(err => {
             setBackDropToggle(false)
@@ -34,7 +33,7 @@ const EminentPersonality = () => {
 
 
     const fetchUserByNumber = () => {
-        let phoneNumber = localStorage.getItem('eminent_number')
+        let phoneNumber = isValuePresent(location.state?.eminent_number) ? location.state?.eminent_number : localStorage.getItem('eminent_number')
         if (phoneNumber) {
             setBackDropToggle(true)
             fetchMobile(phoneNumber, setBackDropToggle).then(res => {
@@ -48,13 +47,9 @@ const EminentPersonality = () => {
         }
     }
 
+
     useEffect(() => {
-        if (isValuePresent(location.state?.user_data)) {
-            setEminentData(location.state?.user_data.data)
-            setUserStateId(location.state?.user_data.country_state_id)
-        } else {
-            isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
-        }
+        isCandidateLogin ? fetchUserDetails() : fetchUserByNumber()
 
     }, []);
 
@@ -126,7 +121,7 @@ const EminentPersonality = () => {
                 </svg>
                 <div className="detailHeading-dashed dashed-2"></div>
             </Grid>
-            {eminentData && <FormWrap userData={eminentData} stateId={userStateId} viewMode={viewMode}/>}
+            {isValuePresent(eminentData) && <FormWrap userData={eminentData} stateId={userStateId} viewMode={viewMode}/>}
         </>
     )
 }

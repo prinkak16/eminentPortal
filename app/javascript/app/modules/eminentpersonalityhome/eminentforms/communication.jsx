@@ -226,7 +226,7 @@ const Communicationform =(props)=>{
     const saveProgress = () => {
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
-            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
             });
         }
     }
@@ -534,6 +534,7 @@ Communicationform.validationSchema = Yup.object().shape({
 
     address: Yup.array().of(
         Yup.object().shape({
+            address_type: Yup.string().required('Please enter Address Type'),
             flat: Yup.string().required('Please enter your Address'),
             street: Yup.string().required('Please enter your Street'),
             district: Yup.string().required('Please Select your District'),

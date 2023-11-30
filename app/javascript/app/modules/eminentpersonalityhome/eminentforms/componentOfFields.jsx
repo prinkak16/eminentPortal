@@ -73,6 +73,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
     }, [isEditable]);
 
     const resetFieldsToBlank = () => {
+        setCurrentlyWorking(false)
         setFieldsData((prevFieldsData) => {
             const updatedFieldsData = { ...prevFieldsData };
             for (const key in updatedFieldsData) {
@@ -92,7 +93,12 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
 
     const handleFieldChange = (value, name, valueType) => {
+        if (valueType === 'profession') {
+            setFieldsData({})
+        }
+
         if (valueType === 'qualification') {
+            setFieldsData({})
             const fields = []
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
@@ -192,7 +198,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
     const notApplicableFields = (naType, key) => (event) => {
         const valueToSet = event.target.checked ? naType === 'all' ? '-' : 'Current Working' : '';
-        setCurrentlyWorking(true)
+        setCurrentlyWorking(event.target.checked)
         if (naType === 'all') {
             setFieldInitialValue(valueToSet);
         } else {
@@ -299,8 +305,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 ))}
                 {
                     jsonForm.title === 'Education Details' &&
-                    <Grid item xs={4} style={{minWidth: '27rem'}}>
-                        <FormLabel>Please Select if this is your Highest Qualification <mark>*</mark></FormLabel>
+                    <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
+                        <FormLabel className='mr-1'>Please Select if this is your Highest Qualification </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' value={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>

@@ -10,7 +10,7 @@ import {disabledSaveProgressButton, formFilledValues, saveProgressButton} from "
 import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
-    const {config, isCandidateLogin} = useContext(ApiContext)
+    const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
     const [mobile, setMobile] = useState(props?.formValues?.reference?.mobile)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
@@ -37,7 +37,7 @@ const Refferedform = (props) => {
     const saveProgress = () => {
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
-            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
             });
         }
     }

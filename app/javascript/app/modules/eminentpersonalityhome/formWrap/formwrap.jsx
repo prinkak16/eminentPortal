@@ -11,13 +11,13 @@ import Educationform from "../eminentforms/educationandprofession";
 import PolticalandGovrnform from "../eminentforms/politicalandgovernmant";
 import Resumeform from "../eminentforms/resume";
 import Refferedform from "../eminentforms/reffer";
-import {electionWiseJson, isValuePresent, showErrorToast, toSnakeCase} from "../../utils";
+import {electionWiseJson, isValuePresent, showErrorToast, showNotification, toSnakeCase} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
 const FormWrap=({userData, stateId, viewMode})=>{
-    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle,setEminentData} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -73,9 +73,9 @@ const FormWrap=({userData, stateId, viewMode})=>{
 
 
     const onSubmit = (values, formikBag) => {
+        const {setSubmitting} = formikBag;
         if (!isViewDisabled) {
             setBackDropToggle(true)
-            const {setSubmitting} = formikBag;
             const newStepValues = [...stepValues];
             newStepValues[activeStep] = values;
             setStepValues(newStepValues)
@@ -96,11 +96,15 @@ const FormWrap=({userData, stateId, viewMode})=>{
                     if (response) {
                         if (isCandidateLogin) {
                             if (activeStep + 1 === 5) {
+                                values = {}
+                                setEminentData({})
                                 navigate({
                                     pathname: '/form_submitted'
                                 });
                             }
                         } else if (activeStep + 1 === 6) {
+                            values = {}
+                            setEminentData({})
                             navigate({
                                 pathname: '/form_submitted'
                             });
@@ -113,6 +117,8 @@ const FormWrap=({userData, stateId, viewMode})=>{
                 setBackDropFalse()
             }
         } else {
+            setSubmitting(false)
+            showNotification()
             handleNext();
             scrollToTop()
         }
