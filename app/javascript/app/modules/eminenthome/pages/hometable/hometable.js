@@ -97,7 +97,10 @@ const HomeTable = (props) => {
     }
 
     const prepareToGetDisplayData = () => {
-        let searched = props?.filterString;
+        let searched = ''
+        if (!resetFilter) {
+            searched = props?.filterString;
+        }
         if (searchedName && searchedName.length > 0) {
             searched += `&query=${searchedName}`;
         }
@@ -112,7 +115,6 @@ const HomeTable = (props) => {
 
     useEffect(() => {
         prepareToGetDisplayData();
-        console.log(resetFilter,'props.clearFilter')
     }, [searchedName, props.filterString, searchId, currentPage, resetFilter]);
 
     const onSearchNameId = (e, isNameSearch = true) => {
