@@ -3,28 +3,27 @@ import { styled, useTheme } from '@mui/material/styles';
 import {
     Box,
     Drawer,
-    Divider,
     Typography,
     TextField,
     Button,
-    MenuItem
+    MenuItem,
+    Table,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {assignSlottingVacancy, getSlottingPsuData} from "../../../../../api/eminentapis/endpoints";
 import {useEffect, useState} from "react";
-import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
 import './slottingassignbtnsidebar.css'
 import AddIcon  from '@mui/icons-material/Add'
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Paper from '@mui/material/Paper';
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -42,6 +41,14 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
     const [addMore, setAddMore] = useState(false)
     const [stateId, setStateId] = useState()
     const [remarks, setRemarks] = useState()
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [toggleEdit, setToggleEdit] = useState(false)
+
+    const toggleEditIcon = (event) => {
+        event.preventDefault()
+        setToggleEdit(!toggleEdit)
+    };
+
 
     const customFunction = () => {
         getSlottingPsuData(psuId).then(response => {
@@ -99,7 +106,7 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
             handleAddMore()
         }}
     const handleEdit = () => {
-
+        setAddMore(true)
     }
     useEffect(() => {
         customFunction();
@@ -217,7 +224,19 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
                                                 <TableCell>{vacancy.vacancy_count}</TableCell>
                                                 <TableCell>{vacancy.country_state_name}</TableCell>
                                                 <TableCell>{vacancy.slotting_remarks}</TableCell>
-                                                <TableCell><Button onClick={() => handleEdit(vacancy.country_state_name)}><MoreVertIcon/></Button></TableCell>
+                                                <TableCell>
+                                                    <div className="position-relative">
+                                                    <Button onClick = {toggleEditIcon}>
+                                                        <MoreVertIcon/>
+                                                    </Button>
+                                                    {toggleEdit && (
+                                                        <div className="edit-popup">
+                                                            <Button onClick={() => handleEdit(vacancy.country_state_name)}><MoreVertIcon/></Button>
+                                                            
+                                                        </div>
+                                                    )}
+                                                    </div>
+                                                </TableCell>
                                             </TableRow>)
                                         )
                                 ) : (<p className="text-center">No data found</p>)}
