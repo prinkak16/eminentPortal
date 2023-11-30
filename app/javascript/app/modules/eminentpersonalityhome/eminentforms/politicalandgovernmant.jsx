@@ -47,7 +47,7 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
-    const [electoralDetails, setElectoralDetails] = useState()
+    const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
     const componentRef = useRef(null);
@@ -58,12 +58,8 @@ const PolticalandGovrnform =(props)=>{
         if (props.viewMode === 'view') {
             setIsViewDisabled(true)
         }
-
     },[props.viewMode])
 
-    useEffect(() => {
-        setElectoralDetails(props.userData.election_fought)
-    },[])
 
     const addSocialFields = () => {
         setSocialFields(prevSocialFields => [...prevSocialFields, { organization: "", description: "" }]);
@@ -237,7 +233,6 @@ const PolticalandGovrnform =(props)=>{
 
 
     const saveElectoralData = (data,index) => {
-        debugger
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
                 if (i === index) {
@@ -299,7 +294,6 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
-    console.log(electoralDetails)
 
     return(
         <>
