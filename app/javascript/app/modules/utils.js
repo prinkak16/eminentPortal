@@ -464,6 +464,19 @@ export const showErrorToast = (massage) => {
     }
 }
 
+export const showNotification = () => {
+    toast.info('In view mode, data is not saving.', {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+}
+
 export const yearToDateConvert = (year) => {
     const dateObject = new Date(parseInt(year), 0)
     return dateObject.toLocaleString('en-US', {
