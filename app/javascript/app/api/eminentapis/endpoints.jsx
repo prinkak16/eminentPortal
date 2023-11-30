@@ -97,7 +97,6 @@ export const getGOMTableData = () => {
             return response.data; // You can return the data if needed
         })
         .catch(error => {
-            console.error("Error fetching data:", error);
             throw error; // Rethrow the error to handle it at the caller's end
         });
 }

@@ -67,7 +67,6 @@ function GomPage({ tabId, filterString }) {
                             // Handle other data or state updates as needed
                         })
                         .catch((error) => {
-                            console.error('Error fetching ministry data by filters:', error);
                             // Handle errors as needed
                         });
                 } else {
@@ -81,7 +80,6 @@ function GomPage({ tabId, filterString }) {
                 axios.get('/api/v1/gom/minister_list').then((res) => {
                     setMinisterData(res.data.data.ministries);
                     // Handle other data or state updates as n
-                    console.log(res.data.data.ministries, ' checking');
                 });
 
 
@@ -105,7 +103,6 @@ function GomPage({ tabId, filterString }) {
 
         } catch (error) {
             // Handle errors
-            console.error(error);
         }
     };
 
@@ -130,14 +127,12 @@ function GomPage({ tabId, filterString }) {
                     { ministry_ids: assignedMinistryIds}
 
                 );
-                console.log('Assigned Ministries API Response:', assignedMinistriesResponse.data);
 
                 // Make API call for own ministries after the first call is complete
                 const ownMinistriesResponse =  axios.post(
                     `/api/v1/user/${ministerId}/allocate_ministries`,
                     { ministry_ids: ownMinistryIds }
                 );
-                console.log('Allocate Ministries API Response:', ownMinistriesResponse.data);
 
                 fetchData();
                 // Update state or perform any other actions if needed
@@ -146,7 +141,6 @@ function GomPage({ tabId, filterString }) {
                 // setOwnMinistryIds([]);
 
             } catch (error) {
-                console.error('Error updating ministries:', error);
                 // Handle errors as needed
             }
         };
@@ -187,7 +181,6 @@ function GomPage({ tabId, filterString }) {
                         setMinisterData(res.data);
                     })
                     .catch(error => {
-                        console.error("Error fetching minister list:", error);
                         // Handle errors as needed
                     });
             }
@@ -203,7 +196,6 @@ function GomPage({ tabId, filterString }) {
         });
         setWantToEdit(true);
     };
-  console.log(editMinisterData,'id');
         const uploadFile = () => {
             hiddenFileInput.current.click();
         }
@@ -228,7 +220,6 @@ function GomPage({ tabId, filterString }) {
     }, [currentPage]);
 
 
-    console.log(gomTableData);
         return (
             <>
                 <div className="mainDiv">

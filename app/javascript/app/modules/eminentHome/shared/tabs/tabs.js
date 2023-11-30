@@ -102,11 +102,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 .then(response => response.json())
                 .then(data => {
                     // Handle the response from the server, e.g., show a success message
-                    console.log('File uploaded successfully', data);
                 })
                 .catch(error => {
                     // Handle errors, e.g., show an error message
-                    console.error('Error uploading file', error);
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
@@ -114,7 +112,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 });
         } else {
             // Handle the case where no file is selected (optional)
-            console.error('No file selected for upload');
         }
     };
 
