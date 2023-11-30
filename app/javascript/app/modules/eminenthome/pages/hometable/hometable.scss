@@ -265,9 +265,10 @@ font-size: 1rem !important;
   min-width: 10rem;
 }
 
-.details-edit-list {
+.home-edit-list {
   position: absolute;
-  z-index: 1;
+  z-index: 5;
+  right: 30px !important;
 }
 
 .blank-eminent-container {

@@ -80,6 +80,12 @@ module UtilHelper
           'key': attribute_key,
           'message': "Invalid '#{attribute_key}' (for ex. #{error['schema']['pattern_example']})."
         }
+      when 'contains'
+        error_messages << {
+          'type': error['type'],
+          'key': attribute_key,
+          'message': "'#{attribute_key}' must have at least one #{error['schema']['contains']['name']}."
+        }
       end
     end
     error_messages

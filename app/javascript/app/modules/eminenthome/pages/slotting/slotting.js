@@ -21,7 +21,7 @@ const SlottingTabPage =({tabId})=>{
     const [slottingTableData, setSlottingTableData] = useState();
     const [open, setOpen] = useState(false);
     const [psuId, setPsuId] = useState(null)
-    const limit = 18;
+    const limit = 10;
     const handleDrawerOpen = (id) => {
         setOpen(true);
         setPsuId(id)
@@ -70,7 +70,7 @@ const SlottingTabPage =({tabId})=>{
                                 <TableCell>{slotting.ministry_name}</TableCell>
                                 <TableCell>{slotting.vacant}</TableCell>
                                 <TableCell>{slotting.slotted}</TableCell>
-                                <TableCell>{slotting.is_listed}</TableCell>
+                                <TableCell>{slotting.is_listed ? 'Yes' : 'No'}</TableCell>
                                 <TableCell>{slotting.last_updated_at}</TableCell>
                                     <TableCell className="text-center"><Button aria-label="open drawer"
                                                                                edge="end"

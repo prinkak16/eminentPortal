@@ -28,7 +28,7 @@ export const educationDetailsJson = {
         {
             type: 'dropdown',
             na_button: false,
-            list: ['Less than 10th', '10th Pass', 'Diploma/ITI', '12th Pass', 'Graduate', 'Post Graduate', 'PhD and Above'],
+            list: [],
             name: 'Qualification',
             key: 'qualification',
             placeholder: 'Select Party level',
@@ -77,11 +77,12 @@ export const ProfessionJson = {
     title: 'Profession Profile',
     fields: [
         {
+            list: [],
             key: 'profession',
             na_button: false,
             name: "Profession",
             placeholder: 'Enter profession',
-            type: 'textField',
+            type: 'dropdown',
             isRequired: true
         },
         {
@@ -120,6 +121,7 @@ export const politicalProfileJson = {
     title: 'Political Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party_level',
             na_button: false,
             name: "Party Level",
@@ -160,6 +162,7 @@ export const otherPartyJson = {
     title: 'Other Party Profile',
     fields: [
         {
+            isRequired: true,
             key: 'party',
             na_button: false,
             name: "Party",
@@ -200,8 +203,6 @@ const electionWin =  {
     list:['Yes', 'No']
 }
 
-const ministerPortfolioArray = [ministerPortfolio, ministryName, ministryDuration]
-
 const ministerPortfolio = {
     is_conditional: true,
     condition_key: 'election_win',
@@ -229,6 +230,7 @@ const ministryName = {
     }
 ]
 }
+
 const ministryDuration = {
     is_conditional: true,
     condition_key: 'minister_portfolio',
@@ -238,6 +240,8 @@ const ministryDuration = {
     key: 'ministry_duration',
     placeholder: 'Enter Duration (in Months)'
 }
+
+export const ministerPortfolioArray = [ministryName, ministryDuration]
 
 const afterElectionFields = [electionWin, ministerPortfolio, ministryName, ministryDuration];
 
@@ -290,7 +294,7 @@ export const electionWiseJson =
                 ...afterElectionFields,
             ]
         },
-        legislative_council_vidhan_sabha: {
+        legislative_council_vidhan_parishad: {
             fields: [
                 {
                     type: 'dropdown',
@@ -498,11 +502,18 @@ export const calculateAge = (dob) => {
 };
 
 export const saveProgressButton=
-    <Button>Save Progress
+    <Button >Save Progress
         <Tooltip title="Save form till the current progress. Until submitted, form will not be counted as complete.">
             <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{ color: "#3f96fd" }} />
         </Tooltip>
     </Button>
+
+export const disabledSaveProgressButton =
+    <Tooltip title="In view mode, data saving is not available.">
+        <Button>Save Progress
+            <FontAwesomeIcon className='save-progress-info' icon={faInfoCircle} style={{color: "#3f96fd"}}/>
+        </Button>
+    </Tooltip>
 
 
 export const VisuallyHiddenInput = styled('input')({

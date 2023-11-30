@@ -6,7 +6,7 @@ import Formheading from "../component/formheading/formheading";
 import Inputfield from "../component/inputfield/inputfield";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import * as Yup from "yup";
-import {formFilledValues, saveProgressButton} from "../../utils";
+import {disabledSaveProgressButton, formFilledValues, saveProgressButton} from "../../utils";
 import {ApiContext} from "../../ApiContext";
 
 const Refferedform = (props) => {
@@ -19,8 +19,15 @@ const Refferedform = (props) => {
         padding: theme.spacing(1),
         flexGrow: 1,
     }));
-
     const [comments, setComments] = useState(props?.formValues?.reference?.comments)
+    const [isViewDisabled, setIsViewDisabled] = useState(false)
+
+    useEffect(() => {
+        if (props.viewMode === 'view') {
+            setIsViewDisabled(true)
+        }
+
+    },[props.viewMode])
 
     const commentsChange = (e) => {
         setComments(e.target.value)
@@ -28,9 +35,11 @@ const Refferedform = (props) => {
     }
 
     const saveProgress = () => {
-        const fieldsWithValues = formFilledValues(props.formValues);
-        getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
-        });
+        if (!isViewDisabled) {
+            const fieldsWithValues = formFilledValues(props.formValues);
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            });
+        }
     }
 
     const enterMobileNumber = (event) => {
@@ -55,7 +64,11 @@ const Refferedform = (props) => {
                     <Item><Formheading number="1" heading="Referred by"/></Item>
                     <Item sx={{textAlign: 'right'}}>
                         <div onClick={saveProgress}>
-                            {saveProgressButton}
+                            {
+                                isViewDisabled ?
+                                    disabledSaveProgressButton :
+                                    saveProgressButton
+                            }
                         </div>
                     </Item>
                 </Stack>
@@ -63,6 +76,7 @@ const Refferedform = (props) => {
                     <Grid item xs={6}>
                         <FormLabel>Name <mark>*</mark></FormLabel>
                         <Inputfield type="text"
+                                    disabled={isViewDisabled}
                                     name={`reference.name`}
                                     value={props?.formValues?.reference?.name}
                                     placeholder="Enter Name"/>
@@ -72,6 +86,7 @@ const Refferedform = (props) => {
                     <Grid item xs={6} className="d-grid">
                         <FormLabel>Phone no. <mark>*</mark></FormLabel>
                         <input
+                            disabled={isViewDisabled}
                             maxLength={10}
                             placeholder='Enter Mobile Number'
                             value={mobile}
@@ -82,6 +97,7 @@ const Refferedform = (props) => {
                     <Grid item xs={6}>
                         <FormLabel>BJP ID</FormLabel>
                         <Inputfield type="text"
+                                    disabled={isViewDisabled}
                                     name={`reference.bjp_id`}
                                     value={props?.formValues?.reference?.bjp_id}
                                     placeholder="BJP ID"/>
@@ -93,6 +109,7 @@ const Refferedform = (props) => {
                     <Grid item xs={6}>
                         <FormLabel>comments </FormLabel>
                         <TextField
+                            disabled={isViewDisabled}
                             className='p-0'
                             fullWidth
                             name={`reference.comments`}

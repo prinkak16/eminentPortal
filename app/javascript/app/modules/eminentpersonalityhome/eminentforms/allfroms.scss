@@ -541,8 +541,8 @@ button.cancelbtn{
 
 .reff-mobile {
   width: 100% !important;
-  height: 3.4rem !important;
-  border-radius: 13px;
+  height: 3.3rem !important;
+  border-radius: 9px;
   border: 1px solid grey;
   background: #f8f9fa;
   padding-left: 1.2rem;
@@ -640,4 +640,36 @@ margin-bottom: auto;
 
 .div.MuiOutlinedInput-root {
   overflow: hidden;
+}
+
+.qualification-name {
+  display: flex;
+  width: 100%;
+}
+
+.highest-qualification-radio {
+  width: 3rem;
+}
+
+.add-ministry-container {
+  display: flex;
+  margin-top: 2rem;
+  width: 20rem;
+  font-size: 1.1rem;
+}
+
+.add-ministry {
+  cursor: pointer;
+  color: #FF9559 !important;
+}
+
+.delete-ministry {
+  cursor: pointer;
+  margin-left: 2rem;
+  color: gray;
+  justify-content: center;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  gap: 7px;
 }

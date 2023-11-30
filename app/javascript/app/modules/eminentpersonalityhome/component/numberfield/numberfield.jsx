@@ -2,10 +2,11 @@ import {Field} from "formik";
 import {TextField} from "@mui/material";
 import React from "react";
 
-const NumberField =({id,name,placeholder,onInput,inputProps, value})=>{
+const NumberField =({id,name,placeholder,onInput,inputProps, value, disabled})=>{
     return(
         <>
             <Field
+                disabled={disabled}
                 id={id}
                 type="text"
                 name={name}
