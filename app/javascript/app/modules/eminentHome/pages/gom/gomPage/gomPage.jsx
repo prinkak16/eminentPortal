@@ -47,6 +47,10 @@ function GomPage({ tabId, filterString }) {
         assigned_states: [],
     });
 
+    useEffect(()=>{
+        console.log('editMinisterData',editMinisterData);
+    },[editMinisterData])
+
 
     useEffect(() => {
                 const params = new URLSearchParams(filterString);
@@ -404,7 +408,7 @@ function GomPage({ tabId, filterString }) {
                                     <p>Assigned Ministries</p>
                                     <MultipleSelectCheckmarks
                                         data={ministryData}
-                                        intialValue={editMinisterData.assigned_ministries}
+                                        initialValue={editMinisterData?.assigned_ministries}
                                         onSelectMinistries={handleAssignedMinistryChange}
                                         style={{ width: "200px", margin: 1 }}
                                     />
@@ -413,7 +417,7 @@ function GomPage({ tabId, filterString }) {
                                     <p>Own Ministry</p>
                                     <MultipleSelectCheckmarks
                                         data={ministryData}
-                                        intialValue={editMinisterData.allocated_ministries}
+                                        initialValue={ editMinisterData?.allocated_ministries}
                                         onSelectMinistries={handleOwnMinistryChange}
                                         style={{ width: "200px", margin: 1 }}
                                     />
