@@ -92,6 +92,10 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
 
     const handleFieldChange = (value, name, valueType) => {
+        if (valueType === 'profession') {
+            setFieldsData({})
+        }
+
         if (valueType === 'qualification') {
             setFieldsData({})
             const fields = []

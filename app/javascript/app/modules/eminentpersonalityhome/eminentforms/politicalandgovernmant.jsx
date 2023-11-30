@@ -86,9 +86,11 @@ const PolticalandGovrnform =(props)=>{
         setTimeout(function() {
             if (title === 'Political Profile') {
                 politicalProfileSave(formData, id)
+                setEditableProfileField({})
             }
 
             if (title === 'Other Party Profile') {
+                setEditableProfileField(form)
                 otherPartiProfileSave(formData, id)
             }
         }, 50)
