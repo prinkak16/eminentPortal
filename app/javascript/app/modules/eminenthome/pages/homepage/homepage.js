@@ -77,6 +77,11 @@ export default function PersistentDrawerLeft() {
 
     const {type} = useParams();
 
+    useEffect(() => {
+       localStorage.setItem('eminent_number', '')
+        localStorage.setItem('view_mode', '')
+    },[])
+
     const isValidNumber = (number) => {
         const regex = /^[5-9]\d{9}$/;
         return regex.test(number);
