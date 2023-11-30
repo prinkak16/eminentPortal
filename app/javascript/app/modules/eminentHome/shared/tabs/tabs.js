@@ -13,13 +13,8 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-<<<<<<< HEAD:app/javascript/app/modules/eminenthome/shared/tabs/tabs.js
 import GomPage from "../../pages/GOM/GomPage/GomPage";
 import Allotment from "../../../eminenthome/pages/allotment/allotment"
-=======
-import GomPage from "../../pages/gom/gomPage/gomPage";
-import Allotment from "../../pages/allotment/Allotment"
->>>>>>> staging:app/javascript/app/modules/eminentHome/shared/tabs/tabs.js
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";

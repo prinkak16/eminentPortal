@@ -1,10 +1,5 @@
-<<<<<<< HEAD:app/javascript/app/modules/eminenthome/pages/hometable/hometable.js
-import React, {useEffect, useState} from "react";
-import "./hometable.css"
-=======
 import React, {useContext, useEffect, useState} from "react";
 import "./hometable.scss"
->>>>>>> staging:app/javascript/app/modules/eminentHome/pages/hometable/hometable.js
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"
