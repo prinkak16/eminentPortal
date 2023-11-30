@@ -54,7 +54,10 @@ const FormStepper = ({
     useEffect(() => {
         for (const key in userData) {
             if (values.hasOwnProperty(key)) {
+                if (key !== 'election_fought')  {
                     values[key] = userData[key]
+                }
+
             }
         }
         values.mobiles = userData.mobiles

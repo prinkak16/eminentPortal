@@ -237,6 +237,7 @@ const PolticalandGovrnform =(props)=>{
 
 
     const saveElectoralData = (data,index) => {
+        debugger
         setElectoralDetails((preElectoral) => {
             return preElectoral.map((form, i) => {
                 if (i === index) {
@@ -253,7 +254,7 @@ const PolticalandGovrnform =(props)=>{
     const saveProgress = () => {
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
-            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId).then(response => {
+            getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
             });
         }
     }
@@ -298,6 +299,7 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
+    console.log(electoralDetails)
 
     return(
         <>

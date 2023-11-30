@@ -1,26 +1,15 @@
-import {FormLabel, Grid, TextField, Typography} from "@mui/material";
-import Inputfield from "../component/inputfield/inputfield";
+import {FormLabel, Grid, TextField} from "@mui/material";
 import {ErrorMessage, Field} from "formik";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
-import Primarybutton from "../component/primarybutton/primarybutton";
 import React, {useEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
-import {v4 as uuidv4} from 'uuid';
 import {isValuePresent, ministerPortfolioArray} from "../../utils";
 import RadioButton from "./radioButton";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {
-    getAssemblyData,
-    getLocationsData,
-    getStateData
-} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
-import NumberField from "../component/numberfield/numberfield";
+import {getLocationsData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleCheck} from "@fortawesome/free-solid-svg-icons";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [ministriesField, setMinistriesField] = useState([]);
@@ -107,8 +96,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     };
 
     const handleSave = () => {
-        saveData(fieldsData,formIndex)
         setIsDataSet(false)
+        saveData(fieldsData,formIndex)
     }
 
     useEffect(() => {
@@ -187,17 +176,21 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
     const deleteMinistry = () => {
         if (!isViewDisabled) {
-            const updatedMinisterPortfolioArray = [...fieldsData.minister_portfolio_array];
-            updatedMinisterPortfolioArray.pop();
-            setFieldsData((prevFieldsData) => ({
-                ...prevFieldsData,
-                minister_portfolio_array: updatedMinisterPortfolioArray,
-            }));
-            const updatedMinistries = ministriesField.slice(0, -1);
-            setMinistriesField(updatedMinistries);
-            setIsDataSet(true)
+            setFieldsData((prevFieldsData) => {
+                const updatedMinisterPortfolioArray = [...prevFieldsData.minister_portfolio_array];
+                updatedMinisterPortfolioArray.pop();
+                return {
+                    ...prevFieldsData,
+                    minister_portfolio_array: updatedMinisterPortfolioArray,
+                };
+            });
+
+            setMinistriesField((prevMinistriesField) => {
+                return prevMinistriesField.slice(0, -1);
+            });
         }
     };
+
 
 
     const getFieldsValue = (key, index) => {

@@ -17,7 +17,7 @@ import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
 const FormWrap=({userData, stateId, viewMode})=>{
-    const {config, isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
+    const {config, isCandidateLogin, setBackDropToggle,setEminentData} = useContext(ApiContext)
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor:'transparent',
         boxShadow:'none',
@@ -96,11 +96,15 @@ const FormWrap=({userData, stateId, viewMode})=>{
                     if (response) {
                         if (isCandidateLogin) {
                             if (activeStep + 1 === 5) {
+                                values = {}
+                                setEminentData({})
                                 navigate({
                                     pathname: '/form_submitted'
                                 });
                             }
                         } else if (activeStep + 1 === 6) {
+                            values = {}
+                            setEminentData({})
                             navigate({
                                 pathname: '/form_submitted'
                             });
