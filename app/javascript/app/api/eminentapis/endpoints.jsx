@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {apiBaseUrl} from "../api_endpoints";
-import slotting from "../../modules/eminenthome/pages/slotting/slotting";
+import slotting from "../../modules/eminentHome/pages/slotting/slotting";
 
 
 export const getFilters = ()  => {
@@ -56,10 +56,14 @@ export  const getSlottingTable =(params)=>{
     return axios.get(apiBaseUrl + 'slotting/list', {params})
 }
 export const getSlottingPsuData = (params ) => {
-    return axios.get(apiBaseUrl + 'slotting/stats/' + params, );
+    return axios.get(apiBaseUrl + 'slotting/stats/' + params )
 
 }
 
+export  const assignSlottingVacancy = (formData) => {
+    return axios.post(apiBaseUrl + 'slotting/slot', formData)
+
+}
 export const getMinistryWiseData = (params, queryParams) => {
     return axios.get(`${apiBaseUrl}vacancy/list?${queryParams}`, { params });
 }
@@ -81,9 +85,7 @@ export const getMinisters = () => {
 }
 
 export const getMinistryByFilters = (filterParams) => {
-    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters', {
-        params: filterParams,
-    })
+    return axios.get(apiBaseUrl + 'gom/assigned_ministries_by_filters?ministry_ids=' + filterParams.ministry_ids + '&minister_ids=' + filterParams.minister_ids)
 }
 export const getSlottingAnalytics=()=>{
     return axios.get(apiBaseUrl + 'slotting/position_analytics');
@@ -95,7 +97,6 @@ export const getGOMTableData = () => {
             return response.data; // You can return the data if needed
         })
         .catch(error => {
-            console.error("Error fetching data:", error);
             throw error; // Rethrow the error to handle it at the caller's end
         });
 }

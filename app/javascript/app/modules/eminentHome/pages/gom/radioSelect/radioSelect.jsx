@@ -63,7 +63,7 @@ export default function RadioSelect({onSelectMinister}) {
                             className="input-field"
                             style={{width: '90%', border: 'none', color: 'black'}}
                         />
-                        {/*<img src="SearchOutline.svg" alt="" width={'25px'} height={'25px'}/>*/}
+                        {/*<img src="searchOutline.svg" alt="" width={'25px'} height={'25px'}/>*/}
                         <SearchIcon width={'20px'} height={'30px'} />
 
                     </div>

@@ -11,3 +11,15 @@
     border: 1px solid transparent !important;
     padding: 5px;
 }
+.countnumber{
+    width: 40%;
+    border: 1px solid #8C8989;
+    padding: 5px 8px;
+}
+.edit-popup{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
