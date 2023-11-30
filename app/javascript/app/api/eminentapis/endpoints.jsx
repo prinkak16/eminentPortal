@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {apiBaseUrl} from "../api_endpoints";
-import slotting from "../../modules/eminenthome/pages/slotting/slotting";
+import slotting from "../../modules/eminentHome/pages/slotting/slotting";
 
 
 export const getFilters = ()  => {
