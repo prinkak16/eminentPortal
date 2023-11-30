@@ -71,6 +71,7 @@ export const getGenderData = (config) => {
 }
 export const getStateData = axios.get(apiBaseUrl + 'metadata/states');
 export const getEducationData = axios.get(apiBaseUrl + 'metadata/educations');
+export const getProfessionData = axios.get(apiBaseUrl + 'metadata/professions');
 export const getPartyData = axios.get(apiBaseUrl + 'metadata/state_party_list');
 
 export const getAssemblyData = (assembly) => {
