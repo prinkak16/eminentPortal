@@ -74,7 +74,7 @@ function GomPage({ tabId, filterString }) {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
                         fetchData();
-
+                    //
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -84,7 +84,7 @@ function GomPage({ tabId, filterString }) {
                 });
              setPageCount(Math.ceil(gomTableData.length / itemsPerPage));
 
-            },  [filterString, ministerSearch, ministrySearch,gomTableData]);
+            },  [filterString, ministerSearch, ministrySearch]);
 
     const fetchData = async () => {
         try {
