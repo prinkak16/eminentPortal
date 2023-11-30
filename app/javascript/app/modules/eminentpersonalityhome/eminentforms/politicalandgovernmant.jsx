@@ -90,7 +90,7 @@ const PolticalandGovrnform =(props)=>{
             }
 
             if (title === 'Other Party Profile') {
-                setEditableProfileField(form)
+                setEditableProfileField({})
                 otherPartiProfileSave(formData, id)
             }
         }, 50)
