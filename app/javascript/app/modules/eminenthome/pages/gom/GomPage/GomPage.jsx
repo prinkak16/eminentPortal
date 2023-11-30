@@ -32,7 +32,7 @@ function GomPage({ tabId, filterString }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
-    const itemsPerPage= 2
+    const itemsPerPage= 5
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
@@ -389,7 +389,7 @@ function GomPage({ tabId, filterString }) {
                                 <p style={{cursor: "pointer"}} onClick={()=> setWantToEdit(false)}><CloseIcon/></p>
                             </div>
                             <p>Minister Name</p>
-                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.name}  style={{width:"200px",margin:1 }} />
+                            <MultipleSelectCheckmarks data={ministerData} initialValue={editMinisterData.assigned_ministries}  style={{width:"200px",margin:1 }} />
                             <div style={{display:"flex"}}>
                                 <div>
                                     <p>Assigned Ministries</p>
@@ -400,7 +400,7 @@ function GomPage({ tabId, filterString }) {
                                 <div>
                                     <p>Own Ministry</p>
                                     <MultipleSelectCheckmarks data={ministryData}
-                                                              intialValue={editMinisterData.assigned_ministries}
+                                                              intialValue={editMinisterData.allocated_ministries}
                                                               onSelectMinistries={handleOwnMinistryChange} style={{width:"200px" ,margin:1}} />
                                 </div>
                             </div>

@@ -11,7 +11,7 @@ import { isValuePresent } from "./modules/utils";
 import { ApiContext } from "./modules/ApiContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import GomPage from "./modules/./eminenthome/pages/GOM/GomPage/GomPage";
+import GomPage from "./modules/eminenthome/pages/gom/GomPage/GomPage";
 import Allotment from "./modules/eminenthome/pages/allotment/Allotment";
 import BackDrop from "./modules/eminentpersonalityhome/component/back-drop/backDrop";
 import AllotAssign from "./modules/eminenthome/pages/allotment/components/Assign/AllotAssign";

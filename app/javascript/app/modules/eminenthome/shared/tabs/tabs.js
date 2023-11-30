@@ -13,7 +13,7 @@ import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import GomPage from "../../pages/GOM/GomPage/GomPage";
+import GomPage from "../../pages/gom/GomPage/GomPage";
 import Allotment from "../../../eminenthome/pages/allotment/Allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
@@ -35,7 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
-    const [basicTabId, setBasicTabId] = useSearchParams({basicTabId: 'home_table'});
+    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');

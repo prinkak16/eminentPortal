@@ -22,7 +22,6 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data, initialValue}) {
-    debugger
     const [personName, setPersonName] = useState([]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
@@ -68,7 +67,7 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
-                value={personName}
+                value={initialValue}
                 onChange={handleChange}
                 input={<OutlinedInput label="Select Ministry" />}
                 renderValue={(selected) => selected.join(', ')}
