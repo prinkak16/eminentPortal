@@ -306,7 +306,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                    <p className="d-flex justify-content-center">or</p>
                                    <p className="d-flex justify-content-center">Click here to upload</p>
                                    <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
-                                   <button className="Submit" onClick={handleSubmitUpload}>
+                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
                                </div>
