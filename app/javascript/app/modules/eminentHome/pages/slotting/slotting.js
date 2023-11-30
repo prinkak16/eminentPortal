@@ -21,10 +21,12 @@ const SlottingTabPage =({tabId})=>{
     const [slottingTableData, setSlottingTableData] = useState();
     const [open, setOpen] = useState(false);
     const [psuId, setPsuId] = useState(null)
+    const [slottingMinistryId, setSlottingMinistryId] = useState(null)
     const limit = 10;
-    const handleDrawerOpen = (id) => {
+    const handleDrawerOpen = (id, MinistryId) => {
         setOpen(true);
         setPsuId(id)
+        setSlottingMinistryId(MinistryId)
     };
     const handleDrawerClose = () => {
         setOpen(false);
@@ -46,7 +48,7 @@ const SlottingTabPage =({tabId})=>{
     return (
         <>
             <Analytics tabId={tabId}/>
-            {open && <AssignBtnSidebar psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
+            {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -75,7 +77,7 @@ const SlottingTabPage =({tabId})=>{
                                     <TableCell className="text-center"><Button aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
-                                                                                   handleDrawerOpen(slotting.org_id)
+                                                                                   handleDrawerOpen(slotting.org_id, slotting.ministry_id)
                                                                                }}
                                                                                sx={{ ...(open && { display: 'none' }) }}>{slotting.slotted === 0 ? 'Assign' : 'Update'}</Button></TableCell>
                             </TableRow>)}
