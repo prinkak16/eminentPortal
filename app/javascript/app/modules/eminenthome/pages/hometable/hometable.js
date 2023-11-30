@@ -46,7 +46,6 @@ const HomeTable = (props) => {
         ))
     }
 
-
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
     }
@@ -143,14 +142,13 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number, userData) => {
+    const  editUser = (number) => {
         localStorage.setItem('eminent_number', number);
         navigate({
             pathname: '/eminent_form'
         }, {
             state: {
                 eminent_number: number,
-                user_data: userData,
             }
         });
     }
@@ -171,7 +169,7 @@ const HomeTable = (props) => {
 
     const getAddress = (address) => {
         const customAddress = isValuePresent(address) ? address[0] : ''
-        if (isValuePresent(customAddress)) return `${customAddress.flat}, ${customAddress.street}, ${customAddress.district}, ${customAddress.state}, ${customAddress.pincode}`
+        if (isValuePresent(customAddress)) return `${customAddress.flat} ${customAddress.street} ${customAddress.district} ${customAddress.state} ${customAddress.pincode}`
     }
 
     return (
@@ -200,7 +198,7 @@ const HomeTable = (props) => {
 
                 {tableData?.data?.data?.members && tableData?.data?.data?.members.map((member) => (
 
-                    <div className="table-container mt-4" key={member.id}>
+                    <div className="table-container mt-4 border-bottom" key={member.id}>
                         <Grid container className="single-row">
                             <Grid item xs={3} className="gridItem min-width-24rem">
                                 <div className="row">
@@ -212,12 +210,7 @@ const HomeTable = (props) => {
                                     <div className="col-md-8">
                                         <h2 className="headingName">{member.data.name}</h2>
                                         <div className="row d-flex">
-                                            {member.data?.mobiles && member.data?.mobiles?.slice(0,2).map((number, index) => (
-                                                <div className="col-md-6 text-container pe-0 ps-2.5" key={member.id}>
-                                                    {index === 0 && <Phone/>}
-                                                    <p className={`ml-2 label-text ${index === 0 ? 'br-label first-number' : 'br-label2 pt-5'}`}>{number}</p>
-                                                </div>
-                                            ))}
+                                            {displayPhoneNumbers(member)}
                                             <div/>
                                             <div className="d-flex">
                                                 <IdBadge/>
@@ -285,9 +278,9 @@ const HomeTable = (props) => {
                                                                 <div className='edit-user-container'>
                                                                     <Typography sx={{p: 2}} className="tableiconlist">
                                                                         {  (member.aasm_state !== 'approved') &&
-                                                                            <p onClick={() => editUser( member.phone, member)}>Edit</p>
+                                                                            <p onClick={() => editUser(member.phone)}>Edit</p>
                                                                         }
-                                                                        <p onClick={() => editUser(member.phone, member)}>View</p>
+                                                                        <p onClick={() => editUser(member.phone)}>View</p>
                                                                         {member.data.attachment && <p onClick={() => openDocument(member.data.attachment)}>View Documents</p>}
                                                                         <p onClick={() => deleteCurrentMember(member.id)}>Delete</p>
                                                                         { (member.aasm_state === 'submitted') &&

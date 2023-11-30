@@ -100,7 +100,7 @@ function Header(){
 
 
         <div className='saral-notify-header'>
-            <div className='header-left-part' onClick={() =>  navigate('/voice-note')} >
+            <div className='header-left-part' onClick={() =>  navigate('/')} >
                 <Saral/>
                 <span className='bjp-text'>भारतीय जनता पार्टी</span>
             </div>
