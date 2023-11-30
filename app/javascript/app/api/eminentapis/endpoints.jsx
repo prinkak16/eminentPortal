@@ -57,7 +57,6 @@ export  const getSlottingTable =(params)=>{
 }
 export const getSlottingPsuData = (params ) => {
     return axios.get(apiBaseUrl + 'slotting/stats/' + params )
-    // .then(res => (console.log('data', res.data.data.slotting.value)))
 
 }
 

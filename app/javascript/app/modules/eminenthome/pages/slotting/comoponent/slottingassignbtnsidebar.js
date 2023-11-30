@@ -28,7 +28,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-start',
 }));
@@ -43,11 +42,6 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
     const [remarks, setRemarks] = useState()
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [toggleEdit, setToggleEdit] = useState(false)
-
-    const toggleEditIcon = (event) => {
-        event.preventDefault()
-        setToggleEdit(!toggleEdit)
-    };
 
 
     const customFunction = () => {
@@ -72,7 +66,6 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
     const handleIncreaseCount = ()=> {
         if(vacancyCount + 1 <= slottingPsuDetail.vacant){
             setVacancyCount(vacancyCount + 1)
-            console.log(vacancyCount)
         }
     }
     const slottingState = () => {
@@ -108,6 +101,15 @@ const AssignBtnSidebar=({open, handleDrawerClose, psuId, slottingMinistryId})=> 
     const handleEdit = () => {
         setAddMore(true)
     }
+
+
+
+    const toggleEditIcon = (event) => {
+        event.preventDefault()
+        setToggleEdit(!toggleEdit)
+    };
+
+
     useEffect(() => {
         customFunction();
         slottingState()
