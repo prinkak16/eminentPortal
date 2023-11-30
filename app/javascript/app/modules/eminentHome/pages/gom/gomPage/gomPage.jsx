@@ -280,19 +280,19 @@ function GomPage({ tabId, filterString }) {
                                     />
                                 </div>
                             </div>
-                            <table className="mt-4">
-                                <tr style={{borderBottom: "1px solid #F8F8F8", height:"50px"}}>
-                                    <th style={{backgroundColor: "#F8F8F8", height:"50px"}}>S.No. </th>
-                                    <th style={{backgroundColor: "#F8F8F8"}}>Minister Name</th>
-                                    <th style={{backgroundColor: "#F8F8F8"}}>Assigned Ministry</th>
-                                    <th style={{backgroundColor: "#F8F8F8"}}>Their own ministry</th>
-                                    <th style={{backgroundColor: "#F8F8F8"}}>Assigned States</th>
-                                    <th style={{backgroundColor: "#F8F8F8"}}>Action</th>
-                                </tr>
-                                {gomTableData.length && gomTableData.map((data, index) => {
-                                    return (
-                                        <tr key={data} style={{border: "2px solid #F8F8F8", padding: "5px",height:"40px"}}>
-                                            <td style={{border: "2px solid #F8F8F8", padding: "5px"}}>{index + 1}</td>
+                            {gomTableData.length ? (
+                                <table className="mt-4">
+                                    <tr style={{ borderBottom: "1px solid #F8F8F8", height: "50px" }}>
+                                        <th style={{ backgroundColor: "#F8F8F8", height: "50px" }}>S.No. </th>
+                                        <th style={{ backgroundColor: "#F8F8F8" }}>Minister Name</th>
+                                        <th style={{ backgroundColor: "#F8F8F8" }}>Assigned Ministry</th>
+                                        <th style={{ backgroundColor: "#F8F8F8" }}>Their own ministry</th>
+                                        <th style={{ backgroundColor: "#F8F8F8" }}>Assigned States</th>
+                                        <th style={{ backgroundColor: "#F8F8F8" }}>Action</th>
+                                    </tr>
+                                    {gomTableData.map((data, index) => (
+                                        <tr key={data} style={{ border: "2px solid #F8F8F8", padding: "5px", height: "40px" }}>
+                                            <td style={{ border: "2px solid #F8F8F8", padding: "5px" }}>{index + 1}</td>
                                             <td>{data.name}</td>
                                             <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
@@ -300,11 +300,12 @@ function GomPage({ tabId, filterString }) {
                                             <td onClick={() => handleEditClick(data)}>
                                                 <EditIcon />
                                             </td>
-
                                         </tr>
-                                    )
-                                })}
-                            </table>
+                                    ))}
+                                </table>
+                            ) : (
+                                <h5 style={{marginTop: "100px"}}>{ministrySearch || ministerSearch ? `No results found for '${ministrySearch || ministerSearch}'` : "No data available"}</h5>
+                            )}
 
                         </div>
 
