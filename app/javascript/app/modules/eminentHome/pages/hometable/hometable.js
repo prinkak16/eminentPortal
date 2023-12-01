@@ -53,6 +53,18 @@ const HomeTable = (props) => {
         ))
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.id !== 'list-container' && event.target.id !== 'list-icon-button' && event.target.id !== 'list-icon') {
+                setOpenList(null)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
     }
@@ -317,10 +329,10 @@ const HomeTable = (props) => {
                                                 <p>{member.data.reference?.mobile}</p>
 
                                             </div>
-                                            <div className="edit-box-container">
+                                            <div className="edit-box-container" id='list-container'>
                                                 <p
-                                                    className="popupicon">
-                                                    <Icon onClick={() => showList(member.id)}/>
+                                                   id='list-icon-button' className="popupicon">
+                                                    <Icon  id='list-icon' onClick={() => showList(member.id)}/>
                                                 </p>
                                                 {openList === member.id &&
                                                     <Paper className='home-edit-list'>

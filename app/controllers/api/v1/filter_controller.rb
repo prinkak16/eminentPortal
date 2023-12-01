@@ -14,7 +14,7 @@ class Api::V1::FilterController < BaseApiController
         get_aasm_state_filter,
         get_qualification_filter,
         get_gender_filter,
-        # get_profession_filter,
+        get_profession_filter,
         get_category_filter
       ]
     }
