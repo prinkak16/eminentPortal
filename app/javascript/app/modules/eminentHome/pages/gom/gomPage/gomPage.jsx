@@ -1,4 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import './gomPage.scss'
 // import {SearchOffOutlined, Upload} from "@mui/icons-material";
@@ -116,34 +119,46 @@ function GomPage({ tabId, filterString }) {
             setOwnMinistryIds(ministryIds);
            };
 
-        const handleUpdateClick = () => {
+    const handleUpdateClick = async () => {
+        const ministerId = editMinisterData.ministerId;
 
-            const ministerId = editMinisterData.ministerId;
+        // Check if both assigned and own ministry arrays are empty
+        if (assignedMinistryIds.length === 0 && ownMinistryIds.length === 0) {
+            // Optionally, you can handle the case where both arrays are empty
+            return;
+        }
 
-            try {
-                // Make API call for assigned ministries
-                const assignedMinistriesResponse =  axios.post(
+        try {
+            // Make API call for assigned ministries if assignedMinistryIds is not empty
+            if (assignedMinistryIds.length > 0) {
+                await axios.post(
                     `/api/v1/user/${ministerId}/assign_ministries`,
-                    { ministry_ids: assignedMinistryIds}
-
+                    { ministry_ids: assignedMinistryIds }
                 );
+            }
 
-                // Make API call for own ministries after the first call is complete
-                const ownMinistriesResponse =  axios.post(
+            // Make API call for own ministries if ownMinistryIds is not empty
+            if (ownMinistryIds.length > 0) {
+                await axios.post(
                     `/api/v1/user/${ministerId}/allocate_ministries`,
                     { ministry_ids: ownMinistryIds }
                 );
-
-                fetchData();
-                // Update state or perform any other actions if needed
-                // For example:
-                // setAssignedMinistryIds([]);
-                // setOwnMinistryIds([]);
-
-            } catch (error) {
-                // Handle errors as needed
             }
-        };
+
+            // Update state or perform any other actions if needed
+            // For example:
+            // setAssignedMinistryIds([]);
+            // setOwnMinistryIds([]);
+
+            fetchData();
+
+            // Show success toast
+            toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
+        } catch (error) {
+            // Handle errors and show error toast
+            toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
+        }
+    };
 
 
         const handleDownload = (url) => {
@@ -432,6 +447,7 @@ function GomPage({ tabId, filterString }) {
                         <button
                             className="Update-btn"
                             onClick={handleUpdateClick}
+                            disabled={assignedMinistryIds.length === 0 && ownMinistryIds.length === 0}
                         >
                             Update
                         </button>
