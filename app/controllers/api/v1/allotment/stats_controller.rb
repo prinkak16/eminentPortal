@@ -165,6 +165,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
           org_id: stat.org_id.present? ? stat.org_id : nil,
           org_name: stat.org_name.present? ? stat.org_name : nil,
           is_listed: stat.is_listed.present? ? stat.is_listed : nil,
+          total: stat.total.present? ? stat.total : 0,
           vacant: stat.vacant.present? ? stat.vacant : 0,
           occupied: stat.occupied.present? ? stat.occupied : 0
         }
