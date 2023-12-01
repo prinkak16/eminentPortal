@@ -67,6 +67,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
+
         setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
     }
 
@@ -289,8 +290,8 @@ const PolticalandGovrnform =(props)=>{
 
     const scrollToBottom = (scroll) => {
         window.scrollTo({
-            top: scroll, // Scroll to the bottom
-            behavior: 'smooth', // Optional: Add smooth scrolling animation
+            top: scroll,
+            behavior: 'smooth',
         });
     };
 
@@ -331,7 +332,7 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{data.start_year}</td>
                                 <td className='end-date-td'>{data.end_year}
                                     <div className='edit-button-logo' ref={componentRef}>
-                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                        <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
                                             <MoreVertIcon/>
                                         </Button>
                                         {showList === data.id && (
@@ -422,7 +423,7 @@ const PolticalandGovrnform =(props)=>{
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
                                         <div className='edit-button-logo' ref={componentRef}>
-                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
                                                 <MoreVertIcon/>
                                             </Button>
                                             {showList === data.id && (

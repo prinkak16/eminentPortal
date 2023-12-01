@@ -86,6 +86,24 @@ const Educationform = (props) => {
         });
     };
 
+    const setMainProfession = (id) => {
+        setProfessionDetails((prevFormValues) => {
+            return prevFormValues.map((form) => {
+                if (form.id === id) {
+                    return {
+                        ...form,
+                        ['main_profession']: true,
+                    };
+                } else {
+                    return {
+                        ...form,
+                        ['main_profession']: false,
+                    };
+                }
+            });
+        });
+    };
+
     const setCurrentWorking = (id) => {
         setProfessionDetails((prevFormValues) => {
             return prevFormValues.map((form) => {
@@ -187,6 +205,7 @@ const Educationform = (props) => {
             organization: isValuePresent(formData.organization) ? formData.organization : '-',
             start_year: isValuePresent(formData.start_year) ? formData.start_year : '-',
             end_year: isValuePresent(formData.end_year) ? formData.end_year : '-',
+            main_profession: isValuePresent(formData.main_profession) ? formData.main_profession : false
         };
 
         setProfessionDetails((prevData) =>
@@ -196,6 +215,10 @@ const Educationform = (props) => {
         );
         if (formData.end_year === 'Current Working') {
             setCurrentWorking(newFormData.id)
+        }
+
+        if (formData.main_profession) {
+            setMainProfession(newFormData.id)
         }
         setBackDropToggle(false)
     }
@@ -326,7 +349,7 @@ const Educationform = (props) => {
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
                                         <div className='edit-button-logo' ref={componentRef}>
-                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
                                                 <MoreVertIcon/>
                                             </Button>
                                             {showList === data.id && (
@@ -373,13 +396,22 @@ const Educationform = (props) => {
                             <tbody>
                             {professionDetails.map((data, index) => (
                                 <tr key={index}>
-                                    <td>{data.profession}</td>
+                                    <td>
+                                        <div className='qualification-name'>
+                                            <span className='highest-qualification-radio'>
+                                               <input disabled={isViewDisabled} type='radio'
+                                                      checked={data.main_profession}
+                                                      onClick={(e) => setMainProfession(data.id)}/>
+                                             </span>
+                                            {data.profession}
+                                        </div>
+                                    </td>
                                     <td>{data.position}</td>
                                     <td>{data.organization}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
                                         <div className='edit-button-logo'>
-                                            <Button
+                                            <Button disabled={isViewDisabled}
                                                 onClick={() => openList(data.id)}
                                                 className="bg-transparent text-black display-contents">
                                                 <MoreVertIcon/>

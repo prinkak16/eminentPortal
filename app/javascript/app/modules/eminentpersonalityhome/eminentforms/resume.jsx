@@ -90,11 +90,9 @@ const Resumeform = (props) => {
     };
 
     const openPdfInBrowser = (file) => {
-        if (!isViewDisabled) {
             if (file) {
                 window.open(file, '_blank');
             }
-        }
     };
 
     const saveProgress = () => {
