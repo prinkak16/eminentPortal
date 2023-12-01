@@ -466,7 +466,9 @@ const PolticalandGovrnform =(props)=>{
                             <Grid container className='mb-5'>
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
                                     <Typography className='social-affiliation' variant="h5" content="h5">
+                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
                                         <Box className="detailnumbers social-affiliation-box" component="div" sx={{ display: 'inline-block' }}>{index+3}</Box> Social Affiliation <InfoOutlinedIcon/>
+                                        </Tooltip>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} sx={{mb:2}} className='organization-grid'>
@@ -482,7 +484,7 @@ const PolticalandGovrnform =(props)=>{
                                 </Grid>
                                 <Grid item xs={12} className='organization-description-grid'>
                                     <FormLabel>Description
-                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
+                                        <Tooltip title="Write upto 500 words.">
                                             <InfoOutlinedIcon/>
                                         </Tooltip>
                                     </FormLabel>
@@ -493,8 +495,8 @@ const PolticalandGovrnform =(props)=>{
                                         value={field.description}
                                         onChange={enterSocialFields( 'description' ,index)}
                                         multiline
-                                        minRows={5}
-                                        maxRows={5}
+                                        minRows={4}
+                                        maxRows={4}
                                         placeholder="Please enter your Organization description."
                                     />
                                 </Grid>
