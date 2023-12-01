@@ -17,7 +17,7 @@ import {
     getFilters,
     getFiltersForGOM,
     getMinistryWiseFilterData,
-    getOrganizationWiseFilterData,
+    getOrganizationWiseFilterData, getSlottingFilters,
     getVacancyWiseFilterData
 } from "../../../../api/eminentapis/endpoints";
 import {HomeContext} from "../../../../context/tabdataContext";
@@ -70,7 +70,10 @@ export default function FiltersSidebar(props) {
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
+
                     })
+
+
                 } else if (homeContext.movTabId === 'psu_wise' ) {
                     const psuParams = {
                         ministry_name: searchMinisterName,
@@ -91,11 +94,23 @@ export default function FiltersSidebar(props) {
                     })
                 }
                 break;
+            case 'slotting':
+
+                const params = {
+                    ministry_names: searchMinisterName,
+                    department_names: searchDepartmentName,
+                    organization_name: searchOrganizationName,
+                }
+                getSlottingFilters(params).then(response => {
+                    setFiltersList(response.data.data)
+                })
+                break;
             case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
                 })
                 break;
+
             default:
                 getFilters().then(res => {
                     setFiltersList(res.data.data)
@@ -208,6 +223,21 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
+                            {(props.tabId === 'slotting' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon/>
+                                            </InputAdornment>
+                                        }
+                                        value={inputSearch}
+                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                    />
+                                </FormControl>
+                            }
+
                             {filter?.values && filter.values.map((filterOption) => (
                                 <p key={filterOption.value}><input type="checkbox"
                                                                    checked={isChecked(filter.key, filterOption.value)}

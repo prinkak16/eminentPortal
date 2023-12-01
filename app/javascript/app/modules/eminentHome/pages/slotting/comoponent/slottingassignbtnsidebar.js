@@ -16,16 +16,17 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import {assignSlottingVacancy, getSlottingPsuData} from "../../../../../api/eminentapis/endpoints";
-import {useContext, useEffect, useState} from "react";
+import {
+    assignSlottingVacancy, deleteSlottingVacancy,
+    getSlottingPsuData,
+    reassignSlottingVacancy
+} from "../../../../../api/eminentapis/endpoints";
+import {useEffect, useState} from "react";
 import './slottingassignbtnsidebar.css'
-import AddIcon from '@mui/icons-material/Add'
-import MinimizeIcon from '@mui/icons-material/Minimize';
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Paper from '@mui/material/Paper';
-// import {ApiContext} from "../../../../ApiContext";
-
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
@@ -42,10 +43,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [addMore, setAddMore] = useState(false)
     const [stateId, setStateId] = useState()
     const [remarks, setRemarks] = useState()
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [toggleEdit, setToggleEdit] = useState(false)
-    const [updateEditTable, setUpdateEditTable] = useState()
-    // const {setBackDropToggle} = useContext(ApiContext)
+    const [vacancyId, setVacancyId] = useState([])
+    const [validValue, setValidValue] = useState(true)
+
 
     const customFunction = () => {
         getSlottingPsuData(psuId).then(response => {
@@ -76,35 +76,55 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setSlottingStateData(res.data.data)
         })
     }
-    const handleStateChange = (event) => {
-        setStateId(event.target.value)
+    const handleStateChange = (e) => {
+        const inputValue = e.target.value;
+        setStateId(inputValue);
+        if (inputValue && validValue === false) {
+            setValidValue(true);
+        }
     }
-    const handleRemarksChange = (event) => {
-        setRemarks(event.target.value)
+    const handleRemarksChange = (e) => {
+        const remarkValue = e.target.value;
+        setRemarks(remarkValue);
+        if (remarkValue && validValue === false) {
+            setValidValue(true);
+        }
     }
     const handleAddMore = () => {
         setAddMore(!addMore)
     }
+
     const handleSave = (event) => {
         event.preventDefault()
-        // setBackDropToggle(true)
         if (addMore === true) {
-            // setBackDropToggle(true)
-            const vacancyData = {
-                ministry_id: slottingMinistryId,
-                organization_id: psuId,
-                vacancy_count: vacancyCount,
-                state_id: stateId,
-                remarks: remarks,
+            if(vacancyCount && stateId && remarks){
+                const reSlottingData = {
+                    ministry_id: slottingMinistryId,
+                    organization_id: psuId,
+                    vacancy_count: vacancyCount,
+                    state_id: stateId,
+                    vacancies_id: vacancyId,
+                    remarks: remarks,
+                }
+                reassignSlottingVacancy(reSlottingData).then((response) => console.log('res', response.json()))
             }
-            assignSlottingVacancy(vacancyData).then((res) => res.json())
+            else {
+                const vacancyData = {
+                    ministry_id: slottingMinistryId,
+                    organization_id: psuId,
+                    vacancy_count: vacancyCount,
+                    state_id: stateId,
+                    remarks: remarks,
+                }
+                assignSlottingVacancy(vacancyData).then((res) => res.json())
+            }
             setAddMore(false)
             addVacancyTableData()
             setVacancyCount(0)
             setStateId('')
             setRemarks('')
-        } else {
-            // setBackDropToggle(false)
+        }
+        else {
             handleAddMore()
         }
     }
@@ -112,14 +132,18 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setVacancyCount(vacancyDetail.vacancy_count);
         setStateId(vacancyDetail.country_state_id);
         setRemarks(vacancyDetail.slotting_remarks);
+        setVacancyId(vacancyDetail.vacancies_id)
         setAddMore(true)
-        console.log('vacancyDetail.country_state_name', vacancyDetail.country_state_name)
     }
 
-    const toggleEditIcon = (event) => {
-        event.preventDefault()
-        setToggleEdit(!toggleEdit)
-    };
+  const handleDelete = (unslotId) => {
+        const deleteParams = {
+            vacancies_id: unslotId,
+            remarks: "",
+        }
+      deleteSlottingVacancy(deleteParams).then((res) => console.log('delete', res.json()))
+      customFunction()
+  }
 
 
     useEffect(() => {
@@ -176,9 +200,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                     </Typography>
                                     <div className="d-flex counterbutton align-items-center">
                                         <Button onClick={handleDecreaseCount}> - </Button>
-                                        <Typography className="countnumber mx-2 p-2 text-center">
-                                            {vacancyCount}
-                                        </Typography>
+                                        <TextField
+                                            className="addremark mx-2 text-center"
+                                            name="count"
+                                            variant="outlined"
+                                            value={vacancyCount}
+                                        error={!validValue}
+                                        helperText={!validValue ? 'Please enter your remark' : ''}/>
+                                        {/*<Typography className="countnumber mx-2 p-2 text-center">*/}
+                                        {/*    {vacancyCount}*/}
+                                        {/*</Typography>*/}
                                         <Button onClick={handleIncreaseCount}> + </Button>
                                     </div>
                                 </div>
@@ -193,6 +224,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                         name="state"
                                         onChange={handleStateChange}
                                         defaultValue={(stateId === stateId) ? stateId : 'Select State'}
+                                        error={!validValue}
+                                        helperText={!validValue ? 'Please select any state' : ''}
                                     >
                                         {slottingStateData?.map((item, index) => (
                                             <MenuItem key={index.id} value={item.id}>
@@ -211,12 +244,14 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                     fullWidth
                                     multiline
                                     rows={2}
-                                    name="remarks"
+                                    name="remark"
                                     id="outlined-basic"
                                     variant="outlined"
                                     onChange={handleRemarksChange}
                                     value={remarks}
-                                    placeholder="E.g. requirement of 1 woman director, requirement of 1 financial background."/>
+                                    placeholder="E.g. requirement of 1 woman director, requirement of 1 financial background."
+                                    error={!validValue}
+                                    helperText={!validValue ? 'Please enter your remark' : ''}/>
                             </div>
                             <Button className="savebtn mt-2 mb-3" onClick={handleSave}>Save</Button>
                         </div>
@@ -242,16 +277,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             <TableCell>{vacancy.country_state_name}</TableCell>
                                             <TableCell>{vacancy.slotting_remarks}</TableCell>
                                             <TableCell>
-                                                <div className="position-relative">
-                                                    <Button onClick={toggleEditIcon}>
-                                                        <MoreVertIcon/>
-                                                    </Button>
-                                                    {toggleEdit && (
-                                                        <div className="edit-popup">
-                                                            <Button onClick={() => handleEdit(vacancy)}>Edit</Button>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                <Button onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
+                                                <Button onClick={() => handleDelete(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
                                             </TableCell>
                                         </TableRow>)
                                     )
