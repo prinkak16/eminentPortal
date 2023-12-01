@@ -40,7 +40,6 @@ const Educationform = (props) => {
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
     const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
     const [showList, setShowList] = useState()
-    const componentRef = useRef(null);
     const [isViewDisabled, setIsViewDisabled] = useState(false)
 
     useEffect(() => {
@@ -49,6 +48,19 @@ const Educationform = (props) => {
         }
 
     },[props.viewMode])
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.id !== 'list-container' && event.target.id !== 'list-icon-button' && event.target.id !== 'list-icon') {
+                setShowList(null)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         const educations = props.formValues.educations
@@ -121,13 +133,6 @@ const Educationform = (props) => {
             });
         });
     }
-
-    useEffect(() => {
-        const filteredItems = EducationData.filter((item) => item === educationLevel);
-        const filteredIndex = filteredItems.length > 0 ? EducationData.indexOf(filteredItems[0]) : -1;
-        let filteredArray = EducationData.filter((item, index) => index <= filteredIndex);
-        setEducationsList(filteredArray)
-    },[educationLevel, EducationData])
 
 
     const Item = styled(Paper)(({theme}) => ({
@@ -231,7 +236,7 @@ const Educationform = (props) => {
         props.formValues.professions = professionDetails;
     }, [professionDetails]);
 
-    const editEducationForm = (type,id) => {
+    const editForm = (type,id) => {
         setShowList(null)
         if (type === 'education') {
             scrollToBottom(500)
@@ -348,18 +353,14 @@ const Educationform = (props) => {
                                     <td>{data.college}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' ref={componentRef}>
-                                            <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon/>
+                                        <div className='edit-button-logo' id='list-container'>
+                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon id='list-icon'/>
                                             </Button>
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
-                                                    <Typography className='edit-buttons' sx={{p: 2}}
-                                                                onClick={() => editEducationForm('education', data.id)}><Edit/>Edit</Typography>
-                                                    <Typography
-                                                        className='edit-buttons'
-                                                        onClick={() => deleteFields('education', data.id)}
-                                                        sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                    <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('education', data.id)}><Edit/>Edit</Typography>
+                                                    <Typography onClick={() => deleteFields('education', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                 </Paper>
                                             )}
                                         </div>
@@ -410,24 +411,16 @@ const Educationform = (props) => {
                                     <td>{data.organization}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo'>
-                                            <Button disabled={isViewDisabled}
-                                                onClick={() => openList(data.id)}
-                                                className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon/>
+                                        <div className='edit-button-logo' id='list-container'>
+                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon id='list-icon'/>
                                             </Button>
-                                            {showList === data.id &&
-                                                (
-                                                    <Paper className='details-edit-list'>
-                                                        <Typography className='edit-buttons' sx={{p: 2}}
-                                                                    onClick={() => editEducationForm('profession', data.id)}><Edit/>Edit</Typography>
-                                                        <Typography
-                                                            className='edit-buttons'
-                                                            onClick={() => deleteFields('profession', data.id)}
-                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
-                                                    </Paper>
-                                                )
-                                            }
+                                            {showList === data.id && (
+                                                <Paper className='details-edit-list'>
+                                                    <Typography className='edit-buttons' sx={{p: 2}} onClick={() => editForm('profession', data.id)}><Edit/>Edit</Typography>
+                                                    <Typography className='edit-buttons' onClick={() => deleteFields('profession', data.id)} sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                </Paper>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

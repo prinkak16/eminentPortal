@@ -55,6 +55,18 @@ const PolticalandGovrnform =(props)=>{
     const [isViewDisabled, setIsViewDisabled] = useState(false)
 
     useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.id !== 'list-container' && event.target.id !== 'list-icon-button' && event.target.id !== 'list-icon') {
+                setShowList(null)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
         if (props.viewMode === 'view') {
             setIsViewDisabled(true)
         }
@@ -331,18 +343,14 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{data.designation}</td>
                                 <td>{data.start_year}</td>
                                 <td className='end-date-td'>{data.end_year}
-                                    <div className='edit-button-logo' ref={componentRef}>
-                                        <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                            <MoreVertIcon/>
+                                    <div className='edit-button-logo' id='list-container'>
+                                        <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <MoreVertIcon id='list-icon'/>
                                         </Button>
                                         {showList === data.id && (
                                             <Paper className='details-edit-list'>
-                                                <Typography sx={{p: 2}}
-                                                            className='edit-buttons'
-                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/>Edit</Typography>
-                                                <Typography onClick={() => deleteFormFields('Political Profile',data.id)}
-                                                            className='edit-buttons'
-                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('Political Profile', data.id)}><Edit/>Edit</Typography>
+                                                <Typography onClick={() => deleteFormFields('Political Profile', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                             </Paper>
                                         )}
                                     </div>
@@ -422,9 +430,9 @@ const PolticalandGovrnform =(props)=>{
                                     <td>{data.position}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' ref={componentRef}>
-                                            <Button disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon/>
+                                        <div className='edit-button-logo' id='list-container'>
+                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon id='list-icon'/>
                                             </Button>
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
