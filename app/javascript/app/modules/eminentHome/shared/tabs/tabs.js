@@ -90,30 +90,37 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-        const handleSubmitUpload = () => {
-            if (selectedFile) {
-                const formData = new FormData();
-                formData.append('file', selectedFile);
+    const handleSubmitUpload = () => {
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
 
-                fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
-                    method: 'POST',
-                    body: formData,
+            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toast.success("File uploaded successfully");
+                    } else {
+                        toast.error("Error: Please enter email or upload the file correctly");
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-
-                    })
-                    .catch(error => {
-
-                    })
-                    .finally(() => {
-                        // Close the modal or perform any cleanup
-                        setWantToUpload(false);
-                    });
-            } else {
-                // Handle the case where no file is selected (optional)
-            }
-        };
+                .catch(error => {
+                    // Handle other errors if needed
+                    console.error("Error during file upload:", error);
+                    toast.error("Error during file upload");
+                })
+                .finally(() => {
+                    // Close the modal or perform any cleanup
+                    setWantToUpload(false);
+                });
+        } else {
+            // Handle the case where no file is selected (optional)
+            toast.error("Error: Please select a file to upload");
+        }
+    };
 
 
 
@@ -286,12 +293,15 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                    style={{display: 'none'}}
                />
                <Modal
+
                    // contentClassName="deleteModal"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered
                    show={wantToUpload}
                >
                    <Modal.Body>
+                       <ToastContainer />
+
                        <div>
                            <div className="d-flex justify-content-between">
                                <h6 >Upload .csv or Excel file</h6>
