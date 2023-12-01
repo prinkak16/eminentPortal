@@ -12,6 +12,7 @@ const EminentPersonality = () => {
 
     const {config, isCandidateLogin, setBackDropToggle, eminentData, setEminentData} = useContext(ApiContext)
     let location = useLocation();
+
     const [userStateId, setUserStateId] = useState(location.state?.state_id)
     const [viewMode, setViewMode] = useState('')
 

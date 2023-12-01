@@ -171,7 +171,7 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number) => {
+    const  editUser = (number,member) => {
         localStorage.setItem('eminent_number', number);
         localStorage.setItem('view_mode', 'edit');
         navigate({
@@ -179,7 +179,7 @@ const HomeTable = (props) => {
         }, {
             state: {
                 eminent_number: number,
-                user_data: userData,
+                user_data: member,
                 view_mode:'edit'
             }
         });

@@ -20,6 +20,7 @@ import Tab from "@mui/material/Tab";
 import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
+import Pencil from "../../../../../../../../../public/images/pencil.svg";
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -173,7 +174,21 @@ function AllotAssign() {
         break;
 
       case 1:
-        return <h1>Assigned</h1>;
+        return (
+          <>
+            <div className="Remark-div">
+              <span className="remark-span">Remark</span>
+              <div className="textarea-div">
+              <textarea className="textarea-field"></textarea>
+              <div className="btn-div">
+              <button className="update-btn-1"><Pencil className="pencil"/></button>
+              </div>
+              
+              </div>
+              
+            </div>
+          </>
+        );
         break;
 
       case 2:
@@ -315,12 +330,12 @@ function AllotAssign() {
           <Box sx={style}>
             {/* Add your modal content here */}
             <div>
-              <div className="modal-head">
+              <div className="modal-head-123">
                 <button className="cross-btn-1" onClick={() => setOpen(false)}>
                   x
                 </button>
               </div>
-              <div className="modal-body">
+              <div className="modal-body-123">
                 <div className="modal-1">
                   <h4>Are you sure you want to assign a position?</h4>
                 </div>

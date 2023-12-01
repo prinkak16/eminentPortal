@@ -211,9 +211,9 @@
 
 /* MuiGrid-root MuiGrid-container single-row css-11lq3yg-MuiGrid-root */
 
-.MuiGrid-container {
+/* .MuiGrid-container {
   border: none;
-}
+} */
 
 .assign-tab {
   border: 1px solid black;
@@ -292,7 +292,7 @@
   font-size: large;
 }
 
-.modal-head {
+.modal-head-123 {
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -315,7 +315,7 @@
   font-size: larger;
 }
 
-.modal-body {
+.modal-body-123 {
   height: 410px;
   display: flex;
   justify-content: space-around;
@@ -381,4 +381,63 @@
   padding-left: 16px;
   resize: none;
   outline: none;
+}
+
+.textarea-div{
+  border: 1px solid #d9d3d3;
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+
+.Remark-div{
+  border-bottom: 1px dashed #d9d3d3;
+  height: 120px;
+  margin-top: 33px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.textarea-field{
+    height: 100%;
+    width: 95%;
+    resize: none;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    padding-left: 10px;
+}
+
+.btn-div {
+  width: 5%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.update-btn-1 {
+  border: none;
+  height: 100%;
+  background-color: white;
+  width: 73%;
+  border-right: 20px;
+}
+
+.pencil{
+  height: 24px;
+  width: 24px;
+}
+
+.remark-span{
+  font-family: Barlow;
+  font-size: 14px;
+font-weight: 500;
+line-height: 14px;
+margin-bottom: 5px;
+color: #54595E  ;
+
 }
