@@ -37,7 +37,6 @@ const VisuallyHiddenInput = styled('input')({
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
     // const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [basicTabId, setBasicTabId] = useSearchParams(  {basicTabId: 'home_table'});
-
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
