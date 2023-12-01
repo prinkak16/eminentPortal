@@ -45,7 +45,15 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [remarks, setRemarks] = useState()
     const [vacancyId, setVacancyId] = useState([])
     const [validValue, setValidValue] = useState(true)
-
+    const [prevVacancyCount, setPrevVacancyCount] = useState(null);
+    let originalVacancyCount;
+    let originalStateId;
+    let originalRemarks;
+    function initializeOriginalValues() {
+        originalVacancyCount = stateId;
+        originalStateId = vacancyCount;
+        originalRemarks = remarks;
+    }
 
     const customFunction = () => {
         getSlottingPsuData(psuId).then(response => {
@@ -94,46 +102,50 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setAddMore(!addMore)
     }
 
-    const handleSave = (event) => {
-        event.preventDefault()
-        if (addMore === true) {
-            if(vacancyCount && stateId && remarks){
-                const reSlottingData = {
-                    ministry_id: slottingMinistryId,
-                    organization_id: psuId,
-                    vacancy_count: vacancyCount,
-                    state_id: stateId,
-                    vacancies_id: vacancyId,
-                    remarks: remarks,
+
+
+        const handleSave = async (event) => {
+            event.preventDefault();
+            if (addMore === true) {
+                    const vacancyData = {
+                        ministry_id: slottingMinistryId,
+                        organization_id: psuId,
+                        vacancy_count: vacancyCount,
+                        state_id: stateId,
+                        remarks: remarks,
+                    };
+                    assignSlottingVacancy(vacancyData).then((res) => res.json())
+
+                if(vacancyCount !== originalVacancyCount || stateId !== originalStateId || remarks !== originalRemarks){
+                    const reSlottingData = {
+                        ministry_id: slottingMinistryId,
+                        organization_id: psuId,
+                        vacancy_count: vacancyCount,
+                        state_id: stateId,
+                        vacancies_id: vacancyId,
+                        remarks: remarks,
+                    };
+                    reassignSlottingVacancy(reSlottingData).then((res) => res.json())
                 }
-                reassignSlottingVacancy(reSlottingData).then((response) => console.log('res', response.json()))
+
+                setAddMore(false);
+                addVacancyTableData();
+                setVacancyCount(0);
+                setStateId('');
+                setRemarks('');
+            } else {
+                handleAddMore();
             }
-            else {
-                const vacancyData = {
-                    ministry_id: slottingMinistryId,
-                    organization_id: psuId,
-                    vacancy_count: vacancyCount,
-                    state_id: stateId,
-                    remarks: remarks,
-                }
-                assignSlottingVacancy(vacancyData).then((res) => res.json())
-            }
-            setAddMore(false)
-            addVacancyTableData()
-            setVacancyCount(0)
-            setStateId('')
-            setRemarks('')
-        }
-        else {
-            handleAddMore()
-        }
-    }
-    const handleEdit = (vacancyDetail) => {
+        };
+
+
+        const handleEdit = (vacancyDetail) => {
         setVacancyCount(vacancyDetail.vacancy_count);
         setStateId(vacancyDetail.country_state_id);
         setRemarks(vacancyDetail.slotting_remarks);
         setVacancyId(vacancyDetail.vacancies_id)
         setAddMore(true)
+            initializeOriginalValues()
     }
 
   const handleDelete = (unslotId) => {
@@ -149,7 +161,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     useEffect(() => {
         customFunction();
         slottingState()
-    }, []);
+        if (vacancyCount !== prevVacancyCount) {
+            setPrevVacancyCount(vacancyCount);
+        }
+    }, [vacancyCount, prevVacancyCount]);
 
     return (
         <Box sx={{display: 'flex'}}>
@@ -221,6 +236,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                         id="outlined-select-currency"
                                         select
                                         fullWidth
+                                        placeholder="select state"
                                         name="state"
                                         onChange={handleStateChange}
                                         defaultValue={(stateId === stateId) ? stateId : 'Select State'}

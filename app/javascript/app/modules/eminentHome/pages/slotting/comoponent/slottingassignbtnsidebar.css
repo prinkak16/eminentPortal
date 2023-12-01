@@ -63,6 +63,6 @@ button.savebtn, button.savebtn:hover{
     font-size: 16px;
     font-weight: 500;
 }
-.addRemark input {
-text-align:center
+.addremark input {
+    text-align: center;
 }
