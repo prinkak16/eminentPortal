@@ -22,7 +22,8 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data,initialValue}) {
-    const [personName, setPersonName] = useState([]);
+    console.log('initail value in multi select ', initialValue)
+    const [personName, setPersonName] = useState(initialValue??[]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
 
@@ -36,6 +37,10 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
         getMinistryData();
     }, []);
 
+    const calculateRemainingCount = (selected) => {
+        const remainingCount = selected.length - 1;
+        return remainingCount > 0 ? `+ ${remainingCount}` : '';
+    };
 
 
     const handleChange = (event) => {
@@ -59,7 +64,17 @@ export default function MultipleSelectCheckmarks({ style, onSelectMinistries, da
                 value={personName}
                 onChange={handleChange}
                 input={<OutlinedInput label="Select Ministry" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) => {
+                    if (selected.length === 0) {
+                        return 'Select Ministry';
+                    } else if (selected.length === 1) {
+                        return selected[0];
+                    } else {
+                        return `${selected[0]} ${calculateRemainingCount(selected)}`;
+
+                    }
+                }}
+
                 MenuProps={MenuProps}
             >
                 {data.map((ministry) => (

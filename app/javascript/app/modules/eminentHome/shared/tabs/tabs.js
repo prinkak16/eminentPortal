@@ -14,7 +14,7 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/gom/gomPage/gomPage";
-import Allotment from "../../pages/allotment/Allotment"
+import Allotment from "../../../eminentHome/pages/allotment/allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
@@ -91,7 +91,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-
     const handleSubmitUpload = () => {
         if (selectedFile) {
             const formData = new FormData();
@@ -103,10 +102,15 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             })
                 .then(response => response.json())
                 .then(data => {
-                    // Handle the response from the server, e.g., show a success message
+                    if (data.success) {
+                        toast.success("File uploaded successfully");
+                    } else {
+                        toast.error("Error: Please enter email or upload the file correctly");
+                    }
                 })
                 .catch(error => {
-                    // Handle errors, e.g., show an error message
+                    // Handle other errors if needed
+                    toast.error("Error during file upload");
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
@@ -114,10 +118,14 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 });
         } else {
             // Handle the case where no file is selected (optional)
+            toast.error("Error: Please select a file to upload");
         }
     };
 
-    const handleSubmit = () => {
+
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
@@ -286,12 +294,15 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                    style={{display: 'none'}}
                />
                <Modal
+
                    // contentClassName="deleteModal"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered
                    show={wantToUpload}
                >
                    <Modal.Body>
+                       <ToastContainer />
+
                        <div>
                            <div className="d-flex justify-content-between">
                                <h6 >Upload .csv or Excel file</h6>
@@ -301,13 +312,19 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                <div className="uploadBox">
                                    <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
 
-                                       <UploadFile onClick={()=> uploadFile()}/>
+                                       <UploadFile style={{cursor: "pointer"}}  onClick={()=> uploadFile()}/>
                                    </div>
-                                   <p className="d-flex justify-content-center">Drag and Drop .CSV or Excl file here </p>
-                                   <p className="d-flex justify-content-center">or</p>
-                                   <p className="d-flex justify-content-center">Click here to upload</p>
-                                   <Input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
-                                   <button className="Submit" onClick={handleSubmitUpload}>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>or</p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Click here to upload</p>
+                                       <input
+                                           placeholder="Enter Email"
+                                           type="email"
+                                           value={email}
+                                           onChange={(e) => handleEmailChange(e)}
+                                           required
+                                       />
+                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload} disabled={!email}>
                                        Submit
                                    </button>
                                </div>
@@ -364,7 +381,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="gom_management">
-                    <GomPage filterString={filterString} tabId={value}/>
+                    <GomPage filterString={filterString} clearFilter= {clearFilter} tabId={value}/>
                 </TabPanel>
 
             </TabContext>

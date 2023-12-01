@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       get 'filters/vacancy_organization_wise', to: 'filter#vacancy_organization_wise'
       get 'filters/vacancy_wise', to: 'filter#vacancy_wise'
       get 'filters/slotting', to: 'filter#slotting'
+      get 'filters/allotment', to: 'filter#allotment'
 
       get 'stats/home', to: 'stats#home'
 
@@ -92,6 +93,11 @@ Rails.application.routes.draw do
         post '/unslot', to: 'slotting#unslot'
         post '/reslot', to: 'slotting#reslot'
         get '/stats/:organization_id', to: 'slotting#stats'
+      end
+
+      namespace :allotment, path: 'allotment' do
+        get '/position_analytics', to: 'stats#position_analytics'
+        get '/list', to: 'stats#list'
       end
 
       namespace :user, path: 'user/:user_id' do

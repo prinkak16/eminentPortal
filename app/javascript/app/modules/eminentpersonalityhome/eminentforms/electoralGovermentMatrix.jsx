@@ -12,7 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled}) => {
     const [fieldsData, setFieldsData] = useState({});
-    const [ministriesField, setMinistriesField] = useState([]);
+    const [ministriesField, setMinistriesFields] = useState([]);
     const [editField, setEditField] = useState(0);
     const [locationsArray, setLocationsArray] =useState({})
     const [states, setStates] = useState([])
@@ -54,7 +54,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             const portFolio = updatedFieldsData.minister_portfolio_array
             if (isValuePresent(portFolio) && portFolio.length > 1) {
               for (let i = 0; i < portFolio.length -1; i++) {
-                  setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+                  setMinistriesFields(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
               }
             }
         }
@@ -115,7 +115,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
         if (fieldKey === 'minister_portfolio') {
             if (value === 'Yes') {
                 fieldsData['minister_portfolio_array'] = [ministryPortfolioObject]
-                setMinistriesField([])
+                setMinistriesFields([])
             } else {
                 fieldsData['minister_portfolio_array'] = []
             }
@@ -170,11 +170,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                     ministryPortfolioObject,
                 ],
             }));
-            setMinistriesField(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+            setMinistriesFields(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
         }
     }
 
     const deleteMinistry = () => {
+
         if (!isViewDisabled) {
             setFieldsData((prevFieldsData) => {
                 const updatedMinisterPortfolioArray = [...prevFieldsData.minister_portfolio_array];
@@ -185,12 +186,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                 };
             });
 
-            setMinistriesField((prevMinistriesField) => {
-                return prevMinistriesField.slice(0, -1);
-            });
+            const newarr=ministriesField.slice(0,ministriesField.length-1)
+            setMinistriesFields([...newarr]);
         }
     };
-
 
 
     const getFieldsValue = (key, index) => {
@@ -202,6 +201,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             setFieldsData({})
         }
     },[electionTypeChange])
+
+
 
 
     return (
@@ -435,8 +436,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                 ))}
 
                 {fieldsData?.minister_portfolio === 'Yes' &&
-                    <div className='add-ministry-container' onClick={addMinistries}>
-                       <span className='add-ministry'>
+                    <div className='add-ministry-container' >
+                       <span className='add-ministry' onClick={addMinistries}>
                             <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
                        </span>
                         {ministriesField.length > 0 &&

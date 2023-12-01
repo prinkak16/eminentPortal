@@ -14,7 +14,7 @@ class Api::V1::FilterController < BaseApiController
         get_aasm_state_filter,
         get_qualification_filter,
         get_gender_filter,
-        # get_profession_filter,
+        get_profession_filter,
         get_category_filter
       ]
     }
@@ -102,6 +102,24 @@ class Api::V1::FilterController < BaseApiController
         fetch_vacancy_organization_filters(org_name),
         fetch_ratna_type_filter,
         fetch_position_status_filter,
+        fetch_state_filter
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'Slotting filters.' }, status: 200
+  end
+
+  def allotment
+    ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
+    department_name = params[:department_name].present? ? params[:department_name] : ''
+    org_name = params[:organization_name].present? ? params[:organization_name] : ''
+
+    result = {
+      'filters': [
+        fetch_vacancy_ministry_filters(ministry_name),
+        fetch_vacancy_department_filters(department_name),
+        fetch_vacancy_organization_filters(org_name),
+        fetch_ratna_type_filter,
         fetch_state_filter
       ]
     }

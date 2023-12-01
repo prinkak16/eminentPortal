@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import "./hometable.scss"
+import "./hometable.css"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"
@@ -23,7 +23,7 @@ import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 import {ApiContext} from "../../../ApiContext";
 const HomeTable = (props) => {
-    const {resetFilter} = useContext(ApiContext)
+    const {resetFilter, setEminentData} = useContext(ApiContext)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');
@@ -53,6 +53,17 @@ const HomeTable = (props) => {
         ))
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.id !== 'list-container' && event.target.id !== 'list-icon-button' && event.target.id !== 'list-icon') {
+                setOpenList(null)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
@@ -160,7 +171,7 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number, userData) => {
+    const  editUser = (number,member) => {
         localStorage.setItem('eminent_number', number);
         localStorage.setItem('view_mode', 'edit');
         navigate({
@@ -168,7 +179,7 @@ const HomeTable = (props) => {
         }, {
             state: {
                 eminent_number: number,
-                user_data: userData,
+                user_data: member,
                 view_mode:'edit'
             }
         });
@@ -318,10 +329,10 @@ const HomeTable = (props) => {
                                                 <p>{member.data.reference?.mobile}</p>
 
                                             </div>
-                                            <div className="edit-box-container">
+                                            <div className="edit-box-container" id='list-container'>
                                                 <p
-                                                    className="popupicon">
-                                                    <Icon onClick={() => showList(member.id)}/>
+                                                   id='list-icon-button' className="popupicon">
+                                                    <Icon  id='list-icon' onClick={() => showList(member.id)}/>
                                                 </p>
                                                 {openList === member.id &&
                                                     <Paper className='home-edit-list'>
