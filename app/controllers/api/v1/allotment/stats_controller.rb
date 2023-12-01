@@ -57,7 +57,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
         stats[:assigned] = results[0]['occupied'] || 0
         stats[:yet_to_assigned] = results[0]['yet_to_assigned'] || 0
       end
-      return render json: { success: true, message: 'Success', data: stats }, status: :ok
+      return render json: { success: true, message: 'Success', data: stats, test: country_states }, status: :ok
 
     rescue StandardError => e
       return render json: {

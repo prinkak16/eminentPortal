@@ -446,7 +446,8 @@ class Api::V1::CustomMemberFormController < BaseApiController
     # compute education filter
     educations = params[:education].present? ? params[:education].split(',') : nil
     unless educations.nil?
-      custom_members = custom_members.where("data->'education_level' ?| array[:education_values]", education_values: educations)
+      educations_json = educations.map { |education| { "qualification" => education } }.to_json
+      custom_members = custom_members.where("data->'educations' @> ?", educations_json)
     end
 
     # compute gender filter
@@ -458,7 +459,8 @@ class Api::V1::CustomMemberFormController < BaseApiController
     # compute profession filter
     professions = params[:profession].present? ? params[:profession].split(',') : nil
     unless professions.nil?
-      custom_members = custom_members.where("data->'profession' ?| array[:profession_values]", profession_values: professions)
+      professions_json = professions.map { |profession| { "profession" => profession } }.to_json
+      custom_members = custom_members.where("data->'professions' @> ?", professions_json)
     end
 
     # compute profession filter
