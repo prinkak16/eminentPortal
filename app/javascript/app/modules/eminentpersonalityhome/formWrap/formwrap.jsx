@@ -118,7 +118,6 @@ const FormWrap=({userData, stateId, viewMode})=>{
             }
         } else {
             setSubmitting(false)
-            showNotification()
             handleNext();
             scrollToTop()
         }
@@ -254,7 +253,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
                         <Formik
                             initialValues={initialValues}
                             onSubmit={onSubmit}
-                            validationSchema={validationSchema}
+                            validationSchema={isViewDisabled ? null : validationSchema}
                         >
                             {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
                                 <Form>

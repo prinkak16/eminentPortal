@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import "./hometable.scss"
+import React, {useContext, useEffect, useState} from "react";
+import "./hometable.css"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"
@@ -21,7 +21,9 @@ import {Link} from 'react-router-dom';
 import Analytics from "../../shared/././analytics/analytics";
 import {calculateAge, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
+import {ApiContext} from "../../../ApiContext";
 const HomeTable = (props) => {
+    const {resetFilter, setEminentData} = useContext(ApiContext)
     const [searchedName, setSearchedName] = useState('');
     const [tableData, setTableData] = useState(null);
     const [searchId, setSearchId] = useState('');
@@ -50,7 +52,6 @@ const HomeTable = (props) => {
             </div>
         ))
     }
-
 
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
@@ -95,7 +96,10 @@ const HomeTable = (props) => {
     }
 
     const prepareToGetDisplayData = () => {
-        let searched = props?.filterString;
+        let searched = ''
+        if (!resetFilter) {
+            searched = props?.filterString;
+        }
         if (searchedName && searchedName.length > 0) {
             searched += `&query=${searchedName}`;
         }
@@ -110,7 +114,7 @@ const HomeTable = (props) => {
 
     useEffect(() => {
         prepareToGetDisplayData();
-    }, [searchedName, props.filterString, searchId, currentPage]);
+    }, [searchedName, props.filterString, searchId, currentPage, resetFilter]);
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -155,7 +159,7 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number, userData) => {
+    const  editUser = (number) => {
         localStorage.setItem('eminent_number', number);
         localStorage.setItem('view_mode', 'edit');
         navigate({

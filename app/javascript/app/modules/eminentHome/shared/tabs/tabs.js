@@ -14,7 +14,7 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/gom/gomPage/gomPage";
-import Allotment from "../../pages/allotment/Allotment"
+import Allotment from "../../../eminentHome/pages/allotment/allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
@@ -34,7 +34,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
+export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
     const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
@@ -354,7 +354,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                     {buttonContent}
                 </Box>
                 <TabPanel value="home_table">
-                    <HomeTable filterString={filterString} tabId={value}/>
+                    <HomeTable filterString={filterString} tabId={value} clearFilter={clearFilter}/>
                 </TabPanel>
 
                 <TabPanel value="allotment">

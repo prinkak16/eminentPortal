@@ -74,7 +74,7 @@ const SlottingTabPage =({tabId})=>{
                                 <TableCell>{slotting.slotted}</TableCell>
                                 <TableCell>{slotting.is_listed ? 'Yes' : 'No'}</TableCell>
                                 <TableCell>{slotting.last_updated_at}</TableCell>
-                                    <TableCell className="text-center"><Button aria-label="open drawer"
+                                    <TableCell className="text-center"><Button className="assignButton" aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
                                                                                    handleDrawerOpen(slotting.org_id, slotting.ministry_id)
