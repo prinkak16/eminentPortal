@@ -8,6 +8,7 @@ import './fileStatus.scss'
 import Phone from "../../../../../../../public/images/phone.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import DialogBox from "../dailogBox/dailogBox";
 
 const FileStatus = () => {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
@@ -16,6 +17,7 @@ const FileStatus = () => {
     const [searchedName, setSearchedName] = useState('');
     const [searchId, setSearchId] = useState('');
     const [showHistory,setShowHistory] = useState(false)
+    const [updateStatus,setUpdateStatus] = useState(false)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -41,6 +43,7 @@ const FileStatus = () => {
         setProfilePhotoUrl('')
     }
 
+    const fileStatus = [1, 2, 'A', 'C', 4, 'D', 'G']
     const tableData = [
         {
             id:'BJ949394PK',
@@ -57,7 +60,7 @@ const FileStatus = () => {
         },
         {
             id:'BJ949394PK',
-            photo: 'https://images.unsplash.com/photo-1683009427513-28e163402d16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            photo: 'https://images.unsplash.com/photo-1682687219573-3fd75f982217?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             name:'Harendra Huda',
             mobiles: [9999222231,9999222230],
             ministry: 'Ministry Ministry of Interior / Home Affairs',
@@ -70,7 +73,7 @@ const FileStatus = () => {
         },
         {
             id:'BJ949394PK',
-            photo: 'https://images.unsplash.com/photo-1683009427513-28e163402d16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            photo: 'https://images.unsplash.com/photo-1682695797873-aa4cb6edd613?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHw2fHx8ZW58MHx8fHx8',
             name:'Gajendra Huda',
             mobiles: [9999222231,9999222230],
             ministry: 'Ministry Ministry of Interior / Home Affairs',
@@ -83,6 +86,11 @@ const FileStatus = () => {
         }
 
     ]
+
+
+    const closeDialog = () => {
+        setUpdateStatus(false)
+    }
 
     return (
         <div className='file-status-component'>
@@ -103,13 +111,14 @@ const FileStatus = () => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
+                    <DialogBox openDialogue={updateStatus} list={fileStatus} onClose={closeDialog}/>
             </div>
             <div className='mt-5 border pb-4'>
                 {tableData && tableData.map((item, index) => (
                     <div className={`mt-4 w-95  ${index +1 !== tableData.length && 'eminent-container pb-4'}`}>
                             <p className={`eminent-status-tag ${item.aasm_status}-tag`}>{item.aasm_status}</p>
                         <div className='eminent-details-container d-flex'>
-                            <div className='eminent-image-container' >
+                            <div className='eminent-image-container ml-1rem' >
                                 <img className='eminent-image' src={item.photo} alt='eminent-image'/>
                             </div>
                             <div className='eminent-initial-details'>
@@ -140,12 +149,12 @@ const FileStatus = () => {
                                     <span className='fw-bold'>{item.type}</span>
                                 </div>
                                 <div className='ml-auto'>
-                                    <button className='eminent-update-button'>Update</button>
+                                    <button className='eminent-update-button' onClick={() => setUpdateStatus(true)}>Update</button>
                                 </div>
                             </div>
                         </div>
                         <div className='d-flex mt-3'>
-                            <div className='eminent-file-status padding-assign'>
+                            <div className='eminent-file-status ml-1rem'>
                                 <span className='user-id-tag d-block'>Current Status</span>
                                 <div className='d-flex mt-2'>
                                      <span className='status-btn'>
@@ -153,9 +162,8 @@ const FileStatus = () => {
                                       </span>
                                     <span>{item.file_status}</span>
                                 </div>
-
                             </div>
-                            <div className='eminent-file-remark padding-assign'>
+                            <div className='eminent-file-remark ml-1rem'>
                                 <span className='user-id-tag d-block '>Remarks</span>
                                 <span className='mt-2'>{item.file_remarks}</span>
                             </div>
