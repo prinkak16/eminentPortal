@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography, Input} from '@mui/material';
+import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography} from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext, useEffect, useRef} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
@@ -124,8 +124,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
 
 
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
