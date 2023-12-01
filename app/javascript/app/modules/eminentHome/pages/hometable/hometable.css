@@ -269,6 +269,7 @@ font-size: 1rem !important;
 
 .border-bottom{
   border-bottom: 1px solid #E6E6E6 !important;
+}
 .home-edit-list {
   position: absolute;
   z-index: 5;
@@ -282,4 +283,8 @@ font-size: 1rem !important;
   display: flex;
   align-items: center;
   font-size: 1.5rem;
+}
+
+.edit-box-container .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.home-edit-list.css-1ps6pg7-MuiPaper-root {
+  position: absolute;
 }
