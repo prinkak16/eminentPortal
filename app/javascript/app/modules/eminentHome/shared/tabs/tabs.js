@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography} from '@mui/material';
+import {Button, Tab, Box, TextField, styled, InputLabel, Alert, Typography, Input} from '@mui/material';
 import HomeTable from "../../pages/hometable/hometable";
 import {useState, useContext, useEffect, useRef} from "react";
 import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
@@ -237,10 +237,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             <div className='upload-excel-button'>
                                 <Button component="label" variant="contained">
                                     <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                    Drag and Drop Excel file here <br/> or <br/> click here to upload
+                                    Drag and Drop CSV file here <br/> or <br/> click here to upload
                                 </Button>
                                 <TextField
                                     variant="outlined"
+                                    placeholder="Enter email"
                                     type="email"
                                     value={email}
                                     onChange={handleEmailChange}
@@ -302,10 +303,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
 
                                        <UploadFile onClick={()=> uploadFile()}/>
                                    </div>
-                                   <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center">Drag and Drop .CSV or Excl file here </p>
                                    <p className="d-flex justify-content-center">or</p>
                                    <p className="d-flex justify-content-center">Click here to upload</p>
-                                   <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
+                                   <Input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
                                    <button className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
