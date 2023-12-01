@@ -145,11 +145,6 @@ function GomPage({ tabId, filterString }) {
                 );
             }
 
-            // Update state or perform any other actions if needed
-            // For example:
-            // setAssignedMinistryIds([]);
-            // setOwnMinistryIds([]);
-
             fetchData();
 
             // Show success toast
@@ -169,15 +164,7 @@ function GomPage({ tabId, filterString }) {
             link.click();
             document.body.removeChild(link);
         };
-        // const test=()=>{
-        //     getGOMTableData().then((response) => {
-        //         setGomTableData(response.data.value);
-        //         console.log('test', gomTableData)
-        //     })
-        // }
-        // useEffect(() => {
-        //     test()
-        // }, []);
+
 
         const handleClick = event => {
             const itemsPerPage = 5;
