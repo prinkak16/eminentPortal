@@ -101,10 +101,10 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        showNotification("File Submitted SuccessFully");
+
                     })
                     .catch(error => {
-                        showNotification("Error: Please check the Email or File type ")
+
                     })
                     .finally(() => {
                         // Close the modal or perform any cleanup
@@ -116,19 +116,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         };
 
 
-    const showNotification = (message) => {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 1000);
-        }, 5000);
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();

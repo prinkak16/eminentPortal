@@ -16,18 +16,6 @@
     color:#fff;
 }
 
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    opacity: 1;
-    transition: opacity 1s ease-in-out;
-}
-
 
 .hometabs .css-1gsv261{
     border-bottom: 1px solid transparent;
