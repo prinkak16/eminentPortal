@@ -300,11 +300,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                <div className="uploadBox">
                                    <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
 
-                                       <UploadFile onClick={()=> uploadFile()}/>
+                                       <UploadFile style={{cursor: "pointer"}}  onClick={()=> uploadFile()}/>
                                    </div>
-                                   <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
-                                   <p className="d-flex justify-content-center">or</p>
-                                   <p className="d-flex justify-content-center">Click here to upload</p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>or</p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Click here to upload</p>
                                    <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
                                    <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
                                        Submit
