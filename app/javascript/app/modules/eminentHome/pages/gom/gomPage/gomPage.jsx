@@ -1,4 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import './gomPage.scss'
 // import {SearchOffOutlined, Upload} from "@mui/icons-material";
@@ -116,34 +119,41 @@ function GomPage({ tabId, filterString }) {
             setOwnMinistryIds(ministryIds);
            };
 
-        const handleUpdateClick = () => {
+    const handleUpdateClick = async () => {
+        const ministerId = editMinisterData.ministerId;
 
-            const ministerId = editMinisterData.ministerId;
+        // Check if both assigned and own ministry arrays are empty
+        if (assignedMinistryIds.length === 0 && ownMinistryIds.length === 0) {
+            // Optionally, you can handle the case where both arrays are empty
+            return;
+        }
 
-            try {
-                // Make API call for assigned ministries
-                const assignedMinistriesResponse =  axios.post(
+        try {
+            // Make API call for assigned ministries if assignedMinistryIds is not empty
+            if (assignedMinistryIds.length > 0) {
+                await axios.post(
                     `/api/v1/user/${ministerId}/assign_ministries`,
-                    { ministry_ids: assignedMinistryIds}
-
+                    { ministry_ids: assignedMinistryIds }
                 );
+            }
 
-                // Make API call for own ministries after the first call is complete
-                const ownMinistriesResponse =  axios.post(
+            // Make API call for own ministries if ownMinistryIds is not empty
+            if (ownMinistryIds.length > 0) {
+                await axios.post(
                     `/api/v1/user/${ministerId}/allocate_ministries`,
                     { ministry_ids: ownMinistryIds }
                 );
-
-                fetchData();
-                // Update state or perform any other actions if needed
-                // For example:
-                // setAssignedMinistryIds([]);
-                // setOwnMinistryIds([]);
-
-            } catch (error) {
-                // Handle errors as needed
             }
-        };
+
+            fetchData();
+
+            // Show success toast
+            toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
+        } catch (error) {
+            // Handle errors and show error toast
+            toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
+        }
+    };
 
 
         const handleDownload = (url) => {
@@ -154,15 +164,7 @@ function GomPage({ tabId, filterString }) {
             link.click();
             document.body.removeChild(link);
         };
-        // const test=()=>{
-        //     getGOMTableData().then((response) => {
-        //         setGomTableData(response.data.value);
-        //         console.log('test', gomTableData)
-        //     })
-        // }
-        // useEffect(() => {
-        //     test()
-        // }, []);
+
 
         const handleClick = event => {
             const itemsPerPage = 5;
@@ -293,7 +295,7 @@ function GomPage({ tabId, filterString }) {
                                             <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={() => handleEditClick(data)}>
+                                            <td onClick={() => handleEditClick(data)}   style={{ cursor: 'pointer' }}>
                                                 <EditIcon />
                                             </td>
                                         </tr>
@@ -308,12 +310,11 @@ function GomPage({ tabId, filterString }) {
                     </div>
                         <div>
                             <div>
-
-                            <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
+                                <span className="d-flex justify-content-center" style={{ cursor: 'pointer' }}>{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
                             </div>
                             <ReactPaginate
                                 breakLabel="..."
-                                nextLabel="next >"
+                                nextLabel={<span style={{ cursor: 'pointer' }}>next {'>'}</span>}
                                 containerClassName={'pagination justify-content-end'}
                                 onPageChange={handlePageChange}
                                 pageLinkClassName={'page-link'}
@@ -327,7 +328,7 @@ function GomPage({ tabId, filterString }) {
                                 activeClassName={'active'}
                                 pageRangeDisplayed={3}
                                 pageCount={pageCount}
-                                previousLabel="< previous"
+                                previousLabel={<span style={{ cursor: 'pointer' }}>{'<'} previous</span>}
                             />
                         </div>
                     </div>
@@ -433,6 +434,7 @@ function GomPage({ tabId, filterString }) {
                         <button
                             className="Update-btn"
                             onClick={handleUpdateClick}
+                            disabled={assignedMinistryIds.length === 0 && ownMinistryIds.length === 0}
                         >
                             Update
                         </button>
