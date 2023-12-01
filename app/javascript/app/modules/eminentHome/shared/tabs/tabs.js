@@ -282,7 +282,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     else if (value === 'gom_management'){
         buttonContent=
            <>
-        <button style={{marginBottom: "50px", marginRight: "30px"}} className="button-upload" onClick={handleClick}>
+        <button className="button-upload" onClick={handleClick}>
             <UploadIcon/> PA/OSD mapping
         </button>
                <input
@@ -380,7 +380,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <SlottingTabPage filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="gom_management">
-                    <GomPage filterString={filterString} tabId={value}/>
+                    <GomPage filterString={filterString} clearFilter= {clearFilter} tabId={value}/>
                 </TabPanel>
 
             </TabContext>
