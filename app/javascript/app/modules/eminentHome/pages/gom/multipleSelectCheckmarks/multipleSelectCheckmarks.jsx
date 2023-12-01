@@ -22,7 +22,8 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks({ style, onSelectMinistries, data,initialValue}) {
-    const [personName, setPersonName] = useState([]);
+    console.log('initail value in multi select ', initialValue)
+    const [personName, setPersonName] = useState(initialValue??[]);
     const [ministryData, setMinistryData] = useState([]);
     const [ministryIds, setMinistryIds] = useState([]);
 

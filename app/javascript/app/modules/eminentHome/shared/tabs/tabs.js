@@ -273,7 +273,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     else if (value === 'gom_management'){
         buttonContent=
            <>
-        <button className="button-upload" onClick={handleClick}>
+        <button style={{marginBottom: "50px", marginRight: "30px"}} className="button-upload" onClick={handleClick}>
             <UploadIcon/> PA/OSD mapping
         </button>
                <input
@@ -305,7 +305,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                    <p className="d-flex justify-content-center">or</p>
                                    <p className="d-flex justify-content-center">Click here to upload</p>
                                    <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
-                                   <button className="Submit" onClick={handleSubmitUpload}>
+                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
                                </div>
