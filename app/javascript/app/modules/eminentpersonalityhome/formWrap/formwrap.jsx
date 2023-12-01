@@ -120,6 +120,21 @@ const FormWrap=({userData, stateId, viewMode})=>{
             setSubmitting(false)
             handleNext();
             scrollToTop()
+            if (isCandidateLogin) {
+                if (activeStep + 1 === 5) {
+                    values = {}
+                    setEminentData({})
+                    navigate({
+                        pathname: '/'
+                    });
+                }
+            } else if (activeStep + 1 === 6) {
+                values = {}
+                setEminentData({})
+                navigate({
+                    pathname: '/'
+                });
+            }
         }
     };
 

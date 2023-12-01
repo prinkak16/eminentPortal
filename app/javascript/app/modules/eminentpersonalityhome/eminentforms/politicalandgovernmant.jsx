@@ -79,8 +79,9 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
-
-        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
+        if (!isViewDisabled) {
+            setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
+        }
     }
 
     const deleteSocialFields = () => {
