@@ -64,8 +64,14 @@ export  const assignSlottingVacancy = (formData) => {
     return axios.post(apiBaseUrl + 'slotting/slot', formData)
 }
 
-export const getSlottingFilters = () => {
-    return axios.get(apiBaseUrl + 'filters/slotting')
+export  const reassignSlottingVacancy = (formData) => {
+    return axios.post(apiBaseUrl + 'slotting/reslot', formData)
+}
+export  const deleteSlottingVacancy = (formData) => {
+    return axios.post(apiBaseUrl + 'slotting/unslot', formData)
+}
+export const getSlottingFilters = (params) => {
+    return axios.get(apiBaseUrl + 'filters/slotting', {params})
 }
 export const getMinistryWiseData = (params, queryParams) => {
     return axios.get(`${apiBaseUrl}vacancy/list?${queryParams}`, { params });

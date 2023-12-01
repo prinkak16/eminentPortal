@@ -16,7 +16,11 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import {assignSlottingVacancy, getSlottingPsuData} from "../../../../../api/eminentapis/endpoints";
+import {
+    assignSlottingVacancy, deleteSlottingVacancy,
+    getSlottingPsuData,
+    reassignSlottingVacancy
+} from "../../../../../api/eminentapis/endpoints";
 import {useContext, useEffect, useState} from "react";
 import './slottingassignbtnsidebar.css'
 import AddIcon from '@mui/icons-material/Add'
@@ -24,6 +28,8 @@ import MinimizeIcon from '@mui/icons-material/Minimize';
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Paper from '@mui/material/Paper';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 // import {ApiContext} from "../../../../ApiContext";
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -44,8 +50,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [remarks, setRemarks] = useState()
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [toggleEdit, setToggleEdit] = useState(false)
-    const [updateEditTable, setUpdateEditTable] = useState()
+    const [vacancyId, setVacancyId] = useState([])
+    // const [updateEditTable, setUpdateEditTable] = useState()
     // const {setBackDropToggle} = useContext(ApiContext)
+
 
     const customFunction = () => {
         getSlottingPsuData(psuId).then(response => {
@@ -85,6 +93,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const handleAddMore = () => {
         setAddMore(!addMore)
     }
+
     const handleSave = (event) => {
         event.preventDefault()
         // setBackDropToggle(true)
@@ -97,13 +106,32 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                 state_id: stateId,
                 remarks: remarks,
             }
-            assignSlottingVacancy(vacancyData).then((res) => res.json())
+            if(vacancyData){
+                const reSlottingData = {
+                    ministry_id: slottingMinistryId,
+                    organization_id: psuId,
+                    vacancy_count: vacancyCount,
+                    state_id: stateId,
+                    vacancies_id: vacancyId,
+                    remarks: remarks,
+                }
+                reassignSlottingVacancy(reSlottingData).then((response) => console.log('res', response.json()))
+
+            }
+            else {
+                assignSlottingVacancy(vacancyData).then((res) => res.json())
+            }
+
             setAddMore(false)
             addVacancyTableData()
             setVacancyCount(0)
             setStateId('')
             setRemarks('')
-        } else {
+        }
+        else if(addMore === true && slottingVacancyDetail.value){
+            console.log('slotting update')
+        }
+        else {
             // setBackDropToggle(false)
             handleAddMore()
         }
@@ -112,14 +140,18 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setVacancyCount(vacancyDetail.vacancy_count);
         setStateId(vacancyDetail.country_state_id);
         setRemarks(vacancyDetail.slotting_remarks);
+        setVacancyId(vacancyDetail.vacancies_id)
         setAddMore(true)
-        console.log('vacancyDetail.country_state_name', vacancyDetail.country_state_name)
     }
 
-    const toggleEditIcon = (event) => {
-        event.preventDefault()
-        setToggleEdit(!toggleEdit)
-    };
+  const handleDelete = (unslotId) => {
+        const deleteParams = {
+            vacancies_id: unslotId,
+            remarks: "",
+        }
+      deleteSlottingVacancy(deleteParams).then((res) => console.log('delete', res.json()))
+      customFunction()
+  }
 
 
     useEffect(() => {
@@ -242,16 +274,19 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             <TableCell>{vacancy.country_state_name}</TableCell>
                                             <TableCell>{vacancy.slotting_remarks}</TableCell>
                                             <TableCell>
-                                                <div className="position-relative">
-                                                    <Button onClick={toggleEditIcon}>
-                                                        <MoreVertIcon/>
-                                                    </Button>
-                                                    {toggleEdit && (
-                                                        <div className="edit-popup">
-                                                            <Button onClick={() => handleEdit(vacancy)}>Edit</Button>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                {/*ModeEditOutlineOutlinedIcon*/}
+                                                <Button onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
+                                                <Button onClick={() => handleDelete(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
+                                                {/*<div className="position-relative">*/}
+                                                {/*    <Button onClick={toggleEditIcon}>*/}
+                                                {/*        <MoreVertIcon/>*/}
+                                                {/*    </Button>*/}
+                                                {/*    {toggleEdit && (*/}
+                                                {/*        <div className="edit-popup">*/}
+                                                {/*            <Button onClick={() => handleEdit(vacancy)}>Edit</Button>*/}
+                                                {/*        </div>*/}
+                                                {/*    )}*/}
+                                                {/*</div>*/}
                                             </TableCell>
                                         </TableRow>)
                                     )

@@ -70,7 +70,10 @@ export default function FiltersSidebar(props) {
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
+
                     })
+
+
                 } else if (homeContext.movTabId === 'psu_wise' ) {
                     const psuParams = {
                         ministry_name: searchMinisterName,
@@ -92,7 +95,13 @@ export default function FiltersSidebar(props) {
                 }
                 break;
             case 'slotting':
-                getSlottingFilters().then(response => {
+
+                const params = {
+                    ministry_names: searchMinisterName,
+                    department_names: searchDepartmentName,
+                    organization_name: searchOrganizationName,
+                }
+                getSlottingFilters(params).then(response => {
                     setFiltersList(response.data.data)
                 })
                 break;
@@ -101,7 +110,6 @@ export default function FiltersSidebar(props) {
                     setFiltersList(response.data.data)
                 })
                 break;
-
 
             default:
                 getFilters().then(res => {
@@ -215,6 +223,21 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
+                            {(props.tabId === 'slotting' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id="input-with-icon-adornment"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon/>
+                                            </InputAdornment>
+                                        }
+                                        value={inputSearch}
+                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                    />
+                                </FormControl>
+                            }
+
                             {filter?.values && filter.values.map((filterOption) => (
                                 <p key={filterOption.value}><input type="checkbox"
                                                                    checked={isChecked(filter.key, filterOption.value)}

@@ -16,7 +16,7 @@ import Analytics from "../../shared/analytics/analytics";
 import {getSlottingTable} from "../../../../api/eminentapis/endpoints";
 import AssignBtnSidebar from "./comoponent/slottingassignbtnsidebar";
 
-const SlottingTabPage =({tabId})=>{
+const SlottingTabPage =({tabId, filterString})=>{
     const [currentPage, setCurrentPage] = useState(0);
     const [slottingTableData, setSlottingTableData] = useState();
     const [open, setOpen] = useState(false);
@@ -34,16 +34,17 @@ const SlottingTabPage =({tabId})=>{
 
     const slottingTable =()=>{
         const params = {
+            ministry: slotting.ministry_id,
             limit: limit,
             offset: currentPage * limit
         }
-        getSlottingTable(params).then(res => {
+        getSlottingTable(params, filterString).then(res => {
             setSlottingTableData(res.data.data)
         })
     }
     useEffect(() => {
         slottingTable()
-    }, [currentPage]);
+    }, [currentPage, filterString]);
 
     return (
         <>
