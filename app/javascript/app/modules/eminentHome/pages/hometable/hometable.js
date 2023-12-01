@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import "./hometable.scss"
+import "./hometable.css"
 import Phone from "./../../../../../../../public/images/phone.svg"
 import {Button, FormLabel, Grid, TextField} from "@mui/material";
 import Download from "./../../../../../../../public/images/download.svg"
@@ -52,7 +52,6 @@ const HomeTable = (props) => {
             </div>
         ))
     }
-
 
     const deleteCurrentMember = (deleteId) => {
         setDeleteMemberId(deleteId);
@@ -160,7 +159,7 @@ const HomeTable = (props) => {
         document.body.removeChild(link);
     };
 
-    const  editUser = (number, userData) => {
+    const  editUser = (number) => {
         localStorage.setItem('eminent_number', number);
         localStorage.setItem('view_mode', 'edit');
         navigate({

@@ -14,7 +14,7 @@ import SlottingTabPage from "../../pages/slotting/slotting";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import GomPage from "../../pages/gom/gomPage/gomPage";
-import Allotment from "../../pages/allotment/Allotment"
+import Allotment from "../../../eminentHome/pages/allotment/allotment"
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
