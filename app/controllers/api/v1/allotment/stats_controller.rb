@@ -105,7 +105,6 @@ class Api::V1::Allotment::StatsController < BaseApiController
           country_states << country_state[:id]
         end
       end
-      puts country_states
 
       results = []
       sql = "
