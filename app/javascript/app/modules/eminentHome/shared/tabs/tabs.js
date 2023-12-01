@@ -90,31 +90,45 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
         }
     };
 
-    const handleSubmitUpload = () => {
-        if (selectedFile) {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
+        const handleSubmitUpload = () => {
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
 
-            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the response from the server, e.g., show a success message
+                fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
+                    method: 'POST',
+                    body: formData,
                 })
-                .catch(error => {
-                    // Handle errors, e.g., show an error message
-                })
-                .finally(() => {
-                    // Close the modal or perform any cleanup
-                    setWantToUpload(false);
-                });
-        } else {
-            // Handle the case where no file is selected (optional)
-        }
+                    .then(response => response.json())
+                    .then(data => {
+                        showNotification("File Submitted SuccessFully");
+                    })
+                    .catch(error => {
+                        showNotification("Error: Please check the Email or File type ")
+                    })
+                    .finally(() => {
+                        // Close the modal or perform any cleanup
+                        setWantToUpload(false);
+                    });
+            } else {
+                // Handle the case where no file is selected (optional)
+            }
+        };
+
+
+    const showNotification = (message) => {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 1000);
+        }, 5000);
     };
-
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -305,8 +319,14 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter}) {
                                    <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Drag and Drop .CSV or Excel file here </p>
                                    <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>or</p>
                                    <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Click here to upload</p>
-                                   <input placeholder="Enter Email" type="email" value={email} onChange={(e) => handleEmailChange(e)} />
-                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
+                                       <input
+                                           placeholder="Enter Email"
+                                           type="email"
+                                           value={email}
+                                           onChange={(e) => handleEmailChange(e)}
+                                           required
+                                       />
+                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload} disabled={!email}>
                                        Submit
                                    </button>
                                </div>
