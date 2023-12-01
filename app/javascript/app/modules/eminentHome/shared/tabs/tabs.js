@@ -109,7 +109,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .catch(error => {
                     // Handle other errors if needed
-                    console.error("Error during file upload:", error);
                     toast.error("Error during file upload");
                 })
                 .finally(() => {
