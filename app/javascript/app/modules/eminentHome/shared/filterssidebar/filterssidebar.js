@@ -17,7 +17,7 @@ import {
     getFilters,
     getFiltersForGOM,
     getMinistryWiseFilterData,
-    getOrganizationWiseFilterData,
+    getOrganizationWiseFilterData, getSlottingFilters,
     getVacancyWiseFilterData
 } from "../../../../api/eminentapis/endpoints";
 import {HomeContext} from "../../../../context/tabdataContext";
@@ -91,11 +91,18 @@ export default function FiltersSidebar(props) {
                     })
                 }
                 break;
+            case 'slotting':
+                getSlottingFilters().then(response => {
+                    setFiltersList(response.data.data)
+                })
+                break;
             case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
                 })
                 break;
+
+
             default:
                 getFilters().then(res => {
                     setFiltersList(res.data.data)
