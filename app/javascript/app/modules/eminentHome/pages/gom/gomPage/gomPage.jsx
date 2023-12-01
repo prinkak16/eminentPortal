@@ -47,10 +47,6 @@ function GomPage({ tabId, filterString }) {
         assigned_states: [],
     });
 
-    useEffect(()=>{
-        console.log('editMinisterData',editMinisterData);
-    },[editMinisterData])
-
 
     useEffect(() => {
                 const params = new URLSearchParams(filterString);
