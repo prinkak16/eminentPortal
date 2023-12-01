@@ -124,8 +124,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
 
 
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
@@ -245,10 +244,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             <div className='upload-excel-button'>
                                 <Button component="label" variant="contained">
                                     <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                    Drag and Drop Excel file here <br/> or <br/> click here to upload
+                                    Drag and Drop CSV file here <br/> or <br/> click here to upload
                                 </Button>
                                 <TextField
                                     variant="outlined"
+                                    placeholder="Enter email"
                                     type="email"
                                     value={email}
                                     onChange={handleEmailChange}

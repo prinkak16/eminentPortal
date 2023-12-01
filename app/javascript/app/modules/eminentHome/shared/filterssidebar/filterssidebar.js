@@ -95,7 +95,6 @@ export default function FiltersSidebar(props) {
                 }
                 break;
             case 'slotting':
-
                 const params = {
                     ministry_names: searchMinisterName,
                     department_names: searchDepartmentName,
