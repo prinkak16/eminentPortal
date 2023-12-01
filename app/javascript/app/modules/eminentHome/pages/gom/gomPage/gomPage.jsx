@@ -293,7 +293,7 @@ function GomPage({ tabId, filterString }) {
                                             <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={() => handleEditClick(data)}>
+                                            <td onClick={() => handleEditClick(data)}   style={{ cursor: 'pointer' }}>
                                                 <EditIcon />
                                             </td>
                                         </tr>
@@ -308,12 +308,11 @@ function GomPage({ tabId, filterString }) {
                     </div>
                         <div>
                             <div>
-
-                            <span className="d-flex justify-content-center">{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
+                                <span className="d-flex justify-content-center" style={{ cursor: 'pointer' }}>{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
                             </div>
                             <ReactPaginate
                                 breakLabel="..."
-                                nextLabel="next >"
+                                nextLabel={<span style={{ cursor: 'pointer' }}>next {'>'}</span>}
                                 containerClassName={'pagination justify-content-end'}
                                 onPageChange={handlePageChange}
                                 pageLinkClassName={'page-link'}
@@ -327,7 +326,7 @@ function GomPage({ tabId, filterString }) {
                                 activeClassName={'active'}
                                 pageRangeDisplayed={3}
                                 pageCount={pageCount}
-                                previousLabel="< previous"
+                                previousLabel={<span style={{ cursor: 'pointer' }}>{'<'} previous</span>}
                             />
                         </div>
                     </div>
