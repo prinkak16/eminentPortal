@@ -55,6 +55,18 @@ const PolticalandGovrnform =(props)=>{
     const [isViewDisabled, setIsViewDisabled] = useState(false)
 
     useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.id !== 'list-container' && event.target.id !== 'list-icon-button' && event.target.id !== 'list-icon') {
+                setShowList(null)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
         if (props.viewMode === 'view') {
             setIsViewDisabled(true)
         }
@@ -67,6 +79,7 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
+
         setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
     }
 
@@ -289,8 +302,8 @@ const PolticalandGovrnform =(props)=>{
 
     const scrollToBottom = (scroll) => {
         window.scrollTo({
-            top: scroll, // Scroll to the bottom
-            behavior: 'smooth', // Optional: Add smooth scrolling animation
+            top: scroll,
+            behavior: 'smooth',
         });
     };
 
@@ -330,18 +343,14 @@ const PolticalandGovrnform =(props)=>{
                                 <td>{data.designation}</td>
                                 <td>{data.start_year}</td>
                                 <td className='end-date-td'>{data.end_year}
-                                    <div className='edit-button-logo' ref={componentRef}>
-                                        <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                            <MoreVertIcon/>
+                                    <div className='edit-button-logo' id='list-container'>
+                                        <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                            <MoreVertIcon id='list-icon'/>
                                         </Button>
                                         {showList === data.id && (
                                             <Paper className='details-edit-list'>
-                                                <Typography sx={{p: 2}}
-                                                            className='edit-buttons'
-                                                            onClick={() => editForm('Political Profile',data.id)}><Edit/>Edit</Typography>
-                                                <Typography onClick={() => deleteFormFields('Political Profile',data.id)}
-                                                            className='edit-buttons'
-                                                            sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('Political Profile', data.id)}><Edit/>Edit</Typography>
+                                                <Typography onClick={() => deleteFormFields('Political Profile', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                             </Paper>
                                         )}
                                     </div>
@@ -421,9 +430,9 @@ const PolticalandGovrnform =(props)=>{
                                     <td>{data.position}</td>
                                     <td>{data.start_year}</td>
                                     <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' ref={componentRef}>
-                                            <Button onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon/>
+                                        <div className='edit-button-logo' id='list-container'>
+                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                <MoreVertIcon id='list-icon'/>
                                             </Button>
                                             {showList === data.id && (
                                                 <Paper className='details-edit-list'>
@@ -457,7 +466,9 @@ const PolticalandGovrnform =(props)=>{
                             <Grid container className='mb-5'>
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
                                     <Typography className='social-affiliation' variant="h5" content="h5">
+                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
                                         <Box className="detailnumbers social-affiliation-box" component="div" sx={{ display: 'inline-block' }}>{index+3}</Box> Social Affiliation <InfoOutlinedIcon/>
+                                        </Tooltip>
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} sx={{mb:2}} className='organization-grid'>
@@ -473,7 +484,7 @@ const PolticalandGovrnform =(props)=>{
                                 </Grid>
                                 <Grid item xs={12} className='organization-description-grid'>
                                     <FormLabel>Description
-                                        <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
+                                        <Tooltip title="Write upto 500 words.">
                                             <InfoOutlinedIcon/>
                                         </Tooltip>
                                     </FormLabel>
@@ -484,8 +495,8 @@ const PolticalandGovrnform =(props)=>{
                                         value={field.description}
                                         onChange={enterSocialFields( 'description' ,index)}
                                         multiline
-                                        minRows={5}
-                                        maxRows={5}
+                                        minRows={4}
+                                        maxRows={4}
                                         placeholder="Please enter your Organization description."
                                     />
                                 </Grid>

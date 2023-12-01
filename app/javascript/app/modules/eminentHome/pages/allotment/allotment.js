@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Analytics from "../../shared/analytics/analytics";
-import AllotmentTable from "./components/AllotmentTable";
-import AllotAssign from "./components/Assign/AllotAssign";
+import AllotmentTable from "./components/allotmentTable";
+import AllotAssign from "./components/assign/allotAssign";
 
 
 function Allotment({tabId}) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import ReactPaginate from "react-paginate";
-import '../components/AllotmentTable.css';
+import '../components/allotmentTable.css';
 import SearchIcon from "../../../../../../../../public/images/search.svg";
 import ArrowDownward from "../../../../../../../../public/images/si_File_download.svg";
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
