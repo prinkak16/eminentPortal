@@ -38,7 +38,7 @@ module AuthHelper
   end
 
   def handle_api_auth(api_token:)
-    puts api_token, ccdms_secret_key
+    
     jti_token = JWT.decode api_token, ccdms_secret_key
     if jti_token[0]['user_id'].present?
       return User.find_by(jti: jti_token[0]['user_id'])&.id
