@@ -24,6 +24,7 @@ import {HomeContext} from "../../../../context/tabdataContext";
 import {debounce} from "lodash";
 import {string} from "yup";
 import {ApiContext} from "../../../ApiContext";
+import {isValuePresent} from "../../../utils";
 
 export default function FiltersSidebar(props) {
     const homeContext = useContext(HomeContext);
@@ -35,6 +36,7 @@ export default function FiltersSidebar(props) {
     const [searchDepartmentName, setSearchDepartmentName] = useState('');
     const [searchOrganizationName, setSearchOrganizationName] = useState('');
     const [inputSearch, setInputSearch] = useState('');
+    const [filtersKey, setFiltersKey] = useState([])
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
@@ -119,13 +121,14 @@ export default function FiltersSidebar(props) {
     }, [props.tabId, homeContext.movTabId, searchMinisterName, searchDepartmentName, searchOrganizationName]);
 
     const handleChange = (value) => (event, isExpanded) => {
-        if (expandedFilter === value) {
-            setExpandedFilter('');
+        if (filtersKey.includes(value)) {
+            const keys = filtersKey.filter((item) => item !== value)
+            setFiltersKey(keys)
         } else {
-            setExpandedFilter(value);
-            setExpandedFilter(value);
+            setFiltersKey([...filtersKey, value])
         }
     };
+    console.log(filtersKey)
 
     const handleSearchFilter = debounce((event, identifier) => {
         const inputValue = event.target.value;
@@ -158,15 +161,24 @@ export default function FiltersSidebar(props) {
         setSearchOrganizationName('');
     }
 
+    useEffect(() => {
+        if (isValuePresent(filtersList.filters)) {
+            const keys = filtersList.filters?.map(item => item.key)
+            setFiltersKey(keys)
+        }
+    }, [filtersList.filters]);
+
+    console.log('Full Height:', filtersList.filters?.map(item => item.key));
+
     return (
-        <div>
+        <div className='filter-container' >
             <div className="d-flex justify-content-between mt-4 ms-4">
                 <p className="refineoption">Refine by</p>
                 <p className="clearoption me-4" onClick={handleClearFilter}>Clear</p>
             </div>
             {filtersList?.filters && filtersList.filters.map((filter) => (
-                <Accordion className={`accordion ${expandedFilter === filter.key ? 'accordian-with-bt' : ''}`}
-                           expanded={expandedFilter === filter.key} onChange={handleChange(filter.key)}
+                <Accordion className={`accordion accordian-with-bt `}
+                           expanded={filtersKey.includes(filter.key)} onChange={handleChange(filter.key)}
                            key={filter.key}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}

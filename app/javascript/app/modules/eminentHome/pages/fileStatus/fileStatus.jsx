@@ -18,6 +18,7 @@ const FileStatus = () => {
     const [searchId, setSearchId] = useState('');
     const [showHistory,setShowHistory] = useState(false)
     const [updateStatus,setUpdateStatus] = useState(false)
+    const [eminentStatus, setEminentStatus] =useState(null)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -87,9 +88,17 @@ const FileStatus = () => {
 
     ]
 
+    const openDialogBox = (status) => {
+        setUpdateStatus(true);
+        setEminentStatus(status)
+    }
 
     const closeDialog = () => {
         setUpdateStatus(false)
+    }
+
+    const handleUpdateDetails  = (selectedItem, input ) => {
+        console.log(selectedItem, input)
     }
 
     return (
@@ -111,7 +120,7 @@ const FileStatus = () => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
-                    <DialogBox openDialogue={updateStatus} list={fileStatus} onClose={closeDialog}/>
+                    <DialogBox openDialogue={updateStatus} list={fileStatus} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails}/>
             </div>
             <div className='mt-5 border pb-4'>
                 {tableData && tableData.map((item, index) => (
@@ -149,7 +158,8 @@ const FileStatus = () => {
                                     <span className='fw-bold'>{item.type}</span>
                                 </div>
                                 <div className='ml-auto'>
-                                    <button className='eminent-update-button' onClick={() => setUpdateStatus(true)}>Update</button>
+                                    <button className='eminent-update-button' onClick={() => openDialogBox(item.file_status)
+                                        }>Update</button>
                                 </div>
                             </div>
                         </div>
