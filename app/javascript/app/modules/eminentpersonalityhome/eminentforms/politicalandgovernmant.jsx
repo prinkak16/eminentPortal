@@ -53,6 +53,7 @@ const PolticalandGovrnform =(props)=>{
     const componentRef = useRef(null);
     const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
     const [isViewDisabled, setIsViewDisabled] = useState(false)
+    const [formResetIndex, setFormResetIndex] = useState(null)
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -79,8 +80,9 @@ const PolticalandGovrnform =(props)=>{
     }
 
     const addFieldElectoralElection = () => {
-
-        setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
+        if (!isViewDisabled) {
+            setElectoralDetails([...electoralDetails,  {election_type: '', election_details:{}}])
+        }
     }
 
     const deleteSocialFields = () => {
@@ -232,16 +234,29 @@ const PolticalandGovrnform =(props)=>{
     }
 
 
-    const changeElectionType = (value,name ,type, formIndex) => {
+
+
+    const changeElectionType = (value, name, type, formIndex) => {
         setIsElectionTypeChange(true)
-        const updatedElectoralData = [...electoralDetails];
-        updatedElectoralData[formIndex].election_type = value;
-        updatedElectoralData[formIndex].election_details = {}
-        setElectoralDetails(updatedElectoralData);
+        setFormResetIndex(formIndex)
+        setElectoralDetails(prevDetails => {
+            return prevDetails.map((item, index) => {
+                if (index === formIndex) {
+                    return {
+                        ...item,
+                        election_type: value,
+                        election_details: {}
+                    };
+                }
+                return item;
+            });
+        });
+
         setTimeout(function() {
             setIsElectionTypeChange(false)
+            setFormResetIndex(null)
         },100)
-    }
+    };
 
 
 
@@ -556,6 +571,7 @@ const PolticalandGovrnform =(props)=>{
                                                         formIndex={index}
                                                         setBackDropToggle={setBackDropToggle}
                                                         electionTypeChange={isElectionTypeChange}
+                                                        resetFormIndex={formResetIndex}
                                                     />
                                                 {electoralDetails.length === index + 1 &&
                                                     <Primarybutton

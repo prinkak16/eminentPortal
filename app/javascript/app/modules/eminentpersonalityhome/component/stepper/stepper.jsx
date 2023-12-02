@@ -128,7 +128,7 @@ const FormStepper = ({
                             Step {activeStep + 1} of {steps.length}
                         </Typography>
                         <Button className="nextbtn" type="submit"  >
-                            {isLastStep() ? "Submit" : "Save & Next"}
+                            {isLastStep() ? `${viewMode === 'view' ? 'Back to home' : 'Submit'}` : `${viewMode === 'view' ? 'Next' : 'Save & Next'}`}
                         </Button>
                     </Box>
                 </div>

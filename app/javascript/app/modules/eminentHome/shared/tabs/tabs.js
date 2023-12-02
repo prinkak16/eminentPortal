@@ -20,6 +20,7 @@ import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
 import UploadFile from "../../../../../../../public/images/upload_file.svg";
 import {useParams} from 'react-router-dom';
+import FileStatus from "../../pages/fileStatus/fileStatus";
 
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
@@ -124,8 +125,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
 
 
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (excelFile && validateEmail(email)) {
             setIsValidEmail(true);
             const formData = new FormData();
@@ -245,10 +245,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             <div className='upload-excel-button'>
                                 <Button component="label" variant="contained">
                                     <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                    Drag and Drop Excel file here <br/> or <br/> click here to upload
+                                    Drag and Drop CSV file here <br/> or <br/> click here to upload
                                 </Button>
                                 <TextField
                                     variant="outlined"
+                                    placeholder="Enter email"
                                     type="email"
                                     value={email}
                                     onChange={handleEmailChange}
@@ -371,7 +372,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <Allotment  tabId={value}/>
                 </TabPanel>
                 <TabPanel value="file_status">
-                    <Typography>File Status Page coming soon.....</Typography>
+                    <FileStatus />
+                    {/*<Typography>File Status Page coming soon.....</Typography>*/}
                 </TabPanel>
                 <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>

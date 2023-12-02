@@ -16,11 +16,11 @@ import {ApiContext} from "../../ApiContext";
 import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
-const FormWrap=({userData, stateId, viewMode})=>{
-    const {config, isCandidateLogin, setBackDropToggle,setEminentData} = useContext(ApiContext)
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor:'transparent',
-        boxShadow:'none',
+const FormWrap = ({userData, stateId, viewMode}) => {
+    const {config, isCandidateLogin, setBackDropToggle, setEminentData} = useContext(ApiContext)
+    const Item = styled(Paper)(({theme}) => ({
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
         ...theme.typography.body2,
         padding: theme.spacing(1),
         flexGrow: 1,
@@ -33,17 +33,17 @@ const FormWrap=({userData, stateId, viewMode})=>{
         if (viewMode === 'view') {
             setIsViewDisabled(true)
         }
-    },[viewMode])
+    }, [viewMode])
 
     useEffect(() => {
         if (isValuePresent(isCandidateLogin)) {
             const updatedSteps = steps.filter(step => step.label !== 'Referred By');
-                  setSteps(updatedSteps)
+            setSteps(updatedSteps)
         }
     }, []);
 
 
-    const [stepValues, setStepValues]=useState([])
+    const [stepValues, setStepValues] = useState([])
     const [activeStep, setActiveStep] = useState(0);
 
     const isLastStep = () => {
@@ -53,7 +53,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
         setActiveStep(Math.max(activeStep - 1, 0));
     };
     const handleNext = () => {
-            setActiveStep(Math.min(activeStep + 1, steps.length - 1));
+        setActiveStep(Math.min(activeStep + 1, steps.length - 1));
 
     };
 
@@ -67,7 +67,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
         }
 
         return arr.slice(0, index + 1).reduce((acc, obj) => {
-            return { ...acc, ...obj };
+            return {...acc, ...obj};
         }, {});
     }
 
@@ -120,11 +120,26 @@ const FormWrap=({userData, stateId, viewMode})=>{
             setSubmitting(false)
             handleNext();
             scrollToTop()
+            if (isCandidateLogin) {
+                if (activeStep + 1 === 5) {
+                    values = {}
+                    setEminentData({})
+                    navigate({
+                        pathname: '/'
+                    });
+                }
+            } else if (activeStep + 1 === 6) {
+                values = {}
+                setEminentData({})
+                navigate({
+                    pathname: '/'
+                });
+            }
         }
     };
 
     const initialValues = steps.reduce(
-        (values, { initialValues }) => ({
+        (values, {initialValues}) => ({
             ...values,
             ...initialValues,
         }),
@@ -166,7 +181,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
                     if (isValuePresent(electoralDetails[item].election_type || electoralDetails[item].election_type === false)) {
                         if (isValuePresent(electoralDetails[item].election_details)) {
                             const fields = electionWiseJson[toSnakeCase(electoralDetails[item].election_type)].fields
-                            const ministriesKey = ['designation','ministry_name', 'ministry_duration']
+                            const ministriesKey = ['designation', 'ministry_name', 'ministry_duration']
                             for (const index in fields) {
                                 if (ministriesKey.includes(fields[index].key)) {
                                     if (electoralDetails[item].election_details.minister_portfolio === 'Yes') {
@@ -237,17 +252,17 @@ const FormWrap=({userData, stateId, viewMode})=>{
         setBackDropToggle(false)
     }
 
-        const scrollToTop = () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth', // Optional: Add smooth scrolling animation
-            });
-        };
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth', // Optional: Add smooth scrolling animation
+        });
+    };
 
 
-        return(
+    return (
         <>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{flexGrow: 1}}>
                 <Grid className='detailFrom' container spacing={2}>
                     <Grid item xs={12}>
                         <Formik
@@ -255,7 +270,7 @@ const FormWrap=({userData, stateId, viewMode})=>{
                             onSubmit={onSubmit}
                             validationSchema={isViewDisabled ? null : validationSchema}
                         >
-                            {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue})=>(
+                            {({isSubmitting, handleSaveClick, touched, values, handleChange, setFieldValue}) => (
                                 <Form>
                                     <FormStepper
                                         stateId={stateId}
