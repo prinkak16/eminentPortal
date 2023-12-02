@@ -209,7 +209,7 @@ const FileStatus = () => {
                                 <span className='user-id-tag d-block '>Remarks</span>
                                 <span className='mt-2'>{item.file_remarks}</span>
                             </div>
-                            <div className='ml-auto'>
+                            <div className='ml-auto mt-auto'>
                                 <button className='view-history-button' onClick={() => showHistory(item.id)}>View Application History
                                     <span
                                         className={`${openHistory === item.id ? 'rotate-180' : ''}`}><FontAwesomeIcon
