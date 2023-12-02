@@ -176,6 +176,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         onSwitchTab(newValue);
     };
 
+
+
     const handleDownload = () => {
         const url = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
         window.location.href = url;
@@ -349,19 +351,31 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const handleBasicTabChange = (basicTabValue) => {
         setBasicTabId(basicTabValue);
     }
-
+    const tabsView = () => {
+        if (IsViewTabs === 1 || IsViewTabs === '1') {
+            return <TabList onChange={handleChange}
+                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
+                            aria-label="lab API tabs example">
+                <Tab label="Home" value="home_table"/>
+            </TabList>
+        } else {
+            return <TabList onChange={handleChange}
+                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
+                            aria-label="lab API tabs example">
+                <Tab label="Home" value="home_table"/>
+                <Tab label="Allotment" value="allotment"/>
+                <Tab label="File Status" value="file_status"/>
+                <Tab label="Master of Vacancies" value="master_of_vacancies"/>
+                <Tab label="Slotting" value="slotting"/>
+                <Tab label="GOM Management" value="gom_management"/>
+            </TabList>
+        }
+    }
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
-                        <Tab label="Home" value="home_table" />
-                        <Tab label="Allotment" value="allotment" />
-                        <Tab label="File Status" value="file_status" />
-                        <Tab label="Master of Vacancies" value="master_of_vacancies" />
-                        <Tab label="Slotting" value="slotting" />
-                        <Tab label="GOM Management" value="gom_management" />
-                    </TabList>
+                    {tabsView()}
                     {buttonContent}
                 </Box>
                 <TabPanel value="home_table">

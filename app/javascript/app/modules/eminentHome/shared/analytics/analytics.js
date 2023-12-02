@@ -78,7 +78,39 @@ const Analytics = (props) => {
 
                     }
                     break;
-
+                    case 'file_status':
+                        switch (value) {
+                            case'overall': {
+                                label = 'Total Persons';
+                                icon = <TotalEminent/>;
+                                break;
+                            }
+                            case
+                            'completed'
+                            : {
+                                label = 'File in Progress ';
+                                iconType = 'png';
+                                icon = 'https://storage.googleapis.com/public-saral/public_document/checklist (1) 1.png';
+                                break;
+                            }
+                            case
+                            'incomplete'
+                            : {
+                                label = 'Dropped file';
+                                iconType = 'png';
+                                icon = 'https://storage.googleapis.com/public-saral/public_document/IncompleteFileIcon1.png';
+                                break;
+                            }
+                            case
+                            'Verified'
+                            : {
+                                label = 'Verified Persons';
+                                iconType = 'png';
+                                icon = 'https://storage.googleapis.com/public-saral/public_document/IncompleteFileIcon1.png';
+                                break;
+                            }
+                        }
+                        break;
                     case 'allotment':
                         switch (value) {
                             case'incomplete': {
