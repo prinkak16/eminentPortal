@@ -207,6 +207,7 @@ border: solid 1px rgba(0,0,0,0.3);
   background: lightgray 50%;
 }
 
+
 .dropdown-menu>li{
   cursor: pointer;
 }
@@ -286,5 +287,4 @@ font-size: 1rem !important;
 }
 
 .edit-box-container .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.home-edit-list.css-1ps6pg7-MuiPaper-root {
-  position: absolute;
 }
