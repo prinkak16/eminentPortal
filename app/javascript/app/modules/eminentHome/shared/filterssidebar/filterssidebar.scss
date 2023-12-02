@@ -44,3 +44,36 @@
 .srchfilter input.MuiInputBase-input{
   padding: 6px 3px;
 }
+
+.filter-container {
+  overflow-y: auto;
+  height: 95vh;
+}
+
+.filter-container::-webkit-scrollbar {
+  width: 0rem
+}
+
+.eminent-status-update-text {
+  padding: 1rem;
+  width: 97%;
+  height: 100px;
+  border: 1px solid lightgray;
+  resize: none;
+  border-radius: 1rem;
+}
+
+.eminent-text-container {
+  margin-top: 1.3rem;
+  padding-left: 1rem;
+}
+
+.list-container {
+  height: 10rem;
+  overflow: auto;
+}
+
+.list-container::-webkit-scrollbar {
+  width: 0rem
+}
+

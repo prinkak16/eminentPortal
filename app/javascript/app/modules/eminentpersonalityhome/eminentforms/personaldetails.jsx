@@ -297,8 +297,7 @@ const PersonalDetails = (props) => {
                                 <ErrorMessage name="languages" style={{color:'red'}} component="p" />
                                 <div className="language-container" onClick={() => openLangDrawer()}>
                                     <span>Select Languages</span>
-                                    <span
-                                        className={`arrow-down-icon ${langDrawer ? 'rotate-180' : ''}`}><FontAwesomeIcon
+                                    <span className={`arrow-down-icon ${langDrawer ? 'rotate-180' : ''}`}><FontAwesomeIcon
                                         icon={faChevronDown}/></span>
                                 </div>
                                 {!langDrawer && selectedLanguages.length > 0 ?
