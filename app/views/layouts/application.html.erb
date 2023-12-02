@@ -11,6 +11,9 @@
     <% if defined?(candidate_login_var) %>
       <div id="my-element" data-ruby-variable="<%= candidate_login_var %>"></div>
     <% end %>
+    <script>
+        var IsViewTabs = <%= ENV['IS_PROD_READY'] %>;
+    </script>
   </head>
 
   <body>
