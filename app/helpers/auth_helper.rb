@@ -38,12 +38,20 @@ module AuthHelper
   end
 
   def handle_api_auth(api_token:)
-    
     jti_token = JWT.decode api_token, ccdms_secret_key
     if jti_token[0]['user_id'].present?
       return User.find_by(jti: jti_token[0]['user_id'])&.id
     else
       return nil
+    end
+  end
+
+  def sync_admin_status(user_id)
+    permission_exist = is_permissible('EminentAdmin', 'IsAdmin')
+    if permission_exist.nil?
+      AuthUser.where(id: user_id).update(is_admin: false)
+    else
+      AuthUser.where(id: user_id).update(is_admin: true)
     end
   end
 end
