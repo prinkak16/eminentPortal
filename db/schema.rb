@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_03_070353) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.string "phone_number"
     t.integer "assist_to_id"
     t.datetime "deleted_at"
+    t.boolean "is_admin", default: false
     t.index ["name"], name: "index_user_name_search", opclass: :gin_trgm_ops, using: :gin
   end
 
