@@ -133,6 +133,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
+                    setSelectedFile(null); // Reset selectedFile to null or initial value
                     setWantToUpload(false);
                     setEmail(''); // Reset email holder to an empty string
                 });
@@ -321,7 +322,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                        <div>
                            <div className="d-flex justify-content-between">
                                <h6 >Upload .csv or Excel file</h6>
-                               <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); handleEmailChange({ target: { value: '' } }); }}>
+                               <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false);  setSelectedFile(null);  handleEmailChange({ target: { value: '' } }); }}>
                                    <CloseIcon />
                                </p>
                            </div>
