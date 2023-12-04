@@ -291,10 +291,10 @@ function GomPage({ tabId, filterString }) {
                                     {gomTableData.map((data, index) => (
                                         <tr key={data} style={{ border: "2px solid #F8F8F8", padding: "5px", height: "40px" }}>
                                             <td style={{ border: "2px solid #F8F8F8", padding: "5px", textAlign: "left" }}>{index + 1}</td>
-                                            <td style={{ textAlign: "left" }}>{data.name}</td>
-                                            <td style={{ textAlign: "left" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
-                                            <td style={{ textAlign: "left" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
-                                            <td style={{ textAlign: "left" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
+                                            <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.name}</td>
+                                            <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
+                                            <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
+                                            <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
                                             <td onClick={() => handleEditClick(data)} style={{ cursor: 'pointer', textAlign: "left" }}>
                                                 <EditIcon />
                                             </td>
