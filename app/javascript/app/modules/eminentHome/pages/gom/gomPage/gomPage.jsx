@@ -147,7 +147,8 @@ function GomPage({ tabId, filterString }) {
 
             fetchData();
 
-            // Show success toast
+            setWantToEdit(false);
+
             toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
         } catch (error) {
             // Handle errors and show error toast
