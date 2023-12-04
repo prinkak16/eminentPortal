@@ -77,7 +77,7 @@ function GomPage({ tabId, filterString }) {
                     getMinistry().then((res) => {
                         setMinistryData(res.data.data.ministries);
                         // Handle other data or state updates as needed
-                        fetchData();
+                                fetchData();
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -124,7 +124,7 @@ function GomPage({ tabId, filterString }) {
 
         // Check if both assigned and own ministry arrays are empty
         if (assignedMinistryIds.length === 0 && ownMinistryIds.length === 0) {
-            // Optionally, you can handle the case where both arrays are empty
+            toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
             return;
         }
 
@@ -279,23 +279,23 @@ function GomPage({ tabId, filterString }) {
                                 </div>
                             </div>
                             {gomTableData.length ? (
-                                <table className="mt-4">
+                                <table className="mt-4" style={{ color: "#343434", fontFamily: "Barlow", fontSize: "14px", fontStyle: "normal", fontWeight: "500", lineHeight: "normal" }}>
                                     <tr style={{ borderBottom: "1px solid #F8F8F8", height: "50px" }}>
-                                        <th style={{ backgroundColor: "#F8F8F8", height: "50px" }}>S.No. </th>
-                                        <th style={{ backgroundColor: "#F8F8F8" }}>Minister Name</th>
-                                        <th style={{ backgroundColor: "#F8F8F8" }}>Assigned Ministry</th>
-                                        <th style={{ backgroundColor: "#F8F8F8" }}>Their own ministry</th>
-                                        <th style={{ backgroundColor: "#F8F8F8" }}>Assigned States</th>
-                                        <th style={{ backgroundColor: "#F8F8F8" }}>Action</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", height: "50px", textAlign: "left" }}>S.No. </th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Minister Name</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned Ministry</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Their own ministry</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned States</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Action</th>
                                     </tr>
                                     {gomTableData.map((data, index) => (
                                         <tr key={data} style={{ border: "2px solid #F8F8F8", padding: "5px", height: "40px" }}>
-                                            <td style={{ border: "2px solid #F8F8F8", padding: "5px" }}>{index + 1}</td>
-                                            <td>{data.name}</td>
-                                            <td>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
-                                            <td>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
-                                            <td>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={() => handleEditClick(data)}   style={{ cursor: 'pointer' }}>
+                                            <td style={{ border: "2px solid #F8F8F8", padding: "5px", textAlign: "left" }}>{index + 1}</td>
+                                            <td style={{ textAlign: "left" }}>{data.name}</td>
+                                            <td style={{ textAlign: "left" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
+                                            <td style={{ textAlign: "left" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
+                                            <td style={{ textAlign: "left" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
+                                            <td onClick={() => handleEditClick(data)} style={{ cursor: 'pointer', textAlign: "left" }}>
                                                 <EditIcon />
                                             </td>
                                         </tr>
@@ -392,7 +392,7 @@ function GomPage({ tabId, filterString }) {
                                 getOptionLabel={(option) => option.name}
                                 value={ministerData.find((minister) => minister.id === editMinisterData.ministerId) || null}
                                 disabled
-                                sx={{ width: '200px'}}
+                                sx={{ width: '225px', marginLeft: '5px'}}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -408,7 +408,7 @@ function GomPage({ tabId, filterString }) {
                                         data={ministryData}
                                         initialValue={editMinisterData?.assigned_ministries}
                                         onSelectMinistries={handleAssignedMinistryChange}
-                                        style={{ width: "200px", margin: 1 }}
+                                        style={{ width: "225px", margin: 1 }}
                                     />
                                 </div>
                                 <div style={{ marginTop: "10px" }}>
@@ -417,7 +417,7 @@ function GomPage({ tabId, filterString }) {
                                         data={ministryData}
                                         initialValue={ editMinisterData?.allocated_ministries}
                                         onSelectMinistries={handleOwnMinistryChange}
-                                        style={{ width: "200px", margin: 1 }}
+                                        style={{ width: "225px", margin: 1 }}
                                     />
                                 </div>
                             </div>
@@ -434,7 +434,7 @@ function GomPage({ tabId, filterString }) {
                         <button
                             className="Update-btn"
                             onClick={handleUpdateClick}
-                            disabled={assignedMinistryIds.length === 0 && ownMinistryIds.length === 0}
+                            // disabled={assignedMinistryIds.length === 0 && ownMinistryIds.length === 0}
                         >
                             Update
                         </button>
