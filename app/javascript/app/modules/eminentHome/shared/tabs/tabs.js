@@ -20,7 +20,6 @@ import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
 import UploadFile from "../../../../../../../public/images/upload_file.svg";
 import {useParams} from 'react-router-dom';
-import FileStatus from "../../pages/fileStatus/fileStatus";
 
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
@@ -36,8 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
-    // const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
-    const [basicTabId, setBasicTabId] = useSearchParams(  {basicTabId: 'home_table'});
+    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -92,8 +90,28 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-    const handleSubmitUpload = () => {
-        if (selectedFile) {
+
+        const handleSubmitUpload = () => {
+            // Check if email is not entered
+            if (!email) {
+                toast.error("Error: Please enter an email");
+                return;
+            }
+
+            // Check if a file is selected
+            if (!selectedFile) {
+                toast.error("Error: Please select a file to upload");
+                return;
+            }
+
+            // Validate the email format
+            if (!validateEmail(email)) {
+                setIsValidEmail(false);
+                toast.error("Error: Please enter a valid email");
+                return;
+            }
+
+            // Continue with file upload
             const formData = new FormData();
             formData.append('file', selectedFile);
 
@@ -106,7 +124,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     if (data.success) {
                         toast.success("File uploaded successfully");
                     } else {
-                        toast.error("Error: Please enter email or upload the file correctly");
+                        toast.error("Error: Please upload Valid File");
                     }
                 })
                 .catch(error => {
@@ -116,12 +134,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 .finally(() => {
                     // Close the modal or perform any cleanup
                     setWantToUpload(false);
+                    setEmail(''); // Reset email holder to an empty string
                 });
-        } else {
-            // Handle the case where no file is selected (optional)
-            toast.error("Error: Please select a file to upload");
-        }
-    };
+        };
 
 
 
@@ -175,8 +190,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         setValue(newValue);
         onSwitchTab(newValue);
     };
-
-
 
     const handleDownload = () => {
         const url = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
@@ -308,7 +321,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                        <div>
                            <div className="d-flex justify-content-between">
                                <h6 >Upload .csv or Excel file</h6>
-                               <p style={{cursor: "pointer"}} onClick={()=> setWantToUpload(false)}><CloseIcon/></p>
+                               <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); handleEmailChange({ target: { value: '' } }); }}>
+                                   <CloseIcon />
+                               </p>
                            </div>
                            <div >
                                <div className="uploadBox">
@@ -325,8 +340,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                            value={email}
                                            onChange={(e) => handleEmailChange(e)}
                                            required
+                                           style={{ width: '300px' }} // Adjust the width value as needed
                                        />
-                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload} disabled={!email}>
+                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
                                        Submit
                                    </button>
                                </div>
@@ -351,31 +367,19 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const handleBasicTabChange = (basicTabValue) => {
         setBasicTabId(basicTabValue);
     }
-    const tabsView = () => {
-        if (IsViewTabs === 1 || IsViewTabs === '1') {
-            return <TabList onChange={handleChange}
-                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
-                            aria-label="lab API tabs example">
-                <Tab label="Home" value="home_table"/>
-            </TabList>
-        } else {
-            return <TabList onChange={handleChange}
-                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
-                            aria-label="lab API tabs example">
-                <Tab label="Home" value="home_table"/>
-                <Tab label="Allotment" value="allotment"/>
-                <Tab label="File Status" value="file_status"/>
-                <Tab label="Master of Vacancies" value="master_of_vacancies"/>
-                <Tab label="Slotting" value="slotting"/>
-                <Tab label="GOM Management" value="gom_management"/>
-            </TabList>
-        }
-    }
+
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    {tabsView()}
+                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
+                        <Tab label="Home" value="home_table" />
+                        <Tab label="Allotment" value="allotment" />
+                        <Tab label="File Status" value="file_status" />
+                        <Tab label="Master of Vacancies" value="master_of_vacancies" />
+                        <Tab label="Slotting" value="slotting" />
+                        <Tab label="GoM MANAGEMENT" value="gom_management" />
+                    </TabList>
                     {buttonContent}
                 </Box>
                 <TabPanel value="home_table">
@@ -386,8 +390,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <Allotment  tabId={value}/>
                 </TabPanel>
                 <TabPanel value="file_status">
-                    <FileStatus />
-                    {/*<Typography>File Status Page coming soon.....</Typography>*/}
+                    <Typography>File Status Page coming soon.....</Typography>
                 </TabPanel>
                 <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>
