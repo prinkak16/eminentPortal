@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,7 +24,10 @@ import {
 import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from '@mui/material/TextField';
-function GomPage({ tabId, filterString }) {
+import {ApiContext} from "../../../../ApiContext";
+import {isValuePresent} from "../../../../utils";
+function GomPage({ tabId, filterString, clearFilter }) {
+    const {resetFilter,setResetFilter} = useContext(ApiContext)
     const [gomTableData, setGomTableData] = useState([]);
     const [pageCount, setPageCount] = useState(0);
     const hiddenFileInput = useRef(null);
@@ -76,8 +79,9 @@ function GomPage({ tabId, filterString }) {
                     // Normal API call without filters
                     getMinistry().then((res) => {
                         setMinistryData(res.data.data.ministries);
-                        // Handle other data or state updates as needed
+
                                 fetchData();
+                                setResetFilter(false);
                     });
                 }
                 axios.get('/api/v1/gom/minister_list').then((res) => {
@@ -87,6 +91,17 @@ function GomPage({ tabId, filterString }) {
 
 
             },  [filterString, ministerSearch, ministrySearch]);
+
+
+    useEffect(() => {
+        if (isValuePresent(resetFilter)) {
+            console.log('resetFilter', resetFilter)
+            fetchData();
+
+        }
+        setResetFilter(false);
+    }, [resetFilter]);
+
 
     const fetchData = async () => {
         try {
@@ -157,14 +172,7 @@ function GomPage({ tabId, filterString }) {
     };
 
 
-        const handleDownload = (url) => {
-            const link = document.createElement('a');
-            link.href = 'url';
-            link.download = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        };
+
 
 
         const handleClick = event => {
@@ -172,22 +180,6 @@ function GomPage({ tabId, filterString }) {
             setPageCount(Math.ceil(apiData.length / itemsPerPage));
         };
 
-        const handleSubmit = () => {
-            // Ensure selectedFile is not null before proceeding
-            if (selectedFile) {
-                // You can perform actions with the selected file, for example, include it in the request payload
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-
-                axios.post('/api/v1/gom/manual_upload/minister_assistant_mapping', formData)
-                    .then(res => {
-                        setMinisterData(res.data);
-                    })
-                    .catch(error => {
-                        // Handle errors as needed
-                    });
-            }
-        };
 
     const handleEditClick = (data) => {
         setEditMinisterData({
@@ -199,19 +191,8 @@ function GomPage({ tabId, filterString }) {
         });
         setWantToEdit(true);
     };
-        const uploadFile = () => {
-            hiddenFileInput.current.click();
-        }
 
-        const handleChange = event => {
-            const fileUploaded = event.target.files[0];
-            // You can add additional logic here to validate the file if needed
-            // Example: Check if the file is not null
-            if (fileUploaded) {
-                // You can perform actions with the file, for example, set it in state
-                setSelectedFile(fileUploaded);
-            }
-        };
+
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
@@ -335,43 +316,7 @@ function GomPage({ tabId, filterString }) {
                     </div>
                 </div>
 
-                <Modal
-                    // contentClassName="deleteModal"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                    show={wantToUpload}
-                >
-                    <Modal.Body>
-                        <div>
-                            <div className="d-flex justify-content-between">
-                                <h6 >Upload .csv or Excel file</h6>
-                                <p style={{cursor: "pointer"}} onClick={()=> setWantToUpload(false)}><CloseIcon/></p>
-                            </div>
-                            <div >
-                                <div className="uploadBox">
-                                    <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
 
-                                        <UploadFile onClick={()=> uploadFile()}/>
-                                    </div>
-                                    <p className="d-flex justify-content-center">Drag and Drop .CSV or Excel file here </p>
-                                    <p className="d-flex justify-content-center">or</p>
-                                    <p className="d-flex justify-content-center">Click here to upload</p>
-                                    <input
-                                        type="file"
-                                        ref={hiddenFileInput}
-                                        onChange={handleChange}
-                                        style={{ display: 'none' }}
-                                    />
-                                    <input placeholder="Enter Email" type="email"/>
-                                    <button className="Submit" onClick={handleSubmit} >
-                                        Submit
-                                    </button>
-                                </div>
-                                <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload("url from api")}>Download sample file</p>
-                            </div>
-                        </div>
-                    </Modal.Body>
-                </Modal>
 
                 <Modal
                     // contentClassName="deleteModal"

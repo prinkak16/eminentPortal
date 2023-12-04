@@ -103,23 +103,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-    const uploadExcell = (event) => {
-        console.log(event)
-        const file = event.target.file;
-        const allowedExtensions = ['.csv'];
-
-        if (file) {
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-            if (allowedExtensions.includes('.' + fileExtension)) {
-                setFileName(file.name);
-                setExcelFile(file);
-            } else {
-                alert('Please upload CSV files with .csv extension.');
-            }
-        }
-    };
-
-
         const handleSubmitUpload = () => {
             // Check if email is not entered
             if (!email) {
