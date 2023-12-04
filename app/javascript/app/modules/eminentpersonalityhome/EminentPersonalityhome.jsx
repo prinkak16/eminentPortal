@@ -22,7 +22,7 @@ const EminentPersonality = () => {
         fetchUser(config).then(res => {
             setBackDropToggle(false)
             setEminentData(res.data.data.data)
-            if (['approved', 'rejected'].includes(res.data.data.aasm_state)) {
+            if (['approved'].includes(res.data.data.aasm_state)) {
                 setViewMode('view')
             }
             setUserStateId(res.data.data.country_state_id)

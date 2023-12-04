@@ -1,0 +1,47 @@
+.vertical-stepper-container {
+    background: rgb(13, 202, 240,0.05) !important;
+    width: 99% !important;
+    margin-left: 1rem !important;
+    margin-top: 1rem;
+    border-radius: 10px
+}
+.css-16r9pk3 {
+    max-width: 1600px !important;
+}
+
+.vertical-stepper {
+    padding-left: 1.5rem;
+}
+
+.uncompleted-steps .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+    color: rgba(0, 0, 0, 0.38) !important;
+}
+
+.completed-steps .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+    color: #4cd964 !important;
+}
+
+.vertical-stepper-description {
+    margin-left: 2rem !important;
+    font-size: 0.8rem !important;
+}
+
+.MuiStepConnector-root span {
+    border-left-width: 3px !important;
+    height: 3rem !important;
+    margin-left: -0.1rem !important;
+}
+
+.completed-steps + .MuiStepConnector-root span {
+    border-color: #4cd964 !important;
+    margin-top: -2rem !important;
+}
+
+
+.uncompleted-steps + .MuiStepConnector-root span {
+    margin-top: -0.5rem !important;
+}
+
+.after-first-step span {
+    margin-top: -0.25rem;
+}

@@ -63,7 +63,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           ministry_name: row[2],
           department_name: row[3],
           organization_name: row[4],
-          state_name: row[5],
+          is_listed: row[5],
           designation: row[6],
           error: '',
           success: false
@@ -81,17 +81,16 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           next
         end
 
-        # compute state
-        state_id_v = nil
-        if row_data[:state_name].present?
-          state_details = CountryState.find_by(name: row_data[:state_name])
-          if state_details.nil?
-            row_data[:error] = 'Please provide a valid slotted state name.'
-            upload_result << row_data
-            next
-          else
-            state_id_v = state_details[:id]
-          end
+        unless row_data[:is_listed].present?
+          row_data[:error] = 'Please provide a valid is listed(YES/NO).'
+          upload_result << row_data
+          next
+        end
+
+        unless %w[YES NO].include? row_data[:is_listed]
+          row_data[:error] = 'Please provide a valid is listed(YES/NO).'
+          upload_result << row_data
+          next
         end
 
         # compute ministry
@@ -136,6 +135,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             name: row_data[:organization_name],
             slug: organization_slug
           ).first_or_create!
+          organization_details.update(is_listed: row_data[:is_listed])
           organization_id_v = organization_details[:id].present? ? organization_details[:id] : nil
         end
 
@@ -167,7 +167,6 @@ class Api::V1::Vacancy::UploadController < BaseApiController
                 ministry_id: ministry_id_v,
                 department_id: department_id_v,
                 organization_id: organization_id_v,
-                country_state_id: state_id_v,
                 designation: row_data[:designation]
               )
               row_data[:success] = true
@@ -195,7 +194,6 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             ministry_id: ministry_id_v,
             department_id: department_id_v,
             organization_id: organization_id_v,
-            country_state_id: state_id_v,
             designation: row_data[:designation]
           )
           vacancy.save
@@ -208,12 +206,12 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
       csv_string = CSV.generate do |csv|
         csv << [
-          'Action',
+          'Action(ADD, EDIT, DELETE)',
           'Vacancy Id',
           'Ministry Name',
           'Department Name',
           'Organization Name',
-          'State Name',
+          'Is Listed(YES/NO)',
           'Designation',
           'Error',
           'Success'
@@ -225,7 +223,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             csv_row_data[:ministry_name],
             csv_row_data[:department_name],
             csv_row_data[:organization_name],
-            csv_row_data[:state_name],
+            csv_row_data[:is_listed],
             csv_row_data[:designation],
             csv_row_data[:error],
             csv_row_data[:success]

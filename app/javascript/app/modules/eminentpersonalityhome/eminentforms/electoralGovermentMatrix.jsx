@@ -10,7 +10,7 @@ import {getLocationsData, getStateData} from "../../../api/stepperApiEndpoints/s
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled}) => {
+const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled,resetFormIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [ministriesField, setMinistriesFields] = useState([]);
     const [editField, setEditField] = useState(0);
@@ -198,11 +198,11 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
     useEffect(() => {
         if (isValuePresent(electionTypeChange)) {
-            setFieldsData({})
+            if (resetFormIndex === formIndex) {
+                setFieldsData({})
+            }
         }
     },[electionTypeChange])
-
-
 
 
     return (

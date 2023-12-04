@@ -45,4 +45,13 @@ module AuthHelper
       return nil
     end
   end
+
+  def sync_admin_status(user_id)
+    permission_exist = is_permissible('EminentAdmin', 'IsAdmin')
+    if permission_exist.nil?
+      AuthUser.where(id: user_id).update(is_admin: false)
+    else
+      AuthUser.where(id: user_id).update(is_admin: true)
+    end
+  end
 end

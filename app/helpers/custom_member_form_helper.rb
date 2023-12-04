@@ -690,14 +690,11 @@ module CustomMemberFormHelper
         'bjp_id': {
           'type': 'string'
         },
-        'grade': {
-          'type': 'string'
-        },
         'comments': {
           'type': 'string'
         }
       },
-      'required': %w[name mobile bjp_id grade comments]
+      'required': %w[name mobile bjp_id comments]
     }
   )
 

@@ -27,6 +27,7 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
             console.error(error);
         })
     }
+
     useEffect(() => {
         setIsFetching(true);
         displayMinistryData();
