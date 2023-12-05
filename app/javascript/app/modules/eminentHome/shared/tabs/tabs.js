@@ -479,7 +479,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <Allotment  tabId={value}/>
                 </TabPanel>
                 <TabPanel value="file_status">
-                    <Typography>File Status Page coming soon.....</Typography>
+                    <FileStatus />
                 </TabPanel>
                 <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>
