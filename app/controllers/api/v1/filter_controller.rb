@@ -126,4 +126,19 @@ class Api::V1::FilterController < BaseApiController
 
     render json: { success: true, data: result, message: 'Slotting filters.' }, status: 200
   end
+
+  def allotment_eminents
+    result = {
+      'filters': [
+        get_entry_type_filter,
+        get_qualification_filter,
+        get_profession_filter,
+        get_category_filter,
+        get_gender_filter,
+        get_age_group_filter
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'Allotment Eminent Filters.' }, status: 200
+  end
 end
