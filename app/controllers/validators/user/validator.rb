@@ -30,8 +30,7 @@ module Validators
               'items': {
                 'type': 'integer',
                 'minimum': 1 # Min length of 3 characters
-              },
-              'minItems': 1, # Min length of 1 phone number
+              }
             }
           },
           'required': %w[
