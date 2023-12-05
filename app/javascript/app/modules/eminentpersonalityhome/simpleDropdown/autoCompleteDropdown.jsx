@@ -12,13 +12,14 @@ const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dro
     return (
         <div>
             <Autocomplete
+                placeholder={name}
                 disabled={disabled}
                 className={classes}
                 value={selectedValue}
                 onChange={onChange}
                 id="autocomplete"
                 options={listArray}
-                renderInput={(params) => <TextField {...params} label={`${isValuePresent(selectedValue) ? '' : `Select ${name}`}`} variant="outlined" />}
+                renderInput={(params) => <TextField {...params}  placeholder={`Select ${name}`} />}
             />
         </div>
     )
