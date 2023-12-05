@@ -10,8 +10,9 @@ export const getFiltersForGOM = (params) => {
     return axios.get(apiBaseUrl + 'filters/gom_management')
 }
 
-export const getFiltersForAllotment = () => {
-    return axios.get(apiBaseUrl + 'filters/allotment')
+export const getFiltersForAllotment = (params) => {
+    console.log('params is here ',params)
+    return axios.get(apiBaseUrl + 'filters/allotment',{params})
 }
 
 // export const getVacancy
