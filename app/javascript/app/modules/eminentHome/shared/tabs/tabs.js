@@ -230,63 +230,69 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             buttonContent = null
         }
     } else if (value === 'master_of_vacancies') {
-        buttonContent =
-            <>
-                <Button className="downloadBtn" variant="primary" onClick={handleShow}>
-                   <ArrowUpwardIcon/> Upload CSV File
-                </Button>
+        if (!isValuePresent(openFilter)) {
+            buttonContent =
+                <>
+                    <Button className="downloadBtn" variant="primary" onClick={handleShow}>
+                        <ArrowUpwardIcon/> Upload CSV File
+                    </Button>
 
-                <Modal  show={show} onHide={handleClose}
-                       aria-labelledby="contained-modal-title-vcenter"
-                       centered
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ToastContainer />
-                        <div className="excel-upload d-flex align-items-center flex-column w-100">
-                            <div className='excel-icon-name'>
-                                <span className="material-icons"><PdfIcon/></span>
-                                <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
+                    <Modal  show={show} onHide={handleClose}
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                    >
+                        <Modal.Header closeButton>
+                            <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <ToastContainer />
+                            <div className="excel-upload d-flex align-items-center flex-column w-100">
+                                <div className='excel-icon-name'>
+                                    <span className="material-icons"><PdfIcon/></span>
+                                    <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
+                                </div>
+                                <div className='upload-excel-button'>
+                                    <Button component="label" variant="contained">
+                                        <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
+                                        Drag and Drop CSV file here <br/> or <br/> click here to upload
+                                    </Button>
+                                    <TextField
+                                        variant="outlined"
+                                        placeholder="Enter email"
+                                        type="email"
+                                        value={email}
+                                        onChange={handleEmailChange}
+                                        error={!isValidEmail}
+                                        helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
+                                    />
+                                </div>
                             </div>
-                            <div className='upload-excel-button'>
-                                <Button component="label" variant="contained">
-                                    <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                    Drag and Drop CSV file here <br/> or <br/> click here to upload
-                                </Button>
-                                <TextField
-                                    variant="outlined"
-                                    placeholder="Enter email"
-                                    type="email"
-                                    value={email}
-                                    onChange={handleEmailChange}
-                                    error={!isValidEmail}
-                                    helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
-                                />
-                            </div>
-                        </div>
 
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <button
-                            className="btn"
-                            onClick={handleClose}>
-                            Cancel
-                        </button>
-                        <button
-                            className="btn addNewSubmit" onClick={()  => handleSubmit()}>
-                            Submit
-                        </button>
-                        <button
-                            className="btn"
-                            onClick={downloadSampleVacancy}
-                        >
-                            Download sample file
-                        </button>
-                    </Modal.Footer>
-                </Modal>
-            </>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <button
+                                className="btn"
+                                onClick={handleClose}>
+                                Cancel
+                            </button>
+                            <button
+                                className="btn addNewSubmit" onClick={()  => handleSubmit()}>
+                                Submit
+                            </button>
+                            <button
+                                className="btn"
+                                onClick={downloadSampleVacancy}
+                            >
+                                Download sample file
+                            </button>
+                        </Modal.Footer>
+                    </Modal>
+                </>
+        } else {
+            buttonContent = null
+        }
+
+
     }
     else if (value === 'gom_management'){
         if (!isValuePresent(openFilter)) {
