@@ -97,13 +97,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         if (file) {
             // You can set the selected file to state
             setSelectedFile(file);
-
-            const fileName = file.name;
-            setFileName(fileName);
-
-
-            // If you need to perform additional actions, you can do so here
-            console.log('Selected File:', file.name);
+            setFileName( file.name);
         }
     };
 
@@ -149,7 +143,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
-                    setSelectedFile(null); // Reset selectedFile to null or initial value
                     setWantToUpload(false);
                     setEmail(''); // Reset email holder to an empty string
                 });
@@ -358,7 +351,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                <div onClick={() => uploadFile()} style={{ cursor: "pointer" }}>
                                    <div className="d-flex justify-content-center mt-4 " style={{ height: "70px", width: "70px", backgroundColor: "#D3D3D3", borderRadius: "50%", marginLeft: "200px", alignItems: "center" }}>
                                        <UploadFile style={{ cursor: "pointer" }} />
-
                                    </div>
 
                                    <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Drag and Drop .CSV or Excel file here </p>
