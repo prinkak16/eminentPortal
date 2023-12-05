@@ -90,6 +90,18 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
+    const handleFileUpload = (files) => {
+        // Assuming you want to handle only one file, you can access it using files[0]
+        const file = files[0];
+
+        if (file) {
+            // You can set the selected file to state
+            setSelectedFile(file);
+
+            // If you need to perform additional actions, you can do so here
+            console.log('Selected File:', file.name);
+        }
+    };
 
         const handleSubmitUpload = () => {
             // Check if email is not entered
@@ -133,6 +145,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
+                    setSelectedFile(null); // Reset selectedFile to null or initial value
                     setWantToUpload(false);
                     setEmail(''); // Reset email holder to an empty string
                 });
@@ -315,32 +328,46 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                    centered
                    show={wantToUpload}
                >
-                   <Modal.Body>
-                       <ToastContainer />
+                   <Modal.Body    onDragOver={(e) => {
+                       e.preventDefault();
+                       // Add styles or other feedback to indicate drop is allowed
+                   }}
+                                  onDragLeave={(e) => {
+                                      // Remove styles or other feedback when drag leaves the area
+                                  }}
+                                  onDrop={(e) => {
+                                      e.preventDefault();
+                                      // Remove styles or other feedback
+
+                                      // Handle the dropped files
+                                      const files = e.dataTransfer.files;
+                                      handleFileUpload(files);
+                                  }}>
 
                        <div>
                            <div className="d-flex justify-content-between">
                                <h6 >Upload .csv or Excel file</h6>
-                               <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); handleEmailChange({ target: { value: '' } }); }}>
+                               <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false);  setSelectedFile(null);  handleEmailChange({ target: { value: '' } }); }}>
                                    <CloseIcon />
                                </p>
                            </div>
                            <div >
                                <div className="uploadBox">
+                                   <div onClick={()=> uploadFile()} style={{cursor: "pointer"}} >
                                    <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
-
                                        <UploadFile style={{cursor: "pointer"}}  onClick={()=> uploadFile()}/>
                                    </div>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Drag and Drop .CSV or Excel file here </p>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>or</p>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Click here to upload</p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  >Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  >or</p>
+                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  >Click here to upload</p>
+                                   </div>
                                        <input
                                            placeholder="Enter Email"
                                            type="email"
                                            value={email}
                                            onChange={(e) => handleEmailChange(e)}
                                            required
-                                           style={{ width: '300px' }} // Adjust the width value as needed
+                                           style={{ width: '300px' , marginLeft: '15px'}} // Adjust the width value as needed
                                        />
                                    <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}>
                                        Submit
