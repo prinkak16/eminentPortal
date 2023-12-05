@@ -17,14 +17,14 @@
 
 .allot-b1 {
   display: flex;
-  border: 1px solid black;
   height: 100%;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
 .icon-rect {
-  height: 100%;
+  height: inherit;
+  width: inherit;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
@@ -162,6 +162,7 @@
 .arrow-pic {
   height: 20px;
   width: 20px;
+  transform: rotate(180deg);
 }
 
 .drawer-tab {

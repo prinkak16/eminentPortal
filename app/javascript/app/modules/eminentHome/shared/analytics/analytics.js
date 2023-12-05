@@ -8,7 +8,7 @@ import iconUrl from './../../../../../../../public/images/plus.svg';
 import TotalVacancy from './../../../../../../../public/images/total-mov.svg'
 import OccupiedVacancy from './../../../../../../../public/images/occupied-mov.svg'
 import VacantVacancy from './../../../../../../../public/images/vacant_mov.svg'
-import {getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
+import {allotmentBoxData, getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
 import Tooltip from "@mui/material/Tooltip";
 const Analytics = (props) => {
     const {analyticsHeading, icon, label} = props
@@ -22,7 +22,7 @@ const Analytics = (props) => {
                 })
                 break;
             case 'allotment':
-                statsData().then(res => {
+                allotmentBoxData().then(res => {
                     setHomeStats(res.data.data);
                 })
                 break;
@@ -113,20 +113,20 @@ const Analytics = (props) => {
                         break;
                     case 'allotment':
                         switch (value) {
-                            case'incomplete': {
+                            case'total': {
                                 label = 'Total Slotted Position';
                                 icon = <Incompletefile/>;
                                 break;
                             }
                             case
-                            'completed'
+                            'assigned'
                             : {
                                 label = 'Assigned';
                                 icon = <TotalEminent/>;
                                 break;
                             }
                             case
-                            'overall'
+                            'yet_to_assigned'
                             : {
                                 label = 'Yet to assign';
                                 icon = <Usergroup/>;

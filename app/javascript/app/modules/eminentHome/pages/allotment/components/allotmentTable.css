@@ -126,3 +126,12 @@
     border: none;
     border-radius: 30px;
 }
+
+.update-button-green{
+    width:70px;
+    height: 27px;
+    background-color:#61BE7A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 30px;
+}
