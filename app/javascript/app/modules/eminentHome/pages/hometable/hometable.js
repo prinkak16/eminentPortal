@@ -89,9 +89,6 @@ const HomeTable = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("current value of showFreeze ", showFreeze);
-  }, [showFreeze]);
 
   const deleteCurrentMember = (deleteId) => {
     setDeleteMemberId(deleteId);

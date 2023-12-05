@@ -233,7 +233,7 @@ const Communicationform =(props)=>{
 
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box className='max-wid' sx={{ flexGrow: 1 }}>
                 <Stack direction="row" useFlexGap flexWrap="wrap">
                     <Formheading number="1" heading="Communication" />
                     <Item sx={{textAlign:'right'}}>
@@ -285,7 +285,7 @@ const Communicationform =(props)=>{
                                 <Grid item xs={6}>
                                     <FormLabel className='mobile-label'>Landline</FormLabel>
                                     <Grid className='detailFrom' container spacing={2}>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={4}>
                                             <NumberField
                                                 disabled={isViewDisabled}
                                                 className='std-code-input'

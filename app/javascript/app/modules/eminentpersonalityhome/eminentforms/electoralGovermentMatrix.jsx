@@ -219,7 +219,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                             <div className='electoral-form-fields'>
                                 {
                                     f.type === 'dropdown' &&
-                                    <Grid item xs={4} className={`${f.name === 'State' ? 'width-22rem' : 'width-22rem margin-left-3-rem'}` }>
+                                    <Grid item xs={4} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
                                         <FormLabel>{f.name}
                                             <mark>*</mark>
                                         </FormLabel>

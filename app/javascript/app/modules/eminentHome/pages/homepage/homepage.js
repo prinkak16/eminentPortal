@@ -26,6 +26,7 @@ import PlusIcon from './../../../../../../../public/images/plus.svg'
 import {HomeContext} from "../../../../context/tabdataContext";
 import {useParams} from 'react-router-dom';
 import {ApiContext} from "../../../ApiContext";
+import {getStepCtgry, userPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 
 
 const drawerWidth = 240;
@@ -120,6 +121,14 @@ export default function PersistentDrawerLeft() {
     const updateToggle = (id) => {
         setToggle(id);
     }
+
+    useEffect(() => {
+        userPermissions().then(
+            (res) => {
+              console.log(res.data)
+            }
+        )
+    },[])
 
 
     const  navigateForm = () => {
