@@ -46,6 +46,11 @@ export const getFileUpload = async (file, config,isCandidateLogin, setBackDropTo
     return url
 }
 
+
+export const userPermissions = () => {
+    return axios.get(apiBaseUrl + 'metadata/user_permissions',{
+    })
+}
 export const getStepCtgry = (config) => {
     return axios.get(apiBaseUrl + 'metadata/categories',{
         params: {
@@ -85,6 +90,7 @@ export const eminentAdminLogout = () => {
 export const eminentAdminDetails = () => {
     return axios.get(apiBaseUrl + 'auth_user/details')
 }
+
 
 export const getLocationsData = (params) => {
     return axios.get(apiBaseUrl + 'metadata/get_required_locations' + params)
