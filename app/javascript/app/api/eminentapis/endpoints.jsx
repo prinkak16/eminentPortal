@@ -10,6 +10,10 @@ export const getFiltersForGOM = (params) => {
     return axios.get(apiBaseUrl + 'filters/gom_management')
 }
 
+export const getFiltersForAllotment = () => {
+    return axios.get(apiBaseUrl + 'filters/allotment')
+}
+
 // export const getVacancy
 export const getData = (filters = '') => {
     return axios.get(apiBaseUrl + 'custom_member_forms/list?type=eminent_personality' + filters);
@@ -19,6 +23,14 @@ export const getVacancyAnalytics=()=>{
 }
 export const statsData = () => {
     return axios.get(apiBaseUrl + '/stats/home');
+}
+
+export const allotmentBoxData = () => {
+    return axios.get(apiBaseUrl + 'allotment/position_analytics');
+}
+
+export const allotmentListData = (offset,limit, filterparams) => {
+    return axios.get(`${apiBaseUrl}/allotment/list?${filterparams}&offset=${offset}&limit=${limit}`);
 }
 
 export const deleteMember = (deleteId) => {

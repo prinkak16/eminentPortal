@@ -369,7 +369,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 </TabPanel>
 
                 <TabPanel value="allotment">
-                    <Allotment  tabId={value}/>
+                    <Allotment  filterString={filterString} tabId={value}/>
                 </TabPanel>
                 <TabPanel value="file_status">
                     <FileStatus />

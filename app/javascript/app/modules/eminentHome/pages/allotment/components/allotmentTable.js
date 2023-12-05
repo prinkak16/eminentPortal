@@ -1,139 +1,165 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Backdrop, CircularProgress
+} from "@mui/material";
 import ReactPaginate from "react-paginate";
-import '../components/allotmentTable.css';
+import "../components/allotmentTable.css";
 import SearchIcon from "../../../../../../../../public/images/search.svg";
 import ArrowDownward from "../../../../../../../../public/images/si_File_download.svg";
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
+import { allotmentListData } from "../../../../../api/eminentapis/endpoints";
 
-function    AllotmentTable({setAssignShow}) {
-    const [tableData, setTableData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [pageCount, setPageCount] = useState(0);
+function AllotmentTable({ setAssignShow, filterString }) {
+  const [tableData, setTableData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
+  const itemsPerPage = 1;
 
-    function changeHandler(data) {
-        if (data.action === 'assign') {
-            setAssignShow(true);
-            console.log('Assign action clicked');
-        }
+  function changeHandler(data) {
+    if (data.vacant / data.total == 1) {
+      setAssignShow(true);
+    } else {
+      setAssignShow(true);
     }
+  }
 
-    const fetchTableData = () => {
+  const fetchTableData = () => {
+    allotmentListData(itemsPerPage * currentPage, itemsPerPage, filterString)
+      .then((res) => {
+        setTableData(res?.data?.data?.value);
+        setIsFetching(false);
+        setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-        const apiData =[
-           {
-            psu_psb:"National Security Solution Corporation (NSSC)",
-            ministry:"Ministry of Interior",
-            vacancy:2,
-            department:"Ensure Put",
-            listed:"yes",
-            action:"assign"
-        },
-        {
-            psu_psb:"National Security Solution Corporation (NSSC)",
-            ministry:"Ministry of Interior",
-            vacancy:2,
-            department:"Ensure Put",
-            listed:"yes",
-            action:"update"
-        },
-        {
-            psu_psb:"National Security Solution Corporation (NSSC)",
-            ministry:"Ministry of Interior",
-            vacancy:2,
-            department:"Ensure Put",
-            listed:"yes",
-            action:"assign"
-        }
-    ];
+  useEffect(() => {
+    fetchTableData();
+    setIsFetching(true);
+  }, [currentPage, filterString]);
 
-        setTableData(apiData);
-        const itemsPerPage = 5;
-        setPageCount(Math.ceil(apiData.length / itemsPerPage));
-    };
+  console.log("Shubhank data", tableData);
 
-    useEffect(() => {
-        fetchTableData();
-    }, []);
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+  };
 
-    const handlePageChange = (selectedPage) => {
-        setCurrentPage(selectedPage.selected);
-    };
+  return (
 
-
-
-    return (
-        <div className="allotment-table">
-            <div className='wrap'>
-                <div className="search-box">
-                    <SearchIcon className="searchIcon" />
-                    <input type="text" placeholder="Search by PSU or Ministry" className="allot-searchField" />
-                </div>
-                <button className="allot-download-btn">Download <ArrowDownward /></button>
-            </div>
-            <div className="table_main">
-                <TableContainer component={Paper} className="psutable_1">
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>S.no.</TableCell>
-                                <TableCell>PSU/PSB</TableCell>
-                                <TableCell>Ministry</TableCell>
-                                <TableCell>Vacancy</TableCell>
-                                <TableCell>Department</TableCell>
-                                <TableCell>PSC Listed</TableCell>
-                                <TableCell className="text-center"><IconPark /></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {tableData.map((data, index) => (
-                                <TableRow key={index + 1}>
-                                    <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{data.psu_psb}</TableCell>
-                                    <TableCell>{data.ministry}</TableCell>
-                                    <TableCell>{data.vacancy}</TableCell>
-                                    <TableCell>{data.department}</TableCell>
-                                    <TableCell>{data.listed}</TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <button
-                                            variant="contained"
-                                            className={data.action === 'assign' ? 'assign-button' : 'update-button'}
-                                            onClick={() => changeHandler(data)}
-                                        >
-                                            {data.action.charAt(0).toUpperCase() + data.action.slice(1)}
-                                        </button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-
-                <div>
-                    <span className="d-flex justify-content-center pageCount">{currentPage + 1}&nbsp;of&nbsp;{pageCount}</span>
-                    <ReactPaginate
-                        breakLabel="..."
-                        nextLabel="next >"
-                        containerClassName={'pagination justify-content-end'}
-                        onPageChange={handlePageChange}
-                        pageLinkClassName={'page-link'}
-                        pageClassName={'page-item'}
-                        previousClassName={'page-item'}
-                        previousLinkClassName={'page-link'}
-                        nextClassName={'page-item'}
-                        nextLinkClassName={'page-link'}
-                        breakClassName={'page-item'}
-                        breakLinkClassName={'page-link'}
-                        activeClassName={'active'}
-                        pageRangeDisplayed={3}
-                        pageCount={pageCount}
-                        previousLabel="< previous"
-                    />
-                </div>
-            </div>
+    
+    <div className="allotment-table">
+      <div className="wrap">
+        <div className="search-box">
+          <SearchIcon className="searchIcon" />
+          <input
+            type="text"
+            placeholder="Search by PSU or Ministry"
+            className="allot-searchField"
+          />
         </div>
-    );
+        <button className="allot-download-btn">
+          Download <ArrowDownward />
+        </button>
+      </div>
+      <div className="table_main">
+
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={isFetching}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+
+        <TableContainer component={Paper} className="psutable_1">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>S.no.</TableCell>
+                <TableCell>PSU/PSB</TableCell>
+                <TableCell>Ministry</TableCell>
+                <TableCell>Vacancy</TableCell>
+                <TableCell>Department</TableCell>
+                <TableCell>PSC Listed</TableCell>
+                <TableCell className="text-center">
+                  <IconPark />
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableData.map((data, index) => (
+                <TableRow key={index + 1}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{data.org_name}</TableCell>
+                  <TableCell>{data.ministry_name}</TableCell>
+                  <TableCell>
+                    {data.occupied === 0
+                      ? data.vacant
+                      : (data.total - data.vacant) / data.total}
+                  </TableCell>
+                  <TableCell>{data.dept_name}</TableCell>
+                  <TableCell>
+                    {data.is_listed === null ? "-" : data.is_listed}
+                  </TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
+                    <button
+                      variant="contained"
+                      className={
+                        data.vacant / data.total == 1
+                          ? (className = "assign-button")
+                          : data.vacant / data.total <= 1
+                          ? (className = "update-button")
+                          : (className = "update-button-green")
+                      }
+                      onClick={() => changeHandler(data)}
+                    >
+                      {data.vacant / data.total == 1 ? "Assign" : "Update"}
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <div>
+          <span className="d-flex justify-content-center pageCount">
+            {currentPage + 1}&nbsp;of&nbsp;{pageCount}
+          </span>
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="next >"
+            containerClassName={"pagination justify-content-end"}
+            onPageChange={handlePageChange}
+            pageLinkClassName={"page-link"}
+            pageClassName={"page-item"}
+            previousClassName={"page-item"}
+            previousLinkClassName={"page-link"}
+            nextClassName={"page-item"}
+            nextLinkClassName={"page-link"}
+            breakClassName={"page-item"}
+            breakLinkClassName={"page-link"}
+            activeClassName={"active"}
+            pageRangeDisplayed={3}
+            pageCount={pageCount}
+            previousLabel="< previous"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default AllotmentTable;

@@ -15,6 +15,7 @@ import {useContext, useEffect, useState, useRef} from "react";
 import {
     getData,
     getFilters,
+    getFiltersForAllotment,
     getFiltersForGOM,
     getMinistryWiseFilterData,
     getOrganizationWiseFilterData, getSlottingFilters,
@@ -35,7 +36,7 @@ export default function FiltersSidebar(props) {
     const [searchMinisterName, setSearchMinisterName] = useState('');
     const [searchDepartmentName, setSearchDepartmentName] = useState('');
     const [searchOrganizationName, setSearchOrganizationName] = useState('');
-    const [inputSearch, setInputSearch] = useState('');
+    const [inputSearch, setInputSearch] = useState({});
     const [filtersKey, setFiltersKey] = useState([])
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
         if (!appliedFilterKey || !appliedKeyOptions) {
@@ -65,6 +66,7 @@ export default function FiltersSidebar(props) {
     }
     useEffect(() => {
         switch (props.tabId) {
+           
             case 'master_of_vacancies':
                 if (homeContext.movTabId === 'ministry_wise') {
                     const params = {
@@ -106,6 +108,16 @@ export default function FiltersSidebar(props) {
                     setFiltersList(response.data.data)
                 })
                 break;
+
+            case 'allotment':
+                const alottimentParams = {
+                    ministry_names: searchMinisterName,
+                    department_names: searchDepartmentName,
+                }
+                getFiltersForAllotment(alottimentParams).then(response =>{
+                    setFiltersList(response.data.data)
+                })
+
             case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
@@ -119,6 +131,8 @@ export default function FiltersSidebar(props) {
         }
         applyFilter();
     }, [props.tabId, homeContext.movTabId, searchMinisterName, searchDepartmentName, searchOrganizationName]);
+
+    
 
     const handleChange = (value) => (event, isExpanded) => {
         if (filtersKey.includes(value)) {
@@ -142,11 +156,12 @@ export default function FiltersSidebar(props) {
         }
     }, 1000)
 
-    const handleInputSearch = (event, identifier) => {
-        setInputSearch(event.target.value);
+    const handleInputSearch = (event, key) => {
+        const {value}=event.target;
+        setInputSearch((prevData)=>{return{...prevData,[key]:value}});
         handleSearchFilter(event, identifier);
     }
-
+    
     const isChecked = (parentKey, optionValue) => {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
         return parentOption && parentOption.selectedValues.includes(optionValue);
@@ -246,6 +261,21 @@ export default function FiltersSidebar(props) {
                                         value={inputSearch}
                                         onChange={() => handleInputSearch(event, filter.display_name)}
                                     />
+                                </FormControl>
+                            }
+
+                            {(props.tabId === 'allotment' && ['Ministry', 'Department'].includes(filter.display_name)) &&
+                                <FormControl variant="outlined" className="mb-4 srchfilter">
+                                    <Input
+                                        id={filter?.display_name}
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <SearchIcon/>
+                                            </InputAdornment>
+                                        }
+                                        value={inputSearch[filter?.display_name]}
+                                        onChange={(e) => handleInputSearch(e, filter.display_name)}
+                                    />  
                                 </FormControl>
                             }
 
