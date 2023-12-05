@@ -456,7 +456,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 <Tab label="File Status" value="file_status"/>
                 <Tab label="Master of Vacancies" value="master_of_vacancies"/>
                 <Tab label="Slotting" value="slotting"/>
-                <AntTab label="GoM Management" value="gom_management"/>
+                <AntTab label="GoM MANAGEMENT" value="gom_management"/>
             </TabList>
         }
 
