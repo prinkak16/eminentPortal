@@ -4,7 +4,7 @@ import AllotmentTable from "./components/allotmentTable";
 import AllotAssign from "./components/assign/allotAssign";
 
 
-function Allotment({tabId}) {
+function Allotment({tabId, filterString}) {
     const [assignShow, setAssignShow] = useState(false);
 
 
@@ -13,7 +13,7 @@ function Allotment({tabId}) {
             {!assignShow ? (
                 <div>
                     <Analytics tabId={tabId} assignShow={assignShow} />
-                    <AllotmentTable setAssignShow={setAssignShow}/>
+                    <AllotmentTable filterString={filterString} setAssignShow={setAssignShow}/>
                 </div>
             ) : (
                 <AllotAssign setAssignShow={setAssignShow}/>

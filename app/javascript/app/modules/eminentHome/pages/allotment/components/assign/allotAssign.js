@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../../../../eminentpersonalityhome/header/header";
-import Reactangle from "../../../../../../../../../public/images/Rectangle.svg";
+import Reactangle from "../../../../../../../../../public/images/building_icon.svg";
 import Ellipse from "../../../../../../../../../public/images/Ellipse.svg";
 import "./allotAssign.css";
 // import '../../../hometable/hometable.css'
