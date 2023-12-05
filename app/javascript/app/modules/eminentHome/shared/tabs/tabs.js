@@ -444,13 +444,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const tabsView = () => {
         if (IsViewTabs === 1 || IsViewTabs === '1') {
             return <TabList onChange={handleChange}
-                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
                             aria-label="lab API tabs example">
                 <Tab label="Home" value="home_table"/>
             </TabList>
         } else {
             return <TabList onChange={handleChange}
-                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
                             aria-label="lab API tabs example"
                             className='testing-tabList'>
                 <Tab label="Home" value="home_table"/>
