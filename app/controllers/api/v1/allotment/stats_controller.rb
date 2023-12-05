@@ -1,6 +1,6 @@
 class Api::V1::Allotment::StatsController < BaseApiController
   before_action :authenticate_user
-  include Validators::User::Validator
+  include Validators::Allotment::Validator
   include UtilHelper
   include MinistryHelper
   include UserHelper
@@ -57,7 +57,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
         stats[:assigned] = results[0]['occupied'] || 0
         stats[:yet_to_assigned] = results[0]['yet_to_assigned'] || 0
       end
-      return render json: { success: true, message: 'Success', data: stats, test: country_states }, status: :ok
+      return render json: { success: true, message: 'Success', data: stats }, status: :ok
 
     rescue StandardError => e
       return render json: {
@@ -180,6 +180,94 @@ class Api::V1::Allotment::StatsController < BaseApiController
         }
       }, status: :ok
 
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def assign_position_info
+    begin
+      # check if user have permission
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      # check if params is validated or not
+      params['organization_id'] = params['organization_id'].to_i
+      is_param_data_is_valid = validate_form(assign_position_info_validator, params.as_json)
+      unless is_param_data_is_valid[:is_valid]
+        return render json: {
+          success: false,
+          message: 'Invalid request',
+          error: is_param_data_is_valid[:error]
+        }, status: :bad_request
+      end
+
+      stats = {
+        "ministry_id": nil,
+        "ministry_name": nil,
+        "organization_id": nil,
+        "organization_name": nil,
+        "location": '{}',
+        "department_id": nil,
+        "department_name": nil,
+        "slotting_remarks": [],
+        "vacant": 0,
+        "occupied": 0,
+        "total": 0
+      }
+
+      # fetch organizations
+      sql = "
+        SELECT
+          ministry.id AS ministry_id,
+          ministry.name AS ministry_name,
+          org.id AS organization_id,
+          org.name AS organization_name,
+          org.location,
+          dept.id AS department_id,
+          dept.name AS department_name,
+          jsonb_agg(DISTINCT vac.slotting_remarks) AS slotting_remarks,
+          SUM(CASE WHEN vac.allotment_status IN ('vacant') AND vac.slotting_status = 'slotted' THEN 1 ELSE 0 END) AS vacant,
+          SUM(CASE WHEN vac.allotment_status IN ('occupied') AND vac.slotting_status = 'slotted' THEN 1 ELSE 0 END) AS occupied,
+          SUM(CASE WHEN vac.slotting_status = 'slotted' THEN 1 ELSE 0 END) AS total
+        FROM public.organizations AS org
+        LEFT JOIN public.ministries AS ministry
+        ON org.ministry_id = ministry.id
+        LEFT JOIN public.departments AS dept
+        ON org.department_id = dept.id
+        LEFT JOIN public.vacancies AS vac
+        ON org.id = vac.organization_id
+        WHERE
+          org.id = #{params['organization_id']}
+          AND
+          org.deleted_at IS null
+        GROUP BY org.id, dept.id, ministry.id
+      "
+      results = Organization.find_by_sql(sql)
+
+      if results.present? && results[0].present?
+        stats[:ministry_id] = results[0]['ministry_id'] || nil
+        stats[:ministry_name] = results[0]['ministry_name'] || nil
+        stats[:organization_id] = results[0]['organization_id'] || nil
+        stats[:organization_name] = results[0]['organization_name'] || nil
+        stats[:location] = results[0]['location'] || '{}'
+        stats[:department_id] = results[0]['department_id'] || nil
+        stats[:department_name] = results[0]['department_name'] || nil
+        stats[:slotting_remarks] = results[0]['slotting_remarks'].present? ? results[0]['slotting_remarks'].reject { |item| item.nil? || item == '' } : []
+        stats[:vacant] = results[0]['vacant'] || 0
+        stats[:occupied] = results[0]['occupied'] || 0
+        stats[:total] = results[0]['total'] || 0
+      end
+      return render json: {
+        success: true,
+        message: 'Success',
+        data: stats
+      }, status: :ok
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
