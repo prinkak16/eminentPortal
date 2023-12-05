@@ -50,6 +50,8 @@ Rails.application.routes.draw do
       get 'filters/vacancy_wise', to: 'filter#vacancy_wise'
       get 'filters/slotting', to: 'filter#slotting'
       get 'filters/allotment', to: 'filter#allotment'
+      get 'filters/allotment_eminents', to: 'filter#allotment_eminents'
+
 
       get 'stats/home', to: 'stats#home'
 
@@ -98,6 +100,8 @@ Rails.application.routes.draw do
       namespace :allotment, path: 'allotment' do
         get '/position_analytics', to: 'stats#position_analytics'
         get '/list', to: 'stats#list'
+        get '/assign_position_info/:organization_id', to: 'stats#assign_position_info'
+        get '/eminent_list', to: 'eminent#list'
       end
 
       namespace :user, path: 'user/:user_id' do
