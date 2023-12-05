@@ -38,8 +38,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
-    // const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
-    const [basicTabId, setBasicTabId] = useSearchParams(  {basicTabId: 'home_table'});
+    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -94,8 +93,40 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-    const handleSubmitUpload = () => {
-        if (selectedFile) {
+    const handleFileUpload = (files) => {
+        // Assuming you want to handle only one file, you can access it using files[0]
+        const file = files[0];
+
+        if (file) {
+            // You can set the selected file to state
+            setSelectedFile(file);
+
+            // If you need to perform additional actions, you can do so here
+            console.log('Selected File:', file.name);
+        }
+    };
+
+        const handleSubmitUpload = () => {
+            // Check if email is not entered
+            if (!email) {
+                toast.error("Error: Please enter an email");
+                return;
+            }
+
+            // Check if a file is selected
+            if (!selectedFile) {
+                toast.error("Error: Please select a file to upload");
+                return;
+            }
+
+            // Validate the email format
+            if (!validateEmail(email)) {
+                setIsValidEmail(false);
+                toast.error("Error: Please enter a valid email");
+                return;
+            }
+
+            // Continue with file upload
             const formData = new FormData();
             formData.append('file', selectedFile);
 
@@ -108,7 +139,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     if (data.success) {
                         toast.success("File uploaded successfully");
                     } else {
-                        toast.error("Error: Please enter email or upload the file correctly");
+                        toast.error("Error: Please upload Valid File");
                     }
                 })
                 .catch(error => {
@@ -117,13 +148,11 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
+                    setSelectedFile(null); // Reset selectedFile to null or initial value
                     setWantToUpload(false);
+                    setEmail(''); // Reset email holder to an empty string
                 });
-        } else {
-            // Handle the case where no file is selected (optional)
-            toast.error("Error: Please select a file to upload");
-        }
-    };
+        };
 
 
 
@@ -177,8 +206,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         setValue(newValue);
         onSwitchTab(newValue);
     };
-
-
 
     const handleDownload = () => {
         const url = "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
@@ -315,17 +342,31 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         centered
                         show={wantToUpload}
                     >
-                        <Modal.Body>
-                            <ToastContainer/>
+                        <Modal.BodyonDragOver={(e) => {
+                       e.preventDefault();
+                       // Add styles or other feedback to indicate drop is allowed
+                   }}
+                            onDragLeave={(e) => {
+                                      // Remove styles or other feedback when drag leaves the area
+                                  }}
+                                  onDrop={(e) => {
+                                      e.preventDefault();
+                                      // Remove styles or other feedback
+
+                                      // Handle the dropped files
+                                      const files = e.dataTransfer.files;
+                                      handleFileUpload(files);
+                                  }}>
 
                             <div>
                                 <div className="d-flex justify-content-between">
                                     <h6>Upload .csv or Excel file</h6>
-                                    <p style={{cursor: "pointer"}} onClick={() => setWantToUpload(false)}><CloseIcon/></p>
+                                    <p style={{cursor: "pointer"}} onClick={() => { setWantToUpload(false);  setSelectedFile(null);  handleEmailChange({ target: { value: '' } }); }}><CloseIcon/></p>
                                 </div>
                                 <div>
                                     <div className="uploadBox">
-                                        <div className="d-flex justify-content-center mt-4 " style={{
+                                        <div onClick={()=> uploadFile()} style={{cursor: "pointer"}} >
+                                   <divclassName="d-flex justify-content-center mt-4 " style={{
                                             height: "70px",
                                             width: "70px",
                                             backgroundColor: "#D3D3D3",
@@ -334,23 +375,24 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                             alignItems: "center"
                                         }}>
 
-                                            <UploadFile style={{cursor: "pointer"}} onClick={() => uploadFile()}/>
+                                            <UploadFile style={{cursor: "pointer"}} />
                                         </div>
                                         <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           onClick={() => uploadFile()}>Drag and Drop .CSV or Excel file here </p>
+                                           >Drag and Drop .CSV or Excel file here </p>
                                         <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           onClick={() => uploadFile()}>or</p>
+                                           >or</p>
                                         <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           onClick={() => uploadFile()}>Click here to upload</p>
+                                           >Click here to upload</p>
+                                   </div>
                                         <input
                                             placeholder="Enter Email"
                                             type="email"
                                             value={email}
                                             onChange={(e) => handleEmailChange(e)}
                                             required
-                                        />
+                                        style={{ width: '300px' , marginLeft: '15px'}} // Adjust the width value as needed/>
                                         <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}
-                                                disabled={!email}>
+                                                >
                                             Submit
                                         </button>
                                     </div>
@@ -364,7 +406,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         } else {
             buttonContent= null
         }
-
     } else if (value === 'file_status') {
         buttonContent = null
     }
@@ -448,8 +489,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     <Allotment  tabId={value}/>
                 </TabPanel>
                 <TabPanel value="file_status">
-                    <FileStatus />
-                    {/*<Typography>File Status Page coming soon.....</Typography>*/}
+                    <Typography>File Status Page coming soon.....</Typography>
                 </TabPanel>
                 <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>
