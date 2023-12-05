@@ -125,7 +125,7 @@ export default function PersistentDrawerLeft() {
     useEffect(() => {
         userPermissions().then(
             (res) => {
-              console.log(res.data)
+
             }
         )
     },[])
