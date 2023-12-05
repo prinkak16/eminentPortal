@@ -26,6 +26,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
     const [organizationId, setOrganizationId] = useState(null)
 
     const handleChange = (event, newValue) => {
+        setMinistryId(null);
+        setOrganizationId(null)
         handleValueChange(newValue);
         handleMasterTabName(newValue);
     };
@@ -49,6 +51,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
 
     useEffect(() => {
         homeContext.handleMovTabsFilter('ministry_wise');
+        switchTabDataHandler()
     }, []);
 
     const handleMasterTabName = (tabValue) => {
