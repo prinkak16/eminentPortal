@@ -342,62 +342,55 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         centered
                         show={wantToUpload}
                     >
-                        <Modal.BodyonDragOver={(e) => {
-                       e.preventDefault();
-                       // Add styles or other feedback to indicate drop is allowed
-                   }}
+                        <Modal.Body
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                // Add styles or other feedback to indicate drop is allowed
+                            }}
                             onDragLeave={(e) => {
-                                      // Remove styles or other feedback when drag leaves the area
-                                  }}
-                                  onDrop={(e) => {
-                                      e.preventDefault();
-                                      // Remove styles or other feedback
-
-                                      // Handle the dropped files
-                                      const files = e.dataTransfer.files;
-                                      handleFileUpload(files);
-                                  }}>
-
+                                // Remove styles or other feedback when drag leaves the area
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const files = e.dataTransfer.files;
+                                handleFileUpload(files);
+                            }}
+                        >
                             <div>
                                 <div className="d-flex justify-content-between">
                                     <h6>Upload .csv or Excel file</h6>
-                                    <p style={{cursor: "pointer"}} onClick={() => { setWantToUpload(false);  setSelectedFile(null);  handleEmailChange({ target: { value: '' } }); }}><CloseIcon/></p>
+                                    <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); setSelectedFile(null); handleEmailChange({ target: { value: '' } }); }}>
+                                        <CloseIcon />
+                                    </p>
                                 </div>
                                 <div>
                                     <div className="uploadBox">
-                                        <div onClick={()=> uploadFile()} style={{cursor: "pointer"}} >
-                                   <divclassName="d-flex justify-content-center mt-4 " style={{
-                                            height: "70px",
-                                            width: "70px",
-                                            backgroundColor: "#D3D3D3",
-                                            borderRadius: "50%",
-                                            marginLeft: "200px",
-                                            alignItems: "center"
-                                        }}>
+                                        <div onClick={() => uploadFile()} style={{ cursor: "pointer" }}>
+                                            <div className="d-flex justify-content-center mt-4 " style={{ height: "70px", width: "70px", backgroundColor: "#D3D3D3", borderRadius: "50%", marginLeft: "200px", alignItems: "center" }}>
+                                                <UploadFile style={{ cursor: "pointer" }} />
+                                            </div>
 
-                                            <UploadFile style={{cursor: "pointer"}} />
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Drag and Drop .CSV or Excel file here </p>
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >or</p>
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Click here to upload</p>
+                                            {selectedFile && (
+                                                <p style={{ marginLeft:'50px', color: "green" }}>Selected File: {selectedFile.name}</p>
+                                            )}
+
                                         </div>
-                                        <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           >Drag and Drop .CSV or Excel file here </p>
-                                        <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           >or</p>
-                                        <p className="d-flex justify-content-center" style={{cursor: "pointer"}}
-                                           >Click here to upload</p>
-                                   </div>
                                         <input
                                             placeholder="Enter Email"
                                             type="email"
                                             value={email}
                                             onChange={(e) => handleEmailChange(e)}
                                             required
-                                        style={{ width: '300px' , marginLeft: '15px'}} // Adjust the width value as needed/>
-                                        <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload}
-                                                >
+                                            style={{ width: '300px', marginLeft: '15px' }} // Adjust the width value as needed
+                                        />
+                                        <button style={{ marginLeft: "20px" }} className="Submit" onClick={handleSubmitUpload}>
                                             Submit
                                         </button>
                                     </div>
-                                    <p style={{marginLeft: "300px", color: "blue", cursor: "pointer"}}
-                                       onClick={() => handleDownload()}>Download sample file</p>
+                                    <p style={{ marginLeft: "300px", color: "blue", cursor: "pointer" }} onClick={() => handleDownload()}>Download sample file</p>
                                 </div>
                             </div>
                         </Modal.Body>
