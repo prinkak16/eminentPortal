@@ -21,6 +21,8 @@ import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
 import UploadFile from "../../../../../../../public/images/upload_file.svg";
 import {useParams} from 'react-router-dom';
 import FileStatus from "../../pages/fileStatus/fileStatus";
+import Tabs from "@mui/material/Tabs";
+import {isValuePresent} from "../../../utils";
 
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
@@ -36,8 +38,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
-    // const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
-    const [basicTabId, setBasicTabId] = useSearchParams(  {basicTabId: 'home_table'});
+    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -92,8 +93,38 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-    const handleSubmitUpload = () => {
-        if (selectedFile) {
+    const handleFileUpload = (files) => {
+        // Assuming you want to handle only one file, you can access it using files[0]
+        const file = files[0];
+
+        if (file) {
+            // You can set the selected file to state
+            setSelectedFile(file);
+            setFileName( file.name);
+        }
+    };
+
+        const handleSubmitUpload = () => {
+            // Check if email is not entered
+            if (!email) {
+                toast.error("Error: Please enter an email");
+                return;
+            }
+
+            // Check if a file is selected
+            if (!selectedFile) {
+                toast.error("Error: Please select a file to upload");
+                return;
+            }
+
+            // Validate the email format
+            if (!validateEmail(email)) {
+                setIsValidEmail(false);
+                toast.error("Error: Please enter a valid email");
+                return;
+            }
+
+            // Continue with file upload
             const formData = new FormData();
             formData.append('file', selectedFile);
 
@@ -106,7 +137,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                     if (data.success) {
                         toast.success("File uploaded successfully");
                     } else {
-                        toast.error("Error: Please enter email or upload the file correctly");
+                        toast.error("Error: Please upload Valid File");
                     }
                 })
                 .catch(error => {
@@ -116,12 +147,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 .finally(() => {
                     // Close the modal or perform any cleanup
                     setWantToUpload(false);
+                    setEmail(''); // Reset email holder to an empty string
                 });
-        } else {
-            // Handle the case where no file is selected (optional)
-            toast.error("Error: Please select a file to upload");
-        }
-    };
+        };
 
 
 
@@ -212,156 +240,235 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
 
     let buttonContent;
     if (value === 'home_table') {
-        buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M13 6C13 5.44772 12.5523 5 12 5C11.4477 5 11 5.44772 11 6V11H6C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H11V18C11 18.5523 11.4477 19 12 19C12.5523 19 13 18.5523 13 18V13H18C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11H13V6Z"
-                    fill="white"/>
-            </svg>
-            Add New
-        </button>
+        if (isValuePresent(!openFilter)) {
+            buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M13 6C13 5.44772 12.5523 5 12 5C11.4477 5 11 5.44772 11 6V11H6C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H11V18C11 18.5523 11.4477 19 12 19C12.5523 19 13 18.5523 13 18V13H18C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11H13V6Z"
+                        fill="white"/>
+                </svg>
+                Add New
+            </button>
+        } else  {
+            buttonContent = null
+        }
     } else if (value === 'master_of_vacancies') {
-        buttonContent =
-            <>
-                <Button className="downloadBtn" variant="primary" onClick={handleShow}>
-                   <ArrowUpwardIcon/> Upload CSV File
-                </Button>
+        if (!isValuePresent(openFilter)) {
+            buttonContent =
+                <>
+                    <Button className="downloadBtn" variant="primary" onClick={handleShow}>
+                        <ArrowUpwardIcon/> Upload CSV File
+                    </Button>
 
-                <Modal  show={show} onHide={handleClose}
-                       aria-labelledby="contained-modal-title-vcenter"
-                       centered
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ToastContainer />
-                        <div className="excel-upload d-flex align-items-center flex-column w-100">
-                            <div className='excel-icon-name'>
-                                <span className="material-icons"><PdfIcon/></span>
-                                <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
+                    <Modal  show={show} onHide={handleClose}
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                    >
+                        <Modal.Header closeButton>
+                            <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <ToastContainer />
+                            <div className="excel-upload d-flex align-items-center flex-column w-100">
+                                <div className='excel-icon-name'>
+                                    <span className="material-icons"><PdfIcon/></span>
+                                    <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
+                                </div>
+                                <div className='upload-excel-button'>
+                                    <Button component="label" variant="contained">
+                                        <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
+                                        Drag and Drop CSV file here <br/> or <br/> click here to upload
+                                    </Button>
+                                    <TextField
+                                        variant="outlined"
+                                        placeholder="Enter email"
+                                        type="email"
+                                        value={email}
+                                        onChange={handleEmailChange}
+                                        error={!isValidEmail}
+                                        helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
+                                    />
+                                </div>
                             </div>
-                            <div className='upload-excel-button'>
-                                <Button component="label" variant="contained">
-                                    <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                    Drag and Drop CSV file here <br/> or <br/> click here to upload
-                                </Button>
-                                <TextField
-                                    variant="outlined"
-                                    placeholder="Enter email"
-                                    type="email"
-                                    value={email}
-                                    onChange={handleEmailChange}
-                                    error={!isValidEmail}
-                                    helperText={!isValidEmail ? 'No CSV file selected or Invalid email format ' : ''}
-                                />
-                            </div>
-                        </div>
 
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <button
-                            className="btn"
-                            onClick={handleClose}>
-                            Cancel
-                        </button>
-                        <button
-                            className="btn addNewSubmit" onClick={()  => handleSubmit()}>
-                            Submit
-                        </button>
-                        <button
-                            className="btn"
-                            onClick={downloadSampleVacancy}
-                        >
-                            Download sample file
-                        </button>
-                    </Modal.Footer>
-                </Modal>
-            </>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <button
+                                className="btn"
+                                onClick={handleClose}>
+                                Cancel
+                            </button>
+                            <button
+                                className="btn addNewSubmit" onClick={()  => handleSubmit()}>
+                                Submit
+                            </button>
+                            <button
+                                className="btn"
+                                onClick={downloadSampleVacancy}
+                            >
+                                Download sample file
+                            </button>
+                        </Modal.Footer>
+                    </Modal>
+                </>
+        } else {
+            buttonContent = null
+        }
+
+
     }
     else if (value === 'gom_management'){
-        buttonContent=
-           <>
-        <button className="button-upload" onClick={handleClick}>
-            <UploadIcon/> PA/OSD mapping
-        </button>
-               <input
-                   type="file"
-                   accept=".csv, .xlsx"
-                   onChange={handleChangeUpload}
-                   ref={hiddenFileInput}
-                   style={{display: 'none'}}
-               />
-               <Modal
+        if (!isValuePresent(openFilter)) {
+            buttonContent=
+                <>
+                    <button className="button-upload" onClick={handleClick}>
+                        <UploadIcon/> PA/OSD mapping
+                    </button>
+                    <input
+                        type="file"
+                        accept=".csv, .xlsx"
+                        onChange={handleChangeUpload}
+                        ref={hiddenFileInput}
+                        style={{display: 'none'}}
+                    />
+                    <Modal
 
                    // contentClassName="deleteModal"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered
                    show={wantToUpload}
+                   >
+                   <Modal.Body
+                   onDragOver={(e) => {
+                       e.preventDefault();
+                       // Add styles or other feedback to indicate drop is allowed
+                   }}
+                   onDragLeave={(e) => {
+                       // Remove styles or other feedback when drag leaves the area
+                   }}
+                   onDrop={(e) => {
+                       e.preventDefault();
+                       const files = e.dataTransfer.files;
+                       handleFileUpload(files);
+                   }}
                >
-                   <Modal.Body>
-                       <ToastContainer />
-
-                       <div>
-                           <div className="d-flex justify-content-between">
-                               <h6 >Upload .csv or Excel file</h6>
-                               <p style={{cursor: "pointer"}} onClick={()=> setWantToUpload(false)}><CloseIcon/></p>
-                           </div>
-                           <div >
-                               <div className="uploadBox">
-                                   <div className="d-flex justify-content-center mt-4 " style={{height:"70px", width:"70px", backgroundColor:"#D3D3D3", borderRadius:"50%", marginLeft:"200px", alignItems:"center"}}>
-
-                                       <UploadFile style={{cursor: "pointer"}}  onClick={()=> uploadFile()}/>
-                                   </div>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Drag and Drop .CSV or Excel file here </p>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>or</p>
-                                   <p className="d-flex justify-content-center" style={{cursor: "pointer"}}  onClick={()=> uploadFile()}>Click here to upload</p>
-                                       <input
-                                           placeholder="Enter Email"
-                                           type="email"
-                                           value={email}
-                                           onChange={(e) => handleEmailChange(e)}
-                                           required
-                                       />
-                                   <button style={{marginLeft: "20px"}} className="Submit" onClick={handleSubmitUpload} disabled={!email}>
-                                       Submit
-                                   </button>
-                               </div>
-                               <p style={{marginLeft:"300px", color:"blue",cursor:"pointer"}} onClick={()=>handleDownload()}>Download sample file</p>
-                           </div>
+                   <div>
+                       <div className="d-flex justify-content-between">
+                           <h6>Upload .csv or Excel file</h6>
+                           <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); setSelectedFile(null); handleEmailChange({ target: { value: '' } }); }}>
+                               <CloseIcon />
+                           </p>
                        </div>
-                   </Modal.Body>
+                       <div>
+                           <div className="uploadBox">
+                               <div onClick={() => uploadFile()} style={{ cursor: "pointer" }}>
+                                   <div className="d-flex justify-content-center mt-4 " style={{ height: "70px", width: "70px", backgroundColor: "#D3D3D3", borderRadius: "50%", marginLeft: "200px", alignItems: "center" }}>
+                                       <UploadFile style={{ cursor: "pointer" }} />
+                                   </div>
+
+                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Drag and Drop .CSV or Excel file here </p>
+                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >or</p>
+                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Click here to upload</p>
+                                   {selectedFile && (
+                                       <p style={{ marginLeft:'50px', color: "green" }}>Selected File: {selectedFile.name}</p>
+                                   )}
+
+                               </div>
+                               <input
+                                   placeholder="Enter Email"
+                                   type="email"
+                                   value={email}
+                                   onChange={(e) => handleEmailChange(e)}
+                                   required
+                                   style={{ width: '300px', marginLeft: '15px' }} // Adjust the width value as needed
+                               />
+                               <button style={{ marginLeft: "20px" }} className="Submit" onClick={handleSubmitUpload}>
+                                   Submit
+                               </button>
+                           </div>
+                           <p style={{ marginLeft: "300px", color: "blue", cursor: "pointer" }} onClick={() => handleDownload()}>Download sample file</p>
+                       </div>
+                   </div>
+               </Modal.Body>
                </Modal>
                </>
+        } else {
+            buttonContent= null
+        }
     } else if (value === 'file_status') {
-        buttonContent = <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M13 6C13 5.44772 12.5523 5 12 5C11.4477 5 11 5.44772 11 6V11H6C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H11V18C11 18.5523 11.4477 19 12 19C12.5523 19 13 18.5523 13 18V13H18C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11H13V6Z"
-                    fill="white"/>
-            </svg>
-            Add New
-        </button>
+        buttonContent = null
     }
 
     const handleBasicTabChange = (basicTabValue) => {
         setBasicTabId(basicTabValue);
     }
 
+    const AntTabs = styled(Tabs)({
+        borderBottom: '1px solid #e8e8e8',
+        '& .MuiTabs-indicator': {
+        },
+    });
+
+    const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
+        textTransform: 'none',
+        minWidth: 0,
+        [theme.breakpoints.up('sm')]: {
+            minWidth: 0,
+        },
+        fontWeight: theme.typography.fontWeightRegular,
+        marginRight: theme.spacing(1),
+        color: 'rgba(0, 0, 0, 0.85)',
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+        '&.Mui-selected': {
+            backgroundColor: '#383737',
+            color: '#fff',
+            fontWeight: theme.typography.fontWeightMedium,
+        },
+        '&.Mui-focusVisible': {
+            backgroundColor: '#d1eaff',
+        },
+    }));
+
+    const tabsView = () => {
+        if (IsViewTabs === 1 || IsViewTabs === '1') {
+            return <TabList onChange={handleChange}
+                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
+                            aria-label="lab API tabs example">
+                <Tab label="Home" value="home_table"/>
+            </TabList>
+        } else {
+            return <TabList onChange={handleChange}
+                            style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}}
+                            aria-label="lab API tabs example"
+                            className='testing-tabList'>
+                <Tab label="Home" value="home_table"/>
+                <Tab label="Allotment" value="allotment"/>
+                <Tab label="File Status" value="file_status"/>
+                <Tab label="Master of Vacancies" value="master_of_vacancies"/>
+                <Tab label="Slotting" value="slotting"/>
+                <AntTab label="GoM Management" value="gom_management"/>
+            </TabList>
+        }
+
+
+    }
     return (
         <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="hometabs d-flex justify-content-between align-items-center">
-                    <TabList onChange={handleChange} style={{maxWidth: window.innerWidth < 1281 && openFilter ? '45rem' : ''}} aria-label="lab API tabs example">
-                        <Tab label="Home" value="home_table" />
-                        <Tab label="Allotment" value="allotment" />
-                        <Tab label="File Status" value="file_status" />
-                        <Tab label="Master of Vacancies" value="master_of_vacancies" />
-                        <Tab label="Slotting" value="slotting" />
-                        <Tab label="GOM Management" value="gom_management" />
-                    </TabList>
+                    {tabsView()}
                     {buttonContent}
                 </Box>
                 <TabPanel value="home_table">
@@ -373,7 +480,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 </TabPanel>
                 <TabPanel value="file_status">
                     <FileStatus />
-                    {/*<Typography>File Status Page coming soon.....</Typography>*/}
                 </TabPanel>
                 <TabPanel value="master_of_vacancies">
                     <MasterVacancies  filterString={filterString} tabId={value}/>

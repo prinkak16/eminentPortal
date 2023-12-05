@@ -89,9 +89,6 @@ const HomeTable = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("current value of showFreeze ", showFreeze);
-  }, [showFreeze]);
 
   const deleteCurrentMember = (deleteId) => {
     setDeleteMemberId(deleteId);
@@ -302,9 +299,9 @@ const HomeTable = (props) => {
           </div>
           <div className="d-flex me-0 ">
             {/*<input className="filestatusfield" placeholder="Person file status"/>*/}
-            <button className="downloadBtn ms-4">
-              Download {<Download />}
-            </button>
+            {/*<button className="downloadBtn ms-4">*/}
+            {/*  Download {<Download />}*/}
+            {/*</button>*/}
           </div>
           {profilePhotoUrl && (
             <PhotoDialog

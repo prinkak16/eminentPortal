@@ -317,7 +317,9 @@ const Resumeform = (props) => {
 
                             </Typography>
                         </Grid>
-                        <ErrorMessage name='attachment' style={{color:'red'}} component="p" />
+                        {!isValuePresent(pdfFile) &&
+                            < ErrorMessage name='attachment' style={{color:'red'}} component="p" />
+                        }
                         <div>
                             <div className="pdf-upload-div d-flex align-items-center w-100">
                                 <div className='pdf-icon-name'>

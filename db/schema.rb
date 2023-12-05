@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.string "phone_number"
     t.integer "assist_to_id"
     t.datetime "deleted_at"
+    t.boolean "is_admin", default: false
     t.index ["name"], name: "index_user_name_search", opclass: :gin_trgm_ops, using: :gin
   end
 
@@ -98,6 +99,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.index ["name"], name: "index_department_name_search", opclass: :gin_trgm_ops, using: :gin
     t.index ["name"], name: "index_departments_on_name"
     t.index ["slug"], name: "index_departments_on_slug"
+  end
+
+  create_table "file_status", force: :cascade do |t|
+    t.integer "vacancy_allotment_id"
+    t.string "file_status"
+    t.bigint "action_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["action_by_id"], name: "index_file_status_on_action_by_id"
+    t.index ["vacancy_allotment_id"], name: "index_file_status_on_vacancy_allotment_id"
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -175,6 +187,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_043525) do
     t.index ["department_id"], name: "index_vacancies_on_department_id"
     t.index ["ministry_id"], name: "index_vacancies_on_ministry_id"
     t.index ["organization_id"], name: "index_vacancies_on_organization_id"
+  end
+
+  create_table "vacancy_allotments", force: :cascade do |t|
+    t.integer "vacancy_id"
+    t.integer "custom_member_form_id"
+    t.string "remarks", default: ""
+    t.string "file_status"
+    t.datetime "unoccupied_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["custom_member_form_id"], name: "index_vacancy_allotments_on_custom_member_form_id"
+    t.index ["vacancy_id"], name: "index_vacancy_allotments_on_vacancy_id"
   end
 
 end

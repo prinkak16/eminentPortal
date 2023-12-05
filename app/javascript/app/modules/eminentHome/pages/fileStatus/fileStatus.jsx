@@ -9,6 +9,7 @@ import Phone from "../../../../../../../public/images/phone.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
+import VerticalLinearStepper from "../verticalStepper/verticalStepper";
 
 const FileStatus = () => {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
@@ -16,9 +17,9 @@ const FileStatus = () => {
     const [searchType, setSearchType] =useState('')
     const [searchedName, setSearchedName] = useState('');
     const [searchId, setSearchId] = useState('');
-    const [showHistory,setShowHistory] = useState(false)
     const [updateStatus,setUpdateStatus] = useState(false)
     const [eminentStatus, setEminentStatus] =useState(null)
+    const [openHistory, setOpenHistory] = useState(null)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -101,6 +102,37 @@ const FileStatus = () => {
         console.log(selectedItem, input)
     }
 
+    const fileHistory = [
+            {
+                "label": "A",
+                "description": "Mon Feb 07 2000 03:03:43 PM"
+            },
+            {
+                "label": "B",
+                "description": "Sun Jan 02 2005 03:05:20 AM"
+            },
+            {
+                "label": "C",
+                "description": "Mon Sep 12 1994 07:30:37 AM"
+            },
+            {
+                "label": "D",
+                "description": ""
+            },
+            {
+                "label": "E",
+                "description": ""
+            }
+    ]
+
+    const showHistory = (id) => {
+        if (openHistory === id) {
+            setOpenHistory(null)
+        } else {
+            setOpenHistory(id)
+        }
+    }
+
     return (
         <div className='file-status-component'>
             <Analytics tabId={'home_table'} assignShow={true} />
@@ -124,14 +156,14 @@ const FileStatus = () => {
             </div>
             <div className='mt-5 border pb-4'>
                 {tableData && tableData.map((item, index) => (
-                    <div className={`mt-4 w-95  ${index +1 !== tableData.length && 'eminent-container pb-4'}`}>
+                    <div key={index} className={`mt-4 w-95  ${index +1 !== tableData.length && 'eminent-container pb-4'}`}>
                             <p className={`eminent-status-tag ${item.aasm_status}-tag`}>{item.aasm_status}</p>
-                        <div className='eminent-details-container d-flex'>
+                        <div key={index * index} className='eminent-details-container d-flex'>
                             <div className='eminent-image-container ml-1rem' >
                                 <img className='eminent-image' src={item.photo} alt='eminent-image'/>
                             </div>
                             <div className='eminent-initial-details'>
-                                <h5>{item.name}</h5>
+                                <p><b>{item.name}</b></p>
                                 <div className='eminent-mobile-container'>
                                     <Phone/>
                                     {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
@@ -177,15 +209,18 @@ const FileStatus = () => {
                                 <span className='user-id-tag d-block '>Remarks</span>
                                 <span className='mt-2'>{item.file_remarks}</span>
                             </div>
-                            <div className='ml-auto'>
-                                <button className='view-history-button'>View Application History
+                            <div className='ml-auto mt-auto'>
+                                <button className='view-history-button' onClick={() => showHistory(item.id)}>View Application History
                                     <span
-                                        className={`${showHistory ? 'rotate-180' : ''}`}><FontAwesomeIcon
+                                        className={`${openHistory === item.id ? 'rotate-180' : ''}`}><FontAwesomeIcon
                                         icon={faChevronDown}/>
                                     </span>
                                 </button>
                             </div>
                         </div>
+                        {openHistory === item.id &&
+                            <VerticalLinearStepper stepperList={fileHistory}/>
+                        }
                     </div>
                 ))}
             </div>

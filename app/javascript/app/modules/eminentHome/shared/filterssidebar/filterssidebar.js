@@ -142,7 +142,6 @@ export default function FiltersSidebar(props) {
             setFiltersKey([...filtersKey, value])
         }
     };
-    console.log(filtersKey)
 
     const handleSearchFilter = debounce((event, identifier) => {
         const inputValue = event.target.value;
@@ -182,8 +181,6 @@ export default function FiltersSidebar(props) {
             setFiltersKey(keys)
         }
     }, [filtersList.filters]);
-
-    console.log('Full Height:', filtersList.filters?.map(item => item.key));
 
     return (
         <div className='filter-container' >

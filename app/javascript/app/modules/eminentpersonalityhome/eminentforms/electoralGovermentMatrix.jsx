@@ -62,12 +62,17 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
 
     const handleFieldChange = (value, name, valueType, index) => {
+        debugger
         if (valueType === 'State') {
             let field = jsonForm?.fields?.find((item) => item.key === 'State')
-            let state = states.find((item) => item.name === value)
             if (isValuePresent(field.combo_fields)) {
-                resetLocationFields(field.combo_fields[0])
-                getLocations(state.id, field.combo_fields[0])
+                if (isValuePresent(value)) {
+                    let state = states.find((item) => item.name === value)
+                    resetLocationFields(field.combo_fields[0])
+                    getLocations(state.id, field.combo_fields[0])
+                } else {
+                    setData(field.combo_fields[0].key, value)
+                }
             }
         }
 
@@ -214,7 +219,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                             <div className='electoral-form-fields'>
                                 {
                                     f.type === 'dropdown' &&
-                                    <Grid item xs={4} className={`${f.name === 'State' ? 'width-22rem' : 'width-22rem margin-left-3-rem'}` }>
+                                    <Grid item xs={4} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
                                         <FormLabel>{f.name}
                                             <mark>*</mark>
                                         </FormLabel>

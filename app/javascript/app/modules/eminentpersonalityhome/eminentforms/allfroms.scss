@@ -338,7 +338,7 @@ button.cancelbtn{
   padding: 1rem;
   min-height: 12rem;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 0px 1px;
-  width: 95rem;
+  width: 100%;
 }
 
 .add-delete-btns {
@@ -674,10 +674,18 @@ margin-bottom: auto;
   gap: 7px;
 }
 
+.width-25rem {
+  width: 25rem;
+}
+
 .width-22rem {
   width: 22rem;
 }
 
 .margin-left-3-rem {
   margin-left: 3rem;
+}
+
+.max-wid {
+  //max-width: 60rem;
 }
