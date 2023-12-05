@@ -64,7 +64,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
                         <TabList onChange={handleChange}  aria-label="lab API tabs example">
                             <Tab label="Ministry Wise" value="ministry_wise" />
                             <Tab label="PSU wise" value="psu_wise" />
-                            <Tab label="Vacancy Wise" value="vacancy_wise" />
+                            <Tab label="Position Wise" value="vacancy_wise" />
                         </TabList>
                         <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
                     </Box>

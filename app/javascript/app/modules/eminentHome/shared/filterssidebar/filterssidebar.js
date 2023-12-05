@@ -72,7 +72,6 @@ export default function FiltersSidebar(props) {
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
-
                     })
 
 
@@ -97,14 +96,15 @@ export default function FiltersSidebar(props) {
                 }
                 break;
             case 'slotting':
-                const params = {
-                    ministry_names: searchMinisterName,
-                    department_names: searchDepartmentName,
+                const slottingParams = {
+                    ministry_name: searchMinisterName,
+                    department_name: searchDepartmentName,
                     organization_name: searchOrganizationName,
                 }
-                getSlottingFilters(params).then(response => {
+                getSlottingFilters(slottingParams).then(response => {
                     setFiltersList(response.data.data)
                 })
+
                 break;
             case 'gom_management':
                 getFiltersForGOM().then(response => {
@@ -119,7 +119,6 @@ export default function FiltersSidebar(props) {
         }
         applyFilter();
     }, [props.tabId, homeContext.movTabId, searchMinisterName, searchDepartmentName, searchOrganizationName]);
-
     const handleChange = (value) => (event, isExpanded) => {
         if (filtersKey.includes(value)) {
             const keys = filtersKey.filter((item) => item !== value)
@@ -198,7 +197,7 @@ export default function FiltersSidebar(props) {
                                             </InputAdornment>
                                         }
                                         value={inputSearch}
-                                        onChange={() => handleInputSearch(event, 'Ministry')}
+                                        onChange={() => handleInputSearch(event, filter.display_name)}
                                     />
                                 </FormControl>
                             }
@@ -231,7 +230,7 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
-                            {(props.tabId === 'slotting' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
+                            { (props.tabId === 'slotting' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id="input-with-icon-adornment"

@@ -35,7 +35,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
-    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
+    const [basicTabId, setBasicTabId] = useSearchParams( {basicTabId: 'home_table'});
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -405,7 +405,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         <Tab label="File Status" value="file_status" />
                         <Tab label="Master of Vacancies" value="master_of_vacancies" />
                         <Tab label="Slotting" value="slotting" />
-                        <Tab label="GoM MANAGEMENT" value="gom_management" />
+                        <Tab className="gomtab" label="GoM MANAGEMENT" value="gom_management" />
                     </TabList>
                     {buttonContent}
                 </Box>

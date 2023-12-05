@@ -52,12 +52,11 @@ export const fetchUser = (config) => {
         headers: config?.headers
     });
 }
-export  const getSlottingTable =(params)=>{
-    return axios.get(apiBaseUrl + 'slotting/list', {params})
+export  const getSlottingTable =(params , filterPrams)=>{
+    return  axios.get(`${apiBaseUrl}slotting/list?${filterPrams}`, params)
 }
 export const getSlottingPsuData = (params ) => {
     return axios.get(apiBaseUrl + 'slotting/stats/' + params )
-
 }
 
 export  const assignSlottingVacancy = (formData) => {

@@ -61,3 +61,6 @@ button.downloadBtn,button.downloadBtn:hover {
     right: 3%;
     z-index: 1;
 }
+.gomtab{
+    text-transform: none !important;
+}
