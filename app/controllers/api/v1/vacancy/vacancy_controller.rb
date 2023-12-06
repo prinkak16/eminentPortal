@@ -192,7 +192,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
           GROUP BY
             ministry.id,
@@ -267,7 +267,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
         sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
             GROUP BY
               ministry.id,
@@ -333,7 +333,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
         sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
           GROUP BY
             ministry.id,
