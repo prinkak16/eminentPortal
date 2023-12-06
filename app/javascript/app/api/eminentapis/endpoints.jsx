@@ -10,8 +10,8 @@ export const getFiltersForGOM = (params) => {
     return axios.get(apiBaseUrl + 'filters/gom_management')
 }
 
-export const getFiltersForAllotment = () => {
-    return axios.get(apiBaseUrl + 'filters/allotment')
+export const getFiltersForAllotment = (params) => {
+    return axios.get(apiBaseUrl + 'filters/allotment',{params})
 }
 
 // export const getVacancy
@@ -64,12 +64,11 @@ export const fetchUser = (config) => {
         headers: config?.headers
     });
 }
-export  const getSlottingTable =(params)=>{
-    return axios.get(apiBaseUrl + 'slotting/list', {params})
+export  const getSlottingTable =(params , filterPrams)=>{
+    return  axios.get(`${apiBaseUrl}slotting/list?${filterPrams}`, params)
 }
 export const getSlottingPsuData = (params ) => {
     return axios.get(apiBaseUrl + 'slotting/stats/' + params )
-
 }
 
 export  const assignSlottingVacancy = (formData) => {

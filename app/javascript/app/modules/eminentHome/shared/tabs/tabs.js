@@ -38,7 +38,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function BasicTabs({ onSwitchTab, filterString, openFilter, clearFilter}) {
-    const [basicTabId, setBasicTabId] = useSearchParams( 'home_table');
+    const [basicTabId, setBasicTabId] = useSearchParams( {basicTabId: 'home_table'});
     const [value, setValue] = React.useState(basicTabId.get('basicTabId'));
     const [wantToAddNew, setWantToAddNew] =useState(false)
     const [inputNumber, setInputNumber] = useState('');
@@ -147,6 +147,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 .finally(() => {
                     // Close the modal or perform any cleanup
                     setWantToUpload(false);
+                    setSelectedFile(null);
                     setEmail(''); // Reset email holder to an empty string
                 });
         };
@@ -266,16 +267,16 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             centered
                     >
                         <Modal.Header closeButton>
-                            <Modal.Title id="contained-modal-title-vcenter">Upload  Excel File</Modal.Title>
+                            <Modal.Title id="contained-modal-title-vcenter">Upload  CSV File</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <ToastContainer />
                             <div className="excel-upload d-flex align-items-center flex-column w-100">
                                 <div className='excel-icon-name'>
-                                    <span className="material-icons"><PdfIcon/></span>
+                                    <span className="material-icons"><UploadFile/></span>
                                     <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
                                 </div>
-                                <div className='upload-excel-button'>
+                                <div className='upload-excel-button d-flex flex-column'>
                                     <Button component="label" variant="contained">
                                         <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
                                         Drag and Drop CSV file here <br/> or <br/> click here to upload

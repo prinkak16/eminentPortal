@@ -41,8 +41,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                 >
                     <CircularProgress color="inherit" />
                 </Backdrop>
-
-
         <TableContainer component={Paper} className="psutable mb-3">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
