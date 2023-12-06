@@ -139,6 +139,7 @@ export default function FiltersSidebar(props) {
             setFiltersKey([...filtersKey, value])
         }
     };
+    
 
     const handleSearchFilter = debounce((event, identifier) => {
         const inputValue = event.target.value;
@@ -156,7 +157,10 @@ export default function FiltersSidebar(props) {
         const {value}=event.target;
         setInputSearch((prevData)=>{return{...prevData,[key]:value}});
         handleSearchFilter(event, key);
+        handleSearchFilter(event, key);
     }
+
+
 
     const isChecked = (parentKey, optionValue) => {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
@@ -178,6 +182,7 @@ export default function FiltersSidebar(props) {
             setFiltersKey(keys)
         }
     }, [filtersList.filters]);
+
 
     return (
         <div className='filter-container' >
@@ -210,7 +215,8 @@ export default function FiltersSidebar(props) {
                                             </InputAdornment>
                                         }
                                         value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                        onChange={(event) => handleInputSearch(event, filter.display_name)}
+                                       
                                     />
                                 </FormControl>
                             }
@@ -225,7 +231,8 @@ export default function FiltersSidebar(props) {
                                             </InputAdornment>
                                         }
                                         value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                        onChange={(e) => handleInputSearch(e, filter.display_name)}
+                                      
                                     />
                                 </FormControl>
                             }
@@ -238,8 +245,8 @@ export default function FiltersSidebar(props) {
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
-                                        value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                        value={inputSearch[[filter?.display_name]]}
+                                        onChange={(e) => handleInputSearch(e, filter.display_name)}
                                     />
                                 </FormControl>
                             }
@@ -253,7 +260,7 @@ export default function FiltersSidebar(props) {
                                             </InputAdornment>
                                         }
                                         value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                        onChange={(e) => handleInputSearch(e, filter.display_name)}
                                     />
                                 </FormControl>
                             }
