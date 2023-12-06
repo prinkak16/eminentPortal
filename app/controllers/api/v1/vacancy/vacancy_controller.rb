@@ -182,19 +182,13 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
             SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
             SUM(1) AS total
-          FROM public.user_ministries AS um
+          FROM public.ministries AS ministry
           LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
-          LEFT JOIN public.ministries AS ministry
-          ON vac.ministry_id = ministry.id
+          ON ministry.id = vac.ministry_id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
-            AND
-            um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
@@ -256,23 +250,17 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                   SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
                   SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
                   SUM(1) AS total
-                FROM public.user_ministries AS um
+                FROM public.ministries AS ministry
                 LEFT JOIN public.vacancies AS vac
-                ON um.ministry_id = vac.ministry_id
-                LEFT JOIN public.ministries AS ministry
-                ON vac.ministry_id = ministry.id
+                ON ministry.id = vac.ministry_id
                 LEFT JOIN public.departments AS dept
                 ON vac.department_id = dept.id
                 LEFT JOIN public.organizations AS org
                 ON vac.organization_id = org.id
                 WHERE
-                  um.is_minister IS false
-                  AND
                   vac.id IS NOT null
                   AND
                   vac.deleted_at IS null
-                  AND
-                  um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
@@ -328,23 +316,17 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                 'tenure_ended_at', vac.tenure_ended_at
               )
             ) AS vac_info
-          FROM public.user_ministries AS um
+          FROM public.ministries AS ministry
           LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
-          LEFT JOIN public.ministries AS ministry
-          ON vac.ministry_id = ministry.id
+          ON ministry.id = vac.ministry_id
           LEFT JOIN public.departments AS dept
           ON vac.department_id = dept.id
           LEFT JOIN public.organizations AS org
           ON vac.organization_id = org.id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
-            AND
-            um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
