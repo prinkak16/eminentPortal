@@ -92,10 +92,8 @@ function GomPage({ tabId, filterString, clearFilter }) {
 
             },  [filterString, ministerSearch, ministrySearch]);
 
-
     useEffect(() => {
         if (isValuePresent(resetFilter)) {
-            console.log('resetFilter', resetFilter)
             fetchData();
 
         }
@@ -134,39 +132,53 @@ function GomPage({ tabId, filterString, clearFilter }) {
             setOwnMinistryIds(ministryIds);
            };
 
-        const handleUpdateClick = async () => {
-            const ministerId = editMinisterData.ministerId;
-            if (ownMinistryIds.length < 1) {
-                toast.error('Please Update Own Ministries', { position: toast.POSITION.TOP_CENTER });
-                return
+    const handleUpdateClick = async () => {
+        const ministerId = editMinisterData.ministerId;
+
+        // Check if both assigned and own ministry arrays are empty
+        // if (ownMinistryIds.length === 0) {
+        //     toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
+        //     return;
+        // }
+
+        try {
+            // Make API call for assigned ministries if assignedMinistryIds is not empty
+            if (assignedMinistryIds.length > 0) {
+                await axios.post(
+                    `/api/v1/user/${ministerId}/assign_ministries`,
+                    { ministry_ids: assignedMinistryIds }
+                );
             }
 
-
-            try {
-                // Make API call for assigned ministries if assignedMinistryIds is not empty
-
-                    await axios.post(
-                        `/api/v1/user/${ministerId}/assign_ministries`,
-                        { ministry_ids: assignedMinistryIds }
-                    );
-
-                // Make API call for own ministries if ownMinistryIds is not empty
-                if (ownMinistryIds.length > 0) {
-                    await axios.post(
-                        `/api/v1/user/${ministerId}/allocate_ministries`,
-                        { ministry_ids: ownMinistryIds }
-                    );
-                }
-
-                fetchData();
-
-                setWantToEdit(false);
-
-                toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
-            } catch (error) {
-                // Handle errors and show error toast
-                toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
+            // Make API call for own ministries if ownMinistryIds is not empty
+            if (ownMinistryIds.length > 0) {
+                await axios.post(
+                    `/api/v1/user/${ministerId}/allocate_ministries`,
+                    { ministry_ids: ownMinistryIds }
+                );
             }
+
+            fetchData();
+
+            setOwnMinistryIds([]);
+            setAssignedMinistryIds([]);
+            setWantToEdit(false);
+
+
+            toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
+        } catch (error) {
+            // Handle errors and show error toast
+            toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
+        }
+    };
+
+
+
+
+
+        const handleClick = event => {
+            const itemsPerPage = 5;
+            setPageCount(Math.ceil(apiData.length / itemsPerPage));
         };
 
 
