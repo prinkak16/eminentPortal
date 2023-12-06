@@ -26,6 +26,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
     const [organizationId, setOrganizationId] = useState(null)
 
     const handleChange = (event, newValue) => {
+        setMinistryId(null);
+        setOrganizationId(null)
         handleValueChange(newValue);
         handleMasterTabName(newValue);
     };
@@ -49,6 +51,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
 
     useEffect(() => {
         homeContext.handleMovTabsFilter('ministry_wise');
+        switchTabDataHandler()
     }, []);
 
     const handleMasterTabName = (tabValue) => {
@@ -64,7 +67,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
                         <TabList onChange={handleChange}  aria-label="lab API tabs example">
                             <Tab label="Ministry Wise" value="ministry_wise" />
                             <Tab label="PSU wise" value="psu_wise" />
-                            <Tab label="Vacancy Wise" value="vacancy_wise" />
+                            <Tab label="Position Wise" value="vacancy_wise" />
                         </TabList>
                         <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
                     </Box>
