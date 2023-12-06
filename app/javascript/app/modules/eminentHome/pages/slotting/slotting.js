@@ -18,7 +18,7 @@ import AssignBtnSidebar from "./comoponent/slottingassignbtnsidebar";
 
 const SlottingTabPage =({tabId, filterString})=>{
     const [currentPage, setCurrentPage] = useState(0);
-    const [slottingTableData, setSlottingTableData] = useState();
+    const [slottingTableData, setSlottingTableData] = useState(null);
     const [open, setOpen] = useState(false);
     const [psuId, setPsuId] = useState(null)
     const [slottingMinistryId, setSlottingMinistryId] = useState(null)
@@ -33,19 +33,18 @@ const SlottingTabPage =({tabId, filterString})=>{
     };
 
     const slottingTable =()=>{
-        const params = {
-            ministry: slotting.ministry_id,
+        const slottingParams = {
             limit: limit,
             offset: currentPage * limit
         }
-        getSlottingTable(params, filterString).then(res => {
+        getSlottingTable(slottingParams, filterString).then(res => {
             setSlottingTableData(res.data.data)
         })
     }
     useEffect(() => {
         slottingTable()
     }, [currentPage, filterString]);
-
+    console.log('slottingTableData', slottingTableData)
     return (
         <>
             <Analytics tabId={tabId}/>
