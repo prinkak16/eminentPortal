@@ -146,8 +146,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                 })
                 .finally(() => {
                     // Close the modal or perform any cleanup
-                    setSelectedFile(null);
                     setWantToUpload(false);
+                    setSelectedFile(null);
                     setEmail(''); // Reset email holder to an empty string
                 });
         };
