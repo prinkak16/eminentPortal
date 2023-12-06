@@ -110,8 +110,8 @@ export default function FiltersSidebar(props) {
 
             case 'allotment':
                 const alottimentParams = {
-                    ministry_names: searchMinisterName,
-                    department_names: searchDepartmentName,
+                    ministry_name: searchMinisterName,
+                    department_name: searchDepartmentName,
                 }
                 getFiltersForAllotment(alottimentParams).then(response =>{
                     setFiltersList(response.data.data)
