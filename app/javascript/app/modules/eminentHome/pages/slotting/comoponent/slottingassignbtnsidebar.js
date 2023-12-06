@@ -48,7 +48,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [validValue, setValidValue] = useState(true)
     const [prevVacancyCount, setPrevVacancyCount] = useState(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const limit = 4;
+    const limit = 10;
     const offset = 0;
     let originalVacancyCount;
     let originalStateId;
