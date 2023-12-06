@@ -137,12 +137,6 @@ function GomPage({ tabId, filterString, clearFilter }) {
         const handleUpdateClick = async () => {
             const ministerId = editMinisterData.ministerId;
 
-            // Check if both assigned and own ministry arrays are empty
-            if (ownMinistryIds.length === 0) {
-                toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
-                return;
-            }
-
             try {
                 // Make API call for assigned ministries if assignedMinistryIds is not empty
 
