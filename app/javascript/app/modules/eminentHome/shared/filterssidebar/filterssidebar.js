@@ -209,16 +209,14 @@ export default function FiltersSidebar(props) {
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id={filter?.display_name}
-                                        id={filter?.display_name}
                                         startAdornment={
                                             <InputAdornment position="start">
                                                 <SearchIcon/>
                                             </InputAdornment>
                                         }
                                         value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
-                                        value={inputSearch[filter?.display_name]}
-                                        onChange={(e) => handleInputSearch(e, 'Ministry')}
+                                        onChange={(event) => handleInputSearch(event, filter.display_name)}
+                                       
                                     />
                                 </FormControl>
                             }
@@ -227,7 +225,6 @@ export default function FiltersSidebar(props) {
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
                                         id={filter?.display_name}
-                                        id={filter?.display_name}
                                         startAdornment={
                                             <InputAdornment position="start">
                                                 <SearchIcon/>
@@ -235,15 +232,13 @@ export default function FiltersSidebar(props) {
                                         }
                                         value={inputSearch[filter?.display_name]}
                                         onChange={(e) => handleInputSearch(e, filter.display_name)}
-                                        value={inputSearch[filter?.display_name]}
-                                        onChange={() => handleInputSearch(event, filter.display_name)}
+                                      
                                     />
                                 </FormControl>
                             }
                             {(props.tabId === 'master_of_vacancies' && homeContext.movTabId === 'vacancy_wise' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
-                                        id={filter?.display_name}
                                         id={filter?.display_name}
                                         startAdornment={
                                             <InputAdornment position="start">
@@ -258,7 +253,6 @@ export default function FiltersSidebar(props) {
                             { (props.tabId === 'slotting' && ['Ministry', 'Department', 'Organization'].includes(filter.display_name)) &&
                                 <FormControl variant="outlined" className="mb-4 srchfilter">
                                     <Input
-                                        id={filter?.display_name}
                                         id={filter?.display_name}
                                         startAdornment={
                                             <InputAdornment position="start">
