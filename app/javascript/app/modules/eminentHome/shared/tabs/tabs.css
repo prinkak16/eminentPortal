@@ -54,6 +54,8 @@ button.downloadBtn,button.downloadBtn:hover {
     box-shadow: none;
     text-align: center;
     color: #000;
+    display: flex;
+    flex-direction: column;
 }
 .alertmessage{
     position: absolute;
@@ -63,4 +65,7 @@ button.downloadBtn,button.downloadBtn:hover {
 }
 .gomtab{
     text-transform: none !important;
+}
+.upload-excel-button{
+    width: 90%;
 }

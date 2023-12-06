@@ -47,7 +47,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     console.log('slottingTableData', slottingTableData)
     return (
         <>
-            <Analytics tabId={tabId}/>
+            <Analytics tabId={tabId} title="Slotting Analytics"/>
             {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">

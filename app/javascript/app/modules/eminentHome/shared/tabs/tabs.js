@@ -52,9 +52,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const handleShow = () => setShow(true);
     const [selectedFile, setSelectedFile] = useState();
     const {type} = useParams();
-    const [fileName, setFileName] = useState()
+    const [fileName, setFileName] = useState('')
     const [excelFile, setExcelFile] = useState()
-    const [email, setEmail] = useState();
+    const [email, setEmail] = useState('');
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [eminentMsg, setEminentMsg] = useState('');
     const navigate = useNavigate();
@@ -92,7 +92,13 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             }
         }
     };
-
+    const handleCsvfile = (filteredFiles) => {
+        const file = filteredFiles[0];
+        if (file) {
+                setFileName(file.name);
+                setExcelFile(file);
+        }
+    }
     const handleFileUpload = (files) => {
         // Assuming you want to handle only one file, you can access it using files[0]
         const file = files[0];
@@ -104,53 +110,53 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         }
     };
 
-        const handleSubmitUpload = () => {
-            // Check if email is not entered
-            if (!email) {
-                toast.error("Error: Please enter an email");
-                return;
-            }
+    const handleSubmitUpload = () => {
+        // Check if email is not entered
+        if (!email) {
+            toast.error("Error: Please enter an email");
+            return;
+        }
 
-            // Check if a file is selected
-            if (!selectedFile) {
-                toast.error("Error: Please select a file to upload");
-                return;
-            }
+        // Check if a file is selected
+        if (!selectedFile) {
+            toast.error("Error: Please select a file to upload");
+            return;
+        }
 
-            // Validate the email format
-            if (!validateEmail(email)) {
-                setIsValidEmail(false);
-                toast.error("Error: Please enter a valid email");
-                return;
-            }
+        // Validate the email format
+        if (!validateEmail(email)) {
+            setIsValidEmail(false);
+            toast.error("Error: Please enter a valid email");
+            return;
+        }
 
-            // Continue with file upload
-            const formData = new FormData();
-            formData.append('file', selectedFile);
+        // Continue with file upload
+        const formData = new FormData();
+        formData.append('file', selectedFile);
 
-            fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
-                method: 'POST',
-                body: formData,
+        fetch(`/api/v1/gom/manual_upload/minister_assistant_mapping?email=${email}`, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    toast.success("File uploaded successfully");
+                } else {
+                    toast.error("Error: Please upload Valid File");
+                }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        toast.success("File uploaded successfully");
-                    } else {
-                        toast.error("Error: Please upload Valid File");
-                    }
-                })
-                .catch(error => {
-                    // Handle other errors if needed
-                    toast.error("Error during file upload");
-                })
-                .finally(() => {
-                    // Close the modal or perform any cleanup
-                    setWantToUpload(false);
-                    setSelectedFile(null);
-                    setEmail(''); // Reset email holder to an empty string
-                });
-        };
+            .catch(error => {
+                // Handle other errors if needed
+                toast.error("Error during file upload");
+            })
+            .finally(() => {
+                // Close the modal or perform any cleanup
+                setWantToUpload(false);
+                setSelectedFile(null);
+                setEmail(''); // Reset email holder to an empty string
+            });
+    };
 
 
 
@@ -163,6 +169,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             uploadVacancy(formData).then((response) => response.json())
             setShow(false)
             notify()
+            setEmail('')
+            setFileName('')
         } else {
             setIsValidEmail(false);
         }
@@ -269,17 +277,43 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         <Modal.Header closeButton>
                             <Modal.Title id="contained-modal-title-vcenter">Upload  CSV File</Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>
+                        <Modal.Body
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                            }}
+                            onDragLeave={(e) => {
+                            }}
+                            onDrop={(e) => {
+                                // e.preventDefault();
+                                // const files = e.dataTransfer.files;
+                                // handleFileUpload(files);
+                                e.preventDefault();
+                                const files = e.dataTransfer.files;
+                                const allowedFileTypes = ["csv"];
+
+                                // Filter files based on their extensions
+                                const filteredFiles = Array.from(files).filter(file => {
+                                    const fileType = file.name.split(".").pop().toLowerCase();
+                                    return allowedFileTypes.includes(fileType);
+                                });
+
+                                // Process the filtered files
+                                handleCsvfile(filteredFiles);
+                            }}
+                        >
                             <ToastContainer />
                             <div className="excel-upload d-flex align-items-center flex-column w-100">
-                                <div className='excel-icon-name'>
-                                    <span className="material-icons"><UploadFile/></span>
-                                    <div id="excel-file-name" onClick={() => openPdfInBrowser(excelFile)}>{fileName}</div>
-                                </div>
+
                                 <div className='upload-excel-button d-flex flex-column'>
                                     <Button component="label" variant="contained">
+                                        <div className='excel-icon-name'>
+                                            <span className="material-icons"><UploadFile/></span>
+                                            <div id="excel-file-name">{fileName}</div>
+                                        </div>
                                         <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                        Drag and Drop CSV file here <br/> or <br/> click here to upload
+                                        <Typography>Drag and Drop CSV file here </Typography>
+                                        <Typography>or</Typography>
+                                        <Typography><b>click here to upload</b></Typography>
                                     </Button>
                                     <TextField
                                         variant="outlined"
@@ -334,66 +368,62 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         style={{display: 'none'}}
                     />
                     <Modal
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered
+                        show={wantToUpload}
+                    >
+                        <Modal.Body
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                            }}
+                            onDragLeave={(e) => {
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const files = e.dataTransfer.files;
+                                handleFileUpload(files);
+                            }}
+                        >
+                            <div>
+                                <div className="d-flex justify-content-between">
+                                    <h6>Upload .csv or Excel file</h6>
+                                    <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); setSelectedFile(null); handleEmailChange({ target: { value: '' } }); }}>
+                                        <CloseIcon />
+                                    </p>
+                                </div>
+                                <div>
+                                    <div className="uploadBox">
+                                        <div onClick={() => uploadFile()} style={{ cursor: "pointer" }}>
+                                            <div className="d-flex justify-content-center mt-4 " style={{ height: "70px", width: "70px", backgroundColor: "#D3D3D3", borderRadius: "50%", marginLeft: "200px", alignItems: "center" }}>
+                                                <UploadFile style={{ cursor: "pointer" }} />
+                                            </div>
 
-                   // contentClassName="deleteModal"
-                   aria-labelledby="contained-modal-title-vcenter"
-                   centered
-                   show={wantToUpload}
-                   >
-                   <Modal.Body
-                   onDragOver={(e) => {
-                       e.preventDefault();
-                       // Add styles or other feedback to indicate drop is allowed
-                   }}
-                   onDragLeave={(e) => {
-                       // Remove styles or other feedback when drag leaves the area
-                   }}
-                   onDrop={(e) => {
-                       e.preventDefault();
-                       const files = e.dataTransfer.files;
-                       handleFileUpload(files);
-                   }}
-               >
-                   <div>
-                       <div className="d-flex justify-content-between">
-                           <h6>Upload .csv or Excel file</h6>
-                           <p style={{ cursor: "pointer" }} onClick={() => { setWantToUpload(false); setSelectedFile(null); handleEmailChange({ target: { value: '' } }); }}>
-                               <CloseIcon />
-                           </p>
-                       </div>
-                       <div>
-                           <div className="uploadBox">
-                               <div onClick={() => uploadFile()} style={{ cursor: "pointer" }}>
-                                   <div className="d-flex justify-content-center mt-4 " style={{ height: "70px", width: "70px", backgroundColor: "#D3D3D3", borderRadius: "50%", marginLeft: "200px", alignItems: "center" }}>
-                                       <UploadFile style={{ cursor: "pointer" }} />
-                                   </div>
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Drag and Drop .CSV or Excel file here </p>
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >or</p>
+                                            <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Click here to upload</p>
+                                            {selectedFile && (
+                                                <p style={{ marginLeft:'50px', color: "green" }}>Selected File: {selectedFile.name}</p>
+                                            )}
 
-                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Drag and Drop .CSV or Excel file here </p>
-                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >or</p>
-                                   <p className="d-flex justify-content-center" style={{ cursor: "pointer" }} >Click here to upload</p>
-                                   {selectedFile && (
-                                       <p style={{ marginLeft:'50px', color: "green" }}>Selected File: {selectedFile.name}</p>
-                                   )}
-
-                               </div>
-                               <input
-                                   placeholder="Enter Email"
-                                   type="email"
-                                   value={email}
-                                   onChange={(e) => handleEmailChange(e)}
-                                   required
-                                   style={{ width: '300px', marginLeft: '15px' }} // Adjust the width value as needed
-                               />
-                               <button style={{ marginLeft: "20px" }} className="Submit" onClick={handleSubmitUpload}>
-                                   Submit
-                               </button>
-                           </div>
-                           <p style={{ marginLeft: "300px", color: "blue", cursor: "pointer" }} onClick={() => handleDownload()}>Download sample file</p>
-                       </div>
-                   </div>
-               </Modal.Body>
-               </Modal>
-               </>
+                                        </div>
+                                        <input
+                                            placeholder="Enter Email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => handleEmailChange(e)}
+                                            required
+                                            style={{ width: '300px', marginLeft: '15px' }} // Adjust the width value as needed
+                                        />
+                                        <button style={{ marginLeft: "20px" }} className="Submit" onClick={handleSubmitUpload}>
+                                            Submit
+                                        </button>
+                                    </div>
+                                    <p style={{ marginLeft: "300px", color: "blue", cursor: "pointer" }} onClick={() => handleDownload()}>Download sample file</p>
+                                </div>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
+                </>
         } else {
             buttonContent= null
         }

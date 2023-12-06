@@ -54,8 +54,8 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                         <TableCell>PSU/PSB</TableCell>
                         <TableCell>Designation</TableCell>
                         <TableCell>Status</TableCell>
-                        <TableCell>Applicant Name</TableCell>
-                        <TableCell>Saral ID</TableCell>
+                        <TableCell>Eminent Name</TableCell>
+                        <TableCell>Eminent ID</TableCell>
                         <TableCell>Tenure Start</TableCell>
                         <TableCell>Tenure End</TableCell>
                     </TableRow>

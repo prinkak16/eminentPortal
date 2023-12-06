@@ -84,7 +84,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                                         {ministryCount ===0 && <TableCell className="element" rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry_wise', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
                                         {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
                                         <TableCell className="element" onClick={() => onSwitchTab('vacancy_wise', null, organization.org_id)}>{organization.org_name}</TableCell>
-                                        <TableCell className="text-center">{organization.is_listed ? 'No' : 'Yes'}</TableCell>
+                                        <TableCell className="text-center">{organization.is_listed ? 'Yes' : 'No'}</TableCell>
                                         <TableCell>{organization.total}</TableCell>
                                         <TableCell>{organization.occupied}</TableCell>
                                         <TableCell>{organization.vacant}</TableCell>
