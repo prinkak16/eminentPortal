@@ -43,7 +43,7 @@ class Api::V1::FilterController < BaseApiController
 
     result = {
       'filters': [
-        fetch_vacancy_ministry_filters(ministry_name),
+        fetch_all_vacancy_ministry_filters(ministry_name),
         fetch_position_status_filter,
         fetch_state_filter
       ]
@@ -59,9 +59,9 @@ class Api::V1::FilterController < BaseApiController
 
     result = {
       'filters': [
-        fetch_vacancy_ministry_filters(ministry_name),
-        fetch_vacancy_department_filters(department_name),
-        fetch_vacancy_organization_filters(org_name),
+        fetch_all_vacancy_ministry_filters(ministry_name),
+        fetch_all_vacancy_department_filters(department_name),
+        fetch_all_vacancy_organization_filters(org_name),
         fetch_ratna_type_filter,
         fetch_position_status_filter,
         fetch_state_filter
