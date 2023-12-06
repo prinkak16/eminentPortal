@@ -278,7 +278,9 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                                 <div className='upload-excel-button d-flex flex-column'>
                                     <Button component="label" variant="contained">
                                         <VisuallyHiddenInput accept=".csv" onChange={uploadExcel} type="file"/><br/>
-                                        Drag and Drop CSV file here <br/> or <br/> click here to upload
+                                        <Typography>Drag and Drop CSV file here </Typography>
+                                        <Typography>or</Typography>
+                                        <Typography><b>click here to upload</b></Typography>
                                     </Button>
                                     <TextField
                                         variant="outlined"
@@ -333,8 +335,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                         style={{display: 'none'}}
                     />
                     <Modal
-
-                   // contentClassName="deleteModal"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered
                    show={wantToUpload}
@@ -342,10 +342,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                    <Modal.Body
                    onDragOver={(e) => {
                        e.preventDefault();
-                       // Add styles or other feedback to indicate drop is allowed
                    }}
                    onDragLeave={(e) => {
-                       // Remove styles or other feedback when drag leaves the area
                    }}
                    onDrop={(e) => {
                        e.preventDefault();
