@@ -11,19 +11,16 @@ module VacancyFilterHelper
     sql = 'SELECT ministry.id, ministry.name'
     sql += ", word_similarity(ministry.name, '#{name}') AS ms " if name.length > 2
     sql += "
-      FROM public.user_ministries AS um
-      LEFT JOIN public.ministries AS ministry
-      ON um.ministry_id = ministry.id
+      FROM public.ministries AS ministry
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id}"
     sql += " AND ministry.name % '#{name}' ORDER BY ms DESC" if name.length > 2
 
-    user_ministries = UserMinistry.find_by_sql(sql)
+    ministries = Ministry.find_by_sql(sql)
 
-    user_ministries.each do |user_ministry|
+    ministries.each do |ministry|
       result[:values] << {
-        'value': user_ministry['id'],
-        'display_name': user_ministry['name']
+        'value': ministry['id'],
+        'display_name': ministry['name']
       }
     end
     result
@@ -40,21 +37,18 @@ module VacancyFilterHelper
     sql = 'SELECT department.id, department.name'
     sql += ", word_similarity(department.name, '#{name}') AS ms " if name.length > 2
     sql += "
-      FROM public.user_ministries AS um
-      LEFT JOIN public.ministries AS ministry
-      ON um.ministry_id = ministry.id
+      FROM public.ministries AS ministry
       LEFT JOIN public.departments AS department
-      ON um.ministry_id = department.ministry_id
+      ON ministry.id = department.ministry_id
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND department.id IS NOT null"
     sql += " AND department.name % '#{name}' ORDER BY ms DESC" if name.length > 2
 
-    user_departments = UserMinistry.find_by_sql(sql)
+    departments = Ministry.find_by_sql(sql)
 
-    user_departments.each do |user_department|
+    departments.each do |department|
       result[:values] << {
-        'value': user_department['id'],
-        'display_name': user_department['name']
+        'value': department['id'],
+        'display_name': department['name']
       }
     end
     result
@@ -71,23 +65,20 @@ module VacancyFilterHelper
     sql = 'SELECT org.id, org.name'
     sql += ", word_similarity(org.name, '#{name}') AS ms " if name.length > 2
     sql += "
-      FROM public.user_ministries AS um
-      LEFT JOIN public.ministries AS ministry
-      ON um.ministry_id = ministry.id
+      FROM public.ministries AS ministry
       LEFT JOIN public.departments AS dept
-      ON um.ministry_id = dept.ministry_id
+      ON ministry.id = dept.ministry_id
       LEFT JOIN public.organizations AS org
-      ON (um.ministry_id = org.ministry_id AND dept.id = org.department_id)
+      ON (ministry.id = org.ministry_id AND dept.id = org.department_id)
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND org.id IS NOT null"
     sql += " AND org.name % '#{name}' ORDER BY ms DESC" if name.length > 2
 
-    user_organizations = UserMinistry.find_by_sql(sql)
+    organizations = Ministry.find_by_sql(sql)
 
-    user_organizations.each do |user_organization|
+    organizations.each do |organization|
       result[:values] << {
-        'value': user_organization['id'],
-        'display_name': user_organization['name']
+        'value': organization['id'],
+        'display_name': organization['name']
       }
     end
     result
