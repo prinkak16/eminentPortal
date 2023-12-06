@@ -168,6 +168,7 @@ export default function FiltersSidebar(props) {
     }
 
     const handleClearFilter = () => {
+        props.setFilterString('');
         setResetFilter(true)
         setAppliedFilters([]);
         setInputSearch('');
@@ -279,7 +280,7 @@ export default function FiltersSidebar(props) {
                                     />
                                 </FormControl>
                             }
-
+                            <div className="scrollFilter">
                             {filter?.values && filter.values.map((filterOption) => (
                                 <p key={filterOption.value}><input type="checkbox"
                                                                    checked={isChecked(filter.key, filterOption.value)}
@@ -288,6 +289,7 @@ export default function FiltersSidebar(props) {
                                 </p>
                             ))
                             }
+                            </div>
                         </Typography>
                     </AccordionDetails>
                 </Accordion>

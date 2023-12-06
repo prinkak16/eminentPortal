@@ -44,7 +44,6 @@ const SlottingTabPage =({tabId, filterString})=>{
     useEffect(() => {
         slottingTable()
     }, [currentPage, filterString]);
-    console.log('slottingTableData', slottingTableData)
     return (
         <>
             <Analytics tabId={tabId} title="Slotting Analytics"/>
