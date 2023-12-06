@@ -276,7 +276,7 @@ const HomeTable = (props) => {
   };
   return (
     <>
-      <Analytics tabId={props.tabId} />
+      <Analytics tabId={props.tabId} title="Eminent Analytics" />
       <div className=" hometable mt-4 mb-4">
         <div className="mt-4 d-flex justify-content-between ">
           <div className="d-flex">

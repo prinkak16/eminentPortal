@@ -202,7 +202,8 @@ const Analytics = (props) => {
         <>
             <div className="analyticsDiv">
                 <div className="headdiv">
-                    <p className="analyticsHeading">Eminent Analytics</p>
+                    {/*{('master_of_vacancies')? <p className="analyticsHeading">Position Analytics</p> : 'Eminent Analytics'}*/}
+                    <p className="analyticsHeading">{props.title}</p>
                 </div>
 
                 <div className="d-flex grid gap-0 column-gap-4 row me-5">

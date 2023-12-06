@@ -60,7 +60,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
 
     return (
         <>
-            <Analytics tabId={tabId}/>
+            <Analytics tabId={tabId} title="Postiton Analytics"/>
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="mastertabs d-flex justify-content-between align-items-center">
