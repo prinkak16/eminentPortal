@@ -11,7 +11,6 @@ export const getFiltersForGOM = (params) => {
 }
 
 export const getFiltersForAllotment = (params) => {
-    console.log('params is here ',params)
     return axios.get(apiBaseUrl + 'filters/allotment',{params})
 }
 
