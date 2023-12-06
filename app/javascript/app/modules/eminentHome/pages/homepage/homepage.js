@@ -17,7 +17,7 @@ import {useContext, useEffect, useState} from "react";
 import BellIcon from "../../../../../../../public/images/bellicon.svg"
 import {Button, Pagination} from "@mui/material";
 import SideBarIcon from "./../../../../../../../public/images/sidebaricon.svg"
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import {fetchMobile, getData} from "../../../../api/eminentapis/endpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
@@ -77,10 +77,11 @@ export default function PersistentDrawerLeft() {
     const [movTabId, setMovTabId] = useState('ministry_wise');
     const navigate = useNavigate();
     const [clearFilter, setClearFilter] = useState(false)
-
+    const [searchParams, setSearchParams] = useSearchParams();
     const {type} = useParams();
 
     useEffect(() => {
+        switchTabHandler(searchParams.get('basicTabId'));
        localStorage.setItem('eminent_number', '')
         localStorage.setItem('view_mode', '')
         setEminentData({})
@@ -168,6 +169,7 @@ export default function PersistentDrawerLeft() {
                     variant="persistent"
                     anchor="left"
                     open={open}
+                    className="filtersidebar"
                 >
                     <div>
                         <DrawerHeader className="d-flex justify-content-between mt-1.7 ms-4 ps-0">
@@ -180,7 +182,7 @@ export default function PersistentDrawerLeft() {
 
                     </div>
                 </Drawer>
-                <Main open={open} className="p-0 mt-5">
+                <Main open={open} className="p-0 mt-5 main-content">
                     <Typography className="ms-15-30">
                         <div className="d-flex justify-content-between">
                             <p className="heading">

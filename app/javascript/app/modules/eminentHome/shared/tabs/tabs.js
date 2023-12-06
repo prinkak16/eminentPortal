@@ -48,8 +48,6 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const [show, setShow] = useState(false);
     const [userData, setUserData] = useState();
     const [wantToUpload, setWantToUpload] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
     const [selectedFile, setSelectedFile] = useState();
     const {type} = useParams();
     const [fileName, setFileName] = useState('')
@@ -68,7 +66,12 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             setIsValidEmail(true);
         }
     };
-
+    const handleClose = () =>{
+        setShow(false)
+        setEmail('')
+        setFileName('')
+    }
+    const handleShow = () => setShow(true);
     const validateEmail = (email) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
@@ -284,20 +287,13 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             onDragLeave={(e) => {
                             }}
                             onDrop={(e) => {
-                                // e.preventDefault();
-                                // const files = e.dataTransfer.files;
-                                // handleFileUpload(files);
                                 e.preventDefault();
                                 const files = e.dataTransfer.files;
                                 const allowedFileTypes = ["csv"];
-
-                                // Filter files based on their extensions
                                 const filteredFiles = Array.from(files).filter(file => {
                                     const fileType = file.name.split(".").pop().toLowerCase();
                                     return allowedFileTypes.includes(fileType);
                                 });
-
-                                // Process the filtered files
                                 handleCsvfile(filteredFiles);
                             }}
                         >

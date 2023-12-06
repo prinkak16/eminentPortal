@@ -77,3 +77,13 @@
   width: 0rem
 }
 
+.scrollFilter{
+  max-height: 200px;
+  overflow-y: auto;
+}
+.scrollFilter input{
+  margin-right: 5px;
+}
+.scrollFilter .MuiCollapse-vertical.MuiCollapse-entered{
+  padding-bottom: 112px
+}
