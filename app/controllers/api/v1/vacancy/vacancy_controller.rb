@@ -199,7 +199,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
             ministry.name
           ORDER BY #{order_by} #{order_type}
         "
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -289,7 +289,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           min_info.ministry_name
         "
 
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -340,7 +340,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
             ministry.name
           ORDER BY #{order_by} #{order_type}
         "
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -356,7 +356,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         message: 'Success',
         data: {
           value: results,
-          count: UserMinistry.find_by_sql(sql).count
+          count: Ministry.find_by_sql(sql).count
         }
       }, status: :ok
     rescue StandardError => e
