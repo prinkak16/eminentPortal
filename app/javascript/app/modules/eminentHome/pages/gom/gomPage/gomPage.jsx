@@ -47,6 +47,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
     const [editMinisterData, setEditMinisterData] = useState({
+        allocated_ids: [],
         name: '',
         assigned_ministries: [],
         allocated_ministries: [],
@@ -92,10 +93,8 @@ function GomPage({ tabId, filterString, clearFilter }) {
 
             },  [filterString, ministerSearch, ministrySearch]);
 
-
     useEffect(() => {
         if (isValuePresent(resetFilter)) {
-            console.log('resetFilter', resetFilter)
             fetchData();
 
         }
@@ -134,44 +133,58 @@ function GomPage({ tabId, filterString, clearFilter }) {
             setOwnMinistryIds(ministryIds);
            };
 
-        const handleUpdateClick = async () => {
-            const ministerId = editMinisterData.ministerId;
-            if (ownMinistryIds.length < 1) {
-                toast.error('Please Update Own Ministries', { position: toast.POSITION.TOP_CENTER });
-                return
+    const handleUpdateClick = async () => {
+        const ministerId = editMinisterData.ministerId;
+
+        // Check if both assigned and own ministry arrays are empty
+        if (ownMinistryIds.length === 0) {
+            toast.error("Own Ministry Cannot be Blank",{ position: toast.POSITION.TOP_CENTER });
+            return;
+        }
+
+        try {
+            // Make API call for assigned ministries if assignedMinistryIds is not empty
+
+                await axios.post(
+                    `/api/v1/user/${ministerId}/assign_ministries`,
+                    { ministry_ids: assignedMinistryIds }
+                );
+
+            // Make API call for own ministries if ownMinistryIds is not empty
+            if (ownMinistryIds.length > 0) {
+                await axios.post(
+                    `/api/v1/user/${ministerId}/allocate_ministries`,
+                    { ministry_ids: ownMinistryIds }
+                );
             }
 
+            fetchData();
 
-            try {
-                // Make API call for assigned ministries if assignedMinistryIds is not empty
+            setOwnMinistryIds([]);
+            setAssignedMinistryIds([]);
+            setWantToEdit(false);
 
-                    await axios.post(
-                        `/api/v1/user/${ministerId}/assign_ministries`,
-                        { ministry_ids: assignedMinistryIds }
-                    );
 
-                // Make API call for own ministries if ownMinistryIds is not empty
-                if (ownMinistryIds.length > 0) {
-                    await axios.post(
-                        `/api/v1/user/${ministerId}/allocate_ministries`,
-                        { ministry_ids: ownMinistryIds }
-                    );
-                }
+            toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
+        } catch (error) {
+            // Handle errors and show error toast
+            toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
+        }
+    };
 
-                fetchData();
-
-                setWantToEdit(false);
-
-                toast.success('Update successful!', { position: toast.POSITION.TOP_CENTER });
-            } catch (error) {
-                // Handle errors and show error toast
-                toast.error('Error updating ministries. Please try again.', { position: toast.POSITION.TOP_CENTER });
-            }
-        };
+    const ministriesMap = new Map(ministryData.map(ministry => [ministry.name, ministry.id]));
 
 
     const handleEditClick = (data) => {
+
+        const allocatedMinistryIds = data.allocated_ministries.map(ministryName => ministriesMap.get(ministryName));
+        const assignedMinistryIds = data.assigned_ministries.map(ministryName => ministriesMap.get(ministryName));
+
+        setAssignedMinistryIds(assignedMinistryIds);
+        setOwnMinistryIds(allocatedMinistryIds);
+
         setEditMinisterData({
+
             ministerId: data.user_id,
             name: data.name,
             assigned_ministries: data.assigned_ministries,
@@ -270,7 +283,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={() => handleEditClick(data)} style={{ cursor: 'pointer', textAlign: "left" }}>
+                                            <td onClick={() => handleEditClick(data)} style={{ cursor: "pointer", textAlign: "left" }}>
                                                 <EditIcon />
                                             </td>
                                         </tr>

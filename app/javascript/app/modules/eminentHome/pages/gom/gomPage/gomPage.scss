@@ -16,6 +16,7 @@
   border: none;
 }
 .Submit{
+  cursor: pointer;
   border-radius: 8px;
   background: var(--Color, #FF9559);
   color: white;
@@ -26,6 +27,7 @@
   border: none;
 }
 .Update-btn{
+  cursor: pointer;
   border-radius: 8px;
   background: var(--Color, #FF9559);
   color: white;
@@ -35,6 +37,7 @@
   border: none;
 }
 .Cancel-btn{
+  cursor: pointer;
   border-radius: 8px;
   background: white;
   color: black;
