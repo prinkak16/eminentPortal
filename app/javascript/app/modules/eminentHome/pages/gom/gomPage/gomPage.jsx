@@ -138,7 +138,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
 
         // Check if both assigned and own ministry arrays are empty
         if (ownMinistryIds.length === 0) {
-            toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
+            toast.error("Own Ministry Cannot be Blank",{ position: toast.POSITION.TOP_CENTER });
             return;
         }
 
