@@ -114,26 +114,22 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     };
 
     const handleSubmitUpload = () => {
-        // Check if email is not entered
         if (!email) {
             toast.error("Error: Please enter an email");
             return;
         }
 
-        // Check if a file is selected
         if (!selectedFile) {
             toast.error("Error: Please select a file to upload");
             return;
         }
 
-        // Validate the email format
         if (!validateEmail(email)) {
             setIsValidEmail(false);
             toast.error("Error: Please enter a valid email");
             return;
         }
 
-        // Continue with file upload
         const formData = new FormData();
         formData.append('file', selectedFile);
 
