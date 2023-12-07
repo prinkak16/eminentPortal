@@ -104,6 +104,13 @@ Rails.application.routes.draw do
         get '/eminent_list', to: 'eminent#list'
       end
 
+      namespace :file_status, path: 'file_status' do
+        get '/position_analytics', to: 'stats#position_analytics'
+        get '/list', to: 'stats#list'
+        get '/assign_position_info/:organization_id', to: 'stats#assign_position_info'
+        get '/eminent_list', to: 'eminent#list'
+      end
+
       namespace :user, path: 'user/:user_id' do
         get '/assigned_ministries', to: 'user#assigned_ministries'
         post '/assign_ministries', to: 'user#assign_ministries'

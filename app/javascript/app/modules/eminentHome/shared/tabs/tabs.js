@@ -473,6 +473,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             return <TabList onChange={handleChange}
                             aria-label="lab API tabs example">
                 <Tab label="Home" value="home_table"/>
+                <Tab label="Master of Vacancies" value="master_of_vacancies"/>
             </TabList>
         } else {
             return <TabList onChange={handleChange}
