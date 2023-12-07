@@ -247,9 +247,9 @@ const Resumeform = (props) => {
                                  sx={{display: 'inline-block'}}>3</Box> Links <InfoOutlinedIcon/>
                         </Typography>
                     </Grid>
-                    <Grid className='websites-container'>
-                        <Grid className='first-container websites'>
-                            <Grid item xs={3} sx={{mb: 2}}>
+                    <Grid className='websites-container' xs={12}>
+                        <Grid className='first-container websites' >
+                            <Grid item xs={4} sx={{mb: 2}}>
                                 <FormLabel>Website</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -258,7 +258,7 @@ const Resumeform = (props) => {
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                             </Grid>
-                            <Grid item xs={3} sx={{mb: 2}}>
+                            <Grid item xs={4} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -271,8 +271,8 @@ const Resumeform = (props) => {
                             </Grid>
                         </Grid>
 
-                        <Grid className='second-container websites'>
-                            <Grid item xs={3} sx={{mb: 2}}>
+                        <Grid className='second-container websites'  >
+                            <Grid item xs={4} sx={{mb: 2}}>
                                 <FormLabel>Linkedin</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -282,7 +282,7 @@ const Resumeform = (props) => {
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
 
                             </Grid>
-                            <Grid item xs={3} sx={{mb: 2}}>
+                            <Grid item xs={4} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -295,7 +295,7 @@ const Resumeform = (props) => {
                         </Grid>
 
                         <Grid className='third-container websites'>
-                            <Grid item xs={3} sx={{mb: 2}}>
+                            <Grid item xs={4} sx={{mb: 2}}>
                                 <FormLabel>Instagram</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
