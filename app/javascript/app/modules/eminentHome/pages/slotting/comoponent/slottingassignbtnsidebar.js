@@ -49,7 +49,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [prevVacancyCount, setPrevVacancyCount] = useState(null);
     const [currentPage, setCurrentPage] = useState(0)
     const limit = 10;
-    const offset = 0;
     let originalVacancyCount;
     let originalStateId;
     let originalRemarks;
@@ -60,19 +59,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }
 
     const customFunction = () => {
-        getSlottingPsuData(psuId).then(response => {
-            setSlottingPsuDetail(response.data.data.stats[0]);
-            setSlottingVacancyDetail(response.data.data.slotting);
-        })
-    }
-
-    const addVacancyTableData = () => {
         const paginateParams = {
-            limit: limit,
-            offset: currentPage * limit
+            limit : limit,
+            offset : currentPage * limit
         }
-
         getSlottingPsuData(psuId, paginateParams).then(response => {
+            setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
@@ -171,7 +163,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         if (vacancyCount !== prevVacancyCount) {
             setPrevVacancyCount(vacancyCount);
         }
-    }, [vacancyCount, prevVacancyCount]);
+    }, [vacancyCount, prevVacancyCount, currentPage]);
 
     return (
         <Box sx={{display: 'flex'}}>
@@ -311,8 +303,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     </TableContainer>
                     {(addMore === false) ? (
                         <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>) : ''}
-
-
                     <div className="mt-3">
                         <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { slottingVacancyDetail?.count ?  Math.ceil(slottingVacancyDetail?.count / limit) : ''}</p>
                         <ReactPaginate
