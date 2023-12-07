@@ -12,7 +12,7 @@ function Allotment({tabId, filterString}) {
         <div>
             {!assignShow ? (
                 <div>
-                    <Analytics tabId={tabId} assignShow={assignShow} />
+                    <Analytics tabId={tabId} assignShow={assignShow} title="Allotment Analytics" />
                     <AllotmentTable filterString={filterString} setAssignShow={setAssignShow}/>
                 </div>
             ) : (

@@ -135,7 +135,7 @@ const FileStatus = () => {
 
     return (
         <div className='file-status-component'>
-            <Analytics tabId={'home_table'} assignShow={true} />
+            <Analytics tabId={'home_table'} assignShow={true} title="File status Analytics" />
             <div className='file-status-table mt-5'>
                 <div className="d-flex">
                     <div className='d-flex search-field'>

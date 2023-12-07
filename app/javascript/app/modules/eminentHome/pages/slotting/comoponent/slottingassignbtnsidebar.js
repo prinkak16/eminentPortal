@@ -27,6 +27,7 @@ import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiend
 import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import ReactPaginate from "react-paginate";
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
@@ -46,6 +47,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [vacancyId, setVacancyId] = useState([])
     const [validValue, setValidValue] = useState(true)
     const [prevVacancyCount, setPrevVacancyCount] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0)
+    const limit = 10;
+    const offset = 0;
     let originalVacancyCount;
     let originalStateId;
     let originalRemarks;
@@ -63,7 +67,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }
 
     const addVacancyTableData = () => {
-        getSlottingPsuData(psuId).then(response => {
+        const paginateParams = {
+            limit: limit,
+            offset: currentPage * limit
+        }
+
+        getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
@@ -101,8 +110,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const handleAddMore = () => {
         setAddMore(!addMore)
     }
-
-
 
         const handleSave = async (event) => {
             event.preventDefault();
@@ -304,6 +311,29 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     </TableContainer>
                     {(addMore === false) ? (
                         <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>) : ''}
+
+
+                    <div className="mt-3">
+                        <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { slottingVacancyDetail?.count ?  Math.ceil(slottingVacancyDetail?.count / limit) : ''}</p>
+                        <ReactPaginate
+                            previousLabel={"Previous"}
+                            nextLabel={"Next"}
+                            breakLabel={"...."}
+                            pageCount={Math.ceil(slottingVacancyDetail?.count / limit)}
+                            marginPagesDisplayed={1}
+                            pageRangeDisplayed={5}
+                            onPageChange={(selectedPage) => setCurrentPage(selectedPage.selected)}
+                            containerClassName={'pagination justify-content-end'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousClassName={'page-item'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            breakClassName={'page-link'}
+                            breakLinkClassName={'page-item'}
+                            activeClassName={'active'}/>
+                    </div>
 
                 </div>
             </Drawer>

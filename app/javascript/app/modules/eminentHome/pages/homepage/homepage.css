@@ -1,8 +1,3 @@
-/*.page{*/
-/*    display: flex;*/
-/*}*/
-
-
 .filter{
     color: #343434;
     font-size: 20px;
@@ -104,3 +99,15 @@ border-radius: 8px !important;
     margin-top: 20% !important;
 }
 
+.filtersidebar{
+    position: fixed;
+    top: 40px;
+}
+.main-content.css-ttn1xo{
+    margin-left: 240px;
+    z-index: 1;
+}
+
+.main-content.css-yfo96e{
+    margin-left: 0;
+}

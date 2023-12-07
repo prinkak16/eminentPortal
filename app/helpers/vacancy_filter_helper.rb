@@ -16,7 +16,7 @@ module VacancyFilterHelper
       ON um.ministry_id = ministry.id
     "
     sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id}"
-    sql += " AND ministry.name % '#{name}' ORDER BY ms DESC" if name.length > 2
+    sql += " AND LOWER(ministry.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_ministries = UserMinistry.find_by_sql(sql)
 
@@ -24,6 +24,31 @@ module VacancyFilterHelper
       result[:values] << {
         'value': user_ministry['id'],
         'display_name': user_ministry['name']
+      }
+    end
+    result
+  end
+  def fetch_all_vacancy_ministry_filters(name)
+    result = {
+      'key': 'ministry',
+      'display_name': 'Ministry',
+      'type': 'array',
+      'values': []
+    }
+
+    sql = 'SELECT ministry.id, ministry.name'
+    sql += ", word_similarity(ministry.name, '#{name}') AS ms " if name.length > 2
+    sql += "
+      FROM public.ministries AS ministry
+    "
+    sql += " WHERE LOWER(ministry.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+
+    ministries = Ministry.find_by_sql(sql)
+
+    ministries.each do |ministry|
+      result[:values] << {
+        'value': ministry['id'],
+        'display_name': ministry['name']
       }
     end
     result
@@ -47,7 +72,7 @@ module VacancyFilterHelper
       ON um.ministry_id = department.ministry_id
     "
     sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND department.id IS NOT null"
-    sql += " AND department.name % '#{name}' ORDER BY ms DESC" if name.length > 2
+    sql += " AND LOWER(department.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_departments = UserMinistry.find_by_sql(sql)
 
@@ -55,6 +80,33 @@ module VacancyFilterHelper
       result[:values] << {
         'value': user_department['id'],
         'display_name': user_department['name']
+      }
+    end
+    result
+  end
+  def fetch_all_vacancy_department_filters(name)
+    result = {
+      'key': 'department',
+      'display_name': 'Department',
+      'type': 'array',
+      'values': []
+    }
+
+    sql = 'SELECT department.id, department.name'
+    sql += ", word_similarity(department.name, '#{name}') AS ms " if name.length > 2
+    sql += "
+      FROM public.ministries AS ministry
+      LEFT JOIN public.departments AS department
+      ON ministry.id = department.ministry_id
+    "
+    sql += " WHERE LOWER(department.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+
+    departments = Ministry.find_by_sql(sql)
+
+    departments.each do |department|
+      result[:values] << {
+        'value': department['id'],
+        'display_name': department['name']
       }
     end
     result
@@ -80,7 +132,7 @@ module VacancyFilterHelper
       ON (um.ministry_id = org.ministry_id AND dept.id = org.department_id)
     "
     sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND org.id IS NOT null"
-    sql += " AND org.name % '#{name}' ORDER BY ms DESC" if name.length > 2
+    sql += " AND LOWER(org.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_organizations = UserMinistry.find_by_sql(sql)
 
@@ -88,6 +140,35 @@ module VacancyFilterHelper
       result[:values] << {
         'value': user_organization['id'],
         'display_name': user_organization['name']
+      }
+    end
+    result
+  end
+  def fetch_all_vacancy_organization_filters(name)
+    result = {
+      'key': 'organization',
+      'display_name': 'Organization',
+      'type': 'array',
+      'values': []
+    }
+
+    sql = 'SELECT org.id, org.name'
+    sql += ", word_similarity(org.name, '#{name}') AS ms " if name.length > 2
+    sql += "
+      FROM public.ministries AS ministry
+      LEFT JOIN public.departments AS dept
+      ON ministry.id = dept.ministry_id
+      LEFT JOIN public.organizations AS org
+      ON (ministry.id = org.ministry_id AND dept.id = org.department_id)
+    "
+    sql += " WHERE LOWER(org.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+
+    organizations = Ministry.find_by_sql(sql)
+
+    organizations.each do |organization|
+      result[:values] << {
+        'value': organization['id'],
+        'display_name': organization['name']
       }
     end
     result

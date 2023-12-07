@@ -135,7 +135,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             name: row_data[:organization_name],
             slug: organization_slug
           ).first_or_create!
-          organization_details.update(is_listed: row_data[:is_listed])
+          organization_details.update(is_listed: row_data[:is_listed] == 'YES')
           organization_id_v = organization_details[:id].present? ? organization_details[:id] : nil
         end
 

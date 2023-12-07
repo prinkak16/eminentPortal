@@ -12,6 +12,8 @@ class CustomMemberForm < ApplicationRecord
   validates_uniqueness_of :phone, scope: :form_type, :allow_blank => true, :allow_nil => true
   belongs_to :country_state
 
+  has_many :vacancy_allotments
+
   scope :buddhist_leader, -> { where(form_type: 'buddhist_leader') }
   acts_as_paranoid
 

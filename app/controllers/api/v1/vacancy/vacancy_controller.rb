@@ -24,21 +24,11 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
            SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
            SUM(1) AS total
-         FROM public.user_ministries AS um
-         LEFT JOIN public.vacancies AS vac
-         ON um.ministry_id = vac.ministry_id
-         LEFT JOIN public.ministries AS ministry
-         ON vac.ministry_id = ministry.id
+         FROM public.vacancies AS vac
          WHERE
-           um.is_minister IS false
-           AND
-           vac.id IS NOT null
-           AND
            vac.deleted_at IS null
-           AND
-           um.user_id = #{current_user.id}
       "
-      results = UserMinistry.find_by_sql(sql)
+      results = Vacancy.find_by_sql(sql)
 
       if results.present? && results[0].present?
         stats[:total] = results[0]['total'] || 0
@@ -182,30 +172,24 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
             SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
             SUM(1) AS total
-          FROM public.user_ministries AS um
+          FROM public.ministries AS ministry
           LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
-          LEFT JOIN public.ministries AS ministry
-          ON vac.ministry_id = ministry.id
+          ON ministry.id = vac.ministry_id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
-            AND
-            um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
           GROUP BY
             ministry.id,
             ministry.name
           ORDER BY #{order_by} #{order_type}
         "
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -256,30 +240,24 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                   SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
                   SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
                   SUM(1) AS total
-                FROM public.user_ministries AS um
+                FROM public.ministries AS ministry
                 LEFT JOIN public.vacancies AS vac
-                ON um.ministry_id = vac.ministry_id
-                LEFT JOIN public.ministries AS ministry
-                ON vac.ministry_id = ministry.id
+                ON ministry.id = vac.ministry_id
                 LEFT JOIN public.departments AS dept
                 ON vac.department_id = dept.id
                 LEFT JOIN public.organizations AS org
                 ON vac.organization_id = org.id
                 WHERE
-                  um.is_minister IS false
-                  AND
                   vac.id IS NOT null
                   AND
                   vac.deleted_at IS null
-                  AND
-                  um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
         sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
             GROUP BY
               ministry.id,
@@ -301,7 +279,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           min_info.ministry_name
         "
 
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -328,37 +306,31 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                 'tenure_ended_at', vac.tenure_ended_at
               )
             ) AS vac_info
-          FROM public.user_ministries AS um
+          FROM public.ministries AS ministry
           LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
-          LEFT JOIN public.ministries AS ministry
-          ON vac.ministry_id = ministry.id
+          ON ministry.id = vac.ministry_id
           LEFT JOIN public.departments AS dept
           ON vac.department_id = dept.id
           LEFT JOIN public.organizations AS org
           ON vac.organization_id = org.id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
-            AND
-            um.user_id = #{current_user.id}
         "
         sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
         sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
         sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
         sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
         sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
-        sql += " AND vac.status IN (#{position_status_search})" unless position_status_search.nil?
+        sql += " AND vac.allotment_status IN (#{position_status_search})" unless position_status_search.nil?
         sql += "
           GROUP BY
             ministry.id,
             ministry.name
           ORDER BY #{order_by} #{order_type}
         "
-        stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+        stats = Ministry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
         stats.each do |stat|
           results << {
@@ -374,7 +346,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         message: 'Success',
         data: {
           value: results,
-          count: UserMinistry.find_by_sql(sql).count
+          count: Ministry.find_by_sql(sql).count
         }
       }, status: :ok
     rescue StandardError => e
