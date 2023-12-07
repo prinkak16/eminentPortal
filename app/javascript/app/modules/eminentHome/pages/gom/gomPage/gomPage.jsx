@@ -47,6 +47,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
     const [editMinisterData, setEditMinisterData] = useState({
+        allocated_ids: [],
         name: '',
         assigned_ministries: [],
         allocated_ministries: [],
@@ -136,19 +137,18 @@ function GomPage({ tabId, filterString, clearFilter }) {
         const ministerId = editMinisterData.ministerId;
 
         // Check if both assigned and own ministry arrays are empty
-        // if (ownMinistryIds.length === 0) {
-        //     toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
-        //     return;
-        // }
+        if (ownMinistryIds.length === 0) {
+            toast.error("Please Update Ministries!",{ position: toast.POSITION.TOP_CENTER });
+            return;
+        }
 
         try {
             // Make API call for assigned ministries if assignedMinistryIds is not empty
-            if (assignedMinistryIds.length > 0) {
+
                 await axios.post(
                     `/api/v1/user/${ministerId}/assign_ministries`,
                     { ministry_ids: assignedMinistryIds }
                 );
-            }
 
             // Make API call for own ministries if ownMinistryIds is not empty
             if (ownMinistryIds.length > 0) {
@@ -172,18 +172,30 @@ function GomPage({ tabId, filterString, clearFilter }) {
         }
     };
 
+    const ministriesData = [
+        { "id": 1, "name": "Ministry of Defence" },
+        { "id": 2, "name": "Ministry of Agriculture" },
+        { "id": 3, "name": "Ministry of Technology" },
+        { "id": 4, "name": "Ministry of Finance" },
+        { "id": 5, "name": "Ministry of Home Affairs" },
+        { "id": 6, "name": "Ministry of Labour" },
+        { "id": 7, "name": "Ministry of Coal & Petroleum" },
+        { "id": 8, "name": "Ministry of Health" }
+    ];
 
-
-
-
-        const handleClick = event => {
-            const itemsPerPage = 5;
-            setPageCount(Math.ceil(apiData.length / itemsPerPage));
-        };
+    const ministriesMap = new Map(ministriesData.map(ministry => [ministry.name, ministry.id]));
 
 
     const handleEditClick = (data) => {
+
+        const allocatedMinistryIds = data.allocated_ministries.map(ministryName => ministriesMap.get(ministryName));
+        const assignedMinistryIds = data.assigned_ministries.map(ministryName => ministriesMap.get(ministryName));
+
+        setAssignedMinistryIds(assignedMinistryIds);
+        setOwnMinistryIds(allocatedMinistryIds);
+
         setEditMinisterData({
+
             ministerId: data.user_id,
             name: data.name,
             assigned_ministries: data.assigned_ministries,
