@@ -172,18 +172,18 @@ function GomPage({ tabId, filterString, clearFilter }) {
         }
     };
 
-    const ministriesData = [
-        { "id": 1, "name": "Ministry of Defence" },
-        { "id": 2, "name": "Ministry of Agriculture" },
-        { "id": 3, "name": "Ministry of Technology" },
-        { "id": 4, "name": "Ministry of Finance" },
-        { "id": 5, "name": "Ministry of Home Affairs" },
-        { "id": 6, "name": "Ministry of Labour" },
-        { "id": 7, "name": "Ministry of Coal & Petroleum" },
-        { "id": 8, "name": "Ministry of Health" }
-    ];
+    // const ministriesData = [
+    //     { "id": 1, "name": "Ministry of Defence" },
+    //     { "id": 2, "name": "Ministry of Agriculture" },
+    //     { "id": 3, "name": "Ministry of Technology" },
+    //     { "id": 4, "name": "Ministry of Finance" },
+    //     { "id": 5, "name": "Ministry of Home Affairs" },
+    //     { "id": 6, "name": "Ministry of Labour" },
+    //     { "id": 7, "name": "Ministry of Coal & Petroleum" },
+    //     { "id": 8, "name": "Ministry of Health" }
+    // ];
 
-    const ministriesMap = new Map(ministriesData.map(ministry => [ministry.name, ministry.id]));
+    const ministriesMap = new Map(ministryData.map(ministry => [ministry.name, ministry.id]));
 
 
     const handleEditClick = (data) => {
@@ -294,7 +294,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
-                                            <td onClick={() => handleEditClick(data)} style={{ cursor: 'pointer', textAlign: "left" }}>
+                                            <td onClick={() => handleEditClick(data)} style={{ cursor: "pointer", textAlign: "left" }}>
                                                 <EditIcon />
                                             </td>
                                         </tr>
