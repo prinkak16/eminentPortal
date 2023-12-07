@@ -172,17 +172,6 @@ function GomPage({ tabId, filterString, clearFilter }) {
         }
     };
 
-    // const ministriesData = [
-    //     { "id": 1, "name": "Ministry of Defence" },
-    //     { "id": 2, "name": "Ministry of Agriculture" },
-    //     { "id": 3, "name": "Ministry of Technology" },
-    //     { "id": 4, "name": "Ministry of Finance" },
-    //     { "id": 5, "name": "Ministry of Home Affairs" },
-    //     { "id": 6, "name": "Ministry of Labour" },
-    //     { "id": 7, "name": "Ministry of Coal & Petroleum" },
-    //     { "id": 8, "name": "Ministry of Health" }
-    // ];
-
     const ministriesMap = new Map(ministryData.map(ministry => [ministry.name, ministry.id]));
 
 
