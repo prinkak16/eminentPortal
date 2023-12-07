@@ -1,4 +1,4 @@
-class Api::V1::FileStatus::GomController < BaseApiController
+class Api::V1::FileStatus < BaseApiController
 
 
 
