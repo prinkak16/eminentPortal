@@ -24,6 +24,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
     const [tabData, setTabData] = useState([]);
     const [ministryId, setMinistryId] = useState(null);
     const [organizationId, setOrganizationId] = useState(null)
+    const [movSearchParams , setMovSearchParams] = useSearchParams()
 
     const handleChange = (event, newValue) => {
         setMinistryId(null);
@@ -51,7 +52,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
 
     useEffect(() => {
         homeContext.handleMovTabsFilter('ministry_wise');
-        switchTabDataHandler()
+        switchTabDataHandler(movSearchParams.get('masterOfVacancies'))
+        console.log('homeContext.handleMovTabsFilter(\'ministry_wise\');', homeContext.handleMovTabsFilter('ministry_wise'))
     }, []);
 
     const handleMasterTabName = (tabValue) => {

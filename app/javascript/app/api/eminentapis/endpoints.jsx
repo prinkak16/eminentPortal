@@ -67,8 +67,9 @@ export const fetchUser = (config) => {
 export  const getSlottingTable =(params , filterPrams)=>{
     return  axios.get(`${apiBaseUrl}slotting/list?${filterPrams}`, params)
 }
-export const getSlottingPsuData = (params ) => {
-    return axios.get(apiBaseUrl + 'slotting/stats/' + params )
+export const getSlottingPsuData = (params, paginateParams) => {
+    const queryParams = new URLSearchParams(paginateParams).toString();
+    return axios.get(apiBaseUrl + 'slotting/stats/' + params + '?' + queryParams )
 }
 
 export  const assignSlottingVacancy = (formData) => {

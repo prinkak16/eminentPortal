@@ -24,7 +24,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
             }).catch(error => {
             setIsFetching(false);
             setError(error);
-            console.error(error);
         })
     }
 
