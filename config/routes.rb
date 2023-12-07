@@ -105,10 +105,7 @@ Rails.application.routes.draw do
       end
 
       namespace :file_status, path: 'file_status' do
-        get '/position_analytics', to: 'stats#position_analytics'
-        get '/list', to: 'stats#list'
-        get '/assign_position_info/:organization_id', to: 'stats#assign_position_info'
-        get '/eminent_list', to: 'eminent#list'
+
       end
 
       namespace :user, path: 'user/:user_id' do
