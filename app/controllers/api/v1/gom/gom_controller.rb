@@ -86,10 +86,10 @@ class Api::V1::Gom::GomController < BaseApiController
         WHERE assist_to_id is null"
 
       if minister_ids.length.positive? && ministry_ids.length.positive?
-        sql += " AND um.user_id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
+        sql += " AND au.id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
       else
         if minister_ids.length.positive?
-          sql += " AND um.user_id IN (#{minister_ids})"
+          sql += " AND au.id IN (#{minister_ids})"
         end
 
         if ministry_ids.length.positive?
