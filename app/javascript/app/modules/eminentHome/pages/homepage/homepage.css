@@ -116,6 +116,20 @@ border-radius: 8px !important;
     margin-left: 0;
 }
 .main-content.css-yfo96e .sidebar-btn{
-    z-index: 1111;
+    z-index: 1;
     position: relative;
+}
+.sidebar-btn{
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+.sidebar-btn button {
+    width: 57px;
+    margin-right: 0;
+}
+.sidebar-btn button svg{
+    width: 41px;
+    height:41px;
 }
