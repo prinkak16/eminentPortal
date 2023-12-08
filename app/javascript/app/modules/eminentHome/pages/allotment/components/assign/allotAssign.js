@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import Header from "../../../../../eminentpersonalityhome/header/header";
 import Reactangle from "../../../../../../../../../public/images/building_icon.svg";
 import Ellipse from "../../../../../../../../../public/images/Ellipse.svg";
@@ -21,25 +21,27 @@ import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Pencil from "../../../../../../../../../public/images/pencil.svg";
+import UnassignModal from './unassignModal';
+import EllipseBlue from "../../../../../../../../../public/images/Ellipse_blue.svg";
+
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
   const [dataArray, setDataArray] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [open, setOpen] = useState(false);
+  const [System, setSystem] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
-    console.log(open);
   };
 
-  console.log(open);
+  
   const handleClose = () => setOpen(false);
 
   const limit = 5;
 
   const [value, setValue] = useState(0);
-  console.log(value);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -54,6 +56,16 @@ function AllotAssign() {
     setValue(1);
     setOpen(false);
   };
+
+  const unassignHandeler = () =>{
+        setSystem(true);
+  }
+
+  const assignedHandeler = ()=>{
+        setIsOpen(true);
+        setValue(1);
+  }
+  
 
   const style = {
     position: "absolute",
@@ -187,12 +199,98 @@ function AllotAssign() {
               </div>
               
             </div>
+
+            <div className="table-main-container">
+              {dataArray &&
+                dataArray.map((member) => (
+                  <div className="user-table-1">
+                    <div
+                      className="table-container mt-4 table-container-1 remove-border"
+                      key={member.id}
+                    >
+                      <Grid container className="single-row ">
+                        <Grid item xs={3} className="gridItem min-width-24rem">
+                          <div className="row">
+                            <div className="col-md-4 pe-0">
+                              <div className="imgdiv circle">
+                                <img className="img" src={member.profile} />
+                              </div>
+                            </div>
+                            <div className="col-md-8">
+                              <h2 className="headingName">{member.name}</h2>
+                              <div className="row d-flex">
+                                <p>Phone : {member.phone}</p>
+                                <div />
+                                <div className="d-flex">
+                                  <IdBadge />
+                                  <p className="id-text">
+                                    ID No. - {member.id}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid
+                          item
+                          xs
+                          className="gridItem education-profession-container"
+                        >
+                          <div className="row">
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Age</p>
+                              <p>{member.age}</p>
+                            </div>
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Profession</p>
+                              <p>{member.profession}</p>
+                            </div>
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Education</p>
+                              <p>{member.education}</p>
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs className="gridItem">
+                          <div className="row data-display">
+                            <p className="text-labels">Address</p>
+                            <p>{member.address}</p>
+                          </div>
+                        </Grid>
+                        <Grid item xs className="gridItemLast">
+                          <div className="d-flex">
+                            <div className="row data-display">
+                              <p className="text-labels">Referred by</p>
+                              <p>{member.referredBy}</p>
+                            </div>
+                          </div>
+                        </Grid>
+                      </Grid>
+                    </div>
+                    <div className="UnAssign-allotment-div">
+                    <button className="UnAssign-allotment-btn" onClick={unassignHandeler}>Unassign</button>
+                    </div> 
+                  </div>
+                ))}
+            </div>
           </>
         );
         break;
 
       case 2:
-        return <h1>History</h1>;
+        return <div className="allot-history-div-1">
+        <div className="allot-history-div">
+        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
+        </div>
+
+        <div className="allot-history-div">
+        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
+        </div>
+
+        <div className="allot-history-div">
+        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
+        </div>
+        </div>
         break;
 
       default:
@@ -315,6 +413,7 @@ function AllotAssign() {
 
   return (
     <div>
+    <UnassignModal System={System} setSystem={setSystem}/>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -368,6 +467,7 @@ function AllotAssign() {
         </Fade>
       </Modal>
 
+      
       <div>
         <SwipeableDrawer
           anchor="right"
@@ -378,6 +478,7 @@ function AllotAssign() {
           {drawerContent}
         </SwipeableDrawer>
       </div>
+      <div className="btn-absolute"><button className="Assigned-Position-btn" onClick={assignedHandeler}>Assigned Position</button></div>
       <div className="allot-card-container">
         <div className="allot-b1">
           <Reactangle className="icon-rect" />
