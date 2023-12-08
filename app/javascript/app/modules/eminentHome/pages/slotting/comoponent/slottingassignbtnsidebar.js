@@ -162,18 +162,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
       customFunction()
   }
 
-    // const slottingDisplay = () =>{
-    //
-    //     }
     useEffect(() => {
-        // if(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 0){
-        //     setAddMore(true)
-        //     // console.log('slottingVacancyDetail.value.length', slottingVacancyDetail.value.length)
-        // }
-        // if(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 1){
-        //     setAddMore(false)
-        // }
-
         customFunction();
         slottingState()
         if (vacancyCount !== prevVacancyCount) {
@@ -193,7 +182,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             >
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
-                        {/*{theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}*/}
                         <ChevronLeftIcon/>
                     </IconButton>
                 </DrawerHeader>
@@ -221,8 +209,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     <Typography variant="h5">
                         Assign Vacancy to state
                     </Typography>
-                    {/*{(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 0) ? '':''}*/}
-
                     { addMore && (
                         <div>
                             <div className="d-flex">
@@ -239,9 +225,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             value={vacancyCount}
                                         error={!validValue}
                                         helperText={!validValue ? 'Please enter your remark' : ''}/>
-                                        {/*<Typography className="countnumber mx-2 p-2 text-center">*/}
-                                        {/*    {vacancyCount}*/}
-                                        {/*</Typography>*/}
+
                                         <Button onClick={handleIncreaseCount}> + </Button>
                                     </div>
                                 </div>
