@@ -80,7 +80,7 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
                                 ministryCount += psuIndex;
                                 return (
                                     <TableRow key={organization.org_id}>
-                                        {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
+                                        {ministryCount ===0   &&  <TableCell rowSpan={ministryRowSpan}>{currentPage * limit + ministryIndex + 1}</TableCell>}
                                         {ministryCount ===0 && <TableCell className="element" rowSpan={ministryRowSpan} onClick={()=>onSwitchTab('ministry_wise', ministry.ministryId)}>{ministry.ministry_name}</TableCell>}
                                         {psuIndex ===0 && <TableCell rowSpan={departmentRowSpan} >{department.dept_name}</TableCell>}
                                         <TableCell className="element" onClick={() => onSwitchTab('vacancy_wise', null, organization.org_id)}>{organization.org_name}</TableCell>
