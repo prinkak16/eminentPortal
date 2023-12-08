@@ -40,7 +40,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
-    const itemsPerPage= 5
+    const itemsPerPage= 10
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
