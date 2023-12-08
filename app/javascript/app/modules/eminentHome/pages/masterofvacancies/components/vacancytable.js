@@ -66,7 +66,7 @@ const  VacancyTable = ({onSwitchTab, filterString, organizationId}) => {
                         return ministry.vac_info.map((vacancy, vacancyIndex) => {
                             return (
                                 <TableRow>
-                                    {vacancyIndex === 0 && <TableCell rowSpan={ministryRowSpan}>{ministryIndex + 1}</TableCell>}
+                                    {vacancyIndex === 0 && <TableCell rowSpan={ministryRowSpan}>{currentPage * limit + ministryIndex + 1}</TableCell>}
                                     {vacancyIndex === 0 && <TableCell className="element" onClick={()=>onSwitchTab('ministry_wise')} rowSpan={ministryRowSpan}>{ministry.ministry_name}</TableCell>}
                                     <TableCell>{vacancy.org_name}</TableCell>
                                     <TableCell>{vacancy.designation}</TableCell>

@@ -66,7 +66,7 @@ const SlottingTabPage =({tabId, filterString})=>{
                         <TableBody>
                             {slottingTableData?.value.map((slotting, index) =>
                                 <TableRow key={slotting.org_id}>
-                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{currentPage * limit + index + 1}</TableCell>
                                 <TableCell>{slotting.org_name}</TableCell>
                                 <TableCell>{slotting.ministry_name}</TableCell>
                                 <TableCell>{slotting.vacant}</TableCell>

@@ -15,7 +15,7 @@ import {
     TableBody
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     assignSlottingVacancy, deleteSlottingVacancy,
     getSlottingPsuData,
@@ -182,7 +182,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             >
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
-                        <ChevronLeftIcon/>
+                        <ArrowForwardIosIcon/>
                     </IconButton>
                 </DrawerHeader>
                 <TableContainer component={Paper} className="slottingassigntable">
