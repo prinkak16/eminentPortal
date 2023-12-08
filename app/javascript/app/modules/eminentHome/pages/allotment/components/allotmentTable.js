@@ -55,7 +55,6 @@ function AllotmentTable({ setAssignShow, filterString }) {
     setIsFetching(true);
   }, [currentPage, filterString]);
 
-  console.log("Shubhank data", tableData);
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);

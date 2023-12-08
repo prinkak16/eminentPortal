@@ -15,7 +15,7 @@ import {
     TableBody
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     assignSlottingVacancy, deleteSlottingVacancy,
     getSlottingPsuData,
@@ -49,7 +49,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [prevVacancyCount, setPrevVacancyCount] = useState(null);
     const [currentPage, setCurrentPage] = useState(0)
     const limit = 10;
-    const offset = 0;
     let originalVacancyCount;
     let originalStateId;
     let originalRemarks;
@@ -60,19 +59,18 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }
 
     const customFunction = () => {
-        getSlottingPsuData(psuId).then(response => {
+        const paginateParams = {
+            limit : limit,
+            offset : currentPage * limit
+        }
+        getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
 
     const addVacancyTableData = () => {
-        const paginateParams = {
-            limit: limit,
-            offset: currentPage * limit
-        }
-
-        getSlottingPsuData(psuId, paginateParams).then(response => {
+        getSlottingPsuData(psuId).then(response => {
             setSlottingVacancyDetail(response.data.data.slotting);
         })
     }
@@ -108,7 +106,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
     }
     const handleAddMore = () => {
-        setAddMore(!addMore)
+        setAddMore(true)
     }
 
         const handleSave = async (event) => {
@@ -164,14 +162,13 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
       customFunction()
   }
 
-
     useEffect(() => {
         customFunction();
         slottingState()
         if (vacancyCount !== prevVacancyCount) {
             setPrevVacancyCount(vacancyCount);
         }
-    }, [vacancyCount, prevVacancyCount]);
+    }, [vacancyCount, prevVacancyCount, currentPage]);
 
     return (
         <Box sx={{display: 'flex'}}>
@@ -185,8 +182,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             >
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
-                        {/*{theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}*/}
-                        <ChevronLeftIcon/>
+                        <ArrowForwardIosIcon/>
                     </IconButton>
                 </DrawerHeader>
                 <TableContainer component={Paper} className="slottingassigntable">
@@ -195,16 +191,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             <TableRow>
                                 <TableCell>PSU Name</TableCell>
                                 <TableCell>Total Position</TableCell>
-                                <TableCell>Occupied</TableCell>
-                                <TableCell>Vacant</TableCell>
+                                <TableCell>Slotted</TableCell>
+                                <TableCell>Unslotted</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow key={slottingPsuDetail.id}>
                                 <TableCell>{slottingPsuDetail.name}</TableCell>
                                 <TableCell>{slottingPsuDetail.total}</TableCell>
-                                <TableCell>{slottingPsuDetail.occupied}</TableCell>
-                                <TableCell>{slottingPsuDetail.vacant}</TableCell>
+                                <TableCell>{slottingPsuDetail.slotted}</TableCell>
+                                <TableCell>{slottingPsuDetail.unslotted}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -213,7 +209,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     <Typography variant="h5">
                         Assign Vacancy to state
                     </Typography>
-                    {addMore && (
+                    { addMore && (
                         <div>
                             <div className="d-flex">
                                 <div className="me-5">
@@ -229,9 +225,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             value={vacancyCount}
                                         error={!validValue}
                                         helperText={!validValue ? 'Please enter your remark' : ''}/>
-                                        {/*<Typography className="countnumber mx-2 p-2 text-center">*/}
-                                        {/*    {vacancyCount}*/}
-                                        {/*</Typography>*/}
+
                                         <Button onClick={handleIncreaseCount}> + </Button>
                                     </div>
                                 </div>
@@ -243,10 +237,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                         id="outlined-select-currency"
                                         select
                                         fullWidth
-                                        placeholder="select state"
                                         name="state"
                                         onChange={handleStateChange}
-                                        defaultValue={(stateId === stateId) ? stateId : 'Select State'}
+                                        defaultValue={stateId ? stateId : 'Select State'}
                                         error={!validValue}
                                         helperText={!validValue ? 'Please select any state' : ''}
                                     >
@@ -311,8 +304,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     </TableContainer>
                     {(addMore === false) ? (
                         <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>) : ''}
-
-
                     <div className="mt-3">
                         <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { slottingVacancyDetail?.count ?  Math.ceil(slottingVacancyDetail?.count / limit) : ''}</p>
                         <ReactPaginate

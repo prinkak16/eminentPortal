@@ -7,7 +7,6 @@ import AllotAssign from "./components/assign/allotAssign";
 function Allotment({tabId, filterString}) {
     const [assignShow, setAssignShow] = useState(false);
 
-
     return (
         <div>
             {!assignShow ? (

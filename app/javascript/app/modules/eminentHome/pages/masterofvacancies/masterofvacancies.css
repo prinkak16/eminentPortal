@@ -29,3 +29,7 @@
 .element:hover {
     cursor: pointer;
 }
+.css-11xur9t-MuiPaper-root-MuiTableContainer-root{
+    max-height: 466px;
+    overflow-y: auto;
+}

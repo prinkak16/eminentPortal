@@ -46,7 +46,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     }, [currentPage, filterString]);
     return (
         <>
-            <Analytics tabId={tabId} title="Slotting Analytics"/>
+            <Analytics tabId={tabId} title="Position Analytics"/>
             {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">
@@ -66,7 +66,7 @@ const SlottingTabPage =({tabId, filterString})=>{
                         <TableBody>
                             {slottingTableData?.value.map((slotting, index) =>
                                 <TableRow key={slotting.org_id}>
-                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{currentPage * limit + index + 1}</TableCell>
                                 <TableCell>{slotting.org_name}</TableCell>
                                 <TableCell>{slotting.ministry_name}</TableCell>
                                 <TableCell>{slotting.vacant}</TableCell>

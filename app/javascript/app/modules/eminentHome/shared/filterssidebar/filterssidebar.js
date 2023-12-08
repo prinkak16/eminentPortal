@@ -68,16 +68,17 @@ export default function FiltersSidebar(props) {
         switch (props.tabId) {
             case 'master_of_vacancies':
                 if (homeContext.movTabId === 'ministry_wise') {
+
                     const params = {
                         ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
-
                     })
 
 
                 } else if (homeContext.movTabId === 'psu_wise' ) {
+                    setResetFilter(true)
                     const psuParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -87,6 +88,7 @@ export default function FiltersSidebar(props) {
                         setFiltersList(response.data.data);
                     })
                 } else if (homeContext.movTabId === 'vacancy_wise') {
+
                     const vacancyParams = {
                         ministry_name: searchMinisterName,
                         department_name: searchDepartmentName,
@@ -109,14 +111,14 @@ export default function FiltersSidebar(props) {
                 break;
 
             case 'allotment':
-                const alottimentParams = {
+                const alotmentParams = {
                     ministry_name: searchMinisterName,
                     department_name: searchDepartmentName,
                 }
-                getFiltersForAllotment(alottimentParams).then(response =>{
+                getFiltersForAllotment(alotmentParams).then(response =>{
                     setFiltersList(response.data.data)
                 })
-
+                break;
             case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
@@ -139,7 +141,6 @@ export default function FiltersSidebar(props) {
             setFiltersKey([...filtersKey, value])
         }
     };
-    
 
     const handleSearchFilter = debounce((event, identifier) => {
         const inputValue = event.target.value;
@@ -160,8 +161,6 @@ export default function FiltersSidebar(props) {
         handleSearchFilter(event, key);
     }
 
-
-
     const isChecked = (parentKey, optionValue) => {
         const parentOption = appliedFilters.find(item => item.parent_key === parentKey);
         return parentOption && parentOption.selectedValues.includes(optionValue);
@@ -170,8 +169,8 @@ export default function FiltersSidebar(props) {
     const handleClearFilter = () => {
         props.setFilterString('');
         setResetFilter(true)
+        setInputSearch({})
         setAppliedFilters([]);
-        setInputSearch('');
         setSearchMinisterName('');
         setSearchDepartmentName('');
         setSearchOrganizationName('');
