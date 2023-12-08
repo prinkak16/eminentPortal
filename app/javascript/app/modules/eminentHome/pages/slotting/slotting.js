@@ -46,7 +46,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     }, [currentPage, filterString]);
     return (
         <>
-            <Analytics tabId={tabId} title="Slotting Analytics"/>
+            <Analytics tabId={tabId} title="Position Analytics"/>
             {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">

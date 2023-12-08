@@ -74,7 +74,6 @@ export default function FiltersSidebar(props) {
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
-                        setResetFilter(true)
                     })
 
 
@@ -96,9 +95,7 @@ export default function FiltersSidebar(props) {
                         organization_name: searchOrganizationName,
                     }
                     getVacancyWiseFilterData(vacancyParams).then(response => {
-
                         setFiltersList(response.data.data)
-                        setResetFilter(true)
                     })
                 }
                 break;
@@ -114,14 +111,14 @@ export default function FiltersSidebar(props) {
                 break;
 
             case 'allotment':
-                const alottimentParams = {
+                const alotmentParams = {
                     ministry_name: searchMinisterName,
                     department_name: searchDepartmentName,
                 }
-                getFiltersForAllotment(alottimentParams).then(response =>{
+                getFiltersForAllotment(alotmentParams).then(response =>{
                     setFiltersList(response.data.data)
                 })
-
+                break;
             case 'gom_management':
                 getFiltersForGOM().then(response => {
                     setFiltersList(response.data.data)
@@ -172,8 +169,8 @@ export default function FiltersSidebar(props) {
     const handleClearFilter = () => {
         props.setFilterString('');
         setResetFilter(true)
+        setInputSearch({})
         setAppliedFilters([]);
-        setInputSearch('');
         setSearchMinisterName('');
         setSearchDepartmentName('');
         setSearchOrganizationName('');
