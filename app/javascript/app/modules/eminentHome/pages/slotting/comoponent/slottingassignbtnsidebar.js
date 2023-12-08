@@ -69,6 +69,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         })
     }
 
+    const addVacancyTableData = () => {
+        getSlottingPsuData(psuId).then(response => {
+            setSlottingVacancyDetail(response.data.data.slotting);
+        })
+    }
+
     const handleDecreaseCount = () => {
         if (vacancyCount >= 1) {
             setVacancyCount(vacancyCount - 1)
@@ -100,7 +106,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
     }
     const handleAddMore = () => {
-        setAddMore(!addMore)
+        setAddMore(true)
     }
 
         const handleSave = async (event) => {
@@ -156,8 +162,18 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
       customFunction()
   }
 
-
+    // const slottingDisplay = () =>{
+    //
+    //     }
     useEffect(() => {
+        // if(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 0){
+        //     setAddMore(true)
+        //     // console.log('slottingVacancyDetail.value.length', slottingVacancyDetail.value.length)
+        // }
+        // if(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 1){
+        //     setAddMore(false)
+        // }
+
         customFunction();
         slottingState()
         if (vacancyCount !== prevVacancyCount) {
@@ -187,16 +203,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             <TableRow>
                                 <TableCell>PSU Name</TableCell>
                                 <TableCell>Total Position</TableCell>
-                                <TableCell>Occupied</TableCell>
-                                <TableCell>Vacant</TableCell>
+                                <TableCell>Slotted</TableCell>
+                                <TableCell>Unslotted</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow key={slottingPsuDetail.id}>
                                 <TableCell>{slottingPsuDetail.name}</TableCell>
                                 <TableCell>{slottingPsuDetail.total}</TableCell>
-                                <TableCell>{slottingPsuDetail.occupied}</TableCell>
-                                <TableCell>{slottingPsuDetail.vacant}</TableCell>
+                                <TableCell>{slottingPsuDetail.slotted}</TableCell>
+                                <TableCell>{slottingPsuDetail.unslotted}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -205,7 +221,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     <Typography variant="h5">
                         Assign Vacancy to state
                     </Typography>
-                    {addMore && (
+                    {/*{(slottingVacancyDetail.value && slottingVacancyDetail.value.length === 0) ? '':''}*/}
+
+                    { addMore && (
                         <div>
                             <div className="d-flex">
                                 <div className="me-5">
@@ -235,10 +253,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                         id="outlined-select-currency"
                                         select
                                         fullWidth
-                                        placeholder="select state"
                                         name="state"
                                         onChange={handleStateChange}
-                                        defaultValue={(stateId === stateId) ? stateId : 'Select State'}
+                                        defaultValue={stateId ? stateId : 'Select State'}
                                         error={!validValue}
                                         helperText={!validValue ? 'Please select any state' : ''}
                                     >
