@@ -102,6 +102,11 @@ border-radius: 8px !important;
 .filtersidebar{
     position: fixed;
     top: 40px;
+    height:100%;
+    z-index:1;
+}
+.filtersidebar .MuiDrawer-paperAnchorLeft{
+    padding-bottom:60px !important;
 }
 .main-content.css-ttn1xo{
     margin-left: 240px;
@@ -109,4 +114,8 @@ border-radius: 8px !important;
 
 .main-content.css-yfo96e{
     margin-left: 0;
+}
+.main-content.css-yfo96e .sidebar-btn{
+    z-index: 1111;
+    position: relative;
 }

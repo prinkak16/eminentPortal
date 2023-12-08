@@ -184,7 +184,7 @@ export default function PersistentDrawerLeft() {
                 </Drawer>
                 <Main open={open} className="p-0 mt-5 main-content">
                     <Typography className="ms-15-30">
-                        <div className="d-flex justify-content-between">
+                        <div className="d-flex justify-content-between sidebar-btn">
                             <p className="heading">
                             <span>
                         <IconButton
@@ -202,13 +202,6 @@ export default function PersistentDrawerLeft() {
                         </div>
 
                     <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open} filterClear={clearFilter}/>
-                        {/*<>*/}
-                        {/*    <Analytics toggle={toggle}/>*/}
-                        {/*    <HomeTable filterString={filterString}/>*/}
-
-                        {/*</>*/}
-                        {/*</div>*/}
-
                     </Typography>
                 </Main>
             </Box>
