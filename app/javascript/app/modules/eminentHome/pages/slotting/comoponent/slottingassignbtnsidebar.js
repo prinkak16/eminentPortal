@@ -14,6 +14,8 @@ import {
     TableCell,
     TableBody
 } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
@@ -82,10 +84,14 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
 
     }
     const handleIncreaseCount = () => {
-        if (vacancyCount + 1 <= slottingPsuDetail.vacant) {
+        if (vacancyCount + 1 <= slottingPsuDetail.unslotted) {
             setVacancyCount(vacancyCount + 1)
         }
+        if (vacancyCount === slottingPsuDetail.unslotted) {
+            toast("Vacancy count can't be greater than Unslotted ");
+        }
     }
+
     const slottingState = () => {
         getStateData.then((res) => {
             setSlottingStateData(res.data.data)
@@ -158,7 +164,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             vacancies_id: unslotId,
             remarks: "",
         }
-      deleteSlottingVacancy(deleteParams).then((res) => console.log('delete', res.json()))
+      deleteSlottingVacancy(deleteParams).then((res) => res.json())
       customFunction()
   }
 
@@ -171,7 +177,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }, [vacancyCount, prevVacancyCount, currentPage]);
 
     return (
+
         <Box sx={{display: 'flex'}}>
+            <ToastContainer />
             <Drawer
 
                 variant="persistent"
@@ -243,6 +251,9 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                         error={!validValue}
                                         helperText={!validValue ? 'Please select any state' : ''}
                                     >
+                                        <MenuItem key="{state}" value="Select State">
+                                            Select State
+                                        </MenuItem>
                                         {slottingStateData?.map((item, index) => (
                                             <MenuItem key={index.id} value={item.id}>
                                                 {item.name}
