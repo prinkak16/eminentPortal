@@ -74,7 +74,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         if(value !== 2){
             setAssignBreadCrums(false);
         }
-    },[value])
+    },[value])  
     const handleClose = () =>{
         setShow(false)
         setEmail('')
