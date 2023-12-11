@@ -45,7 +45,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [slottingStateData, setSlottingStateData] = useState([])
     const [addMore, setAddMore] = useState(false)
     const [stateId, setStateId] = useState()
-    const [remarks, setRemarks] = useState()
+    const [remarks, setRemarks] = useState('')
     const [vacancyId, setVacancyId] = useState([])
     const [validValue, setValidValue] = useState(true)
     const [prevVacancyCount, setPrevVacancyCount] = useState(null);
@@ -103,6 +103,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         if (inputValue && validValue === false) {
             setValidValue(true);
         }
+        toast("state updated ");
     }
     const handleRemarksChange = (e) => {
         const remarkValue = e.target.value;
