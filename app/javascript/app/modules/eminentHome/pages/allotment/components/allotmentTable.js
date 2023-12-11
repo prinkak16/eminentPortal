@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
   Button,
@@ -18,8 +18,10 @@ import ArrowDownward from "../../../../../../../../public/images/si_File_downloa
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
 import { allotmentListData } from "../../../../../api/eminentapis/endpoints";
+import AllotmentContext from "../context/allotmentContext";
 
 function AllotmentTable({ setAssignShow, filterString }) {
+  const { assignBreadCrums, setAssignBreadCrums } = useContext(AllotmentContext);
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
@@ -29,8 +31,10 @@ function AllotmentTable({ setAssignShow, filterString }) {
   function changeHandler(data) {
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
+      setAssignBreadCrums(true);
     } else {
-      setAssignShow(true);
+      setAssignShow(true);    
+      setAssignBreadCrums(true);
     }
   }
 
@@ -51,7 +55,6 @@ function AllotmentTable({ setAssignShow, filterString }) {
     setIsFetching(true);
   }, [currentPage, filterString]);
 
-  console.log("Shubhank data", tableData);
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);

@@ -24,7 +24,6 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
             }).catch(error => {
             setIsFetching(false);
             setError(error);
-            console.error(error);
         })
     }
 
@@ -54,7 +53,7 @@ const  MinistryTable = ({ onSwitchTab, filterString }) => {
                 </TableHead>
                 <TableBody>
                     {ministryTableData?.value.map((ministry, index) => <TableRow key={ministry.ministry_id}>
-                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{currentPage * limit + index + 1}</TableCell>
                         <TableCell className="element" onClick={() => onSwitchTab('psu_wise', ministry.ministry_id)}>{ministry.ministry_name}</TableCell>
                         <TableCell>{ministry.total}</TableCell>
                         <TableCell>{ministry.occupied}</TableCell>

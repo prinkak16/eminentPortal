@@ -66,3 +66,6 @@ button.savebtn, button.savebtn:hover{
 .addremark input {
     text-align: center;
 }
+.vacancytostate .css-11xur9t-MuiPaper-root-MuiTableContainer-root {
+    max-height: 260px;
+}

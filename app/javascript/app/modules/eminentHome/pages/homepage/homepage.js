@@ -27,6 +27,7 @@ import {HomeContext} from "../../../../context/tabdataContext";
 import {useParams} from 'react-router-dom';
 import {ApiContext} from "../../../ApiContext";
 import {getStepCtgry, userPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
+import AllotmentContext from '../allotment/context/allotmentContext';
 
 
 const drawerWidth = 240;
@@ -59,8 +60,9 @@ const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex', alignItems: 'center', padding: theme.spacing(0, 1), // necessary for content to be below app bar
     ...theme.mixins.toolbar, justifyContent: 'flex-end',
 }));
-
+;
 export default function PersistentDrawerLeft() {
+    const {assignBreadCrums}=useContext(AllotmentContext)
     const {resetFilter, setEminentData} = useContext(ApiContext)
 
     const theme = useTheme();   
@@ -184,7 +186,8 @@ export default function PersistentDrawerLeft() {
                 </Drawer>
                 <Main open={open} className="p-0 mt-5 main-content">
                     <Typography className="ms-15-30">
-                        <div className="d-flex justify-content-between">
+                    <div>
+                    <div className="d-flex justify-content-between sidebar-btn">
                             <p className="heading">
                             <span>
                         <IconButton
@@ -197,18 +200,13 @@ export default function PersistentDrawerLeft() {
                             <SideBarIcon/>
                         </IconButton>
                             </span>
-                                {/* {type && type == 'allotment' ? 'Bread' : 'Eminent Personalities'}</p> */}
-                                Eminent Personalities</p>
+                                {assignBreadCrums ? "Allotment/ Assign Positions" : 'Eminent Personalities'}</p>
+                            
                         </div>
+                    </div>
+                        
 
                     <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open} filterClear={clearFilter}/>
-                        {/*<>*/}
-                        {/*    <Analytics toggle={toggle}/>*/}
-                        {/*    <HomeTable filterString={filterString}/>*/}
-
-                        {/*</>*/}
-                        {/*</div>*/}
-
                     </Typography>
                 </Main>
             </Box>

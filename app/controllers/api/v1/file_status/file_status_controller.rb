@@ -1,5 +1,3 @@
-class Api::V1::FileStatus::FileStatusCotroller < BaseApiController
-
-
+class Api::V1::FileStatus::FileStatusController < BaseApiController
 
 end

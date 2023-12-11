@@ -86,10 +86,10 @@ class Api::V1::Gom::GomController < BaseApiController
         WHERE assist_to_id is null"
 
       if minister_ids.length.positive? && ministry_ids.length.positive?
-        sql += " AND um.user_id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
+        sql += " AND au.id IN (#{minister_ids}) AND um.ministry_id IN (#{ministry_ids})"
       else
         if minister_ids.length.positive?
-          sql += " AND um.user_id IN (#{minister_ids})"
+          sql += " AND au.id IN (#{minister_ids})"
         end
 
         if ministry_ids.length.positive?
@@ -190,8 +190,8 @@ class Api::V1::Gom::GomController < BaseApiController
       LEFT JOIN public.ministries AS mi
       ON um.ministry_id = mi.id
       WHERE au.assist_to_id IS null "
-      sql += " AND au.name % '#{minister_name}' " if minister_name.length > 2
-      sql += " AND mi.name % '#{ministry_name}' " if ministry_name.length > 2
+      sql += " AND LOWER(au.name) LIKE LOWER('%#{minister_name}%') " if minister_name.length > 2
+      sql += " AND LOWER(mi.name) LIKE LOWER('%#{ministry_name}%') " if ministry_name.length > 2
       sql += 'GROUP BY au.id, au.name, mi.name, um.is_minister'
       sql += ' ,mi.name' if ministry_name.length > 2
       sql += ' ORDER BY '
