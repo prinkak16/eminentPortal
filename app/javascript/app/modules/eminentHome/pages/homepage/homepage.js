@@ -187,7 +187,7 @@ export default function PersistentDrawerLeft() {
                 <Main open={open} className="p-0 mt-5 main-content">
                     <Typography className="ms-15-30">
                     <div>
-                    <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-between sidebar-btn">
                             <p className="heading">
                             <span>
                         <IconButton
