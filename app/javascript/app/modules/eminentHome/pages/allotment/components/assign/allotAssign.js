@@ -21,8 +21,11 @@ import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Pencil from "../../../../../../../../../public/images/pencil.svg";
+import History from "../../../../../../../../../public/images/History.svg";
 import UnassignModal from "./unassignModal";
 import EllipseBlue from "../../../../../../../../../public/images/Ellipse_blue.svg";
+import Frame from "../../../../../../../../../public/images/Frame.svg";
+
 import AllotmentContext from "../../context/allotmentContext";
 
 function AllotAssign() {
@@ -282,7 +285,7 @@ function AllotAssign() {
         return (
           <div className="allot-history-div-1">
             <div className="allot-history-div">
-              <span>
+              <span>ry
                 <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
               </span>
             </div>
@@ -329,7 +332,7 @@ function AllotAssign() {
             <Tabs value={value} onChange={handleChange}>
               <Tab label="Added Eminent" className="assign-tab" />
               <Tab label="Assigned" className="assign-tab" />
-              <Tab label="History" className="assign-tab" />
+              <Tab label={<>{<History />} History</>} className="assign-tab" />
             </Tabs>
           </Box>
         </div>
@@ -488,7 +491,7 @@ function AllotAssign() {
       </div>
       <div className="btn-absolute">
         <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
-          Assigned Position
+          <big><Frame />   Assigned Position</big>
         </Button>
       </div>
 

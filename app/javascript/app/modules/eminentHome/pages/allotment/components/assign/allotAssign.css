@@ -228,6 +228,7 @@
   font-size: 16px;
   font-weight: 500;
   color: #494949;
+  display: block;
 }
 
 .drawer-tab .css-1aquho2-MuiTabs-indicator {
@@ -509,7 +510,7 @@
 
 .Assigned-Position-btn {
   height: 45px !important;
-  width: 172px !important;
+  width: 210px !important;
   color: #ff9559 !important;
   background-color: white !important;
   border: 1px solid #ff9559 !important;
