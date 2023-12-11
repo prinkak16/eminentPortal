@@ -77,7 +77,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
-export default function PersistentDrawerLeft() {
+export default function     PersistentDrawerLeft() {
   const { assignBreadCrums,setAssignBreadCrums, crumbsState, setCrumbsState } =
     useContext(AllotmentContext);
 
@@ -135,10 +135,14 @@ export default function PersistentDrawerLeft() {
   };
   const handleDrawerOpen = () => {
     setOpen(true);
+    let button = document.querySelector(".btn-absolute");
+    button.classList.toggle('active')
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    let button = document.querySelector(".btn-absolute");
+    button.classList.toggle('active')
   };
 
   const updateToggle = (id) => {
