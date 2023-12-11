@@ -1,6 +1,10 @@
 .hometabs{
     border-bottom: transparent !important;
 }
+.main-content.css-yfo96e .hometabs{
+   position: relative;
+    z-index: 1;
+}
 .hometabs .MuiTab-root{
     border-radius: 20px;
     background: #F8F7F7;
