@@ -207,13 +207,6 @@ export default function PersistentDrawerLeft() {
                         
 
                     <BasicTabs filterString={filterString} onSwitchTab={switchTabHandler}  openFilter={open} filterClear={clearFilter}/>
-                        {/*<>*/}
-                        {/*    <Analytics toggle={toggle}/>*/}
-                        {/*    <HomeTable filterString={filterString}/>*/}
-
-                        {/*</>*/}
-                        {/*</div>*/}
-
                     </Typography>
                 </Main>
             </Box>

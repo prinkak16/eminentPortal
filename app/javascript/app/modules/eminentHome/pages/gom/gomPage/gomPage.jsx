@@ -40,12 +40,13 @@ function GomPage({ tabId, filterString, clearFilter }) {
     const [AssignId, setAssignId] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [ministryData, setMinistryData] = useState([]);
-    const itemsPerPage= 5
+    const itemsPerPage= 10
     const [ministerData, setMinisterData] = useState([]);
     const [assignedMinistryIds, setAssignedMinistryIds] = useState([]);
     const [ownMinistryIds, setOwnMinistryIds] = useState([]);
     const [ministerSearch, setMinisterSearch] = useState('');
     const [ministrySearch, setMinistrySearch] = useState('');
+    const [searchPerformed, setSearchPerformed] = useState(false);
     const [editMinisterData, setEditMinisterData] = useState({
         allocated_ids: [],
         name: '',
@@ -70,7 +71,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                         .then((res) => {
 
                             setGomTableData(res.data.data.value);
-
+                            setSearchPerformed(true); // Set searchPerformed to true
                             // Handle other data or state updates as needed
                         })
                         .catch((error) => {
@@ -109,11 +110,10 @@ function GomPage({ tabId, filterString, clearFilter }) {
                     minister_name: ministerSearch,
                     ministry_name: ministrySearch,
                     limit: itemsPerPage,
-                    offset: itemsPerPage*currentPage,
+                    offset: searchPerformed ? 0 : itemsPerPage * currentPage, // Reset page to 0 if search is performed
                 },
             });
-            // Update the srch results
-
+            setSearchPerformed(true); // Set searchPerformed to true
             setGomTableData(response?.data?.data?.value);
             setPageCount(Math.ceil( response?.data?.data?.count/ itemsPerPage));
 
@@ -202,6 +202,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
+        setSearchPerformed(false); // Reset searchPerformed when changing pages
     };
 
 

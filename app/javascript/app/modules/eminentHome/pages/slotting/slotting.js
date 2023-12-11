@@ -30,6 +30,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     };
     const handleDrawerClose = () => {
         setOpen(false);
+        slottingTable()
     };
 
     const slottingTable =()=>{
