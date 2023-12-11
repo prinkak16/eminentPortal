@@ -105,6 +105,9 @@ Rails.application.routes.draw do
       end
 
       namespace :file_status, path: 'file_status' do
+        post '/update_file_status', to: 'file_status#update_status'
+        post '/file_status_members', to: 'file_status#file_status_members'
+        post '/analytics', to: 'file_status#analytics'
 
       end
 
