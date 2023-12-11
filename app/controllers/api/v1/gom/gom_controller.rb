@@ -296,8 +296,10 @@ class Api::V1::Gom::GomController < BaseApiController
         row_data = {
           minister_number: user_number,
           assist_to_phone_number: assist_to_number,
+          action: row[2],
           error: '',
-          success: false
+          success: false,
+          message: ''
         }
         user_number_id = nil
         user_number_name = nil
@@ -337,24 +339,38 @@ class Api::V1::Gom::GomController < BaseApiController
           end
         end
 
-        fetch_user_detail = AuthUser.where(id: user_number_id).first_or_create!
-        if !assist_to_number_user_id.nil?
-          sync_auth_users(assist_to_number_user_id)
-          AuthUser.find_by(id: fetch_user_detail.id).update(
-            name: user_number_name,
-            phone_number: user_number,
-            assist_to_id: assist_to_number_user_id
-          )
-
+        if row_data[:action] == 'DELETE'
+          user_detail = AuthUser.find_by(phone_number: row_data[:minister_number])
+          assist_to_user_detail = AuthUser.find_by(phone_number: row_data[:assist_to_phone_number])
+          if user_detail.present? && assist_to_user_detail.present?
+            if user_detail.assist_to_id == assist_to_user_detail.id
+              user_detail.destroy!
+              row_data[:success] = true
+              row_data[:message] = 'User is deleted successfully.'
+              upload_user_result << row_data
+            end
+          end
         else
-          AuthUser.find_by(id: fetch_user_detail.id).update(
-            name: user_number_name,
-            phone_number: user_number,
-            assist_to_id: nil
-          )
+          fetch_user_detail = AuthUser.where(id: user_number_id).first_or_create!
+          if !assist_to_number_user_id.nil?
+            sync_auth_users(assist_to_number_user_id)
+            AuthUser.find_by(id: fetch_user_detail.id).update(
+              name: user_number_name,
+              phone_number: user_number,
+              assist_to_id: assist_to_number_user_id
+            )
+
+          else
+            AuthUser.find_by(id: fetch_user_detail.id).update(
+              name: user_number_name,
+              phone_number: user_number,
+              assist_to_id: nil
+            )
+          end
+          row_data[:success] = true
+          row_data[:message] = 'User is mapped successfully.'
+          upload_user_result << row_data
         end
-        row_data[:success] = true
-        upload_user_result << row_data
       end
 
       csv_string = CSV.generate do |csv|
@@ -369,7 +385,8 @@ class Api::V1::Gom::GomController < BaseApiController
             csv_row_data[:minister_number],
             csv_row_data[:assist_to_phone_number],
             csv_row_data[:error],
-            csv_row_data[:success]
+            csv_row_data[:success],
+            csv_row_data[:message]
           ]
         end
       end
