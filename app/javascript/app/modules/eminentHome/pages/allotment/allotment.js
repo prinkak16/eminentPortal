@@ -1,25 +1,39 @@
-import React, {useState} from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import Analytics from "../../shared/analytics/analytics";
 import AllotmentTable from "./components/allotmentTable";
 import AllotAssign from "./components/assign/allotAssign";
+import AllotmentContext from "./context/allotmentContext";
+
+function Allotment({ tabId, filterString }) {
+  const [assignShow, setAssignShow] = useState(false);
+  const { crumbsState } = useContext(AllotmentContext);
+
+  const {setAssignBreadCrums} = useContext(AllotmentContext);
 
 
-function Allotment({tabId, filterString}) {
-    const [assignShow, setAssignShow] = useState(false);
+  useEffect(() => {
+    setAssignShow(false);
+  }, [crumbsState]);
 
-    return (
+  return (
+    <div>
+      {!assignShow ? (
         <div>
-            {!assignShow ? (
-                <div>
-                    <Analytics tabId={tabId} assignShow={assignShow} title="Allotment Analytics" />
-                    <AllotmentTable filterString={filterString} setAssignShow={setAssignShow}/>
-                </div>
-            ) : (
-                <AllotAssign setAssignShow={setAssignShow}/>
-            )}
+          <Analytics
+            tabId={tabId}
+            assignShow={assignShow}
+            title="Allotment Analytics"
+          />
+          <AllotmentTable
+            filterString={filterString}
+            setAssignShow={setAssignShow}
+          />
         </div>
-    );
+      ) : (
+        <AllotAssign setAssignShow={setAssignShow} />
+      )}
+    </div>
+  );
 }
 
-
-    export default Allotment;
+export default Allotment;

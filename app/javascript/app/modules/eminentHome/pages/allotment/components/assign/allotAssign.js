@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Header from "../../../../../eminentpersonalityhome/header/header";
 import Reactangle from "../../../../../../../../../public/images/building_icon.svg";
 import Ellipse from "../../../../../../../../../public/images/Ellipse.svg";
@@ -21,9 +21,9 @@ import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Pencil from "../../../../../../../../../public/images/pencil.svg";
-import UnassignModal from './unassignModal';
+import UnassignModal from "./unassignModal";
 import EllipseBlue from "../../../../../../../../../public/images/Ellipse_blue.svg";
-
+import AllotmentContext from "../../context/allotmentContext";
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,11 +32,11 @@ function AllotAssign() {
   const [open, setOpen] = useState(false);
   const [System, setSystem] = useState(false);
 
+
   const handleOpen = () => {
     setOpen(true);
   };
 
-  
   const handleClose = () => setOpen(false);
 
   const limit = 5;
@@ -46,7 +46,6 @@ function AllotAssign() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
   };
@@ -56,16 +55,13 @@ function AllotAssign() {
     setValue(1);
     setOpen(false);
   };
-
-  const unassignHandeler = () =>{
-        setSystem(true);
-  }
-
-  const assignedHandeler = ()=>{
-        setIsOpen(true);
-        setValue(1);
-  }
-  
+  const unassignHandeler = () => {
+    setSystem(true);
+  };
+  const assignedHandeler = () => {
+    setIsOpen(true);
+    setValue(1);
+  };
 
   const style = {
     position: "absolute",
@@ -191,13 +187,13 @@ function AllotAssign() {
             <div className="Remark-div">
               <span className="remark-span">Remark</span>
               <div className="textarea-div">
-              <textarea className="textarea-field"></textarea>
-              <div className="btn-div">
-              <button className="update-btn-1"><Pencil className="pencil"/></button>
+                <textarea className="textarea-field"></textarea>
+                <div className="btn-div">
+                  <button className="update-btn-1">
+                    <Pencil className="pencil" />
+                  </button>
+                </div>
               </div>
-              
-              </div>
-              
             </div>
 
             <div className="table-main-container">
@@ -268,8 +264,13 @@ function AllotAssign() {
                       </Grid>
                     </div>
                     <div className="UnAssign-allotment-div">
-                    <button className="UnAssign-allotment-btn" onClick={unassignHandeler}>Unassign</button>
-                    </div> 
+                      <button
+                        className="UnAssign-allotment-btn"
+                        onClick={unassignHandeler}
+                      >
+                        Unassign
+                      </button>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -278,19 +279,27 @@ function AllotAssign() {
         break;
 
       case 2:
-        return <div className="allot-history-div-1">
-        <div className="allot-history-div">
-        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
-        </div>
+        return (
+          <div className="allot-history-div-1">
+            <div className="allot-history-div">
+              <span>
+                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+              </span>
+            </div>
 
-        <div className="allot-history-div">
-        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
-        </div>
+            <div className="allot-history-div">
+              <span>
+                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+              </span>
+            </div>
 
-        <div className="allot-history-div">
-        <span><EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23</span>
-        </div>
-        </div>
+            <div className="allot-history-div">
+              <span>
+                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+              </span>
+            </div>
+          </div>
+        );
         break;
 
       default:
@@ -413,7 +422,7 @@ function AllotAssign() {
 
   return (
     <div>
-    <UnassignModal System={System} setSystem={setSystem}/>
+      <UnassignModal System={System} setSystem={setSystem} />
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -467,7 +476,6 @@ function AllotAssign() {
         </Fade>
       </Modal>
 
-      
       <div>
         <SwipeableDrawer
           anchor="right"
@@ -478,7 +486,12 @@ function AllotAssign() {
           {drawerContent}
         </SwipeableDrawer>
       </div>
-      <div className="btn-absolute"><button className="Assigned-Position-btn" onClick={assignedHandeler}>Assigned Position</button></div>
+      <div className="btn-absolute">
+        <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
+          Assigned Position
+        </Button>
+      </div>
+
       <div className="allot-card-container">
         <div className="allot-b1">
           <Reactangle className="icon-rect" />

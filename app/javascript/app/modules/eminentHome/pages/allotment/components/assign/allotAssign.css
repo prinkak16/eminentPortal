@@ -508,17 +508,18 @@ margin-bottom: 10px;
 .btn-absolute
   {
     position: absolute;
-    top: 154px;
+    top: 182px;
     right: 58px;
 }
 
 .Assigned-Position-btn{ 
-    height: 45px;
-    width: 172px;
-    color: #ff9559;
-    background-color: white;
-    border: 1px solid #ff9559;
-    border-radius: 32px;
-    font-family: Barlow;
-    font-weight: 600;
+    height: 45px !important;
+    width: 172px !important;
+    color: #ff9559 !important;
+    background-color: white !important;
+    border: 1px solid #ff9559 !important;
+    border-radius: 32px !important;
+    font-family: Barlow !important;
+    font-weight: 600 !important;
+    z-index: 10 !important;
 }
