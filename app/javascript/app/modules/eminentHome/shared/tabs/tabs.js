@@ -23,6 +23,7 @@ import {useParams} from 'react-router-dom';
 import FileStatus from "../../pages/fileStatus/fileStatus";
 import Tabs from "@mui/material/Tabs";
 import {isValuePresent} from "../../../utils";
+import AllotmentContext from '../../pages/allotment/context/allotmentContext';
 
 // import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled('input')({
@@ -58,6 +59,8 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState(false)
     const notify = () => toast("CSV file Uploaded successfully");
+    const { assignBreadCrums, setAssignBreadCrums } = useContext(AllotmentContext);
+
     const hiddenFileInput = useRef(null);
     const handleEmailChange = (e) => {
         const inputValue = e.target.value;
@@ -66,6 +69,12 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
             setIsValidEmail(true);
         }
     };
+
+    useEffect(()=>{
+        if(value !== 2){
+            setAssignBreadCrums(false);
+        }
+    },[value])
     const handleClose = () =>{
         setShow(false)
         setEmail('')
@@ -470,7 +479,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
                             aria-label="lab API tabs example">
                 <Tab label="Home" value="home_table"/>
                 <Tab label="Master of Vacancies" value="master_of_vacancies"/>
-            </TabList>
+                </TabList>
         } else {
             return <TabList onChange={handleChange}
                             aria-label="lab API tabs example"
