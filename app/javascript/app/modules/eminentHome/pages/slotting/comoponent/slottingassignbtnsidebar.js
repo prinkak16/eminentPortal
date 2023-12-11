@@ -115,7 +115,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const handleAddMore = () => {
         setAddMore(true)
     }
-
         const handleSave = async (event) => {
             event.preventDefault();
             if (addMore === true) {
@@ -127,8 +126,19 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                         remarks: remarks,
                     };
                     assignSlottingVacancy(vacancyData).then((res) => res.json())
-
-                if(vacancyCount !== originalVacancyCount || stateId !== originalStateId || remarks !== originalRemarks){
+                if(vacancyData && vacancyData.state_id === undefined && vacancyData.vacancy_count === 0){
+                    toast("State not assigned Successfully");
+                }
+                else if(vacancyData && vacancyData.state_id === undefined && vacancyData.vacancy_count > 0){
+                    toast("State not added so State not assigned Successfully");
+                }
+                else if(vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count === 0){
+                    toast("Vacancy count not added so State not assigned Successfully");
+                }
+                else {
+                    toast("Successfully assigned the state ");
+                }
+                if(vacancyCount && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0 && vacancyData.remarks !== ''){
                     const reSlottingData = {
                         ministry_id: slottingMinistryId,
                         organization_id: psuId,
@@ -139,7 +149,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     };
                     reassignSlottingVacancy(reSlottingData).then((res) => res.json())
                 }
-
                 setAddMore(false);
                 addVacancyTableData();
                 setVacancyCount(0);
@@ -149,8 +158,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                 handleAddMore();
             }
         };
-
-
         const handleEdit = (vacancyDetail) => {
         setVacancyCount(vacancyDetail.vacancy_count);
         setStateId(vacancyDetail.country_state_id);
