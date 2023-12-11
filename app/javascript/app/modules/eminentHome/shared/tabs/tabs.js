@@ -432,6 +432,7 @@ export default function BasicTabs({ onSwitchTab, filterString, openFilter, clear
         buttonContent = null
     }
 
+
     const handleBasicTabChange = (basicTabValue) => {
         setBasicTabId(basicTabValue);
     }

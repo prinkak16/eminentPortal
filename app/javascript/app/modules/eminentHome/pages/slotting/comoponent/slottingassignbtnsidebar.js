@@ -126,18 +126,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                         remarks: remarks,
                     };
                     assignSlottingVacancy(vacancyData).then((res) => res.json())
-                if(vacancyData && vacancyData.state_id === undefined && vacancyData.vacancy_count === 0){
-                    toast("State not assigned Successfully");
-                }
-                else if(vacancyData && vacancyData.state_id === undefined && vacancyData.vacancy_count > 0){
-                    toast("State not added so State not assigned Successfully");
-                }
-                else if(vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count === 0){
-                    toast("Vacancy count not added so State not assigned Successfully");
-                }
-                else {
-                    toast("Successfully assigned the state ");
-                }
+                 if(vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0){
+                    toast(`${vacancyCount} vacancy successfully assigned to state`);
+                 }
+
                 if(vacancyCount && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0 && vacancyData.remarks !== ''){
                     const reSlottingData = {
                         ministry_id: slottingMinistryId,
