@@ -73,14 +73,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             offset: currentPage * limit
         }
         getSlottingPsuData(psuId, paginateParams).then(response => {
-            // debugger
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
         })
-        console.log('limit', currentPage)
     }
 
     const addVacancyTableData = () => {
@@ -131,7 +129,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
 
     const handleSave = async (event, inputValue) => {
         event.preventDefault();
-        if (addMore === true) {
+        if (addMore) {
             if (changeLable === 'Save') {
                 const vacancyData = {
                     ministry_id: slottingMinistryId,
@@ -142,7 +140,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                 };
                 assignSlottingVacancy(vacancyData).then((res) => res.json())
                 if (vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0) {
-                    toast(`${vacancyCount} vacancy successfully assigned to ${inputValue}`);
+                    toast(`${vacancyCount} vacancy successfully assigned to selected state`);
                 }
             } else if (changeLable === 'Update') {
                 const reSlottingData = {
