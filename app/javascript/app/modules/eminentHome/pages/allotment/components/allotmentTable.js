@@ -9,7 +9,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Backdrop, CircularProgress
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import ReactPaginate from "react-paginate";
 import "../components/allotmentTable.css";
@@ -19,9 +20,12 @@ import IconPark from "../../../../../../../../public/images/icon-park_column.svg
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
 import { allotmentListData } from "../../../../../api/eminentapis/endpoints";
 import AllotmentContext from "../context/allotmentContext";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 function AllotmentTable({ setAssignShow, filterString }) {
-  const { assignBreadCrums, setAssignBreadCrums } = useContext(AllotmentContext);
+  const { crumbsState, setCrumbsState, assignBreadCrums, setAssignBreadCrums } =
+    useContext(AllotmentContext);
+
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
@@ -33,7 +37,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
       setAssignShow(true);
       setAssignBreadCrums(true);
     } else {
-      setAssignShow(true);    
+      setAssignShow(true);
       setAssignBreadCrums(true);
     }
   }
@@ -55,14 +59,11 @@ function AllotmentTable({ setAssignShow, filterString }) {
     setIsFetching(true);
   }, [currentPage, filterString]);
 
-
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
   };
 
   return (
-
-    
     <div className="allotment-table">
       <div className="wrap">
         <div className="search-box">
@@ -78,13 +79,12 @@ function AllotmentTable({ setAssignShow, filterString }) {
         </button>
       </div>
       <div className="table_main">
-
-                <Backdrop
-                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={isFetching}
-                >
-                    <CircularProgress color="inherit" />
-                </Backdrop>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isFetching}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
 
         <TableContainer component={Paper} className="psutable_1">
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
