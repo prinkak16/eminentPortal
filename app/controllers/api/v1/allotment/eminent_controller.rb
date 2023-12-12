@@ -36,7 +36,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
     state_ids = params[:entry_type].present? ? params[:entry_type].split(',') : nil
     if state_ids.nil?
       state_ids = []
-      fetch_user_assigned_country_states.each do |country_state|
+      fetch_minister_assigned_country_states.each do |country_state|
         state_ids << country_state['id']
       end
     end

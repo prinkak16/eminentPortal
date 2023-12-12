@@ -115,7 +115,7 @@ module VacancyFilterHelper
   def fetch_vacancy_organization_filters(name)
     result = {
       'key': 'organization',
-      'display_name': 'Organization',
+      'display_name': 'PSU/PSB',
       'type': 'array',
       'values': []
     }
@@ -147,7 +147,7 @@ module VacancyFilterHelper
   def fetch_all_vacancy_organization_filters(name)
     result = {
       'key': 'organization',
-      'display_name': 'Organization',
+      'display_name': 'PSU/PSB',
       'type': 'array',
       'values': []
     }
