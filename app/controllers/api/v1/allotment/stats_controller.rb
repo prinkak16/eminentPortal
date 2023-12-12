@@ -17,7 +17,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
       end
 
       country_states = []
-      fetch_user_assigned_country_states.each do |country_state|
+      fetch_minister_assigned_country_states.each do |country_state|
         country_states << country_state[:id]
       end
 
@@ -101,7 +101,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
       country_states = params[:country_state_id].present? ? params[:country_state_id] : nil
       if country_states.nil?
         country_states = []
-        fetch_user_assigned_country_states.each do |country_state|
+        fetch_minister_assigned_country_states.each do |country_state|
           country_states << country_state[:id]
         end
       end
