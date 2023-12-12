@@ -285,7 +285,7 @@ function AllotAssign() {
         return (
           <div className="allot-history-div-1">
             <div className="allot-history-div">
-              <span>ry
+              <span>
                 <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
               </span>
             </div>

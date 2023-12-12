@@ -30,7 +30,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
 
   function changeHandler(data) {
     if (data.vacant / data.total == 1) {
@@ -83,7 +83,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
             onChange={(e) => searchHandeler(e)}
           />
         </div>
-        <button className="allot-download-btn">
+        <button className="allot-download-btn" disabled>
           Download <ArrowDownward />
         </button>
       </div>
