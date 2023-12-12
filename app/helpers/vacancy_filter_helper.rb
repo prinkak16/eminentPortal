@@ -28,6 +28,31 @@ module VacancyFilterHelper
     end
     result
   end
+  def fetch_vacancy_ministry_filters_for_allotted_locations(name)
+    country_states = []
+    fetch_minister_assigned_country_states.each do |country_state|
+      country_states << country_state[:id]
+    end
+    user_ministries = Ministry.joins(:vacancies).where(vacancies: { country_state_id: country_states })
+    if name.present? && (name.length > 2)
+      user_ministries = user_ministries.where("LOWER(ministries.name) LIKE ?", "%#{name.downcase}%")
+    end
+    user_ministries = user_ministries.select("ministries.id as ministry_id, ministries.name as ministry_name").distinct
+    result = {
+      'key': 'ministry',
+      'display_name': 'Ministry',
+      'type': 'array',
+      'values': []
+    }
+
+    user_ministries.each do |user_ministry|
+      result[:values] << {
+        'value': user_ministry.ministry_id,
+        'display_name': user_ministry.ministry_name
+      }
+    end
+    result
+  end
   def fetch_all_vacancy_ministry_filters(name)
     result = {
       'key': 'ministry',
