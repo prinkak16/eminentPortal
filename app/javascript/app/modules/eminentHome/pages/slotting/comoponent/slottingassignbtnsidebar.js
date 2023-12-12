@@ -115,7 +115,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const handleAddMore = () => {
         setAddMore(true)
     }
-        const handleSave = async (event) => {
+    debugger
+        const handleSave = async (event, inputValue) => {
             event.preventDefault();
             if (addMore === true) {
                     const vacancyData = {
@@ -127,7 +128,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     };
                     assignSlottingVacancy(vacancyData).then((res) => res.json())
                  if(vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0){
-                    toast(`${vacancyCount} vacancy successfully assigned to state`);
+                    toast(`${vacancyCount} vacancy successfully assigned to ${inputValue}`);
                  }
 
                 if(vacancyCount && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0 && vacancyData.remarks !== ''){
