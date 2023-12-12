@@ -45,7 +45,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [slottingVacancyDetail, setSlottingVacancyDetail] = useState([])
     const [vacancyCount, setVacancyCount] = useState(0)
     const [slottingStateData, setSlottingStateData] = useState([])
-    // const [addMore, setAddMore] = useState(false)
     const [stateId, setStateId] = useState()
     const [remarks, setRemarks] = useState('')
     const [vacancyId, setVacancyId] = useState([])
@@ -74,10 +73,14 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             offset: currentPage * limit
         }
         getSlottingPsuData(psuId, paginateParams).then(response => {
+            // debugger
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
-
+            if(response.data.data.slotting.count === 0){
+                setAddMore(true)
+            }
         })
+        console.log('limit', currentPage)
     }
 
     const addVacancyTableData = () => {
@@ -90,10 +93,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         if (vacancyCount >= 1) {
             setVacancyCount(vacancyCount - 1)
         }
-
     }
+
     const handleIncreaseCount = () => {
-        if (vacancyCount  <= slottingPsuDetail.unslotted) {
+        if (vacancyCount + 1  <= slottingPsuDetail.unslotted) {
             setVacancyCount(vacancyCount + 1)
         }
         if (vacancyCount === slottingPsuDetail.unslotted) {
@@ -158,9 +161,11 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setVacancyCount(0);
             setStateId('');
             setRemarks('');
+
         } else {
             handleAddMore();
         }
+        customFunction()
     };
     const handleEdit = (vacancyDetail) => {
         setChangeLable('Update')
@@ -169,7 +174,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setRemarks(vacancyDetail.slotting_remarks);
         setVacancyId(vacancyDetail.vacancies_id)
         setAddMore(true)
-        initializeOriginalValues()
+
     }
     const handleOpen = (unslotId) => {
         setOpenDeleteModal(true)
@@ -188,8 +193,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
         deleteSlottingVacancy(deleteParams).then((res) => res.json())
         customFunction()
+        if(slottingVacancyDetail.count <= 1){
+            setOpenDeleteModal(false);
+            setChangeLable('Save')
+            setVacancyCount(0);
+            setStateId();
+            setRemarks('');
+        }
         setOpenDeleteModal(false);
         toast("Deleted Successfully");
+        setAddMore(false)
     }
 
     useEffect(() => {
@@ -354,9 +367,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             <Button onClick={handleClose}>No</Button>
                         </Box>
                     </Modal>
-
-
-
 
                     {(addMore === false) ? (
                         <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>) : ''}
