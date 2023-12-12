@@ -76,3 +76,13 @@ button.savebtn, button.savebtn:hover{
     max-height: 100% !important;
     overflow: initial;
 }
+.delete-modal .css-1wnsr1i{
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 0;
+}
+.delete-modal button{
+    background: #f3f3f3;
+    color: #000;
+    margin: 1rem 0.5rem 0;
+}

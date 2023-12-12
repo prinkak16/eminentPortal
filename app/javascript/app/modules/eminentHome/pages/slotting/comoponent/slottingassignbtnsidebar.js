@@ -12,9 +12,10 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    Modal
 } from '@mui/material';
-import { ToastContainer, toast } from 'react-toastify';
+import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -30,6 +31,7 @@ import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import ReactPaginate from "react-paginate";
+
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
@@ -43,31 +45,38 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [slottingVacancyDetail, setSlottingVacancyDetail] = useState([])
     const [vacancyCount, setVacancyCount] = useState(0)
     const [slottingStateData, setSlottingStateData] = useState([])
-    const [addMore, setAddMore] = useState(false)
+    // const [addMore, setAddMore] = useState(false)
     const [stateId, setStateId] = useState()
     const [remarks, setRemarks] = useState('')
     const [vacancyId, setVacancyId] = useState([])
     const [validValue, setValidValue] = useState(true)
-    const [prevVacancyCount, setPrevVacancyCount] = useState(null);
+    const [addMore, setAddMore] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
+    const [changeLable, setChangeLable] = useState('Save')
+    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+    const [deleteState, setDeleteState] = useState(null)
     const limit = 10;
-    let originalVacancyCount;
-    let originalStateId;
-    let originalRemarks;
-    function initializeOriginalValues() {
-        originalVacancyCount = stateId;
-        originalStateId = vacancyCount;
-        originalRemarks = remarks;
+    const deleteModalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
     }
 
     const customFunction = () => {
         const paginateParams = {
-            limit : limit,
-            offset : currentPage * limit
+            limit: limit,
+            offset: currentPage * limit
         }
         getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
+
         })
     }
 
@@ -84,7 +93,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
 
     }
     const handleIncreaseCount = () => {
-        if (vacancyCount + 1 <= slottingPsuDetail.unslotted) {
+        if (vacancyCount  <= slottingPsuDetail.unslotted) {
             setVacancyCount(vacancyCount + 1)
         }
         if (vacancyCount === slottingPsuDetail.unslotted) {
@@ -112,75 +121,86 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setValidValue(true);
         }
     }
-    const handleAddMore = () => {
+    const handleAddMore = (updateAdd) => {
         setAddMore(true)
+        setChangeLable('Save')
     }
-    debugger
-        const handleSave = async (event, inputValue) => {
-            event.preventDefault();
-            if (addMore === true) {
-                    const vacancyData = {
-                        ministry_id: slottingMinistryId,
-                        organization_id: psuId,
-                        vacancy_count: vacancyCount,
-                        state_id: stateId,
-                        remarks: remarks,
-                    };
-                    assignSlottingVacancy(vacancyData).then((res) => res.json())
-                 if(vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0){
-                    toast(`${vacancyCount} vacancy successfully assigned to ${inputValue}`);
-                 }
 
-                if(vacancyCount && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0 && vacancyData.remarks !== ''){
-                    const reSlottingData = {
-                        ministry_id: slottingMinistryId,
-                        organization_id: psuId,
-                        vacancy_count: vacancyCount,
-                        state_id: stateId,
-                        vacancies_id: vacancyId,
-                        remarks: remarks,
-                    };
-                    reassignSlottingVacancy(reSlottingData).then((res) => res.json())
+    const handleSave = async (event, inputValue) => {
+        event.preventDefault();
+        if (addMore === true) {
+            if (changeLable === 'Save') {
+                const vacancyData = {
+                    ministry_id: slottingMinistryId,
+                    organization_id: psuId,
+                    vacancy_count: vacancyCount,
+                    state_id: stateId,
+                    remarks: remarks,
+                };
+                assignSlottingVacancy(vacancyData).then((res) => res.json())
+                if (vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0) {
+                    toast(`${vacancyCount} vacancy successfully assigned to ${inputValue}`);
                 }
-                setAddMore(false);
-                addVacancyTableData();
-                setVacancyCount(0);
-                setStateId('');
-                setRemarks('');
-            } else {
-                handleAddMore();
+            } else if (changeLable === 'Update') {
+                const reSlottingData = {
+                    ministry_id: slottingMinistryId,
+                    organization_id: psuId,
+                    vacancy_count: vacancyCount,
+                    state_id: stateId,
+                    vacancies_id: vacancyId,
+                    remarks: remarks,
+                };
+                reassignSlottingVacancy(reSlottingData).then((res) => res.json())
             }
-        };
-        const handleEdit = (vacancyDetail) => {
+
+            setAddMore(false);
+            addVacancyTableData();
+            setVacancyCount(0);
+            setStateId('');
+            setRemarks('');
+        } else {
+            handleAddMore();
+        }
+    };
+    const handleEdit = (vacancyDetail) => {
+        setChangeLable('Update')
         setVacancyCount(vacancyDetail.vacancy_count);
         setStateId(vacancyDetail.country_state_id);
         setRemarks(vacancyDetail.slotting_remarks);
         setVacancyId(vacancyDetail.vacancies_id)
         setAddMore(true)
-            initializeOriginalValues()
+        initializeOriginalValues()
+    }
+    const handleOpen = (unslotId) => {
+        setOpenDeleteModal(true)
+        setDeleteState(unslotId)
+    }
+    const handleClose = () => {
+        setOpenDeleteModal(false);
+        setDeleteState(null)
     }
 
-  const handleDelete = (unslotId) => {
+
+    const handleDelete = () => {
         const deleteParams = {
-            vacancies_id: unslotId,
+            vacancies_id: deleteState,
             remarks: "",
         }
-      deleteSlottingVacancy(deleteParams).then((res) => res.json())
-      customFunction()
-  }
+        deleteSlottingVacancy(deleteParams).then((res) => res.json())
+        customFunction()
+        setOpenDeleteModal(false);
+        toast("Deleted Successfully");
+    }
 
     useEffect(() => {
         customFunction();
         slottingState()
-        if (vacancyCount !== prevVacancyCount) {
-            setPrevVacancyCount(vacancyCount);
-        }
-    }, [vacancyCount, prevVacancyCount, currentPage]);
+    }, [currentPage]);
 
     return (
 
         <Box sx={{display: 'flex'}}>
-            <ToastContainer />
+            <ToastContainer/>
             <Drawer
 
                 variant="persistent"
@@ -218,7 +238,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     <Typography variant="h5">
                         Assign Vacancy to state
                     </Typography>
-                    { addMore && (
+                    {addMore && (
                         <div>
                             <div className="d-flex">
                                 <div className="me-5">
@@ -232,8 +252,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             name="count"
                                             variant="outlined"
                                             value={vacancyCount}
-                                        error={!validValue}
-                                        helperText={!validValue ? 'Please enter your remark' : ''}/>
+                                            error={!validValue}
+                                            helperText={!validValue ? 'Please enter your remark' : ''}/>
 
                                         <Button onClick={handleIncreaseCount}> + </Button>
                                     </div>
@@ -281,7 +301,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                     error={!validValue}
                                     helperText={!validValue ? 'Please enter your remark' : ''}/>
                             </div>
-                            <Button className="savebtn mt-2 mb-3" onClick={handleSave}>Save</Button>
+                            <Button className="savebtn mt-2 mb-3"
+                                    onClick={handleSave}>{changeLable === 'Save' ? 'Save' : 'Update'}</Button>
                         </div>
                     )}
                     <TableContainer component={Paper} className="psutable">
@@ -305,8 +326,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             <TableCell>{vacancy.country_state_name}</TableCell>
                                             <TableCell>{vacancy.slotting_remarks}</TableCell>
                                             <TableCell>
-                                                <Button onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
-                                                <Button onClick={() => handleDelete(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
+                                                <Button
+                                                    onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
+                                                <Button
+                                                    onClick={() =>  handleOpen(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
                                             </TableCell>
                                         </TableRow>)
                                     )
@@ -314,10 +337,31 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             </TableBody>
                         </Table>
                     </TableContainer>
+
+
+                    <Modal
+                        open={openDeleteModal}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        className="delete-modal"
+                    >
+                        <Box sx={deleteModalStyle}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                               Do you really want to delete ?
+                            </Typography>
+                            <Button onClick={handleDelete}>Yes</Button>
+                            <Button onClick={handleClose}>No</Button>
+                        </Box>
+                    </Modal>
+
+
+
+
                     {(addMore === false) ? (
                         <Button className="savebtn mt-3 " onClick={handleAddMore}>Add More</Button>) : ''}
                     <div className="mt-3">
-                        <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; { slottingVacancyDetail?.count ?  Math.ceil(slottingVacancyDetail?.count / limit) : ''}</p>
+                        <p className="d-flex justify-content-center">{currentPage + 1} &nbsp;of&nbsp; {slottingVacancyDetail?.count ? Math.ceil(slottingVacancyDetail?.count / limit) : ''}</p>
                         <ReactPaginate
                             previousLabel={"Previous"}
                             nextLabel={"Next"}
