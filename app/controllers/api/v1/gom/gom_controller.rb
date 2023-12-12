@@ -346,7 +346,7 @@ class Api::V1::Gom::GomController < BaseApiController
             if user_detail.assist_to_id == assist_to_user_detail.id
               user_detail.destroy!
               row_data[:success] = true
-              row_data[:message] = 'User is deleted successfully.'
+              row_data[:message] = 'PA is deleted successfully.'
               upload_user_result << row_data
             end
           end
@@ -368,7 +368,7 @@ class Api::V1::Gom::GomController < BaseApiController
             )
           end
           row_data[:success] = true
-          row_data[:message] = 'User is mapped successfully.'
+          row_data[:message] = 'PA is mapped successfully.'
           upload_user_result << row_data
         end
       end
