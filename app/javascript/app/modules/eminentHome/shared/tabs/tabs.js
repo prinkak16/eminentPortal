@@ -528,9 +528,10 @@ export default function BasicTabs({
     buttonContent = null;
   }
 
-  const handleBasicTabChange = (basicTabValue) => {
-    setBasicTabId(basicTabValue);
-  };
+
+    const handleBasicTabChange = (basicTabValue) => {
+        setBasicTabId(basicTabValue);
+    };
 
   const AntTabs = styled(Tabs)({
     borderBottom: "1px solid #e8e8e8",
