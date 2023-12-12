@@ -398,6 +398,7 @@ export const languagesName = [
         'Manipuri',
         'Bodo',
         'Sanskrit',
+        'English',
         'Other Indian languages'
     ];
 
