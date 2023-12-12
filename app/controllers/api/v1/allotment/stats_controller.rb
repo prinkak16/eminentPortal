@@ -119,9 +119,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
             SUM(1) AS total,
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
             SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied
-          FROM public.user_ministries AS um
-          LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
+          FROM public.vacancies AS vac
           LEFT JOIN public.ministries AS ministry
           ON vac.ministry_id = ministry.id
           LEFT JOIN public.departments AS dept
@@ -129,8 +127,6 @@ class Api::V1::Allotment::StatsController < BaseApiController
           LEFT JOIN public.organizations AS org
           ON vac.organization_id = org.id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
@@ -138,8 +134,6 @@ class Api::V1::Allotment::StatsController < BaseApiController
             vac.slotting_status IN ('slotted', 'outside_saral')
             AND
             vac.country_state_id IN (#{country_states.join(',')})
-            AND
-            um.user_id = #{current_user.id}
       "
       sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
       sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
@@ -154,7 +148,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
             dept.id,
             dept.name
       "
-      stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+      stats = Vacancy.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
       stats.each do |stat|
         results << {
@@ -176,7 +170,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
         message: 'Success',
         data: {
           value: results,
-          count: UserMinistry.find_by_sql(sql).count
+          count: Vacancy.find_by_sql(sql).count
         }
       }, status: :ok
 
@@ -271,5 +265,53 @@ class Api::V1::Allotment::StatsController < BaseApiController
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
+  end
+
+  def psu_details
+    begin
+      # check if user have permission
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+      psu_id = params[:psu_id]
+      raise "PSU Id can't be blank." unless psu_id.present?
+
+      country_states = []
+      fetch_minister_assigned_country_states.each do |country_state|
+        country_states << country_state[:id]
+      end
+
+      psu_details = Organization.joins(ministry: :user_ministries)
+                                .joins(:vacancies)
+                                .where(id: psu_id)
+                                .where(user_ministries: { user_id: current_user.id })
+                                .where(vacancies: {country_state_id: country_states, allotment_status: 'vacant' })
+                                .group('organizations.id, organizations.name, ministries.name')
+                                .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
+                                                count(distinct vacancies.id) as vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks")
+      if psu_details.exists?
+        psu_data = {
+          psu_id: psu_details.first.psu_id,
+          psu_name: psu_details.first.psu_name,
+          ministry_name: psu_details.first.ministry_name,
+          vacancy_count: psu_details.first.vacancy_count,
+          remarks: psu_details.first.remarks
+        }
+
+        return render json: {
+          success: true,
+          message: 'Data received successfully.',
+          data: psu_data
+        }
+      else
+        raise 'No PSU found.'
+      end
+    end
+  rescue StandardError => e
+    return render json: { success: false, message: e.message }, status: :bad_request
   end
 end
