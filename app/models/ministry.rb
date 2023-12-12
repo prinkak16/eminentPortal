@@ -1,6 +1,8 @@
 class Ministry < ApplicationRecord
   self.table_name = 'ministries'
 
+  has_many :user_ministries
+
   scope :name_similar, ->(search) {
     select(:id, :name, "word_similarity(name, '#{search}') AS ms")
       .where('name % :name', name: search)

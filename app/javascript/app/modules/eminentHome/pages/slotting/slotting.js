@@ -23,7 +23,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     const [psuId, setPsuId] = useState(null)
     const [slottingMinistryId, setSlottingMinistryId] = useState(null)
     const limit = 10;
-    const handleDrawerOpen = (id, MinistryId) => {
+    const handleDrawerOpen = (id, MinistryId, slotted) => {
         setOpen(true);
         setPsuId(id)
         setSlottingMinistryId(MinistryId)
@@ -48,7 +48,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     return (
         <>
             <Analytics tabId={tabId} title="Position Analytics"/>
-            {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}/>}
+            {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}  />}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -77,7 +77,7 @@ const SlottingTabPage =({tabId, filterString})=>{
                                     <TableCell className="text-center"><Button className="assignButton" aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
-                                                                                   handleDrawerOpen(slotting.org_id, slotting.ministry_id)
+                                                                                   handleDrawerOpen(slotting.org_id, slotting.ministry_id, slotting.slotted)
                                                                                }}
                                                                                sx={{ ...(open && { display: 'none' }) }}>{slotting.slotted === 0 ? 'Assign' : 'Update'}</Button></TableCell>
                             </TableRow>)}

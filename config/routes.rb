@@ -101,6 +101,7 @@ Rails.application.routes.draw do
         get '/position_analytics', to: 'stats#position_analytics'
         get '/list', to: 'stats#list'
         get '/assign_position_info/:organization_id', to: 'stats#assign_position_info'
+        get '/psu_details', to: 'stats#psu_details'
         get '/eminent_list', to: 'eminent#list'
       end
 
