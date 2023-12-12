@@ -129,8 +129,6 @@ class Api::V1::Allotment::StatsController < BaseApiController
           LEFT JOIN public.organizations AS org
           ON vac.organization_id = org.id
           WHERE
-            um.is_minister IS false
-            AND
             vac.id IS NOT null
             AND
             vac.deleted_at IS null
@@ -271,5 +269,41 @@ class Api::V1::Allotment::StatsController < BaseApiController
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
+  end
+
+  def psu_details
+    begin
+      # check if user have permission
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+      psu_id = params[:psu_id]
+      raise "PSU Id can't be blank." unless psu_id.present?
+
+      psu_details = Organization.left_joins(:ministry).where(id: psu_id).first
+      vacancy_count = psu_details.vacancies.where(allotment_status: 'vacant').count
+
+      if psu_details.present?
+        psu_data = {
+          psu_id: psu_details.id,
+          psu_name: psu_details.name,
+          ministry_name: psu_details.ministry&.name,
+          vacancy_count: vacancy_count
+        }
+        return render json: {
+          success: true,
+          data: psu_data,
+          message: 'PSU data received successfully.'
+        }, status: :ok
+      else
+        raise 'No PSU found.'
+      end
+    end
+  rescue StandardError => e
+    return render json: { success: false, message: e.message }, status: :bad_request
   end
 end
