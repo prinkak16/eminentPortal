@@ -42,6 +42,14 @@ function AllotmentTable({ setAssignShow, filterString }) {
     }
   }
 
+  const searchHandeler = (e) => {
+    console.log(e.target.value)
+        // const searchParams = {
+        //   ministry_name: e.target.value,
+        //   // organization_name: searchOrganizationName,
+        // }
+       // allotmentListData(searchParams);
+  } 
   const fetchTableData = () => {
     allotmentListData(itemsPerPage * currentPage, itemsPerPage, filterString)
       .then((res) => {
@@ -72,6 +80,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
             type="text"
             placeholder="Search by PSU or Ministry"
             className="allot-searchField"
+            onChange={(e) => searchHandeler(e)}
           />
         </div>
         <button className="allot-download-btn">

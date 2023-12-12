@@ -491,7 +491,7 @@ function AllotAssign() {
       </div>
       <div className="btn-absolute">
         <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
-          <big><Frame />   Assigned Position</big>
+          <big><Frame className="frame-icon-allotment"/>   Assigned Position</big>
         </Button>
       </div>
 

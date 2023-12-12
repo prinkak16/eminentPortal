@@ -520,5 +520,13 @@
   z-index: 10 !important;
 }
 .btn-absolute.active {
-  display: none;
+  /* display: none; */
+  position: absolute;
+  top: 182px;
+  right: 58px;
+}
+
+
+.frame-icon-allotment{
+  color: #ff9559 !important;
 }
