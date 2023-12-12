@@ -119,9 +119,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
             SUM(1) AS total,
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
             SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied
-          FROM public.user_ministries AS um
-          LEFT JOIN public.vacancies AS vac
-          ON um.ministry_id = vac.ministry_id
+          FROM public.vacancies AS vac
           LEFT JOIN public.ministries AS ministry
           ON vac.ministry_id = ministry.id
           LEFT JOIN public.departments AS dept
@@ -136,8 +134,6 @@ class Api::V1::Allotment::StatsController < BaseApiController
             vac.slotting_status IN ('slotted', 'outside_saral')
             AND
             vac.country_state_id IN (#{country_states.join(',')})
-            AND
-            um.user_id = #{current_user.id}
       "
       sql += " AND ministry.id IN (#{ministry_id_search})" unless ministry_id_search.nil?
       sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
@@ -152,7 +148,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
             dept.id,
             dept.name
       "
-      stats = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+      stats = Vacancy.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
       stats.each do |stat|
         results << {
@@ -174,7 +170,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
         message: 'Success',
         data: {
           value: results,
-          count: UserMinistry.find_by_sql(sql).count
+          count: Vacancy.find_by_sql(sql).count
         }
       }, status: :ok
 
