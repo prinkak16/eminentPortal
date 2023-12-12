@@ -284,21 +284,33 @@ class Api::V1::Allotment::StatsController < BaseApiController
       psu_id = params[:psu_id]
       raise "PSU Id can't be blank." unless psu_id.present?
 
-      psu_details = Organization.left_joins(:ministry).where(id: psu_id).first
-      vacancy_count = psu_details.vacancies.where(allotment_status: 'vacant').count
+      country_states = []
+      fetch_minister_assigned_country_states.each do |country_state|
+        country_states << country_state[:id]
+      end
 
-      if psu_details.present?
+      psu_details = Organization.joins(ministry: :user_ministries)
+                                .joins(:vacancies)
+                                .where(id: psu_id)
+                                .where(user_ministries: { user_id: current_user.id })
+                                .where(vacancies: {country_state_id: country_states, allotment_status: 'vacant' })
+                                .group('organizations.id, organizations.name, ministries.name')
+                                .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
+                                                count(distinct vacancies.id) as vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks")
+      if psu_details.exists?
         psu_data = {
-          psu_id: psu_details.id,
-          psu_name: psu_details.name,
-          ministry_name: psu_details.ministry&.name,
-          vacancy_count: vacancy_count
+          psu_id: psu_details.first.psu_id,
+          psu_name: psu_details.first.psu_name,
+          ministry_name: psu_details.first.ministry_name,
+          vacancy_count: psu_details.first.vacancy_count,
+          remarks: psu_details.first.remarks
         }
+
         return render json: {
           success: true,
-          data: psu_data,
-          message: 'PSU data received successfully.'
-        }, status: :ok
+          message: 'Data received successfully.',
+          data: psu_data
+        }
       else
         raise 'No PSU found.'
       end
