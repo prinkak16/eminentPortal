@@ -47,7 +47,7 @@ export const getFileUpload = async (file, config,isCandidateLogin, setBackDropTo
 }
 
 
-export const userPermissions = () => {
+export const getUserPermissions = () => {
     return axios.get(apiBaseUrl + 'metadata/user_permissions',{
     })
 }

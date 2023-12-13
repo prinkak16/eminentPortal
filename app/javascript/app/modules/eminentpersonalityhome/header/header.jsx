@@ -20,6 +20,7 @@ function Header({userData}){
           setAuthToken('')
       } else {
           eminentAdminLogout().then((res) => {
+              localStorage.setItem('user_permissions', '')
               window.location.reload()
           })
       }
@@ -34,7 +35,6 @@ function Header({userData}){
     const handleClose = () => {
         setAnchorEl(null);
     };
-
 
     return(
   
@@ -76,9 +76,6 @@ function Header({userData}){
                 </Menu>
             </div>
         </div>
-
-
-
     )
 }
 
