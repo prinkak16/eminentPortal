@@ -289,7 +289,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
                                 .joins(:vacancies)
                                 .where(id: psu_id)
                                 .where(user_ministries: { user_id: current_user.id })
-                                .where(vacancies: { country_state_id: country_states })
+                                .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
                                 .group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
                                                 count(distinct vacancies.id) as total_vacancy_count, count(case when vacancies.allotment_status = 'vacant' then 1 end) as vacant_vacancy_count,

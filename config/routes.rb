@@ -103,6 +103,7 @@ Rails.application.routes.draw do
         get '/assign_position_info/:organization_id', to: 'stats#assign_position_info'
         get '/psu_details', to: 'stats#psu_details'
         get '/eminent_list', to: 'eminent#list'
+        post '/assign_vacancy', to: 'eminent#assign_vacancy'
       end
 
       namespace :file_status, path: 'file_status' do
