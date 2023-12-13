@@ -73,7 +73,7 @@ export default function     PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [filterString, setFilterString] = useState("");
-  const [tabId, setTabId] = useState("home_table");
+  const [tabId, setTabId] = useState("home");
   const [movTabId, setMovTabId] = useState("ministry_wise");
   const [clearFilter, setClearFilter] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
