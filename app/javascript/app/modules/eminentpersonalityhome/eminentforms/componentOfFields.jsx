@@ -171,30 +171,42 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
 
     const handleSave = (id) => {
-        for (let key in fieldsData) {
+        const formValue = fieldsData
+        if (jsonForm?.title ===  'Education Details') {
+            if (!formValue.hasOwnProperty('highest_qualification')) {
+                formValue['highest_qualification'] = false
+            }
+        } else if ( jsonForm.title === 'Profession Profile') {
+            if (!formValue.hasOwnProperty('main_profession')) {
+                formValue['main_profession'] = false
+            }
+        }
+
+        for (let key in formValue) {
             if (key !== 'id') {
-                if (!isValuePresent(fieldsData[key]) && fieldsData[key] !== false) {
+                if (!isValuePresent(formValue[key]) && formValue[key] !== false) {
                  const item = jsonForm.fields.find((item) => item.key === key)
                     if (item.isRequired) {
                         return showErrorToast(`Please enter ${key}`)
                     }
                 }
                 if (key === 'start_year') {
-                    if (parseInt(fieldsData[key]) < 1900 ) {
+                    if (parseInt(formValue[key]) < 1900 ) {
                         return showErrorToast(`Start Year Should be greater then start year 1900`)
                     }
                 }
 
-                if (key === 'end_year' && fieldsData.end_year !== '-') {
-                    if (isValuePresent(fieldsData.end_year)) {
-                        if (fieldsData.start_year > fieldsData.end_year) {
-                            return showErrorToast(`End Year Should be greater then start year ${fieldsData.start_year}`)
+                if (key === 'end_year' && formValue.end_year !== '-') {
+                    if (isValuePresent(formValue.end_year)) {
+                        if (formValue.start_year > formValue.end_year) {
+                            return showErrorToast(`End Year Should be greater then start year ${formValue.start_year}`)
                         }
                     }
                 }
             }
         }
-        saveData(jsonForm.title,fieldsData, id)
+        console.log(formValue)
+        saveData(jsonForm.title,formValue, id)
         resetFieldsToBlank()
     }
 
@@ -243,9 +255,9 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     <>
                         {
                             f.type === 'dropdown' &&
-                                <Grid item xs={4}>
-
-                                    <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
+                            <Grid item xs={4}>
+                                <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
+                                <div className='components-dropdown'>
                                     <AutoCompleteDropdown
                                         disabled={isViewDisabled}
                                         name={f.name}
@@ -253,7 +265,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         listArray={isValuePresent(getList()) ? getList() : f.list}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
-                                </Grid>
+                                </div>
+                            </Grid>
                         }
                         {
                             f.type === "textField" &&

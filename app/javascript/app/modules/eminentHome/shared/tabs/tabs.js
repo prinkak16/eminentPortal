@@ -6,7 +6,6 @@ import {
   TextField,
   styled,
   InputLabel,
-  Alert,
   Typography,
 } from "@mui/material";
 import HomeTable from "../../pages/hometable/hometable";
@@ -22,7 +21,6 @@ import {
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import PdfIcon from "../../../../../../../public/images/PdfIcon.svg";
 import SlottingTabPage from "../../pages/slotting/slotting";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -32,13 +30,12 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import UploadIcon from "../../../../../../../public/images/upload.svg";
 import CloseIcon from "../../../../../../../public/images/CloseIcon.svg";
 import UploadFile from "../../../../../../../public/images/upload_file.svg";
-import { useParams } from "react-router-dom";
 import FileStatus from "../../pages/fileStatus/fileStatus";
 import Tabs from "@mui/material/Tabs";
-import { isValuePresent } from "../../../utils";
+import {checkPermission, isValuePresent, convertToCamelCase} from "../../../utils";
 import AllotmentContext from "../../pages/allotment/context/allotmentContext";
+import {getUserPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 
-// import {TabsContext} from "../../../../context/tabdataContext";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -70,14 +67,30 @@ export default function BasicTabs({
   const [userData, setUserData] = useState();
   const [wantToUpload, setWantToUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
-  const { type } = useParams();
   const [fileName, setFileName] = useState("");
   const [excelFile, setExcelFile] = useState();
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [eminentMsg, setEminentMsg] = useState("");
   const navigate = useNavigate();
-  const [alertMessage, setAlertMessage] = useState(false);
+
+  const [userPermissions, setUserPermissions] = useState()
+
+  useEffect(() => {
+    if (isValuePresent(localStorage.getItem('user_permissions'))) {
+      setUserPermissions(JSON.parse(localStorage.getItem('user_permissions')))
+      console.log(JSON.parse(localStorage.getItem('user_permissions')))
+    } else  {
+      getUserPermissions().then(
+          (res) => {
+            if (res.data.success) {
+              localStorage.setItem('user_permissions', JSON.stringify(res.data.data))
+              setUserPermissions(res.data.data)
+            }
+          }
+      )
+    }
+  },[])
   const notify = () => toast("CSV file Uploaded successfully");
   const { assignBreadCrums, setAssignBreadCrums } =
     useContext(AllotmentContext);
@@ -240,9 +253,11 @@ export default function BasicTabs({
     setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
   };
   const handleChange = (event, newValue) => {
-    handleBasicTabChange({ basicTabId: newValue });
-    setValue(newValue);
-    onSwitchTab(newValue);
+    if (checkPermission('Eminent', convertToCamelCase(newValue))) {
+      handleBasicTabChange({ basicTabId: newValue });
+      setValue(newValue);
+      onSwitchTab(newValue);
+    }
   };
 
   const handleDownload = () => {
@@ -572,30 +587,16 @@ export default function BasicTabs({
   );
 
   const tabsView = () => {
-    if (IsViewTabs === 1 || IsViewTabs === "1") {
-      return (
-        <TabList onChange={handleChange} aria-label="lab API tabs example">
-          <Tab label="Home" value="home_table" />
-          <Tab label="Master of Vacancies" value="master_of_vacancies" />
-        </TabList>
-      );
-    } else {
-      return (
-        <TabList
-          onChange={handleChange}
-          aria-label="lab API tabs example"
-          className="testing-tabList"
-        >
-          <Tab label="Home" value="home_table" />
-          <Tab label="Allotment" value="allotment" />
-          <Tab label="File Status" value="file_status" />
-          <Tab label="Master of Vacancies" value="master_of_vacancies" />
-          <Tab label="Slotting" value="slotting" />
-          <AntTab label="GoM MANAGEMENT" value="gom_management" />
-        </TabList>
-      );
-    }
-  };
+    return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
+                {checkPermission('Eminent','Home') && <Tab label="Home" value="home_table"/>}
+                {checkPermission('Eminent','Allotment') && <Tab label="Allotment" value="allotment"/>}
+                {checkPermission('Eminent','FileStatus') && <Tab label="File Status" value="file_status"/>}
+                {checkPermission('Eminent','MasterOfVacancies') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
+                {checkPermission('Eminent','Slotting') && <Tab label="Slotting" value="slotting"/>}
+                {checkPermission('Eminent','GomManagement') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
+          </TabList>)
+  }
+
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value}>
