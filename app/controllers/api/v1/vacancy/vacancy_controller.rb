@@ -14,11 +14,11 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
         }, status: :unauthorized
       end
 
-      stats = {
-        'total': 0,
-        'occupied': 0,
-        'vacant': 0
-      }
+        stats = {
+          'total': 0,
+          'occupied': 0,
+          'vacant': 0
+        }
       sql = "
         SELECT
            SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,

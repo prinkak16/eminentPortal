@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
 import VerticalLinearStepper from "../verticalStepper/verticalStepper";
+import {isValuePresent} from "../../../utils";
 
 const FileStatus = () => {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
@@ -45,43 +46,40 @@ const FileStatus = () => {
         setProfilePhotoUrl('')
     }
 
-    const fileStatus = [1, 2, 'A', 'C', 4, 'D', 'G']
+    const fileStatus = [1, 2, 'A', 3, 'B', 'C', 4, 5, 'Dropped', 'Decline By Candidate', 'Passed Away']
     const tableData = [
         {
-            id:'BJ949394PK',
+            id:'BJ949394PK1',
             photo: 'https://images.unsplash.com/photo-1683009427513-28e163402d16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             name:'Narendra Huda',
             mobiles: [9999222231,9999222230],
             ministry: 'Ministry Ministry of Interior / Home Affairs',
             psu: 'PSU Law Enforcement Training Institute',
             type: 'Type Maharatna',
-            user_id: 'BJ949394PK',
             aasm_status:'In progress',
             file_status: '2',
             file_remarks:'The Remarks will appear here'
         },
         {
-            id:'BJ949394PK',
-            photo: 'https://images.unsplash.com/photo-1682687219573-3fd75f982217?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            id:'BJ949394PK2',
+            photo: '',
             name:'Harendra Huda',
-            mobiles: [9999222231,9999222230],
+            mobiles: [9999222771,9999222266],
             ministry: 'Ministry Ministry of Interior / Home Affairs',
             psu: 'PSU Law Enforcement Training Institute',
             type: 'Type Maharatna',
-            user_id: 'BJ949394PK',
             aasm_status:'Reject',
             file_status: '2',
             file_remarks:'The Remarks will appear here'
         },
         {
-            id:'BJ949394PK',
+            id:'BJ949394PK3',
             photo: 'https://images.unsplash.com/photo-1682695797873-aa4cb6edd613?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHw2fHx8ZW58MHx8fHx8',
             name:'Gajendra Huda',
             mobiles: [9999222231,9999222230],
             ministry: 'Ministry Ministry of Interior / Home Affairs',
             psu: 'PSU Law Enforcement Training Institute',
             type: 'Type Maharatna',
-            user_id: 'BJ949394PK',
             aasm_status:'Verified',
             file_status: '2',
             file_remarks:'The Remarks will appear here'
@@ -125,12 +123,17 @@ const FileStatus = () => {
             }
     ]
 
+
     const showHistory = (id) => {
         if (openHistory === id) {
             setOpenHistory(null)
         } else {
             setOpenHistory(id)
         }
+    }
+
+    const userPhoto = (photo) => {
+      return   isValuePresent(photo) ? photo :'https://storage.googleapis.com/public-saral/public_document/form_banners/certificate/images/photoIconV2.png'
     }
 
     return (
@@ -160,7 +163,7 @@ const FileStatus = () => {
                             <p className={`eminent-status-tag ${item.aasm_status}-tag`}>{item.aasm_status}</p>
                         <div key={index * index} className='eminent-details-container d-flex'>
                             <div className='eminent-image-container ml-1rem' >
-                                <img className='eminent-image' src={item.photo} alt='eminent-image'/>
+                                <img className='eminent-image' src={userPhoto(item.photo)} alt='eminent-image'/>
                             </div>
                             <div className='eminent-initial-details'>
                                 <p><b>{item.name}</b></p>

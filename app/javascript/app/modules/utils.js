@@ -1,5 +1,5 @@
-import {getFileUpload, getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
-import { toast } from 'react-toastify';
+import {getFormData} from "../api/stepperApiEndpoints/stepperapiendpoints";
+import {toast} from 'react-toastify';
 import moment from "moment/moment";
 import {Button} from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {styled} from "@mui/material/styles";
+
 const dayjs = require('dayjs');
 
 export const isValuePresent = (value) => {
@@ -397,6 +398,7 @@ export const languagesName = [
         'Manipuri',
         'Bodo',
         'Sanskrit',
+        'English',
         'Other Indian languages'
     ];
 
@@ -540,3 +542,24 @@ export const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
+
+
+export const checkPermission = (name, action) => {
+    if (isValuePresent(localStorage.getItem('user_permissions'))) {
+        const userPermissions = JSON.parse(localStorage.getItem('user_permissions'))
+        return userPermissions.filter(item => item.permission_name === name).find(item => item.action === action);
+    } else {
+        return false
+    }
+}
+
+
+export const convertToCamelCase = (inputString) => {
+    return inputString.replace(/_(\w)/g, function (match, group) {
+        return group.toUpperCase();
+    }).replace(/^./, function(match) {
+        return match.toUpperCase();
+    });
+}
+
+

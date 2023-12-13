@@ -81,9 +81,10 @@ module ApplicationHelper
         'permission_name': up[:permission_name],
         'action': up[:action],
         'group': up[:display_name],
-        'is_allowed': up[:is_allowed]
+        'is_allowed': true
       }
     end
+
     return permissions
   end
 
