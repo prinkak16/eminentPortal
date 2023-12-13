@@ -35,7 +35,6 @@ function AllotAssign() {
   const [open, setOpen] = useState(false);
   const [System, setSystem] = useState(false);
 
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -491,7 +490,9 @@ function AllotAssign() {
       </div>
       <div className="btn-absolute">
         <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
-          <big><Frame className="frame-icon-allotment"/>   Assigned Position</big>
+          <big>
+            <Frame className="frame-icon-allotment" /> Assigned Position
+          </big>
         </Button>
       </div>
 
