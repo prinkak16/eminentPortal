@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Analytics from "../../shared/analytics/analytics";
 import SearchIcon from "../../../../../../../public/images/search.svg";
-import Download from "../../../../../../../public/images/download.svg";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 import debounce from "lodash/debounce";
 import './fileStatus.scss'
@@ -11,6 +10,8 @@ import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
 import VerticalLinearStepper from "../verticalStepper/verticalStepper";
 import {isValuePresent} from "../../../utils";
+import axios from "axios";
+import {apiBaseUrl} from "../../../../api/api_endpoints";
 
 const FileStatus = () => {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
@@ -21,6 +22,7 @@ const FileStatus = () => {
     const [updateStatus,setUpdateStatus] = useState(false)
     const [eminentStatus, setEminentStatus] =useState(null)
     const [openHistory, setOpenHistory] = useState(null)
+    const [fileStatuses, setFileStatuses] =useState([])
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -46,7 +48,22 @@ const FileStatus = () => {
         setProfilePhotoUrl('')
     }
 
-    const fileStatus = [1, 2, 'A', 3, 'B', 'C', 4, 5, 'Dropped', 'Decline By Candidate', 'Passed Away']
+    const getFileStatuses = () => {
+        return axios.get(apiBaseUrl + 'file_status/file_status_level',{
+        }).then(
+            (res) => {
+                if (res.data.status) {
+                    setFileStatuses(res.data.data)
+                }
+            }
+        )
+    }
+
+    useEffect(() => {
+        getFileStatuses()
+    },[])
+
+
     const tableData = [
         {
             id:'BJ949394PK1',
@@ -155,7 +172,7 @@ const FileStatus = () => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
-                    <DialogBox openDialogue={updateStatus} list={fileStatus} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails}/>
+                    <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails}/>
             </div>
             <div className='mt-5 border pb-4'>
                 {tableData && tableData.map((item, index) => (

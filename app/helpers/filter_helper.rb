@@ -227,4 +227,26 @@ module FilterHelper
     end
     result
   end
+
+  def get_file_statuses_filters(search)
+    result = {
+      'key': 'file_status',
+      'display_name': 'File Status',
+      'type': 'array',
+      'values': []
+    }
+
+    file_statuses = FileStatusLevel.select(:id, :name)
+    if search.length > 2
+      file_statuses = FileStatusLevel.name_similar(search)
+    end
+
+    file_statuses.each do |status|
+      result[:values] << {
+        'value': status[:id],
+        'display_name': status[:name]
+      }
+    end
+    result
+  end
 end
