@@ -16,7 +16,7 @@ const Analytics = (props) => {
     const [homeStats,setHomeStats] = useState([]);
     useEffect(()=>{
         switch (props.tabId) {
-            case 'home_table':
+            case 'home':
                 statsData().then(res => {
                     setHomeStats(res.data.data);
                 })
@@ -52,7 +52,7 @@ const Analytics = (props) => {
             let iconType = 'svg'
             let icon = null;
                 switch (props.tabId){
-                    case 'home_table':
+                    case 'home':
                     switch (value) {
                         case'overall': {
                             label = 'Total Eminent Personality';

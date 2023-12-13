@@ -55,7 +55,7 @@ export default function BasicTabs({
   clearFilter,
 }) {
   const [basicTabId, setBasicTabId] = useSearchParams({
-    basicTabId: "home_table",
+    basicTabId: "home",
   });
   const [value, setValue] = React.useState(basicTabId.get("basicTabId"));
   const [wantToAddNew, setWantToAddNew] = useState(false);
@@ -297,7 +297,7 @@ export default function BasicTabs({
   };
 
   let buttonContent;
-  if (value === "home_table") {
+  if (value === "home") {
     if (isValuePresent(!openFilter)) {
       buttonContent = (
         <button className="addNewBtn" onClick={() => setWantToAddNew(true)}>
@@ -588,7 +588,7 @@ export default function BasicTabs({
 
   const tabsView = () => {
     return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
-                {checkPermission('Eminent','Home') && <Tab label="Home" value="home_table"/>}
+                {checkPermission('Eminent','Home') && <Tab label="Home" value="home"/>}
                 {checkPermission('Eminent','Allotment') && <Tab label="Allotment" value="allotment"/>}
                 {checkPermission('Eminent','FileStatus') && <Tab label="File Status" value="file_status"/>}
                 {checkPermission('Eminent','MasterOfVacancies') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
@@ -607,7 +607,7 @@ export default function BasicTabs({
             {tabsView()}
             {buttonContent}
           </Box>
-          <TabPanel value="home_table">
+          <TabPanel value="home">
             <HomeTable
               filterString={filterString}
               tabId={value}
