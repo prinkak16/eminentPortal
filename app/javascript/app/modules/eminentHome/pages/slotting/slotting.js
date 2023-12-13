@@ -23,7 +23,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     const [psuId, setPsuId] = useState(null)
     const [slottingMinistryId, setSlottingMinistryId] = useState(null)
     const limit = 10;
-    const handleDrawerOpen = (id, MinistryId, slotted) => {
+    const handleDrawerOpen = (id, MinistryId) => {
         setOpen(true);
         setPsuId(id)
         setSlottingMinistryId(MinistryId)
@@ -40,6 +40,7 @@ const SlottingTabPage =({tabId, filterString})=>{
         }
         getSlottingTable(slottingParams, filterString).then(res => {
             setSlottingTableData(res.data.data)
+            console.log('date format', res.data.data)
         })
     }
 
@@ -74,7 +75,11 @@ const SlottingTabPage =({tabId, filterString})=>{
                                 <TableCell>{slotting.vacant}</TableCell>
                                 <TableCell>{slotting.slotted}</TableCell>
                                 <TableCell>{slotting.is_listed ? 'Yes' : 'No'}</TableCell>
-                                <TableCell>{slotting.last_updated_at}</TableCell>
+                                <TableCell>{new Date(slotting.last_updated_at).toLocaleString('en-US',{
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                })}</TableCell>
                                     <TableCell className="text-center"><Button className="assignButton" aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
@@ -111,12 +116,3 @@ const SlottingTabPage =({tabId, filterString})=>{
     )
 }
 export default SlottingTabPage
-
-const slotting={
-    psu_psb:"Citizen and Immigration Authority",
-    ministry:"ministry of finance/treasury",
-    vacant:3,
-    assigned_to_state:1,
-    psu_listed:"yes",
-    last_updated:"10 Jul 2023",
-}

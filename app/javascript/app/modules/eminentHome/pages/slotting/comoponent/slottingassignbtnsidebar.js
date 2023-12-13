@@ -78,6 +78,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
+            console.log('response.data.data.slotting', response.data.data.slotting)
         })
     }
 
