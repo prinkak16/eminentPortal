@@ -122,7 +122,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setValidValue(true);
         }
     }
-    const handleAddMore = (updateAdd) => {
+    const handleAddMore = () => {
         setAddMore(true)
         setChangeLable('Save')
     }

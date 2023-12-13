@@ -42,6 +42,7 @@ const SlottingTabPage =({tabId, filterString})=>{
             setSlottingTableData(res.data.data)
         })
     }
+
     useEffect(() => {
         slottingTable()
     }, [currentPage, filterString]);
