@@ -14,6 +14,10 @@ export const getFiltersForAllotment = (params) => {
     return axios.get(apiBaseUrl + 'filters/allotment',{params})
 }
 
+export const getFiltersFileStatus = (params) => {
+    return axios.get(apiBaseUrl + 'filters/file_status',{params})
+}
+
 // export const getVacancy
 export const getData = (filters = '') => {
     return axios.get(apiBaseUrl + 'custom_member_forms/list?type=eminent_personality' + filters);

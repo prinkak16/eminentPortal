@@ -51,6 +51,7 @@ Rails.application.routes.draw do
       get 'filters/slotting', to: 'filter#slotting'
       get 'filters/allotment', to: 'filter#allotment'
       get 'filters/allotment_eminents', to: 'filter#allotment_eminents'
+      get 'filters/file_status', to: 'filter#file_status'
 
 
       get 'stats/home', to: 'stats#home'
@@ -108,7 +109,8 @@ Rails.application.routes.draw do
       namespace :file_status, path: 'file_status' do
         post '/update_file_status', to: 'file_status#update_status'
         post '/file_status_members', to: 'file_status#file_status_members'
-        post '/analytics', to: 'file_status#analytics'
+        get '/analytics', to: 'file_status#analytics'
+        get 'file_status_level', to: 'file_status#file_status_levels'
 
       end
 

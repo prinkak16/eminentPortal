@@ -98,5 +98,10 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   def get_last_file_status(va_id)
     FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status
   end
+
+  def file_status_levels
+    file_statuses = FileStatusLevel.all.select(:id,:name)
+    render json: {status: true, data: file_statuses, message: 'File Statuses'}, status: :ok
+  end
 end
 
