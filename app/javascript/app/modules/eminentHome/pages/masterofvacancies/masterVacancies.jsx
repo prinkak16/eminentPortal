@@ -9,10 +9,10 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Analytics from '../../shared/analytics/analytics'
-import MinistryTable from "./components/ministrytable";
-import PSUTable from "./components/psutable";
-import VacancyTable from "./components/vacancytable";
-import './masterofvacancies.css'
+import MinistryTable from "./components/ministryTable";
+import PsuTable from "./components/psuTable";
+import VacancyTable from "./components/vacancyTable";
+import './masterVacancies.css'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
@@ -76,7 +76,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
                         <MinistryTable filterString={filterString} ministryId={ministryId} onSwitchTab={switchTabDataHandler} />
                     </TabPanel>
                     <TabPanel value="psu_wise" className="p-0">
-                        <PSUTable filterString={filterString} ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
+                        <PsuTable filterString={filterString} ministryId={ministryId} data={tabData} onSwitchTab={switchTabDataHandler}/>
                     </TabPanel>
                     <TabPanel value="vacancy_wise" className="p-0">
                         <VacancyTable filterString={filterString} organizationId={organizationId} data={tabData} onSwitchTab={switchTabDataHandler}/>

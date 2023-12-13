@@ -25,7 +25,7 @@ import {
     reassignSlottingVacancy
 } from "../../../../../api/eminentapis/endpoints";
 import {useEffect, useState} from "react";
-import './slottingassignbtnsidebar.css'
+import './slottingSidebar.css'
 import {getStateData} from "../../../../../api/stepperApiEndpoints/stepperapiendpoints";
 import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';

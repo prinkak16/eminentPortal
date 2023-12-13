@@ -7,13 +7,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
-import  './movtable.css'
+import  './movTable.css'
 import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 import {Backdrop, CircularProgress} from "@mui/material";
 
 
-const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
+const  PsuTable = ({onSwitchTab, ministryId, filterString}) => {
     const [psuTableData, setPsuTableData] = useState(null)
     const [isFetching, setIsFetching] = useState(false);
     const [currentPage, setCurrentPage] = useState(0)
@@ -121,4 +121,4 @@ const  PSUTable = ({onSwitchTab, ministryId, filterString}) => {
     </>
     );
 }
-export  default PSUTable;
+export  default PsuTable;

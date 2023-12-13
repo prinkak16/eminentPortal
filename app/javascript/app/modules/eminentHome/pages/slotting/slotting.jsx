@@ -14,7 +14,7 @@ import {
 import ReactPaginate from "react-paginate";
 import Analytics from "../../shared/analytics/analytics";
 import {getSlottingTable} from "../../../../api/eminentapis/endpoints";
-import AssignBtnSidebar from "./comoponent/slottingassignbtnsidebar";
+import AssignBtnSidebar from "./comoponent/slottingSidebar";
 
 const SlottingTabPage =({tabId, filterString})=>{
     const [currentPage, setCurrentPage] = useState(0);

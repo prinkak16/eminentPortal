@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useEffect, useState} from "react";
-import  './movtable.css'
+import  './movTable.css'
 import ReactPaginate from "react-paginate";
 import {getMinistryWiseData} from "../../../../../api/eminentapis/endpoints";
 import {Backdrop, CircularProgress} from "@mui/material";
