@@ -129,7 +129,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
         }, status: :unauthorized
       end
 
-      selected_members = params[:selected_members].present? ? params[:selected_members] : 0
+      selected_members = params[:selected_members].present? ? CustomMemberForm.where(id: params[:selected_members]) : []
       raise 'No member is selected' if selected_members.empty?
 
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
@@ -146,7 +146,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
                         .group('organizations.id')
                         .select('organizations.id, count(distinct vacancies.id) as vacant_vacancy_count')
       if psu.length.positive?
-        if selected_members.length > psu.first.vacant_vacancy_count
+        if selected_members.count > psu.first.vacant_vacancy_count
           raise "Selected eminent can't be greater than vacancy count"
         end
 
@@ -154,14 +154,18 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
         ActiveRecord::Base.transaction do
           selected_members.each_with_index do |member, index|
-            VacancyAllotment.create!(custom_member_form_id: member, vacancy_id: vacancies_for_allotment[index])
-            vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+            if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index]).count.positive?
+              raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
+            else
+              VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
+              vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+            end
           end
         end
 
         return render json: {
           success: true,
-          message: 'All eminent are assigned.'
+          message: 'All eminents are assigned.'
         }, status: :ok
       end
 
