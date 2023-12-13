@@ -126,10 +126,10 @@ border-radius: 8px !important;
     line-height: normal;
 }
 .sidebar-btn button {
-    width: 57px;
-    margin-right: 0;
+    width: 40px;
+    margin-right: 9px;
 }
 .sidebar-btn button svg{
-    width: 41px;
-    height:41px;
+    width: 25px;
+    height: 25px;
 }
