@@ -119,4 +119,58 @@ class Api::V1::Allotment::EminentController < BaseApiController
       render json: { success: false, message: 'No member found.' }, status: :not_found
     end
   end
+  def assign_vacancy
+    begin
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      selected_members = params[:selected_members].present? ? CustomMemberForm.where(id: params[:selected_members]) : []
+      raise 'No member is selected' if selected_members.empty?
+
+      psu_id = params[:psu_id].present? ? params[:psu_id] : nil
+      raise "PSU Id can't be blank." if psu_id.nil?
+
+      country_states = []
+      fetch_minister_assigned_country_states.each do |country_state|
+        country_states << country_state[:id]
+      end
+
+      psu = Organization.joins(:vacancies).where(id: psu_id)
+                        .where(vacancies: { country_state_id: country_states })
+                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+                        .group('organizations.id')
+                        .select('organizations.id, count(distinct vacancies.id) as vacant_vacancy_count')
+      if psu.length.positive?
+        if selected_members.count > psu.first.vacant_vacancy_count
+          raise "Selected eminent can't be greater than vacancy count"
+        end
+
+        vacancies_for_allotment = psu.first.vacancies.take(selected_members.length)
+
+        ActiveRecord::Base.transaction do
+          selected_members.each_with_index do |member, index|
+            if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index]).count.positive?
+              raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
+            else
+              VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
+              vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+            end
+          end
+        end
+
+        return render json: {
+          success: true,
+          message: 'All eminents are assigned.'
+        }, status: :ok
+      end
+
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
 end
