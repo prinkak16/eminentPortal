@@ -141,12 +141,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     state_id: stateId,
                     remarks: remarks,
                 };
-                assignSlottingVacancy(vacancyData).then((res) => res.json())
-                if (vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0) {
-                    const stateObject = slottingStateData.find(state => state.id === vacancyData.state_id)
-                    const stateName = stateObject.name
-                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                }
+                assignSlottingVacancy(vacancyData).then((res) => {
+                    toast(`${res.data.message}`);
+                    customFunction();
+                })
             }
             else if (changeLable === 'Update') {
                 const reSlottingData = {
@@ -157,19 +155,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     vacancies_id: vacancyId,
                     remarks: remarks,
                 };
-                reassignSlottingVacancy(reSlottingData).then((res) => res.json())
-                if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
-                    const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
-                    const stateName = stateObject.name
-                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                }
+                reassignSlottingVacancy(reSlottingData).then((res) => {
+                    toast(`${res.data.message}`);
+                    customFunction();
+                })
             }
-            addVacancyTableData();
+            // addVacancyTableData();
             setVacancyCount(0);
             setStateId('');
             setRemarks('');
             setAddMore(false);
-            customFunction()
 
         } else {
             handleAddMore();
@@ -200,8 +195,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             vacancies_id: deleteState,
             remarks: "",
         }
-        deleteSlottingVacancy(deleteParams).then((res) => res.json())
-        customFunction()
+        deleteSlottingVacancy(deleteParams).then((res) => {
+            toast(`${res.data.message}`);
+            customFunction();
+        })
         if(slottingVacancyDetail.count <= 1){
             setOpenDeleteModal(false);
             setChangeLable('Save')
@@ -210,7 +207,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setRemarks('');
         }
         setOpenDeleteModal(false);
-        toast("Deleted Successfully");
         setAddMore(false)
     }
 
@@ -240,7 +236,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                         <TableHead>
                             <TableRow>
                                 <TableCell>PSU Name</TableCell>
-                                <TableCell>Total Position</TableCell>
+                                <TableCell>Vacant Position</TableCell>
                                 <TableCell>Slotted</TableCell>
                                 <TableCell>Unslotted</TableCell>
                             </TableRow>
@@ -248,7 +244,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                         <TableBody>
                             <TableRow key={slottingPsuDetail.id}>
                                 <TableCell>{slottingPsuDetail.name}</TableCell>
-                                <TableCell>{slottingPsuDetail.total}</TableCell>
+                                <TableCell>{slottingPsuDetail.vacant}</TableCell>
                                 <TableCell>{slottingPsuDetail.slotted}</TableCell>
                                 <TableCell>{slottingPsuDetail.unslotted}</TableCell>
                             </TableRow>
