@@ -129,7 +129,7 @@ export default function FiltersSidebar(props) {
                 //     ministry_name: searchMinisterName,
                 //     department_name: searchDepartmentName,
                 // }
-                getFiltersFileStatus(fileStatusParams).then(response => {
+                getFiltersFileStatus().then(response => {
                     setFiltersList(response.data.data)
                 })
                 break
