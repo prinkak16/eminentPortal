@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import HomeTable from "../../pages/hometable/hometable";
 import { useState, useContext, useEffect, useRef } from "react";
-import MasterVacancies from "../../pages/masterofvacancies/masterofvacancies";
+import MasterVacancies from "../../pages/masterofvacancies/masterVacancies";
 import "./tabs.css";
 import Modal from "react-bootstrap/Modal";
 import {

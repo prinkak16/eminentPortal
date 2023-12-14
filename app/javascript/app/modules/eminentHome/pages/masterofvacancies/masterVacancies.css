@@ -5,6 +5,10 @@
     margin-bottom: 1rem;
     border-bottom: transparent !important;
 }
+.main-content.css-yfo96e .mastertabs {
+    position: relative;
+    z-index: 1;
+}
 .mastertabs .css-1aquho2-MuiTabs-indicator{
     background-color: #FF9559 !important;
     border-radius: 4px 4px 0 0 !important;

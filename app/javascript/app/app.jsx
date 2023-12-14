@@ -6,7 +6,7 @@ import {Navigate} from "react-router";
 import HomePage from "./modules/eminentHome/pages/homepage/homepage";
 import EminentPersonality from "./modules/eminentpersonalityhome/EminentPersonalityhome";
 import LoginPage from "./modules/./eminentlogin/loginpage";
-import MasterVacancies from "./modules/eminentHome/pages/masterofvacancies/masterofvacancies";
+import MasterVacancies from "./modules/eminentHome/pages/masterofvacancies/masterVacancies";
 import {isValuePresent} from "./modules/utils";
 import {ApiContext} from "./modules/ApiContext";
 import {ToastContainer, toast} from "react-toastify";
