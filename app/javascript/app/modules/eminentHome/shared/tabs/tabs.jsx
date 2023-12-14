@@ -264,7 +264,7 @@ export default function BasicTabs({
 
   const handleDownload = () => {
     const url =
-      "https://storage.googleapis.com/public-saral/minister_assitant_mapping.csv";
+      "https://storage.googleapis.com/public-saral/minister_assitant_mapping_o.csv";
     window.location.href = url;
   };
 

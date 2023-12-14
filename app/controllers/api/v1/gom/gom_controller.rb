@@ -350,7 +350,7 @@ class Api::V1::Gom::GomController < BaseApiController
               upload_user_result << row_data
             end
           end
-        else
+        elsif row_data[:action] == 'ADD'
           fetch_user_detail = AuthUser.where(id: user_number_id).first_or_create!
           if !assist_to_number_user_id.nil?
             sync_auth_users(assist_to_number_user_id)
@@ -377,14 +377,14 @@ class Api::V1::Gom::GomController < BaseApiController
         csv << [
           'User Phone Number(Minister/Assistant/PA Phone Number)',
           'Assist To(Minister Phone Number)',
-          'Error',
+          'Action',
           'Success'
         ]
         upload_user_result.each do |csv_row_data|
           csv << [
             csv_row_data[:minister_number],
             csv_row_data[:assist_to_phone_number],
-            csv_row_data[:error],
+            csv_row_data[:action],
             csv_row_data[:success],
             csv_row_data[:message]
           ]
