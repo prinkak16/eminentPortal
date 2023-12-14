@@ -36,16 +36,12 @@ function AllotAssign() {
   const [open, setOpen] = useState(false);
   const [System, setSystem] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const {
-    allotmentCardDetails,
-    setAllotmentCardDetails,
-    showAssignAllotmentBtn,
-  } = useContext(AllotmentContext);
+  const { allotmentCardDetails, setAllotmentCardDetails } =
+    useContext(AllotmentContext);
 
   useEffect(() => {
     allotmentEminentList()
       .then((res) => {
-        console.log("eminent list", res);
         setTableData(res.data.data.members);
       })
       .catch((err) => {
@@ -242,7 +238,122 @@ function AllotAssign() {
           </>
         );
         break;
-
+      // case 1:
+      //   return (
+      //     <>
+      //       <div className="Remark-div">
+      //         <span className="remark-span">Remark</span>
+      //         <div className="textarea-div">
+      //           <textarea className="textarea-field"></textarea>
+      //           <div className="btn-div">
+      //             <button className="update-btn-1">
+      //               <Pencil className="pencil" />
+      //             </button>
+      //           </div>
+      //         </div>
+      //       </div>
+      //       <div className="table-main-container">
+      //         {dataArray &&
+      //           dataArray.map((member) => (
+      //             <div className="user-table-1">
+      //               <div
+      //                 className="table-container mt-4 table-container-1 remove-border"
+      //                 key={member.id}
+      //               >
+      //                 <Grid container className="single-row ">
+      //                   <Grid item xs={3} className="gridItem min-width-24rem">
+      //                     <div className="row">
+      //                       <div className="col-md-4 pe-0">
+      //                         <div className="imgdiv circle">
+      //                           <img className="img" src={member.profile} />
+      //                         </div>
+      //                       </div>
+      //                       <div className="col-md-8">
+      //                         <h2 className="headingName">{member.name}</h2>
+      //                         <div className="row d-flex">
+      //                           <p>Phone : {member.phone}</p>
+      //                           <div />
+      //                           <div className="d-flex">
+      //                             <IdBadge />
+      //                             <p className="id-text">
+      //                               ID No. - {member.id}
+      //                             </p>
+      //                           </div>
+      //                         </div>
+      //                       </div>
+      //                     </div>
+      //                   </Grid>
+      //                   <Grid
+      //                     item
+      //                     xs
+      //                     className="gridItem education-profession-container"
+      //                   >
+      //                     <div className="row">
+      //                       <div className="col-md-6 data-display">
+      //                         <p className="text-labels">Age</p>
+      //                         <p>{member.age}</p>
+      //                       </div>
+      //                       <div className="col-md-6 data-display">
+      //                         <p className="text-labels">Profession</p>
+      //                         <p>{member.profession}</p>
+      //                       </div>
+      //                       <div className="col-md-6 data-display">
+      //                         <p className="text-labels">Education</p>
+      //                         <p>{member.education}</p>
+      //                       </div>
+      //                     </div>
+      //                   </Grid>
+      //                   <Grid item xs className="gridItem">
+      //                     <div className="row data-display">
+      //                       <p className="text-labels">Address</p>
+      //                       <p>{member.address}</p>
+      //                     </div>
+      //                   </Grid>
+      //                   <Grid item xs className="gridItemLast">
+      //                     <div className="d-flex">
+      //                       <div className="row data-display">
+      //                         <p className="text-labels">Referred by</p>
+      //                         <p>{member.referredBy}</p>
+      //                       </div>
+      //                     </div>
+      //                   </Grid>
+      //                 </Grid>
+      //               </div>
+      //               <div className="UnAssign-allotment-div">
+      //                 <button
+      //                   className="UnAssign-allotment-btn"
+      //                   onClick={unassignHandeler}
+      //                 >
+      //                   Unassign
+      //                 </button>
+      //               </div>
+      //             </div>
+      //           ))}
+      //       </div>
+      //     </>
+      //   );
+      //   break;
+      // case 2:
+      //   return (
+      //     <div className="allot-history-div-1">
+      //       <div className="allot-history-div">
+      //         <span>
+      //           <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+      //         </span>
+      //       </div>
+      //       <div className="allot-history-div">
+      //         <span>
+      //           <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+      //         </span>
+      //       </div>
+      //       <div className="allot-history-div">
+      //         <span>
+      //           <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
+      //         </span>
+      //       </div>
+      //     </div>
+      //   );
+      //   break;
       default:
         return <h1>none</h1>;
     }
@@ -364,15 +475,13 @@ function AllotAssign() {
           {drawerContent}
         </SwipeableDrawer>
       </div>
-      {showAssignAllotmentBtn ? (
-        <div className="btn-absolute">
-          <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
-            <big>
-              <Frame className="frame-icon-allotment" /> Assigned Position
-            </big>
-          </Button>
-        </div>
-      ) : null}
+      <div className="btn-absolute">
+        <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
+          <big>
+            <Frame className="frame-icon-allotment" /> Assigned Position
+          </big>
+        </Button>
+      </div>
 
       <div className="allot-card-container">
         <div className="allot-b1">

@@ -34,8 +34,8 @@ export const allotmentBoxData = () => {
   return axios.get(apiBaseUrl + "allotment/position_analytics");
 };
 
-export const allotmentEminentList = () => {
-  return axios.get(apiBaseUrl + "allotment/eminent_list");
+export const allotmentEminentList = (params) => {
+  return axios.get(apiBaseUrl + "allotment/eminent_list", { params });
 };
 
 export const allotmentCardData = (params) => {
