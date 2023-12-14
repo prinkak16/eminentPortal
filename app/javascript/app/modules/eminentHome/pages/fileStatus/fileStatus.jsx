@@ -81,7 +81,7 @@ const FileStatus = () => {
     },[])
 
 
-    const updateFileStatus = (fs_id, fs_description, fs_level_id) => {
+    const updateFileStatus = (fs_level_id, fs_description, fs_id) => {
         let url = '';
         const formData = new FormData();
         formData.append("fs_id", fs_id);
@@ -91,7 +91,9 @@ const FileStatus = () => {
         axios.post(apiBaseUrl + 'file_status/update_file_status', formData)
             .then(response => {
                 url = response;
-                console.log(url);
+              if (url.data.status) {
+                  getAssignedEminent()
+              }
             })
             .catch(error => {
                 showErrorToast(error.response.data.message);
@@ -111,6 +113,7 @@ const FileStatus = () => {
     }
 
     const handleUpdateDetails  = (selectedItem, input, fs_id) => {
+        console.log(fileStatusId,'fileStatusId')
         updateFileStatus(selectedItem, input, fileStatusId)
     }
 
