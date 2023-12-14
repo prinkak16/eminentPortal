@@ -272,6 +272,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                                     <tr style={{ borderBottom: "1px solid #F8F8F8", height: "50px" }}>
                                         <th style={{ backgroundColor: "#F8F8F8", height: "50px", textAlign: "left" }}>S.No. </th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Minister Name</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>PA Name</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned Ministry</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Their own ministry</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned States</th>
@@ -281,6 +282,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                                         <tr key={data} style={{ border: "2px solid #F8F8F8", padding: "5px", height: "40px" }}>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{calculateSerialNumber(index)}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.name}</td>
+                                            <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.pa_name}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
