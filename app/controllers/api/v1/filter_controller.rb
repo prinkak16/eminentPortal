@@ -141,4 +141,19 @@ class Api::V1::FilterController < BaseApiController
 
     render json: { success: true, data: result, message: 'Allotment Eminent Filters.' }, status: 200
   end
+
+  def file_status
+    ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
+    file_status = params[:file_status].present? ? params[:file_status] : ''
+    org_name = params[:organization_name].present? ? params[:organization_name] : ''
+    result = {
+      'filters': [
+        get_ministry_filters(ministry_name),
+        get_file_statuses_filters(file_status),
+        fetch_all_vacancy_organization_filters(org_name),
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'File Status Filters.' }, status: 200
+  end
 end

@@ -14,12 +14,12 @@ import "./filterssidebar.scss"
 import {useContext, useEffect, useState, useRef} from "react";
 import {
     getData,
-    getFilters,
+    getFilters, getFiltersFileStatus,
     getFiltersForAllotment,
     getFiltersForGOM,
     getMinistryWiseFilterData,
     getOrganizationWiseFilterData, getSlottingFilters,
-    getVacancyWiseFilterData
+    getVacancyWiseFilterData,
 } from "../../../../api/eminentapis/endpoints";
 import {HomeContext} from "../../../../context/tabdataContext";
 import {debounce} from "lodash";
@@ -124,7 +124,15 @@ export default function FiltersSidebar(props) {
                     setFiltersList(response.data.data)
                 })
                 break;
-
+            case 'file_status':
+                // const fileStatusParams = {
+                //     ministry_name: searchMinisterName,
+                //     department_name: searchDepartmentName,
+                // }
+                getFiltersFileStatus(fileStatusParams).then(response => {
+                    setFiltersList(response.data.data)
+                })
+                break
             default:
                 getFilters().then(res => {
                     setFiltersList(res.data.data)

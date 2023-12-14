@@ -32,8 +32,8 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData}) => {
         setInput(e.target.value)
     }
 
-    const setListItem = (item) => {
-        setSelectedItem(item)
+    const setListItem = (id) => {
+        setSelectedItem(id)
     }
 
 
@@ -53,9 +53,9 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData}) => {
                     <DialogContentText id="alert-dialog-description">
                         <div className='list-container'>
                             {list && list.map((item) => (
-                                <div className='dialog-list-container' onClick={() => setListItem(item)}>
-                                    <input className='dialog-list-input' checked={selectedItem === item} type='radio'/>
-                                    <span className='dialog-list-item' >{item}</span>
+                                <div className='dialog-list-container' onClick={() => setListItem(item.id)}>
+                                    <input className='dialog-list-input' checked={selectedItem === item.id} type='radio'/>
+                                    <span className='dialog-list-item' >{item.name}</span>
                                 </div>
                             ))}
                         </div>
