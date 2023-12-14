@@ -145,11 +145,9 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
       psu = Organization.joins(:vacancies).where(id: psu_id)
                         .where(vacancies: { country_state_id: country_states })
-                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
-                        .group('organizations.id')
-                        .select('organizations.id as psu_id, organizations.name as psu_name, count(distinct vacancies.id) as vacant_vacancy_count')
-      if psu.length.positive?
-        if selected_members.count > psu.first.vacant_vacancy_count
+                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' }).distinct
+      if psu.count.positive?
+        if selected_members.count > psu.first.vacancies.count
           raise "Selected eminent can't be greater than vacancy count"
         end
 
