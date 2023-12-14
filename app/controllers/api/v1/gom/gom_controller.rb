@@ -377,14 +377,14 @@ class Api::V1::Gom::GomController < BaseApiController
         csv << [
           'User Phone Number(Minister/Assistant/PA Phone Number)',
           'Assist To(Minister Phone Number)',
-          'Action',
+          'Error',
           'Success'
         ]
         upload_user_result.each do |csv_row_data|
           csv << [
             csv_row_data[:minister_number],
             csv_row_data[:assist_to_phone_number],
-            csv_row_data[:action],
+            csv_row_data[:error],
             csv_row_data[:success],
             csv_row_data[:message]
           ]
