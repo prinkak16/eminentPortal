@@ -4,6 +4,8 @@ import AllotmentContext from "./allotmentContext";
 const AllotmentProvider = ({ children }) => {
   const [assignBreadCrums, setAssignBreadCrums] = useState(false);
   const [crumbsState, setCrumbsState] = useState(false);
+  const [allotmentCardDetails, setAllotmentCardDetails] = useState([]);
+  const [showAssignAllotmentBtn, setShowAssignAllotmentBtn] = useState([]);
 
   return (
     <AllotmentContext.Provider
@@ -12,6 +14,10 @@ const AllotmentProvider = ({ children }) => {
         setAssignBreadCrums,
         crumbsState,
         setCrumbsState,
+        allotmentCardDetails,
+        setAllotmentCardDetails,
+        showAssignAllotmentBtn,
+        setShowAssignAllotmentBtn,
       }}
     >
       {children}

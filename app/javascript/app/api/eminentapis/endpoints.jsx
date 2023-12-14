@@ -33,8 +33,16 @@ export const allotmentBoxData = () => {
     return axios.get(apiBaseUrl + 'allotment/position_analytics');
 }
 
-export const allotmentListData = (offset,limit, filterparams) => {
-    return axios.get(`${apiBaseUrl}/allotment/list?${filterparams}&offset=${offset}&limit=${limit}`);
+export const allotmentEminentList = () => {
+    return axios.get(apiBaseUrl + 'allotment/eminent_list');
+}
+
+export const allotmentCardData = (params) => {
+    return axios.get(apiBaseUrl + 'allotment/assign_position_info/' + params);
+}
+
+export const allotmentListData = (params , filterString) => {
+    return axios.get(`${apiBaseUrl}/allotment/list?${filterString}`, {params} );
 }
 
 export const deleteMember = (deleteId) => {

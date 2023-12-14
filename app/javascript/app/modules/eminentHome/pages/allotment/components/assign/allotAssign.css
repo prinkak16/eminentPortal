@@ -504,7 +504,7 @@
 
 .btn-absolute {
   position: absolute;
-  top: 182px;
+  top: 168px;
   right: 58px;
 }
 
@@ -519,14 +519,6 @@
   font-weight: 600 !important;
   z-index: 10 !important;
 }
-.btn-absolute.active {
-  /* display: none; */
-  position: absolute;
-  top: 182px;
-  right: 58px;
-}
-
-
-.frame-icon-allotment{
+.frame-icon-allotment {
   color: #ff9559 !important;
 }
