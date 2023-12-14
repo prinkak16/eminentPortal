@@ -170,8 +170,51 @@ class Api::V1::Allotment::EminentController < BaseApiController
           success: true,
           message: 'All eminents are assigned.'
         }, status: :ok
+      else
+        return render json: {
+          success: true,
+          message: 'No PSU is available for user allotted locations'
+        }, status: :ok
       end
 
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def assigned_members
+    begin
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
+      raise "PSU Id can't be blank." unless psu.present?
+
+      limit = params[:limit].present? ? params[:limit] : 10
+      offset = params[:offset].present? ? params[:offset] : 0
+
+      assigned_members = CustomMemberForm.joins(vacancy_allotments: :vacancy)
+                                         .where(vacancies: { organization: psu })
+                                         .where(vacancy_allotments: { unoccupied_at: nil })
+      if assigned_members.exists?
+        return render json: {
+          success: true,
+          message: 'Data received successfully.',
+          count: assigned_members.count,
+          psu_name: psu.name,
+          data: assigned_members.limit(limit).offset(offset).as_json
+        }
+      else
+        return render json: {
+          success: true,
+          message: 'No eminent is assigned.'
+        }
+      end
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
