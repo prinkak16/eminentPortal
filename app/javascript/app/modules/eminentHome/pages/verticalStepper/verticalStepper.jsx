@@ -13,20 +13,20 @@ export default function VerticalLinearStepper({stepperList}) {
     const [activeStep, setActiveStep] = React.useState(1);
 
     useEffect(() => {
-        const step = stepperList.map(item => item.description)
+        const step = stepperList.map(item => item.updated_at)
         setActiveStep(step.length )
     },[])
 
 
     return (
-        <Box className='vertical-stepper-container' sx={{ maxWidth: 400 }}>
+        <Box className='vertical-stepper-container' sx={{ maxWidth: 400}}>
             <Stepper className='vertical-stepper' activeStep={activeStep}  orientation="vertical">
                 {stepperList && stepperList.map((step, index) => (
-                    <Step key={step.label} className={`${step.description !== '' ? 'completed-steps' : 'uncompleted-steps'} ${index > 0 && 'after-first-step'}`}>
+                    <Step key={step.status} className={`${step.updated_at !== '' ? 'completed-steps' : 'uncompleted-steps'} ${index > 0 && 'after-first-step'}`}>
                         <StepLabel>
-                            {step.label}
+                            {step.status}
                         </StepLabel>
-                            <Typography className='vertical-stepper-description'>{step.description}</Typography>
+                            <Typography className='vertical-stepper-description'>{step.updated_at}</Typography>
                     </Step>
                 ))}
             </Stepper>

@@ -23,6 +23,7 @@ const FileStatus = () => {
     const [eminentStatus, setEminentStatus] =useState(null)
     const [openHistory, setOpenHistory] = useState(null)
     const [fileStatuses, setFileStatuses] =useState([])
+    const [eminentData, setEminentData] = useState([])
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -59,8 +60,23 @@ const FileStatus = () => {
         )
     }
 
+    const getAssignedEminent = () => {
+        return axios.get(apiBaseUrl + 'file_status/file_status_members',{
+            params: {
+                offset: 0
+            }
+        }).then(
+            (res) => {
+                if (res.data.status) {
+                    setEminentData(res.data.data)
+                }
+            }
+        )
+    }
+
     useEffect(() => {
         getFileStatuses()
+        getAssignedEminent()
     },[])
 
 
@@ -175,9 +191,9 @@ const FileStatus = () => {
                     <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails}/>
             </div>
             <div className='mt-5 border pb-4'>
-                {tableData && tableData.map((item, index) => (
-                    <div key={index} className={`mt-4 w-95  ${index +1 !== tableData.length && 'eminent-container pb-4'}`}>
-                            <p className={`eminent-status-tag ${item.aasm_status}-tag`}>{item.aasm_status}</p>
+                {eminentData && eminentData.map((item, index) => (
+                    <div key={index} className={`mt-4 w-95  ${index +1 !== eminentData.length && 'eminent-container pb-4'}`}>
+                            <p className={`eminent-status-tag ${item.file_state}-tag`}>{item.file_state}</p>
                         <div key={index * index} className='eminent-details-container d-flex'>
                             <div className='eminent-image-container ml-1rem' >
                                 <img className='eminent-image' src={userPhoto(item.photo)} alt='eminent-image'/>
@@ -187,7 +203,7 @@ const FileStatus = () => {
                                 <div className='eminent-mobile-container'>
                                     <Phone/>
                                     {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
-                                        <span className={`ml-2 ${index === 0 ? 'br-label eminent-first-number' : 'pt-5 ml-1rem'}`} >{number}</span>
+                                        <span className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`} >{number}</span>
                                     ))}
                                 </div>
                                 <span className='eminent-user-id'> <span className='user-id-tag'>User ID : </span>{item.id}</span>
@@ -222,12 +238,12 @@ const FileStatus = () => {
                                      <span className='status-btn'>
                                          <span ></span>
                                       </span>
-                                    <span>{item.file_status}</span>
+                                    <span>{item.file_status.status}</span>
                                 </div>
                             </div>
                             <div className='eminent-file-remark ml-1rem'>
-                                <span className='user-id-tag d-block '>Remarks</span>
-                                <span className='mt-2'>{item.file_remarks}</span>
+                                <span className='user-id-tag d-block state-remark '>Remarks</span>
+                                <span className='mt-2'>{item.file_status.description}</span>
                             </div>
                             <div className='ml-auto mt-auto'>
                                 <button className='view-history-button' onClick={() => showHistory(item.id)}>View Application History
@@ -239,7 +255,7 @@ const FileStatus = () => {
                             </div>
                         </div>
                         {openHistory === item.id &&
-                            <VerticalLinearStepper stepperList={fileHistory}/>
+                            <VerticalLinearStepper stepperList={item.file_history}/>
                         }
                     </div>
                 ))}
