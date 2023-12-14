@@ -54,6 +54,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     const [changeLable, setChangeLable] = useState('Save')
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [deleteState, setDeleteState] = useState(null)
+    const [updateUnslotted, setUpdateUnslotted] = useState()
     const limit = 10;
     const deleteModalStyle = {
         position: 'absolute',
@@ -75,10 +76,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
+            setUpdateUnslotted(response.data.data.stats[0].unslotted)
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
-            console.log('response.data.data.slotting', response.data.data.slotting)
+            console.log('data', response.data.data.stats[0].unslotted)
+
         })
     }
 
@@ -94,12 +97,11 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
     }
 
+
     const handleIncreaseCount = () => {
-        if (vacancyCount + 1  <= slottingPsuDetail.unslotted) {
-            setVacancyCount(vacancyCount + 1)
-        }
-        if (vacancyCount === slottingPsuDetail.unslotted) {
-            toast("Vacancy count can't be greater than Unslotted ");
+        if(updateUnslotted > 0){
+            setVacancyCount(vacancyCount + 1 )
+            setUpdateUnslotted(updateUnslotted - 1)
         }
     }
 
@@ -114,7 +116,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         if (inputValue && validValue === false) {
             setValidValue(true);
         }
-        toast("state updated ");
+
     }
     const handleRemarksChange = (e) => {
         const remarkValue = e.target.value;
@@ -141,9 +143,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                 };
                 assignSlottingVacancy(vacancyData).then((res) => res.json())
                 if (vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0) {
-                    toast(`${vacancyCount} vacancy successfully assigned to selected state`);
+                    const stateObject = slottingStateData.find(state => state.id === vacancyData.state_id)
+                    const stateName = stateObject.name
+                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
                 }
-            } else if (changeLable === 'Update') {
+            }
+            else if (changeLable === 'Update') {
                 const reSlottingData = {
                     ministry_id: slottingMinistryId,
                     organization_id: psuId,
@@ -153,18 +158,23 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     remarks: remarks,
                 };
                 reassignSlottingVacancy(reSlottingData).then((res) => res.json())
+                if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
+                    const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
+                    const stateName = stateObject.name
+                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
+                }
             }
-
-            setAddMore(false);
             addVacancyTableData();
             setVacancyCount(0);
             setStateId('');
             setRemarks('');
+            setAddMore(false);
+            customFunction()
 
         } else {
             handleAddMore();
         }
-        customFunction()
+
     };
     const handleEdit = (vacancyDetail) => {
         setChangeLable('Update')
@@ -208,7 +218,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         customFunction();
         slottingState()
     }, [currentPage]);
-
     return (
 
         <Box sx={{display: 'flex'}}>
