@@ -189,6 +189,7 @@ export default function BasicTabs({
           toast.success("File uploaded successfully");
         } else {
           toast.error("Error: Please upload Valid File");
+          setSelectedFile(null);
         }
       })
       .catch((error) => {
@@ -229,6 +230,7 @@ export default function BasicTabs({
   };
 
   const uploadFile = () => {
+    hiddenFileInput.current.value = null;
     hiddenFileInput.current.click();
   };
   const changeInputNumber = (number) => {
@@ -424,6 +426,7 @@ export default function BasicTabs({
             <UploadIcon /> PA/OSD mapping
           </button>
           <input
+            key={wantToUpload}
             type="file"
             accept=".csv, .xlsx"
             onChange={handleChangeUpload}
