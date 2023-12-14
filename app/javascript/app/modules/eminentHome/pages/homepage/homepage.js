@@ -64,9 +64,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
-export default function     PersistentDrawerLeft() {
-  const { assignBreadCrums,setAssignBreadCrums, crumbsState, setCrumbsState } =
-    useContext(AllotmentContext);
+export default function PersistentDrawerLeft() {
+  const {
+    assignBreadCrums,
+    setAssignBreadCrums,
+    crumbsState,
+    setCrumbsState,
+    setShowAssignAllotmentBtn,
+  } = useContext(AllotmentContext);
 
   const { resetFilter, setEminentData } = useContext(ApiContext);
 
@@ -85,28 +90,20 @@ export default function     PersistentDrawerLeft() {
     setEminentData({});
   }, []);
 
-
   const handleDrawerOpen = () => {
     setOpen(true);
-    let button = document.querySelector(".btn-absolute");
-    button.classList.toggle('active')
+    setShowAssignAllotmentBtn(false);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
-    let button = document.querySelector(".btn-absolute");
-    button.classList.toggle('active')
+    setShowAssignAllotmentBtn(true);
   };
 
   const crumbsHandeler = () => {
     setCrumbsState(!crumbsState);
     setAssignBreadCrums(false);
   };
-
-  useEffect(() => {
-    console.log("crumbs in home page", crumbsState);
-  }, [crumbsState]);
-
 
   const switchTabHandler = (id) => {
     setTabId(id);
@@ -178,11 +175,17 @@ export default function     PersistentDrawerLeft() {
                       <>
                         <Link
                           onClick={crumbsHandeler}
-                          style={{ textDecoration: "underline", fontWeight:"300 !important" }}
+                          style={{
+                            textDecoration: "underline",
+                            fontWeight: "300 !important",
+                          }}
                         >
                           Allotment
                         </Link>
-                        <span style={{fontWeight:"500 !important"}}> / Assign position</span>
+                        <span style={{ fontWeight: "500 !important" }}>
+                          {" "}
+                          / Assign position
+                        </span>
                       </>
                     ) : (
                       "Eminent Personalities"
