@@ -350,7 +350,7 @@ class Api::V1::Gom::GomController < BaseApiController
               upload_user_result << row_data
             end
           end
-        else
+        elsif row_data[:action] == 'ADD'
           fetch_user_detail = AuthUser.where(id: user_number_id).first_or_create!
           if !assist_to_number_user_id.nil?
             sync_auth_users(assist_to_number_user_id)
