@@ -221,7 +221,7 @@ class Api::V1::Gom::GomController < BaseApiController
       assigned_ministries << {
         user_id: user_ministry.user_id.present? ? user_ministry.user_id : nil,
         name: user_ministry.minister_name.present? ? user_ministry.minister_name : nil,
-        pa_name: user_ministry.pa_name.present? ? user_ministry.pa_name : nil,
+        pa_names: user_ministry.pa_name.present? ? user_ministry.pa_name.split(',').map(&:strip) : [], # Use split(',') to convert comma-separated PAs into an array
         allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
         assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
         assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
