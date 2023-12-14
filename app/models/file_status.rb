@@ -3,4 +3,5 @@ class FileStatus < ApplicationRecord
 
   belongs_to :vacancy_allotment, class_name: 'VacancyAllotment'
   belongs_to :action_by, class_name: 'AuthUser'
+  belongs_to :vacancy_allotment
 end

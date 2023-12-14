@@ -16,7 +16,7 @@ class Vacancy < ApplicationRecord
   belongs_to :department, class_name: 'Department', optional: true
   belongs_to :organization, class_name: 'Organization', optional: true
   belongs_to :country_state, class_name: 'CountryState', optional: true
-  has_many :vacancy_allotments
+  has_many :vacancy_allotments, dependent: :destroy
 
   aasm(:allotment_status, column: 'allotment_status') do
     state :vacant, initial: true
