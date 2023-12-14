@@ -80,7 +80,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
-            console.log('data', response.data.data.slotting)
 
         })
     }
@@ -158,12 +157,11 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     remarks: remarks,
                 };
                 reassignSlottingVacancy(reSlottingData).then((res) => res.json())
-                // if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
-                //     const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
-                //     const stateName = stateObject.name
-                //     toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                // }
-                console.log('reSlottingData', vacancyCount)
+                if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
+                    const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
+                    const stateName = stateObject.name
+                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
+                }
             }
             addVacancyTableData();
             setVacancyCount(0);
