@@ -1,5 +1,6 @@
 class Vacancy < ApplicationRecord
-  self.table_name = 'vacancies'
+  acts_as_paranoid
+  include AASM
 
   # is_appointed: pending, appointed, outside_saral
   # allotment_status: vacant, occupied
@@ -11,13 +12,13 @@ class Vacancy < ApplicationRecord
       .order(ms: :desc)
   }
 
-  include AASM
   belongs_to :ministry, class_name: 'Ministry', optional: true
   belongs_to :department, class_name: 'Department', optional: true
   belongs_to :organization, class_name: 'Organization', optional: true
   belongs_to :country_state, class_name: 'CountryState', optional: true
+  has_many :vacancy_allotments, dependent: :destroy
 
-  aasm column: :allotment_status do
+  aasm(:allotment_status, column: 'allotment_status') do
     state :vacant, initial: true
     state :occupied
 
@@ -36,13 +37,13 @@ class Vacancy < ApplicationRecord
     end
   end
 
-  aasm column: :is_appointed do
+  aasm(:is_appointed, column: 'is_appointed') do
     state :pending, initial: true
     state :appointed
     state :outside_saral
   end
 
-  aasm column: :slotting_status do
+  aasm(:slotting_status, column: 'slotting_status') do
     state :unslotted, initial: true
     state :slotted
     state :outside_saral
@@ -73,5 +74,5 @@ class Vacancy < ApplicationRecord
     end
   end
 
-  acts_as_paranoid
+
 end

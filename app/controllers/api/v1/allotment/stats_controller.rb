@@ -289,16 +289,19 @@ class Api::V1::Allotment::StatsController < BaseApiController
                                 .joins(:vacancies)
                                 .where(id: psu_id)
                                 .where(user_ministries: { user_id: current_user.id })
-                                .where(vacancies: {country_state_id: country_states, allotment_status: 'vacant' })
+                                .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
                                 .group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
-                                                count(distinct vacancies.id) as vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks")
+                                                count(distinct vacancies.id) as total_vacancy_count, count(case when vacancies.allotment_status = 'vacant' then 1 end) as vacant_vacancy_count,
+                                                count(case when vacancies.allotment_status = 'occupied' then 1 end) as assigned_vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks")
       if psu_details.exists?
         psu_data = {
           psu_id: psu_details.first.psu_id,
           psu_name: psu_details.first.psu_name,
           ministry_name: psu_details.first.ministry_name,
-          vacancy_count: psu_details.first.vacancy_count,
+          total_vacancy_count: psu_details.first.total_vacancy_count,
+          vacant_vacancy_count: psu_details.first.vacant_vacancy_count,
+          assigned_vacancy_count: psu_details.first.assigned_vacancy_count,
           remarks: psu_details.first.remarks
         }
 

@@ -47,6 +47,7 @@ const PolticalandGovrnform =(props)=>{
     const [editableProfileField, setEditableProfileField] = useState()
     const [editableOtherPartyField, setEditableOtherPartyField] = useState()
     const [NAFields, setNAFields] = useState(props?.formValues?.political_not_applicable)
+    const [NAFieldOther, setNAFieldOther] = useState(props?.formValues?.other_party_not_applicable)
     const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
@@ -183,6 +184,11 @@ const PolticalandGovrnform =(props)=>{
     const NotApplicableFields = (event) => {
         setNAFields(event.target.checked)
         props.formValues.political_not_applicable = event.target.checked
+    }
+
+    const NotApplicableOtherFields = (event) => {
+        setNAFieldOther(event.target.checked)
+        props.formValues.other_party_not_applicable = event.target.checked
     }
 
     const enterSocialFields = (field, index) => (event) => {
@@ -467,12 +473,22 @@ const PolticalandGovrnform =(props)=>{
                         </table>
                     </div>
                 )}
-                <Grid  className="grid-wrap">
-                    {!backDropToggle &&
-                        <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
-                                           isEditable={editableOtherPartyField} isViewDisabled={isViewDisabled}/>
-                    }
-                </Grid>
+                {otherPartyDetails.length === 0 &&
+                    <div className='date-na-button date-na-button-out-side'>
+                         <span className='na-check-box'>
+                           <input type="checkbox" checked={NAFieldOther} onClick={NotApplicableOtherFields}/>
+                        </span>
+                        <span className='na-check-msg'>Not Applicable</span>
+                    </div>
+                }
+                {!NAFieldOther &&
+                    <Grid  className="grid-wrap">
+                        {!backDropToggle &&
+                            <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
+                                               isEditable={editableOtherPartyField} isViewDisabled={isViewDisabled}/>
+                        }
+                    </Grid>
+                }
 
 
                 <Grid container className="grid-wrap">
@@ -598,6 +614,7 @@ const PolticalandGovrnform =(props)=>{
 PolticalandGovrnform.label = 'Political and Government'
 PolticalandGovrnform.initialValues = {
     political_not_applicable:false,
+    other_party_not_applicable:false,
     political_profile: [],
     rss_years: '',
     bjp_years: '',
