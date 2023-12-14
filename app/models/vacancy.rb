@@ -26,6 +26,7 @@ class Vacancy < ApplicationRecord
     event :assign do
       transitions from: [:vacant], to: :occupied
       after do
+        update allotted_at: DateTime.now
         update updated_at: DateTime.now
       end
     end
@@ -33,6 +34,7 @@ class Vacancy < ApplicationRecord
     event :unassign do
       transitions from: [:occupied], to: :vacant
       after do
+        update allotted_at: DateTime.now
         update updated_at: DateTime.now
       end
     end

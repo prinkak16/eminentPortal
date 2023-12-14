@@ -136,6 +136,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
       raise "PSU Id can't be blank." if psu_id.nil?
 
+      remark = params[:remark].present? ? params[:remark] : nil
+
       country_states = []
       fetch_minister_assigned_country_states.each do |country_state|
         country_states << country_state[:id]
@@ -163,6 +165,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
               file_status = FileStatus.create!(vacancy_allotment: allotment, file_status: 'pending', action_by_id: current_user.id)
               allotment.update!(file_status_id: file_status.id)
               vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+              vacancies_for_allotment[index].update!(allotment_remark: remark)
               vacancy_allotment_data << {
                 psu_id: psu.first.id,
                 psu_name: psu.first.name,
