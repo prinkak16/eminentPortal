@@ -136,6 +136,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
       raise "PSU Id can't be blank." if psu_id.nil?
 
+      remark = params[:remark].present? ? params[:remark] : nil
+
       country_states = []
       fetch_minister_assigned_country_states.each do |country_state|
         country_states << country_state[:id]
@@ -143,16 +145,15 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
       psu = Organization.joins(:vacancies).where(id: psu_id)
                         .where(vacancies: { country_state_id: country_states })
-                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
-                        .group('organizations.id')
-                        .select('organizations.id, count(distinct vacancies.id) as vacant_vacancy_count')
-      if psu.length.positive?
-        if selected_members.count > psu.first.vacant_vacancy_count
+                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' }).distinct
+      if psu.count.positive?
+        if selected_members.count > psu.first.vacancies.count
           raise "Selected eminent can't be greater than vacancy count"
         end
 
         vacancies_for_allotment = psu.first.vacancies.take(selected_members.length)
 
+        vacancy_allotment_data = []
         ActiveRecord::Base.transaction do
           selected_members.each_with_index do |member, index|
             if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index], unoccupied_at: nil).count.positive?
@@ -162,16 +163,109 @@ class Api::V1::Allotment::EminentController < BaseApiController
               file_status = FileStatus.create!(vacancy_allotment: allotment, file_status: 'pending', action_by_id: current_user.id)
               allotment.update!(file_status_id: file_status.id)
               vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+              vacancies_for_allotment[index].update!(allotment_remark: remark)
+              vacancy_allotment_data << {
+                psu_id: psu.first.id,
+                psu_name: psu.first.name,
+                vacancy_id: vacancies_for_allotment[index].id,
+                member_id: member.id,
+                member_name: member.data['name']
+              }
             end
           end
         end
 
         return render json: {
           success: true,
-          message: 'All eminents are assigned.'
+          message: 'All eminents are assigned.',
+          data: vacancy_allotment_data
+        }, status: :ok
+      else
+        return render json: {
+          success: true,
+          message: 'No PSU is available for user allotted locations'
         }, status: :ok
       end
 
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def assigned_members
+    begin
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
+      raise "PSU Id can't be blank." unless psu.present?
+
+      limit = params[:limit].present? ? params[:limit] : 10
+      offset = params[:offset].present? ? params[:offset] : 0
+
+      assigned_members = CustomMemberForm.joins(vacancy_allotments: [vacancy: :organization])
+                                         .where(vacancies: { organization_id: 6 })
+                                         .where(vacancy_allotments: { unoccupied_at: nil })
+                                         .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id')
+      assigned_members_count = assigned_members.length
+      assigned_members = assigned_members.limit(limit).offset(offset)
+      if assigned_members.exists?
+        assigned_members_data = []
+        assigned_members.each do |member|
+          assigned_members_data << {
+            psu_id: member.psu_id,
+            psu_name: member.psu_name,
+            vacancy_id: member.vacancy_id,
+            member_data: member.as_json,
+          }
+        end
+        return render json: {
+          success: true,
+          message: 'Data received successfully.',
+          count: assigned_members_count,
+          data: assigned_members_data
+        }
+      else
+        return render json: {
+          success: true,
+          message: 'No eminent is assigned.'
+        }
+      end
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def unassign_member
+    begin
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      member = params[:member_id].present? ? CustomMemberForm.find_by(id: params[:member_id]) : nil
+      raise "Eminent doesn't exist." unless member.present?
+
+      member_allotment = VacancyAllotment.where(custom_member_form_id: member)
+      raise 'Eminent is not assigned to any vacancy.' unless member_allotment.present?
+      raise 'Eminent is already unassigned.' if member_allotment.where.not(unoccupied_at: nil).present?
+
+      member_allotment.first.update!(unoccupied_at: DateTime.now)
+      allotted_vacancy = member_allotment.first.vacancy
+      allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
+
+      return render json: {
+        success: true,
+        message: "#{member.data['name']} is unassigned successfully."
+      }
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
