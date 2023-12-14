@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
 import VerticalLinearStepper from "../verticalStepper/verticalStepper";
-import {isValuePresent} from "../../../utils";
+import {isValuePresent, showErrorToast} from "../../../utils";
 import axios from "axios";
 import {apiBaseUrl} from "../../../../api/api_endpoints";
 
@@ -24,6 +24,7 @@ const FileStatus = () => {
     const [openHistory, setOpenHistory] = useState(null)
     const [fileStatuses, setFileStatuses] =useState([])
     const [eminentData, setEminentData] = useState([])
+    const [fileStatusId, setFileStatusId] =useState(null)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -80,81 +81,39 @@ const FileStatus = () => {
     },[])
 
 
-    const tableData = [
-        {
-            id:'BJ949394PK1',
-            photo: 'https://images.unsplash.com/photo-1683009427513-28e163402d16?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            name:'Narendra Huda',
-            mobiles: [9999222231,9999222230],
-            ministry: 'Ministry Ministry of Interior / Home Affairs',
-            psu: 'PSU Law Enforcement Training Institute',
-            type: 'Type Maharatna',
-            aasm_status:'In progress',
-            file_status: '2',
-            file_remarks:'The Remarks will appear here'
-        },
-        {
-            id:'BJ949394PK2',
-            photo: '',
-            name:'Harendra Huda',
-            mobiles: [9999222771,9999222266],
-            ministry: 'Ministry Ministry of Interior / Home Affairs',
-            psu: 'PSU Law Enforcement Training Institute',
-            type: 'Type Maharatna',
-            aasm_status:'Reject',
-            file_status: '2',
-            file_remarks:'The Remarks will appear here'
-        },
-        {
-            id:'BJ949394PK3',
-            photo: 'https://images.unsplash.com/photo-1682695797873-aa4cb6edd613?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHw2fHx8ZW58MHx8fHx8',
-            name:'Gajendra Huda',
-            mobiles: [9999222231,9999222230],
-            ministry: 'Ministry Ministry of Interior / Home Affairs',
-            psu: 'PSU Law Enforcement Training Institute',
-            type: 'Type Maharatna',
-            aasm_status:'Verified',
-            file_status: '2',
-            file_remarks:'The Remarks will appear here'
-        }
+    const updateFileStatus = (fs_id, fs_description, fs_level_id) => {
+        let url = '';
+        const formData = new FormData();
+        formData.append("fs_id", fs_id);
+        formData.append("fs_description", fs_description);
+        formData.append("fs_level_id", fs_level_id);
 
-    ]
+        axios.post(apiBaseUrl + 'file_status/update_file_status', formData)
+            .then(response => {
+                url = response;
+                console.log(url);
+            })
+            .catch(error => {
+                showErrorToast(error.response.data.message);
+            });
+    };
 
-    const openDialogBox = (status) => {
+
+    const openDialogBox = (status, fsId) => {
+        setFileStatusId(fsId)
         setUpdateStatus(true);
         setEminentStatus(status)
     }
 
     const closeDialog = () => {
+        setFileStatusId(null)
         setUpdateStatus(false)
     }
 
-    const handleUpdateDetails  = (selectedItem, input ) => {
-        console.log(selectedItem, input)
+    const handleUpdateDetails  = (selectedItem, input, fs_id) => {
+        updateFileStatus(selectedItem, input, fileStatusId)
     }
 
-    const fileHistory = [
-            {
-                "label": "A",
-                "description": "Mon Feb 07 2000 03:03:43 PM"
-            },
-            {
-                "label": "B",
-                "description": "Sun Jan 02 2005 03:05:20 AM"
-            },
-            {
-                "label": "C",
-                "description": "Mon Sep 12 1994 07:30:37 AM"
-            },
-            {
-                "label": "D",
-                "description": ""
-            },
-            {
-                "label": "E",
-                "description": ""
-            }
-    ]
 
 
     const showHistory = (id) => {
@@ -188,7 +147,7 @@ const FileStatus = () => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
-                    <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails}/>
+                    <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
             </div>
             <div className='mt-5 border pb-4'>
                 {eminentData && eminentData.map((item, index) => (
@@ -226,7 +185,7 @@ const FileStatus = () => {
                                     <span className='fw-bold'>{item.type}</span>
                                 </div>
                                 <div className='ml-auto'>
-                                    <button className='eminent-update-button' onClick={() => openDialogBox(item.file_status)
+                                    <button className='eminent-update-button' onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
                                         }>Update</button>
                                 </div>
                             </div>
