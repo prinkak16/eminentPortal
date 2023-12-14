@@ -45,7 +45,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
         setAllotmentCardDetails(res.data.data);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
@@ -55,10 +55,6 @@ function AllotmentTable({ setAssignShow, filterString }) {
       setAssignBreadCrums(true);
     }
   }
-
-  useEffect(() => {
-    console.log("Updated allotmentCardDetails:", allotmentCardDetails);
-  }, [allotmentCardDetails]);
 
   const searchHandeler = (e) => {
     const searchParams = {
