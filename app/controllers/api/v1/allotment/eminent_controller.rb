@@ -119,6 +119,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
       render json: { success: false, message: 'No member found.' }, status: :not_found
     end
   end
+
   def assign_vacancy
     begin
       permission_exist = is_permissible('Eminent', 'ViewAll')
@@ -154,10 +155,12 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
         ActiveRecord::Base.transaction do
           selected_members.each_with_index do |member, index|
-            if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index]).count.positive?
+            if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index], unoccupied_at: nil).count.positive?
               raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
             else
-              VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
+              allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
+              file_status = FileStatus.create!(vacancy_allotment: allotment, file_status: 'pending', action_by_id: current_user.id)
+              allotment.update!(file_status_id: file_status.id)
               vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
             end
           end
