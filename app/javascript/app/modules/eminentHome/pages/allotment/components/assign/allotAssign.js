@@ -53,10 +53,6 @@ function AllotAssign() {
       });
   }, []);
 
-  useEffect(() => {
-    console.log("dataArray is", dataArray);
-  }, [dataArray]);
-
   const handleOpen = () => {
     setOpen(true);
   };
