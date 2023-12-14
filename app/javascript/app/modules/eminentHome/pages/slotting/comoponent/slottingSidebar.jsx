@@ -76,11 +76,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
-            setUpdateUnslotted(response.data.data.stats[0].unslotted)
+            setUpdateUnslotted((response.data.data.stats[0].unslotted) - 1)
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
-            console.log('data', response.data.data.stats[0].unslotted)
 
         })
     }
@@ -92,16 +91,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }
 
     const handleDecreaseCount = () => {
-        if (vacancyCount >= 1) {
+        if (vacancyCount - 1 >= 0) {
             setVacancyCount(vacancyCount - 1)
         }
     }
 
 
     const handleIncreaseCount = () => {
-        if(updateUnslotted > 0){
+        if(updateUnslotted >= 0){
             setVacancyCount(vacancyCount + 1 )
-            setUpdateUnslotted(updateUnslotted - 1)
+            setUpdateUnslotted(updateUnslotted - 1 )
         }
     }
 
@@ -171,6 +170,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
 
     };
+    const handleCancel = () => {
+        setVacancyCount(0);
+        setStateId('');
+        setRemarks('');
+        setAddMore(false);
+    }
     const handleEdit = (vacancyDetail) => {
         setChangeLable('Update')
         setVacancyCount(vacancyDetail.vacancy_count);
@@ -188,8 +193,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setOpenDeleteModal(false);
         setDeleteState(null)
     }
-
-
     const handleDelete = () => {
         const deleteParams = {
             vacancies_id: deleteState,
@@ -320,6 +323,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             </div>
                             <Button className="savebtn mt-2 mb-3"
                                     onClick={handleSave}>{changeLable === 'Save' ? 'Save' : 'Update'}</Button>
+                            <Button className="savebtn mt-2 mb-3 ms-2"
+                                    onClick={handleCancel}>Cancel</Button>
                         </div>
                     )}
                     <TableContainer component={Paper} className="psutable">
