@@ -22,7 +22,12 @@ const SlottingTabPage =({tabId, filterString})=>{
     const [open, setOpen] = useState(false);
     const [psuId, setPsuId] = useState(null)
     const [slottingMinistryId, setSlottingMinistryId] = useState(null)
+    const [updateAnalytics, setUpdateAnalytics] = useState([])
     const limit = 10;
+
+    const slottingAnalytics = (newData) => {
+        setUpdateAnalytics(newData)
+    }
     const handleDrawerOpen = (id, MinistryId) => {
         setOpen(true);
         setPsuId(id)
@@ -31,7 +36,9 @@ const SlottingTabPage =({tabId, filterString})=>{
     const handleDrawerClose = () => {
         setOpen(false);
         slottingTable()
+        slottingAnalytics()
     };
+
 
     const slottingTable =()=>{
         const slottingParams = {
@@ -49,7 +56,7 @@ const SlottingTabPage =({tabId, filterString})=>{
     }, [currentPage, filterString]);
     return (
         <>
-            <Analytics tabId={tabId} title="Position Analytics"/>
+            <Analytics tabId={tabId} title="Position Analytics" slottingAnalytics={slottingAnalytics}/>
             {open && <AssignBtnSidebar slottingMinistryId={slottingMinistryId} psuId={psuId} open={open} handleDrawerClose={handleDrawerClose}  />}
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TableContainer component={Paper} className="psutable">
