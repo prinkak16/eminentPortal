@@ -46,6 +46,12 @@ login-form h2 {
   margin-bottom: 3rem;
   margin-left: 0.6rem;
 }
+.login-image {
+  margin-bottom: 4rem;
+}
+.login-image svg{
+  width: 100%;
+}
 .opt-flields > div{
   justify-content: space-between;
 }
@@ -66,7 +72,7 @@ login-form h2 {
   background:transparent;
   border:none;
 }
-.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused, .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root{
+.number-filed .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused, .number-filed .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root{
   color: #7C7C7C !important;
   font-size: 16px;
   font-style: normal;
