@@ -17,12 +17,6 @@ const LoginPage = () => {
     const [otpSent, setOtpSent] = useState()
     const [otpField, setOtpField] = useState(false)
     const inputMobileNumber = (event) => {
-        // if (isPhoneNumber) {
-        //     let Number = enterPhoneNumber(event)
-        //     setInputNumber(Number);
-        // } else {
-        //     setInputNumber(event.target.value)
-        // }
         setInputNumber(event.target.value)
     }
 
@@ -74,19 +68,6 @@ const LoginPage = () => {
                  }
          }
      }
-    // function handleEnterKeyPress(event) {
-    //     if (event.key === "Enter") {
-    //         if (otpSent) {
-    //             if (inputNumber.length > 5) {
-    //                 submitOtp();
-    //             }
-    //         } else {
-    //             if (inputNumber.length > 9) {
-    //                 OtpSend();
-    //             }
-    //         }
-    //     }
-    // }
 
     return(
         <div className="login-wrap">
@@ -133,21 +114,7 @@ const LoginPage = () => {
                                             </div>
                                         </>
                                     )}
-                                    {/*<input key={index} value={digit} maxLength={1}*/}
-                                    {/*       onChange={(e)=> handleChange(e.target.value, index)}*/}
-                                    {/*       onKeyUp={(e)=> handleBackspaceAndEnter(e, index)}*/}
-                                    {/*       ref={(reference) => (otpBoxReference.current[index] = reference)}*/}
-                                    {/*       className={`border w-20 h-auto text-white p-3 rounded-md block bg-black focus:border-2 focus:outline-none appearance-none`}*/}
-                                    {/*/>*/}
 
-                                    {/*<input className="inputNumber ps-2"*/}
-                                    {/*       autoFocus={true}*/}
-                                    {/*       type="tel"*/}
-                                    {/*       maxLength={otpSent ? 6 : 10}*/}
-                                    {/*   value={inputNumber}*/}
-                                    {/*   onKeyDown={handleEnterKeyPress}*/}
-                                    {/*   placeholder={otpSent ? "Enter OTP" : "Enter Phone number"}*/}
-                                    {/*   onChange={(e)=> inputMobileNumber(e, !otpSent)}/>*/}
                                 </div>
                                 <div className="row h-100 justify-content-center align-items-center pt-2">
                                     <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit OTP' : 'Send OTP'}</button>
