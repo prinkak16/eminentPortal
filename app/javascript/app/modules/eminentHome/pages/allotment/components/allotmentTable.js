@@ -32,6 +32,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
     setAssignBreadCrums,
     allotmentCardDetails,
     setAllotmentCardDetails,
+    setPsuIdAllotment,
   } = useContext(AllotmentContext);
 
   const [tableData, setTableData] = useState([]);
@@ -48,6 +49,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
       .catch((err) => {
         alert(err);
       });
+
+    setPsuIdAllotment(id);
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
       setAssignBreadCrums(true);
@@ -143,9 +146,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                       : (data.total - data.vacant) / data.total}
                   </TableCell>
                   <TableCell>{data.dept_name}</TableCell>
-                  <TableCell>
-                    {data.is_listed === null ? "-" : data.is_listed}
-                  </TableCell>
+                  <TableCell>{data.assigned_states}</TableCell>
                   <TableCell style={{ textAlign: "center" }}>
                     <button
                       variant="contained"
