@@ -17,7 +17,7 @@ import Arrow from "../../../../../../../../../public/images/Vector.svg";
 // import HisIcon from "../../../../../../../../../public/images/Vector 153.svg";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Backdrop from "@mui/material/Backdrop";
+import { Backdrop, CircularProgress } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Pencil from "../../../../../../../../../public/images/pencil.svg";
@@ -33,24 +33,47 @@ function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
   const [dataArray, setDataArray] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [System, setSystem] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const { allotmentCardDetails, setAllotmentCardDetails } =
-    useContext(AllotmentContext);
+  const [isFetching, setIsFetching] = useState(false);
 
-  useEffect(() => {
-    allotmentEminentList()
+  const {
+    allotmentCardDetails,
+    setAllotmentCardDetails,
+    showAssignAllotmentBtn,
+    setShowAssignAllotmentBtn,
+  } = useContext(AllotmentContext);
+
+  const eminentList = () => {
+    const eminentParams = {
+      offset: itemsPerPage * currentPage,
+      limit: itemsPerPage,
+    };
+    allotmentEminentList(eminentParams)
       .then((res) => {
         setTableData(res.data.data.members);
+        setIsFetching(false);
+        setPageCount(Math.ceil(res.data.data.length / itemsPerPage));
       })
       .catch((err) => {
         console.log(err);
+        setIsFetching(false);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    eminentList();
+    setIsFetching(true);
+  }, [currentPage]);
 
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
   };
 
   const getAddress = (address) => {
@@ -87,7 +110,7 @@ function AllotAssign() {
   };
   const handleClose = () => setOpen(false);
 
-  const limit = 5;
+  const itemsPerPage = 10;
 
   const [value, setValue] = useState(0);
 
@@ -475,13 +498,15 @@ function AllotAssign() {
           {drawerContent}
         </SwipeableDrawer>
       </div>
-      <div className="btn-absolute">
-        <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
-          <big>
-            <Frame className="frame-icon-allotment" /> Assigned Position
-          </big>
-        </Button>
-      </div>
+      {showAssignAllotmentBtn ? (
+        <div className="btn-absolute">
+          <Button className="Assigned-Position-btn" onClick={assignedHandeler}>
+            <big>
+              <Frame className="frame-icon-allotment" /> Assigned Position
+            </big>
+          </Button>
+        </div>
+      ) : null}
 
       <div className="allot-card-container">
         <div className="allot-b1">
@@ -547,6 +572,12 @@ function AllotAssign() {
       </div>
 
       <div className="user-table">
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isFetching}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
         {tableData &&
           tableData.map((member) => (
             <div className="table-container mt-4" key={member.id}>
@@ -626,29 +657,45 @@ function AllotAssign() {
           ))}
         <div>
           <p className="d-flex justify-content-center">
-            {currentPage + 1}&nbsp;of&nbsp;{" "}
-            {tableData.length ? Math.ceil(tableData.length / limit) : ""}
+            {currentPage + 1}&nbsp;of&nbsp;{pageCount}
           </p>
           <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"...."}
-            pageCount={Math.ceil(tableData.length / limit)}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={5}
-            onPageChange={(selectedPage) =>
-              setCurrentPage(selectedPage.selected)
-            }
+            // previousLabel={"Previous"}
+            // nextLabel={"Next"}
+            // breakLabel={"...."}
+            // pageCount={Math.ceil(tableData.length / limit)}
+            // marginPagesDisplayed={1}
+            // pageRangeDisplayed={5}
+            // onPageChange={(selectedPage) =>
+            //   setCurrentPage(selectedPage.selected)
+            // }
+            // containerClassName={"pagination justify-content-end"}
+            // pageClassName={"page-item"}
+            // pageLinkClassName={"page-link"}
+            // previousClassName={"page-item"}
+            // previousLinkClassName={"page-link"}
+            // nextClassName={"page-item"}
+            // nextLinkClassName={"page-link"}
+            // breakClassName={"page-link"}
+            // breakLinkClassName={"page-item"}
+            // activeClassName={"active"}
+
+            breakLabel="..."
+            nextLabel="next >"
             containerClassName={"pagination justify-content-end"}
-            pageClassName={"page-item"}
+            onPageChange={handlePageChange}
             pageLinkClassName={"page-link"}
+            pageClassName={"page-item"}
             previousClassName={"page-item"}
             previousLinkClassName={"page-link"}
             nextClassName={"page-item"}
             nextLinkClassName={"page-link"}
-            breakClassName={"page-link"}
-            breakLinkClassName={"page-item"}
+            breakClassName={"page-item"}
+            breakLinkClassName={"page-link"}
             activeClassName={"active"}
+            pageRangeDisplayed={3}
+            pageCount={pageCount}
+            previousLabel="< previous"
           />
         </div>
       </div>
