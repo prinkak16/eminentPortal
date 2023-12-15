@@ -18,21 +18,35 @@ import SearchIcon from "../../../../../../../../public/images/search.svg";
 import ArrowDownward from "../../../../../../../../public/images/si_File_download.svg";
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
-import { allotmentListData } from "../../../../../api/eminentapis/endpoints";
+import {
+  allotmentCardData,
+  allotmentListData,
+} from "../../../../../api/eminentapis/endpoints";
 import AllotmentContext from "../context/allotmentContext";
-import { faL } from "@fortawesome/free-solid-svg-icons";
-
 function AllotmentTable({ setAssignShow, filterString }) {
-  const { crumbsState, setCrumbsState, assignBreadCrums, setAssignBreadCrums } =
-    useContext(AllotmentContext);
+  const {
+    crumbsState,
+    setCrumbsState,
+    assignBreadCrums,
+    setAssignBreadCrums,
+    allotmentCardDetails,
+    setAllotmentCardDetails,
+  } = useContext(AllotmentContext);
 
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
 
-  function changeHandler(data) {
+  function changeHandler(data, id) {
+    allotmentCardData(id)
+      .then((res) => {
+        setAllotmentCardDetails(res.data.data);
+      })
+      .catch((err) => {
+        alert(err);
+      });
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
       setAssignBreadCrums(true);
@@ -42,8 +56,20 @@ function AllotmentTable({ setAssignShow, filterString }) {
     }
   }
 
+  const searchHandeler = (e) => {
+    const searchParams = {
+      ministry_name: e.target.value,
+      organization_name: e.target.value,
+    };
+    allotmentListData(searchParams, filterString);
+  };
   const fetchTableData = () => {
-    allotmentListData(itemsPerPage * currentPage, itemsPerPage, filterString)
+    const tableParams = {
+      offset: itemsPerPage * currentPage,
+      limit: itemsPerPage,
+    };
+
+    allotmentListData(tableParams, filterString)
       .then((res) => {
         setTableData(res?.data?.data?.value);
         setIsFetching(false);
@@ -72,9 +98,10 @@ function AllotmentTable({ setAssignShow, filterString }) {
             type="text"
             placeholder="Search by PSU or Ministry"
             className="allot-searchField"
+            onChange={(e) => searchHandeler(e)}
           />
         </div>
-        <button className="allot-download-btn">
+        <button className="allot-download-btn" disabled>
           Download <ArrowDownward />
         </button>
       </div>
@@ -95,7 +122,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                 <TableCell>Ministry</TableCell>
                 <TableCell>Vacancy</TableCell>
                 <TableCell>Department</TableCell>
-                <TableCell>PSC Listed</TableCell>
+                <TableCell>Assigned State</TableCell>
                 <TableCell className="text-center">
                   <IconPark />
                 </TableCell>
@@ -126,7 +153,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                           ? (className = "update-button")
                           : (className = "update-button-green")
                       }
-                      onClick={() => changeHandler(data)}
+                      onClick={(id) => changeHandler(data, data.org_id)}
                     >
                       {data.vacant / data.total == 1 ? "Assign" : "Update"}
                     </button>

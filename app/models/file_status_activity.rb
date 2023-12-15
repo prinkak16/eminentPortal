@@ -1,5 +1,5 @@
 class FileStatusActivity < ApplicationRecord
   belongs_to :vacancy_allotment
-  belongs_to :file_status_level
+  has_many :file_status_levels
   belongs_to :file_status, class_name: 'FileStatus'
 end

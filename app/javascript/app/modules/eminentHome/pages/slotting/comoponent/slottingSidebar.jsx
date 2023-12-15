@@ -76,11 +76,10 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         getSlottingPsuData(psuId, paginateParams).then(response => {
             setSlottingPsuDetail(response.data.data.stats[0]);
             setSlottingVacancyDetail(response.data.data.slotting);
-            setUpdateUnslotted(response.data.data.stats[0].unslotted)
+            setUpdateUnslotted((response.data.data.stats[0].unslotted) - 1)
             if(response.data.data.slotting.count === 0){
                 setAddMore(true)
             }
-            console.log('data', response.data.data.stats[0].unslotted)
 
         })
     }
@@ -92,16 +91,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
     }
 
     const handleDecreaseCount = () => {
-        if (vacancyCount >= 1) {
+        if (vacancyCount - 1 >= 0) {
             setVacancyCount(vacancyCount - 1)
         }
     }
 
 
     const handleIncreaseCount = () => {
-        if(updateUnslotted > 0){
+        if(updateUnslotted >= 0){
             setVacancyCount(vacancyCount + 1 )
-            setUpdateUnslotted(updateUnslotted - 1)
+            setUpdateUnslotted(updateUnslotted - 1 )
         }
     }
 
@@ -141,12 +140,11 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     state_id: stateId,
                     remarks: remarks,
                 };
-                assignSlottingVacancy(vacancyData).then((res) => res.json())
-                if (vacancyData && vacancyData.state_id !== undefined && vacancyData.vacancy_count > 0) {
-                    const stateObject = slottingStateData.find(state => state.id === vacancyData.state_id)
-                    const stateName = stateObject.name
-                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                }
+
+                assignSlottingVacancy(vacancyData).then((res) => {
+                    toast(`${res.data.message}`);
+                    customFunction();
+                })
             }
             else if (changeLable === 'Update') {
                 const reSlottingData = {
@@ -157,14 +155,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     vacancies_id: vacancyId,
                     remarks: remarks,
                 };
-                reassignSlottingVacancy(reSlottingData).then((res) => res.json())
-                if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
-                    const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
-                    const stateName = stateObject.name
-                    toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                }
+                reassignSlottingVacancy(reSlottingData).then((res) => {
+                    toast(`${res.data.message}`)
+                    customFunction()
+                })
+
             }
-            addVacancyTableData();
             setVacancyCount(0);
             setStateId('');
             setRemarks('');
@@ -176,6 +172,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         }
 
     };
+    const handleCancel = () => {
+        setVacancyCount(0);
+        setStateId('');
+        setRemarks('');
+        setAddMore(false);
+    }
     const handleEdit = (vacancyDetail) => {
         setChangeLable('Update')
         setVacancyCount(vacancyDetail.vacancy_count);
@@ -193,15 +195,15 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         setOpenDeleteModal(false);
         setDeleteState(null)
     }
-
-
     const handleDelete = () => {
         const deleteParams = {
             vacancies_id: deleteState,
             remarks: "",
         }
-        deleteSlottingVacancy(deleteParams).then((res) => res.json())
-        customFunction()
+        deleteSlottingVacancy(deleteParams).then((res) => {
+            toast(`${res.data.message}`)
+            customFunction()
+        })
         if(slottingVacancyDetail.count <= 1){
             setOpenDeleteModal(false);
             setChangeLable('Save')
@@ -210,7 +212,6 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
             setRemarks('');
         }
         setOpenDeleteModal(false);
-        toast("Deleted Successfully");
         setAddMore(false)
     }
 
@@ -324,6 +325,8 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                             </div>
                             <Button className="savebtn mt-2 mb-3"
                                     onClick={handleSave}>{changeLable === 'Save' ? 'Save' : 'Update'}</Button>
+                            <Button className="savebtn mt-2 mb-3 ms-2"
+                                    onClick={handleCancel}>Cancel</Button>
                         </div>
                     )}
                     <TableContainer component={Paper} className="psutable">

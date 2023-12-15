@@ -118,7 +118,8 @@ class Api::V1::Allotment::StatsController < BaseApiController
             org.is_listed AS is_listed,
             SUM(1) AS total,
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
-            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied
+            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
+            ARRAY_AGG(distinct vac.country_state_id) as state_ids
           FROM public.vacancies AS vac
           LEFT JOIN public.ministries AS ministry
           ON vac.ministry_id = ministry.id
@@ -161,7 +162,8 @@ class Api::V1::Allotment::StatsController < BaseApiController
           is_listed: stat.is_listed.present? ? stat.is_listed : nil,
           total: stat.total.present? ? stat.total : 0,
           vacant: stat.vacant.present? ? stat.vacant : 0,
-          occupied: stat.occupied.present? ? stat.occupied : 0
+          occupied: stat.occupied.present? ? stat.occupied : 0,
+          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name) : []
         }
       end
 
