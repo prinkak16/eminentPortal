@@ -11,7 +11,6 @@ import VacantVacancy from './../../../../../../../public/images/vacant_mov.svg'
 import {allotmentBoxData, getSlottingAnalytics, getVacancyAnalytics, statsData} from "../../../../api/eminentapis/endpoints";
 import Tooltip from "@mui/material/Tooltip";
 const Analytics = (props) => {
-    const {analyticsHeading, icon, label} = props
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [homeStats,setHomeStats] = useState([]);
     useEffect(()=>{
@@ -34,11 +33,13 @@ const Analytics = (props) => {
             case 'slotting':
                 getSlottingAnalytics().then(res=>{
                     setHomeStats(res.data.data)
+                    props.slottingAnalytics(res.data.data)
                 })
                 break;
-        }
-    },[])
 
+        }
+    },[props.tabId, props.slottingAnalytics])
+    // console.log('slottingAnalytics', slottingAnalytics)
     const tooltipTitle =
         {
             'Total Eminent Personality': 'Total count of eminents.',
@@ -202,7 +203,6 @@ const Analytics = (props) => {
         <>
             <div className="analyticsDiv">
                 <div className="headdiv">
-                    {/*{('master_of_vacancies')? <p className="analyticsHeading">Position Analytics</p> : 'Eminent Analytics'}*/}
                     <p className="analyticsHeading">{props.title}</p>
                 </div>
 
@@ -210,11 +210,6 @@ const Analytics = (props) => {
                     {createAnalyticCard()}
                 </div>
                 <div>
-
-                    {/*<div onClick={()=> setShowSeeMore(!showSeeMore)} className='d-flex mt-3 justify-content-end'>*/}
-                    {/*    <p className="see-more-button">See More</p>*/}
-                    {/*    <ExpandMoreIcon className='expandicon'/>*/}
-                    {/*</div>*/}
 
                     { showSeeMore &&
                         <div className="card seemorecard">
