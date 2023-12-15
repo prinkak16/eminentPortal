@@ -54,6 +54,7 @@ const HomeTable = (props) => {
   const navigate = useNavigate();
   const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
   const [showFreeze, setShowFreeze] = useState(false);
+  const [callAnalyticsApi, setCallAnalyticsApi] = useState(false)
   const offset = 0;
   const limit = 10;
   const displayPhoneNumbers = (member) => {
@@ -130,6 +131,10 @@ const HomeTable = (props) => {
       .then((res) => {
         prepareToGetDisplayData();
         setDeleteMemberId(null);
+        setCallAnalyticsApi(true)
+        setTimeout(() => {
+          setCallAnalyticsApi(false)
+        }, "1000");
       })
       .catch((err) => {
         console.log("Error With Deleting Member", err);
@@ -276,7 +281,7 @@ const HomeTable = (props) => {
   };
   return (
     <>
-      <Analytics tabId={props.tabId} title="Eminent Analytics" />
+      <Analytics tabId={props.tabId} getAnalitics={callAnalyticsApi} title="Eminent Analytics" />
       <div className=" hometable mt-4 mb-4">
         <div className="mt-4 d-flex justify-content-between ">
           <div className="d-flex">

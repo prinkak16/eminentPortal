@@ -52,7 +52,7 @@ export default function BasicTabs({
   onSwitchTab,
   filterString,
   openFilter,
-  clearFilter,
+  clearFilter
 }) {
   const [basicTabId, setBasicTabId] = useSearchParams({
     basicTabId: "home",
@@ -73,6 +73,7 @@ export default function BasicTabs({
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [eminentMsg, setEminentMsg] = useState("");
   const navigate = useNavigate();
+  const [callFetchFunction, setCallFetchFunction] = useState(false)
 
   const [userPermissions, setUserPermissions] = useState()
 
@@ -186,7 +187,11 @@ export default function BasicTabs({
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          setCallFetchFunction(true)
           toast.success("File uploaded successfully");
+          setTimeout(() => {
+            setCallFetchFunction(false)
+          }, "1000");
         } else {
           toast.error("Error: Please upload Valid File");
           setSelectedFile(null);
@@ -622,7 +627,7 @@ export default function BasicTabs({
             <Allotment filterString={filterString} tabId={value} />
           </TabPanel>
           <TabPanel value="file_status">
-            <FileStatus />
+            <FileStatus filterString={filterString} tabId={value} />
           </TabPanel>
           <TabPanel value="master_of_vacancies">
             <MasterVacancies filterString={filterString} tabId={value} />
@@ -635,6 +640,7 @@ export default function BasicTabs({
               filterString={filterString}
               clearFilter={clearFilter}
               tabId={value}
+              callFetchFunction={callFetchFunction}
             />
           </TabPanel>
         </TabContext>

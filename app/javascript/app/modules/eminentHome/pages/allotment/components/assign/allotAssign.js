@@ -26,7 +26,11 @@ import UnassignModal from "./unassignModal";
 import EllipseBlue from "../../../../../../../../../public/images/Ellipse_blue.svg";
 import Frame from "../../../../../../../../../public/images/Frame.svg";
 import AllotmentContext from "../../context/allotmentContext";
-import { allotmentEminentList } from "../../../../../../api/eminentapis/endpoints";
+import {
+  allotmentEminentList,
+  assignAllotment,
+  getAssignedAllotment,
+} from "../../../../../../api/eminentapis/endpoints";
 import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
 
 function AllotAssign() {
@@ -38,12 +42,16 @@ function AllotAssign() {
   const [System, setSystem] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [selectedMember, setSelectedmember] = useState([]);
+  const [remark, setRemark] = useState(null);
 
   const {
     allotmentCardDetails,
     setAllotmentCardDetails,
     showAssignAllotmentBtn,
     setShowAssignAllotmentBtn,
+    psuIdAllotment,
+    setPsuIdAllotment,
   } = useContext(AllotmentContext);
 
   const eminentList = () => {
@@ -67,6 +75,21 @@ function AllotAssign() {
     eminentList();
     setIsFetching(true);
   }, [currentPage]);
+
+  const assignedList = (psuIdAllotment) => {
+    const assignparams = {
+      psu_id: psuIdAllotment,
+    };
+    getAssignedAllotment(assignparams)
+      .then((res) => {})
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  useEffect(() => {
+    assignedList(psuIdAllotment);
+  }, []);
 
   const handleOpen = () => {
     setOpen(true);
@@ -108,6 +131,10 @@ function AllotAssign() {
     }
     return education;
   };
+
+  const textareaHandeler = (e) => {
+    setRemark(e.target.value);
+  };
   const handleClose = () => setOpen(false);
 
   const itemsPerPage = 10;
@@ -121,11 +148,23 @@ function AllotAssign() {
     setIsOpen(open);
   };
 
-  const handleModal = () => {
-    setIsOpen(true);
-    setValue(1);
-    setOpen(false);
+  const handleModal = async () => {
+    const data = {
+      selected_members: selectedMember,
+      psu_id: psuIdAllotment,
+      remarks: remark,
+    };
+
+    try {
+      await assignAllotment(data);
+      setIsOpen(true);
+      setValue(1);
+      setOpen(false);
+    } catch (err) {
+      alert(err);
+    }
   };
+
   const unassignHandeler = () => {
     setSystem(true);
   };
@@ -261,101 +300,7 @@ function AllotAssign() {
           </>
         );
         break;
-      // case 1:
-      //   return (
-      //     <>
-      //       <div className="Remark-div">
-      //         <span className="remark-span">Remark</span>
-      //         <div className="textarea-div">
-      //           <textarea className="textarea-field"></textarea>
-      //           <div className="btn-div">
-      //             <button className="update-btn-1">
-      //               <Pencil className="pencil" />
-      //             </button>
-      //           </div>
-      //         </div>
-      //       </div>
-      //       <div className="table-main-container">
-      //         {dataArray &&
-      //           dataArray.map((member) => (
-      //             <div className="user-table-1">
-      //               <div
-      //                 className="table-container mt-4 table-container-1 remove-border"
-      //                 key={member.id}
-      //               >
-      //                 <Grid container className="single-row ">
-      //                   <Grid item xs={3} className="gridItem min-width-24rem">
-      //                     <div className="row">
-      //                       <div className="col-md-4 pe-0">
-      //                         <div className="imgdiv circle">
-      //                           <img className="img" src={member.profile} />
-      //                         </div>
-      //                       </div>
-      //                       <div className="col-md-8">
-      //                         <h2 className="headingName">{member.name}</h2>
-      //                         <div className="row d-flex">
-      //                           <p>Phone : {member.phone}</p>
-      //                           <div />
-      //                           <div className="d-flex">
-      //                             <IdBadge />
-      //                             <p className="id-text">
-      //                               ID No. - {member.id}
-      //                             </p>
-      //                           </div>
-      //                         </div>
-      //                       </div>
-      //                     </div>
-      //                   </Grid>
-      //                   <Grid
-      //                     item
-      //                     xs
-      //                     className="gridItem education-profession-container"
-      //                   >
-      //                     <div className="row">
-      //                       <div className="col-md-6 data-display">
-      //                         <p className="text-labels">Age</p>
-      //                         <p>{member.age}</p>
-      //                       </div>
-      //                       <div className="col-md-6 data-display">
-      //                         <p className="text-labels">Profession</p>
-      //                         <p>{member.profession}</p>
-      //                       </div>
-      //                       <div className="col-md-6 data-display">
-      //                         <p className="text-labels">Education</p>
-      //                         <p>{member.education}</p>
-      //                       </div>
-      //                     </div>
-      //                   </Grid>
-      //                   <Grid item xs className="gridItem">
-      //                     <div className="row data-display">
-      //                       <p className="text-labels">Address</p>
-      //                       <p>{member.address}</p>
-      //                     </div>
-      //                   </Grid>
-      //                   <Grid item xs className="gridItemLast">
-      //                     <div className="d-flex">
-      //                       <div className="row data-display">
-      //                         <p className="text-labels">Referred by</p>
-      //                         <p>{member.referredBy}</p>
-      //                       </div>
-      //                     </div>
-      //                   </Grid>
-      //                 </Grid>
-      //               </div>
-      //               <div className="UnAssign-allotment-div">
-      //                 <button
-      //                   className="UnAssign-allotment-btn"
-      //                   onClick={unassignHandeler}
-      //                 >
-      //                   Unassign
-      //                 </button>
-      //               </div>
-      //             </div>
-      //           ))}
-      //       </div>
-      //     </>
-      //   );
-      //   break;
+
       case 2:
         return (
           <div className="allot-history-div-1">
@@ -421,6 +366,13 @@ function AllotAssign() {
         return prevDataArray.filter((item) => item.id !== data.id);
       }
     });
+    setSelectedmember((preData) => {
+      if (e.target.checked) {
+        return [...preData, data.id];
+      } else {
+        return preData.filter((id) => id !== data.id);
+      }
+    });
   };
 
   const isEqual = (item) => {
@@ -471,6 +423,7 @@ function AllotAssign() {
                   <textarea
                     placeholder="Write something…"
                     className="modal-textarea"
+                    onChange={(e) => textareaHandeler(e)}
                   />
                 </div>
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Api::V1::FileStatus::FileStatusController < BaseApiController
-
+  include ApplicationHelper
   def analytics
     stats = {
       'total_persons': 0,
@@ -15,7 +15,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
                              .count
 
     total_count = 0
-    if result.present? && result[0].present?
+    if result.present?
       stats[:in_progress] = result['In Progress'] || 0
       stats[:dropped] = result['Rejected'] || 0
       stats[:verified] = result['Verified'] || 0
@@ -32,13 +32,24 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
   def file_status_members
     offset = params[:offset]
+    member_name = params[:name]
+    member_id = params[:id]
+    ministry_id = params[:ministry_ids]
+    fs_level_id = params[:file_status_ids]
+    psu_psb_id = params[:organization]
+
     raise StandardError, 'Offset is required' if offset.nil?
 
     limit = params[:limit].present? ? params[:limit] : 10
     custom_forms = CustomMemberForm
-    data = custom_forms.joins(vacancy_allotments: %i[file_status vacancy])
-                       .where(vacancy_allotments: { unoccupied_at: nil })
-                       .offset(offset).limit(limit).map do |member|
+    custom_forms = custom_forms.where("LOWER(data->>'name') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
+    custom_forms = custom_forms.where("CAST(custom_member_forms.id AS TEXT) LIKE ?", "%#{member_id}%") if member_id.present?
+    custom_forms = custom_forms.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
+    custom_forms = custom_forms.where(vacancy: { ministry_id: ministry_id.split(',') }) if ministry_id.present?
+    custom_forms = custom_forms.where(vacancy: { organization_id: psu_psb_id.split(',') }) if psu_psb_id.present?
+    custom_forms = custom_forms.where(file_status: { file_status_level_id: fs_level_id.split(',') }) if fs_level_id.present?
+    total_count = custom_forms.count
+    data = custom_forms.offset(offset).limit(limit).map do |member|
       m_relations = member.vacancy_allotments&.first
       {
         id: member.id,
@@ -54,7 +65,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
         fs_id: m_relations&.file_status&.id
       }
     end
-    render json: { message: 'Allotted files list', data: data, status: true }, status: :ok
+    render json: { message: 'Allotted files list', data: data, total_eminent: total_count, status: true }, status: :ok
   rescue StandardError => e
     render json: { message: e.message }, status: :bad_request
   end
@@ -99,8 +110,8 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status_level&.state
   end
   def file_status_levels
-    file_statuses = FileStatusLevel.all.select(:id,:name).order(:created_at)
-    render json: {status: true, data: file_statuses, message: 'File Statuses'}, status: :ok
+    file_statuses = get_file_status_levels
+    render json: { status: true, data: file_statuses, message: 'File Statuses' }, status: :ok
   end
 end
 

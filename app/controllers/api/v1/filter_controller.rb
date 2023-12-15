@@ -1,5 +1,6 @@
 class Api::V1::FilterController < BaseApiController
   before_action :authenticate_user
+  include ApplicationHelper
   include FilterHelper
   include Validators::Metadata::Validator
   include UtilHelper

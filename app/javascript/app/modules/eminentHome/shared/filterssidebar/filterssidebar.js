@@ -41,13 +41,11 @@ export default function FiltersSidebar(props) {
   const [inputSearch, setInputSearch] = useState({});
   const [filtersKey, setFiltersKey] = useState([]);
   const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
-    if (!appliedFilterKey || !appliedKeyOptions) {
-      return;
-    }
-    const appliedFiltersValue = appliedFilters;
-    const foundKey = appliedFiltersValue?.find(
-      (item) => item.parent_key === appliedFilterKey
-    );
+        if (!appliedFilterKey || !appliedKeyOptions) {
+            return;
+        }
+        const appliedFiltersValue = appliedFilters;
+        const foundKey = appliedFiltersValue?.find((item) => item.parent_key === appliedFilterKey);
     if (foundKey) {
       const newValues = foundKey.selectedValues.find(
         (item) => item === appliedKeyOptions
