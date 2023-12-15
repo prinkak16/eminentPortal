@@ -39,7 +39,6 @@ const Analytics = (props) => {
 
         }
     },[props.tabId, props.slottingAnalytics])
-    // console.log('slottingAnalytics', slottingAnalytics)
     const tooltipTitle =
         {
             'Total Eminent Personality': 'Total count of eminents.',
