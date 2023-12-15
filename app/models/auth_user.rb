@@ -7,4 +7,5 @@ class AuthUser < ApplicationRecord
   }
 
   belongs_to :assist_to, class_name: 'AuthUser', optional: true
+  has_many :user_ministries, foreign_key: 'user_id', dependent: :destroy
 end
