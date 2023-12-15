@@ -6,20 +6,28 @@ import {useNavigate} from "react-router-dom";
 import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import {ApiContext} from "../ApiContext";
 import PageDesign from '../../../../../public/images/saffron_bg 1.svg'
+import {Typography, TextField, Button} from "@mui/material";
 
 const LoginPage = () => {
     const {setAuthToken} = useContext(ApiContext)
     const navigate = useNavigate();
     const [inputNumber, setInputNumber] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [inputOtp, setInputOtp] = useState('')
     const [otpSent, setOtpSent] = useState()
-    const inputMobileNumber = (event, isPhoneNumber) => {
-        if (isPhoneNumber) {
-            let Number = enterPhoneNumber(event)
-            setInputNumber(Number);
-        } else {
-            setInputNumber(event.target.value)
-        }
+    const [otpField, setOtpField] = useState(false)
+    const inputMobileNumber = (event) => {
+        // if (isPhoneNumber) {
+        //     let Number = enterPhoneNumber(event)
+        //     setInputNumber(Number);
+        // } else {
+        //     setInputNumber(event.target.value)
+        // }
+        setInputNumber(event.target.value)
+    }
+
+    const inputMobileOtp = (event) => {
+        setInputOtp(event.target.value)
     }
 
     const sendSubmitOtp = (isPhoneNumber) => {
@@ -29,18 +37,17 @@ const LoginPage = () => {
     const OtpSend = () => {
             setPhoneNumber(inputNumber)
             sendOtp(inputNumber).then((res) => {
-                setOtpSent(res.data.success)
+                setInputNumber(res.data.success)
                 if (res.data.success) {
                     showSuccessToast(res.data.message)
                 }
                 setInputNumber('')
             })
+        setOtpField(true)
     }
 
-
-
     const submitOtp = () => {
-        validateOtp(phoneNumber, inputNumber).then((res) => {
+        validateOtp(phoneNumber, inputOtp).then((res) => {
             if (res.data.success) {
                 showSuccessToast('OTP verified successfully')
             }
@@ -50,41 +57,103 @@ const LoginPage = () => {
                 pathname: '/eminent_personality'
             });
         })
+        setOtpField(false)
     }
-
-
     function handleEnterKeyPress(event) {
         if (event.key === "Enter") {
-            if (otpSent) {
-                if (inputNumber.length > 5) {
-                    submitOtp();
-                }
-            } else {
                 if (inputNumber.length > 9) {
                     OtpSend();
                 }
-            }
         }
     }
 
+     function  handleOtpEnterKeyPress(event){
+         if (event.key === "Enter") {
+                 if (inputOtp.length > 5) {
+                     submitOtp();
+                 }
+         }
+     }
+    // function handleEnterKeyPress(event) {
+    //     if (event.key === "Enter") {
+    //         if (otpSent) {
+    //             if (inputNumber.length > 5) {
+    //                 submitOtp();
+    //             }
+    //         } else {
+    //             if (inputNumber.length > 9) {
+    //                 OtpSend();
+    //             }
+    //         }
+    //     }
+    // }
+
     return(
-        <div className="container h-100 login-container d-flex">
-            <PageDesign className='login-design' />
-            <div className="row h-100 justify-content-center align-items-center">
-                <div className="">
-                    <div className="justify-content-start">
-                        <label>{otpSent ? 'OTP':'Phone Number'}<span className="text-danger">*</span></label>
-                        <input className="inputNumber ps-2"
-                               autoFocus={true}
-                               type="tel"
-                               maxLength={otpSent ? 6 : 10}
-                               value={inputNumber}
-                               onKeyDown={handleEnterKeyPress}
-                               placeholder={otpSent ? "Enter OTP" : "Enter Phone number"}
-                               onChange={(e)=> inputMobileNumber(e, !otpSent)}/>
-                    </div>
-                    <div className="row h-100 justify-content-center align-items-center pt-2">
-                        <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit OTP' : 'Send OTP'}</button>
+        <div className="login-wrap">
+            <div className="login-image">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="86" viewBox="0 0 1440 86" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M0 35.6L48.4324 25.52C96.8649 15.44 193.73 -4.71999 290.595 0.32C387.459 5.36 484.324 35.6 581.189 55.76C678.054 75.92 774.919 86 871.784 86C968.649 86 1065.51 75.92 1162.38 58.28C1259.24 40.64 1356.11 15.44 1404.54 2.84L1452.97 -9.75999V-40H1404.54C1356.11 -40 1259.24 -40 1162.38 -40C1065.51 -40 968.649 -40 871.784 -40C774.919 -40 678.054 -40 581.189 -40C484.324 -40 387.459 -40 290.595 -40C193.73 -40 96.8649 -40 48.4324 -40H0V35.6Z"
+                          fill="#FF9559"/>
+                </svg>
+            </div>
+            <div className="container h-100 login-container d-flex justify-content-center">
+                <div className="col-md-8">
+                    <div className="h-100 justify-content-center align-items-center">
+                        <div className="login-form">
+                            <Typography variant="h2" className=" text-center my-4">
+                                Eminent Personality form
+                            </Typography>
+                            <div className="login-form-wrap">
+                                <Typography variant="h4" >
+                                    Login with Mobile Number
+                                </Typography>
+                                <div className="justify-content-start my-4 text-start">
+                                    <TextField id="outlined-basic" label="Enter Phone Number" variant="outlined" className="inputNumber ps-2" autoFocus={true} type="tel"
+                                               maxLength={10}
+                                               value={inputNumber}
+                                               onKeyDown={handleEnterKeyPress}
+                                               placeholder= "Enter Phone number"
+                                               onChange={(e)=> inputMobileNumber(e)}
+                                    />
+                                    {otpField && (
+                                        <>
+                                            <Typography variant="h6" className="mt-4 mb-1">
+                                                Enter 6 digit OTP
+                                            </Typography>
+                                            <TextField id="outlined-basic"  variant="outlined" className="inputNumber ps-2" autoFocus={true} type="tel"
+                                                       maxLength={ 6}
+                                                       value={inputOtp}
+                                                       onKeyDown={handleOtpEnterKeyPress}
+                                                       placeholder="Enter OTP"
+                                                       onChange={(e)=> inputMobileOtp(e)}
+                                            />
+                                            <div className="text-center mt-4">
+                                                <Button>Re-Send OTP</Button>
+                                            </div>
+                                        </>
+                                    )}
+                                    {/*<input key={index} value={digit} maxLength={1}*/}
+                                    {/*       onChange={(e)=> handleChange(e.target.value, index)}*/}
+                                    {/*       onKeyUp={(e)=> handleBackspaceAndEnter(e, index)}*/}
+                                    {/*       ref={(reference) => (otpBoxReference.current[index] = reference)}*/}
+                                    {/*       className={`border w-20 h-auto text-white p-3 rounded-md block bg-black focus:border-2 focus:outline-none appearance-none`}*/}
+                                    {/*/>*/}
+
+                                    {/*<input className="inputNumber ps-2"*/}
+                                    {/*       autoFocus={true}*/}
+                                    {/*       type="tel"*/}
+                                    {/*       maxLength={otpSent ? 6 : 10}*/}
+                                    {/*   value={inputNumber}*/}
+                                    {/*   onKeyDown={handleEnterKeyPress}*/}
+                                    {/*   placeholder={otpSent ? "Enter OTP" : "Enter Phone number"}*/}
+                                    {/*   onChange={(e)=> inputMobileNumber(e, !otpSent)}/>*/}
+                                </div>
+                                <div className="row h-100 justify-content-center align-items-center pt-2">
+                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit OTP' : 'Send OTP'}</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

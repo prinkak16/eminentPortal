@@ -68,14 +68,12 @@ export default function FiltersSidebar(props) {
         switch (props.tabId) {
             case 'master_of_vacancies':
                 if (homeContext.movTabId === 'ministry_wise') {
-
                     const params = {
                         ministry_name: searchMinisterName,
                     }
                     getMinistryWiseFilterData(params).then(response => {
                         setFiltersList(response.data.data)
                     })
-
 
                 } else if (homeContext.movTabId === 'psu_wise' ) {
                     setResetFilter(true)
