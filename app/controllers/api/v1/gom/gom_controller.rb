@@ -348,7 +348,7 @@ def upload_minister_assistant_mapping
         if row_data[:action] == 'DELETE'
           user_detail = AuthUser.find_by(phone_number: row_data[:minister_number])
           assist_to_user_detail = AuthUser.find_by(phone_number: row_data[:assist_to_phone_number])
-          if user_detail.present? && assist_to_user_detail.present?
+          if user_detail.present? || assist_to_user_detail.present?
             if user_detail.assist_to_id == assist_to_user_detail.id
               user_detail.destroy!
               row_data[:success] = true
