@@ -39,6 +39,7 @@ export default function FiltersSidebar(props) {
     const [inputSearch, setInputSearch] = useState({});
     const [filtersKey, setFiltersKey] = useState([])
     const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
+        console.log('filte apply')
         if (!appliedFilterKey || !appliedKeyOptions) {
             return;
         }

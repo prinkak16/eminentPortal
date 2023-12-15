@@ -96,4 +96,9 @@ module ApplicationHelper
       .where("client_apps.name = '#{ENV['CLIENT_APP_PERMISSION']}' AND user_permissions.user_id = #{current_user.id} AND user_permissions.deleted_at IS null AND app_permissions.permission_name = '#{permission_name}' AND app_permissions.action = '#{action_name}'")
       .first
   end
+
+  def get_file_status_levels
+    FileStatusLevel.all.select(:id,:name).order(:created_at)
+  end
+
 end

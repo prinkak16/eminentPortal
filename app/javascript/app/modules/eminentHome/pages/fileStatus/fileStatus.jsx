@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Analytics from "../../shared/analytics/analytics";
 import SearchIcon from "../../../../../../../public/images/search.svg";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
@@ -12,8 +12,10 @@ import VerticalLinearStepper from "../verticalStepper/verticalStepper";
 import {isValuePresent, showErrorToast} from "../../../utils";
 import axios from "axios";
 import {apiBaseUrl} from "../../../../api/api_endpoints";
+import {ApiContext} from "../../../ApiContext";
 
-const FileStatus = () => {
+const FileStatus = ({filterString}) => {
+    const {setBackDropToggle} = useContext(ApiContext)
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const [searchValue, setSearchValue] =useState('')
     const [searchType, setSearchType] =useState('')
@@ -57,37 +59,49 @@ const FileStatus = () => {
                 if (res.data.status) {
                     setFileStatuses(res.data.data)
                 }
-            }
-        )
-    }
-
-    const getAssignedEminent = () => {
-        return axios.get(apiBaseUrl + 'file_status/file_status_members',{
-            params: {
-                offset: 0
-            }
-        }).then(
-            (res) => {
-                if (res.data.status) {
-                    setEminentData(res.data.data)
+                if (eminentData.length > 0) {
+                    setBackDropToggle(false)
                 }
             }
         )
     }
+
+    const getAssignedEminent = (filters) => {
+        setBackDropToggle(true)
+        return axios.get(apiBaseUrl + 'file_status/file_status_members' + `?${filters}`, {
+            params: {
+                offset: 0,
+                limit: 10,
+                name: searchedName,
+                id: searchId,
+            },
+        }).then((res) => {
+            setBackDropToggle(false);
+            if (res.data.status) {
+                setEminentData(res.data.data);
+            }
+        }).catch((error) => {
+            setBackDropToggle(false);
+        });
+    };
 
     useEffect(() => {
         getFileStatuses()
         getAssignedEminent()
     },[])
 
+    useEffect(() => {
+        getAssignedEminent(filterString)
+    }, [searchedName,searchId,filterString]);
+
 
     const updateFileStatus = (fs_level_id, fs_description, fs_id) => {
+        setBackDropToggle(true)
         let url = '';
         const formData = new FormData();
         formData.append("fs_id", fs_id);
         formData.append("fs_description", fs_description);
         formData.append("fs_level_id", fs_level_id);
-
         axios.post(apiBaseUrl + 'file_status/update_file_status', formData)
             .then(response => {
                 url = response;
@@ -96,10 +110,10 @@ const FileStatus = () => {
               }
             })
             .catch(error => {
+                setBackDropToggle(false);
                 showErrorToast(error.response.data.message);
             });
     };
-
 
     const openDialogBox = (status, fsId) => {
         setFileStatusId(fsId)
@@ -113,7 +127,6 @@ const FileStatus = () => {
     }
 
     const handleUpdateDetails  = (selectedItem, input, fs_id) => {
-        console.log(fileStatusId,'fileStatusId')
         updateFileStatus(selectedItem, input, fileStatusId)
     }
 
