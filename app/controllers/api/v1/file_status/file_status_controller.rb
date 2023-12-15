@@ -48,6 +48,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     custom_forms = custom_forms.where(vacancy: { ministry_id: ministry_id.split(',') }) if ministry_id.present?
     custom_forms = custom_forms.where(vacancy: { organization_id: psu_psb_id.split(',') }) if psu_psb_id.present?
     custom_forms = custom_forms.where(file_status: { file_status_level_id: fs_level_id.split(',') }) if fs_level_id.present?
+    total_count = custom_forms.count
     data = custom_forms.offset(offset).limit(limit).map do |member|
       m_relations = member.vacancy_allotments&.first
       {
@@ -64,7 +65,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
         fs_id: m_relations&.file_status&.id
       }
     end
-    render json: { message: 'Allotted files list', data: data, status: true }, status: :ok
+    render json: { message: 'Allotted files list', data: data, total_eminent: total_count, status: true }, status: :ok
   rescue StandardError => e
     render json: { message: e.message }, status: :bad_request
   end
