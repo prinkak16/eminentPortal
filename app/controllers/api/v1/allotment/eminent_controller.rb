@@ -160,7 +160,9 @@ class Api::V1::Allotment::EminentController < BaseApiController
               raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
             else
               allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
-              file_status = FileStatus.create!(vacancy_allotment: allotment, file_status: 'pending', action_by_id: current_user.id)
+              file_status_level = FileStatusLevel.first
+              file_status = FileStatus.create!(vacancy_allotment_id: allotment.id, action_by_id: current_user.id, file_status_level_id: file_status_level.id)
+              FileStatusActivity.create!(file_status_id: file_status.id, vacancy_allotment_id: allotment.id, file_status_level_id: file_status_level.id)
               allotment.update!(file_status_id: file_status.id)
               vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
               vacancies_for_allotment[index].update!(allotment_remark: remark)
