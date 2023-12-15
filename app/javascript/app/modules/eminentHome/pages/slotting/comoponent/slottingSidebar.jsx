@@ -159,11 +159,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                     toast(`${res.data.message}`)
                     customFunction()
                 })
-                // if (reSlottingData && reSlottingData.state_id  && reSlottingData.vacancy_count ) {
-                //     const stateObject = slottingStateData.find(state => state.id === reSlottingData.state_id)
-                //     const stateName = stateObject.name
-                //     toast(`${vacancyCount} vacancy successfully assigned to selected ${stateName}`);
-                // }
+
             }
             setVacancyCount(0);
             setStateId('');
