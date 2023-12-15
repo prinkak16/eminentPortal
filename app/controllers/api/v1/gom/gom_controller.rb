@@ -155,55 +155,55 @@ class Api::V1::Gom::GomController < BaseApiController
     minister_name = params[:minister_name].present? ? params[:minister_name] : ''
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
 
-    sql = "SELECT
-      info.user_id,
-      info.minister_name,
-      info.pa_name,
-      array_remove(
-        array_agg(
-          CASE
-          WHEN info.is_minister IS false THEN info.ministry_name
-          ELSE null
-          END
-        ), null
-      ) AS assigned_ministries,
-      array_remove(
-        array_agg(
-          CASE
-          WHEN info.is_minister THEN info.ministry_name
-          ELSE null
-          END
-        ), null
-      ) AS allocated_ministries
-    FROM
-    (
-      SELECT
-        au.id as user_id,
-        au.name AS minister_name,
-        PA.name AS pa_name,
-        mi.name AS ministry_name,
-        um.is_minister AS is_minister
-  "
-    sql += ", word_similarity(au.name, '#{minister_name}') AS ms_minister " if minister_name.length > 2
-    sql += ", word_similarity(mi.name, '#{ministry_name}') AS ms_ministry " if ministry_name.length > 2
-    sql += "FROM public.auth_users AS au
-  LEFT JOIN public.user_ministries AS um
-  ON au.id = um.user_id
-  LEFT JOIN public.ministries AS mi
-  ON um.ministry_id = mi.id
-  LEFT JOIN public.auth_users AS PA
-  ON au.id = PA.assist_to_id
-  WHERE au.assist_to_id IS null "
-    sql += " AND LOWER(au.name) LIKE LOWER('%#{minister_name}%') " if minister_name.length > 2
-    sql += " AND LOWER(mi.name) LIKE LOWER('%#{ministry_name}%') " if ministry_name.length > 2
-    sql += 'GROUP BY au.id, au.name, PA.name, mi.name, um.is_minister'
-    sql += ' ,mi.name' if ministry_name.length > 2
-    sql += ' ORDER BY '
-    sql += ' ms_minister DESC, ' if minister_name.length > 2
-    sql += ' ms_ministry DESC, ' if ministry_name.length > 2
-    sql += 'MAX(um.created_at) IS null, MAX(um.created_at) DESC'
-    sql += ') AS info
-    GROUP BY info.user_id, info.minister_name, info.pa_name'
+      sql = "SELECT
+        info.user_id,
+        info.minister_name,
+        array_agg(DISTINCT info.pa_name) as pa_name,
+        array_remove(
+          array_agg(
+            CASE
+            WHEN info.is_minister IS false THEN info.ministry_name
+            ELSE null
+            END
+          ), null
+        ) AS assigned_ministries,
+        array_remove(
+          array_agg(
+            CASE
+            WHEN info.is_minister THEN info.ministry_name
+            ELSE null
+            END
+          ), null
+        ) AS allocated_ministries
+      FROM
+      (
+        SELECT
+          au.id as user_id,
+          au.name AS minister_name,
+          pa.name AS pa_name,
+          mi.name AS ministry_name,
+          um.is_minister AS is_minister
+    "
+      sql += ", word_similarity(au.name, '#{minister_name}') AS ms_minister " if minister_name.length > 2
+      sql += ", word_similarity(mi.name, '#{ministry_name}') AS ms_ministry " if ministry_name.length > 2
+      sql += "FROM public.auth_users AS au
+    LEFT JOIN public.user_ministries AS um
+    ON au.id = um.user_id
+    LEFT JOIN public.ministries AS mi
+    ON um.ministry_id = mi.id
+    LEFT JOIN public.auth_users AS pa
+    ON au.id = pa.assist_to_id
+    WHERE au.assist_to_id IS null "
+      sql += " AND LOWER(au.name) LIKE LOWER('%#{minister_name}%') " if minister_name.length > 2
+      sql += " AND LOWER(mi.name) LIKE LOWER('%#{ministry_name}%') " if ministry_name.length > 2
+      sql += 'GROUP BY au.id, au.name, pa.name, mi.name, um.is_minister'
+      sql += ' ,mi.name' if ministry_name.length > 2
+      sql += ' ORDER BY '
+      sql += ' ms_minister DESC, ' if minister_name.length > 2
+      sql += ' ms_ministry DESC, ' if ministry_name.length > 2
+      sql += 'MAX(um.created_at) IS null, MAX(um.created_at) DESC'
+      sql += ') AS info
+      GROUP BY info.user_id, info.minister_name, info.pa_name'
     user_ministries = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
     # fetch all the user ids
@@ -221,7 +221,7 @@ class Api::V1::Gom::GomController < BaseApiController
       assigned_ministries << {
         user_id: user_ministry.user_id.present? ? user_ministry.user_id : nil,
         name: user_ministry.minister_name.present? ? user_ministry.minister_name : nil,
-        pa_names: user_ministry.pa_name.present? ? user_ministry.pa_name.split(',').map(&:strip) : [], # Use split(',') to convert comma-separated PAs into an array
+        pa_names: user_ministry.pa_name.present? ? user_ministry.pa_name: [],
         allocated_ministries: user_ministry.allocated_ministries.present? ? user_ministry.allocated_ministries : [],
         assigned_ministries: user_ministry.assigned_ministries.present? ? user_ministry.assigned_ministries : [],
         assigned_states: user_information[user_ministry[:user_id]].present? ? user_information[user_ministry[:user_id]][:user_alloted_states] : []
