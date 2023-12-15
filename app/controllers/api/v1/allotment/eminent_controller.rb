@@ -210,8 +210,14 @@ class Api::V1::Allotment::EminentController < BaseApiController
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
 
+      country_states = []
+      fetch_minister_assigned_country_states.each do |country_state|
+        country_states << country_state[:id]
+      end
+
+
       assigned_members = CustomMemberForm.joins(vacancy_allotments: [vacancy: :organization])
-                                         .where(vacancies: { organization_id: psu })
+                                         .where(vacancies: { organization_id: psu, country_state_id: country_states })
                                          .where(vacancy_allotments: { unoccupied_at: nil })
                                          .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id, vacancy_allotments.remarks as allotment_remarks')
       assigned_members_count = assigned_members.length
@@ -267,9 +273,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
         allotted_vacancy = member_allotment.first.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
         file_status = member_allotment.first.file_status
-        file_status_activity = FileStatusActivity.find_by(file_status_id: file_status) if file_status.present?
         file_status.destroy if file_status.present?
-        file_status_activity.destroy if file_status_activity.present?
 
         return render json: {
           success: true,
@@ -282,6 +286,63 @@ class Api::V1::Allotment::EminentController < BaseApiController
         }
       end
 
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+
+  def vacancies_history
+    begin
+      permission_exist = is_permissible('Eminent', 'ViewAll')
+      if permission_exist.nil?
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      psu_id = params[:psu_id].present? ? params[:psu_id] : nil
+      limit = params[:limit].present? ? params[:limit] : 10
+      offset = params[:offset].present? ? params[:offset] : 0
+
+      country_states = []
+      fetch_minister_assigned_country_states.each do |country_state|
+        country_states << country_state[:id]
+      end
+
+      vacancy_allotments = VacancyAllotment.joins(vacancy: :organization)
+                                           .where(vacancies: { organization_id: psu_id, country_state_id: country_states })
+                                           .select("vacancies.id as vacancy_id, organizations.id as psu_id, organizations.name as psu_name,
+                                                          vacancy_allotments.unoccupied_at as unoccupied_status, vacancies.designation as vacancy_designation,
+                                                          to_char(vacancy_allotments.updated_at, 'YYYY-MM-DD HH24:MI:SS') as updated_at, vacancy_allotments.id").distinct
+
+      vacancy_allotment_count = vacancy_allotments.size
+      vacancy_allotments = vacancy_allotments.limit(limit).offset(offset)
+      if vacancy_allotments.length.positive?
+        result = []
+        vacancy_allotments.each do |vacancy|
+          result << {
+            vacancy_id: vacancy.vacancy_id,
+            psu_id: vacancy.psu_id,
+            psu_name: vacancy.psu_name,
+            allotment_status: vacancy.unoccupied_status.nil? ? 'Assigned' : 'Unassigned',
+            vacancy_designation: vacancy.vacancy_designation,
+            created_at: vacancy.updated_at
+          }
+        end
+
+        return render json: {
+          success: true,
+          count: vacancy_allotment_count,
+          data: result,
+          message: 'Data received successfully.'
+        }
+      else
+        return render json: {
+          success: true,
+          message: 'No Vacancy is found.'
+        }, status: :ok
+      end
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
