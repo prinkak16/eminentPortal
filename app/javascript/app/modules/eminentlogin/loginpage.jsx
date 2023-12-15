@@ -62,15 +62,6 @@ const resendOtp = () => {
         }
     }
 
-    console.log('inputOtp', inputOtp)
-     // function  handleOtpEnterKeyPress(event){
-     //     if (event.key === "Enter") {
-     //             if (inputOtp.length > 5) {
-     //                 submitOtp();
-     //             }
-     //     }
-     // }
-
     return(
         <div className="login-wrap">
             <div className="login-image">
