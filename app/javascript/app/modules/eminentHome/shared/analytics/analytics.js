@@ -60,12 +60,14 @@ const Analytics = (props) => {
         getAnalytics()
     },[])
 
-    console.log('callAnalyticsApi',props.callAnalyticsApi)
     useEffect(() => {
         if (props.getAnalitics) {
             getAnalytics()
         }
-    }, [props.getAnalitics]);
+        if (props.slottingAnalytics) {
+            getAnalytics()
+        }
+    }, [props.getAnalitics, props.slottingAnalytics]);
 
     const tooltipTitle =
         {
