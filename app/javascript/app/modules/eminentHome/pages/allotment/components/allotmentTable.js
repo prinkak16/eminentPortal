@@ -78,7 +78,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
         setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
         setIsFetching(false);
       });
   };
