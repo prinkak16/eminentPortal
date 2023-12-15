@@ -158,7 +158,7 @@ class Api::V1::Gom::GomController < BaseApiController
       sql = "SELECT
         info.user_id,
         info.minister_name,
-        array_agg(DISTINCT info.pa_name) as pa_name,
+        array_remove(array_agg(DISTINCT info.pa_name),null) as pa_name,
         array_remove(
           array_agg(
             CASE
