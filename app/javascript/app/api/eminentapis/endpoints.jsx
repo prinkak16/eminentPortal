@@ -26,6 +26,9 @@ export const getData = (filters = "") => {
 export const getVacancyAnalytics = () => {
   return axios.get(apiBaseUrl + "vacancy/position_analytics");
 };
+export const getFileStatusAnalytics = () => {
+  return axios.get(apiBaseUrl + "file_status/analytics");
+};
 export const statsData = () => {
   return axios.get(apiBaseUrl + "/stats/home");
 };

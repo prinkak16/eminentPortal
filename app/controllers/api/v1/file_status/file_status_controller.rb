@@ -15,7 +15,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
                              .count
 
     total_count = 0
-    if result.present? && result[0].present?
+    if result.present?
       stats[:in_progress] = result['In Progress'] || 0
       stats[:dropped] = result['Rejected'] || 0
       stats[:verified] = result['Verified'] || 0
