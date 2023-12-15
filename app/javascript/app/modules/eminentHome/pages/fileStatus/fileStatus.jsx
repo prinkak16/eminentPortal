@@ -15,7 +15,7 @@ import {apiBaseUrl} from "../../../../api/api_endpoints";
 import {ApiContext} from "../../../ApiContext";
 import ReactPaginate from "react-paginate";
 
-const FileStatus = ({filterString}) => {
+const FileStatus = ({filterString, tabId}) => {
     const {setBackDropToggle} = useContext(ApiContext)
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const [searchValue, setSearchValue] =useState('')
@@ -30,6 +30,7 @@ const FileStatus = ({filterString}) => {
     const [fileStatusId, setFileStatusId] =useState(null)
     const [pageCount, setPageCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
+    const [callAnalyticsApi, setCallAnalyticsApi] = useState(false)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -112,6 +113,10 @@ const FileStatus = ({filterString}) => {
                 url = response;
               if (url.data.status) {
                   getAssignedEminent()
+                  setCallAnalyticsApi(true)
+                  setTimeout(() => {
+                      setCallAnalyticsApi(false)
+                  }, "1000");
               }
             })
             .catch(error => {
@@ -155,7 +160,7 @@ const FileStatus = ({filterString}) => {
 
     return (
         <div className='file-status-component'>
-            <Analytics tabId={'home'} assignShow={true} title="File status Analytics"/>
+            <Analytics tabId={tabId} assignShow={true} getAnalitics={callAnalyticsApi} title="File status Analytics"/>
             <div className='file-status-table mt-5'>
                 <div className="d-flex">
                     <div className='d-flex search-field'>
