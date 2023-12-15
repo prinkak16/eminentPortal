@@ -136,7 +136,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
       raise "PSU Id can't be blank." if psu_id.nil?
 
-      remark = params[:remark].present? ? params[:remark] : nil
+      remarks = params[:remarks].present? ? params[:remarks] : nil
 
       country_states = []
       fetch_minister_assigned_country_states.each do |country_state|
@@ -159,17 +159,19 @@ class Api::V1::Allotment::EminentController < BaseApiController
             if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index], unoccupied_at: nil).count.positive?
               raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
             else
-              allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index])
-              file_status = FileStatus.create!(vacancy_allotment: allotment, file_status: 'pending', action_by_id: current_user.id)
+              allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index], remarks: remarks)
+              file_status_level = FileStatusLevel.first
+              file_status = FileStatus.create!(vacancy_allotment_id: allotment.id, action_by_id: current_user.id, file_status_level_id: file_status_level.id)
+              FileStatusActivity.create!(file_status_id: file_status.id, vacancy_allotment_id: allotment.id, file_status_level_id: file_status_level.id)
               allotment.update!(file_status_id: file_status.id)
               vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
-              vacancies_for_allotment[index].update!(allotment_remark: remark)
               vacancy_allotment_data << {
                 psu_id: psu.first.id,
                 psu_name: psu.first.name,
                 vacancy_id: vacancies_for_allotment[index].id,
                 member_id: member.id,
-                member_name: member.data['name']
+                member_name: member.data['name'],
+                remarks: remarks
               }
             end
           end
@@ -209,9 +211,9 @@ class Api::V1::Allotment::EminentController < BaseApiController
       offset = params[:offset].present? ? params[:offset] : 0
 
       assigned_members = CustomMemberForm.joins(vacancy_allotments: [vacancy: :organization])
-                                         .where(vacancies: { organization_id: 6 })
+                                         .where(vacancies: { organization_id: psu })
                                          .where(vacancy_allotments: { unoccupied_at: nil })
-                                         .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id')
+                                         .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id, vacancy_allotments.remarks as allotment_remarks')
       assigned_members_count = assigned_members.length
       assigned_members = assigned_members.limit(limit).offset(offset)
       if assigned_members.exists?
@@ -221,13 +223,14 @@ class Api::V1::Allotment::EminentController < BaseApiController
             psu_id: member.psu_id,
             psu_name: member.psu_name,
             vacancy_id: member.vacancy_id,
-            member_data: member.as_json,
+            member_data: member.as_json
           }
         end
         return render json: {
           success: true,
           message: 'Data received successfully.',
           count: assigned_members_count,
+          allotment_remarks: assigned_members.pluck('vacancy_allotments.remarks').uniq,
           data: assigned_members_data
         }
       else
@@ -255,17 +258,30 @@ class Api::V1::Allotment::EminentController < BaseApiController
       raise "Eminent doesn't exist." unless member.present?
 
       member_allotment = VacancyAllotment.where(custom_member_form_id: member)
-      raise 'Eminent is not assigned to any vacancy.' unless member_allotment.present?
-      raise 'Eminent is already unassigned.' if member_allotment.where.not(unoccupied_at: nil).present?
+      raise 'Eminent is not assigned yet.' unless member_allotment.present?
 
-      member_allotment.first.update!(unoccupied_at: DateTime.now)
-      allotted_vacancy = member_allotment.first.vacancy
-      allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
+      member_allotment = member_allotment.where(unoccupied_at: nil)
 
-      return render json: {
-        success: true,
-        message: "#{member.data['name']} is unassigned successfully."
-      }
+      if member_allotment.present?
+        member_allotment.first.update!(unoccupied_at: DateTime.now)
+        allotted_vacancy = member_allotment.first.vacancy
+        allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
+        file_status = member_allotment.first.file_status
+        file_status_activity = FileStatusActivity.find_by(file_status_id: file_status) if file_status.present?
+        file_status.destroy if file_status.present?
+        file_status_activity.destroy if file_status_activity.present?
+
+        return render json: {
+          success: true,
+          message: "#{member.data['name']} is unassigned successfully."
+        }
+      else
+        return render json: {
+          success: true,
+          message: 'Eminent is already unassigned.'
+        }
+      end
+
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end

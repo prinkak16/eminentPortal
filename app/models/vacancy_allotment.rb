@@ -3,5 +3,6 @@ class VacancyAllotment < ApplicationRecord
 
   belongs_to :vacancy, class_name: 'Vacancy'
   has_one :file_status, dependent: :destroy
+  has_many :file_status_activities, dependent: :destroy
   belongs_to :custom_member_form, class_name: 'CustomMemberForm'
 end
