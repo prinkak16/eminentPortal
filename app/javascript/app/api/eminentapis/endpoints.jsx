@@ -13,6 +13,9 @@ export const getFiltersForAllotment = (params) => {
   return axios.get(apiBaseUrl + "filters/allotment", { params });
 };
 
+export const getAssignedAllotment = (params) => {
+  return axios.get(apiBaseUrl + "allotment/assigned_members", { params });
+};
 export const getFiltersFileStatus = (params) => {
   return axios.get(apiBaseUrl + "filters/file_status", { params });
 };
@@ -65,6 +68,10 @@ export const uploadVacancy = (formData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+export const assignAllotment = (data) => {
+  return axios.post(apiBaseUrl + "allotment/assign_vacancy", data);
 };
 
 export const fetchMobile = (number) => {
