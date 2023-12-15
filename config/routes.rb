@@ -105,11 +105,13 @@ Rails.application.routes.draw do
         get '/psu_details', to: 'stats#psu_details'
         get '/eminent_list', to: 'eminent#list'
         post '/assign_vacancy', to: 'eminent#assign_vacancy'
+        get '/assigned_members', to: 'eminent#assigned_members'
+        get '/unassign_member/:member_id', to: 'eminent#unassign_member'
       end
 
       namespace :file_status, path: 'file_status' do
         post '/update_file_status', to: 'file_status#update_status'
-        post '/file_status_members', to: 'file_status#file_status_members'
+        get '/file_status_members', to: 'file_status#file_status_members'
         get '/analytics', to: 'file_status#analytics'
         get 'file_status_level', to: 'file_status#file_status_levels'
 

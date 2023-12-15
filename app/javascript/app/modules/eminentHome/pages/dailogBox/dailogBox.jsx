@@ -8,17 +8,18 @@ import {useEffect, useState} from "react";
 import './dailogBox.scss'
 import DrawerRectangle from '../../../../../../../public/images/drawerRectangle.svg'
 
-const DialogBox = ({openDialogue, list, status, onClose, saveData}) => {
+const DialogBox = ({openDialogue, list, status, onClose, saveData, fileStatusId}) => {
     const [open, setOpen] = React.useState(false);
     const [input, setInput] = useState('')
     const [selectedItem, setSelectedItem] = useState(status)
 
+    console.log(selectedItem,'sdhbchjb')
     useEffect(() => {
         setOpen(openDialogue);
     }, [openDialogue]);
 
     const handleSave = () => {
-        saveData(selectedItem, input)
+        saveData(selectedItem, input, fileStatusId)
         handleClose()
     }
     const handleClose = () => {
@@ -36,6 +37,9 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData}) => {
         setSelectedItem(id)
     }
 
+    useEffect(() => {
+        setSelectedItem(status)
+    },[status])
 
     return (
         <div>
