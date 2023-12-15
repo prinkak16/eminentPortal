@@ -622,7 +622,7 @@ export default function BasicTabs({
             <Allotment filterString={filterString} tabId={value} />
           </TabPanel>
           <TabPanel value="file_status">
-            <FileStatus />
+            <FileStatus filterString={filterString} />
           </TabPanel>
           <TabPanel value="master_of_vacancies">
             <MasterVacancies filterString={filterString} tabId={value} />

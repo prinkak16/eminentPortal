@@ -13,7 +13,6 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData, fileStatusId}
     const [input, setInput] = useState('')
     const [selectedItem, setSelectedItem] = useState(status)
 
-    console.log(selectedItem,'sdhbchjb')
     useEffect(() => {
         setOpen(openDialogue);
     }, [openDialogue]);
