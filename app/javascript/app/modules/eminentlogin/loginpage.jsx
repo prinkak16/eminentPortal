@@ -115,7 +115,7 @@ const resendOtp = () => {
 
                                 </div>
                                 <div className="row h-100 justify-content-center align-items-center pt-2">
-                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>{inputOtp ? 'Submit' : 'Send OTP'}</button>
+                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>{otpField ? 'Submit' : 'Send OTP'}</button>
                                 </div>
                             </div>
                         </div>
