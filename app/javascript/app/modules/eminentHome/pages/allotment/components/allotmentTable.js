@@ -18,6 +18,7 @@ import SearchIcon from "../../../../../../../../public/images/search.svg";
 import ArrowDownward from "../../../../../../../../public/images/si_File_download.svg";
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
+import { debounce } from "lodash";
 import {
   allotmentCardData,
   allotmentListData,
@@ -56,13 +57,14 @@ function AllotmentTable({ setAssignShow, filterString }) {
     }
   }
 
-  const searchHandeler = (e) => {
+  const searchHandeler = debounce((e) => {
     const searchParams = {
       ministry_name: e.target.value,
       organization_name: e.target.value,
     };
     allotmentListData(searchParams, filterString);
-  };
+  }, 500);
+
   const fetchTableData = () => {
     const tableParams = {
       offset: itemsPerPage * currentPage,
@@ -76,7 +78,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
         setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
       })
       .catch((error) => {
-        console.log(error);
+        alert(error);
+        setIsFetching(false);
       });
   };
 
