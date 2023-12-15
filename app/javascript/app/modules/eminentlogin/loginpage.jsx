@@ -7,21 +7,22 @@ import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import {ApiContext} from "../ApiContext";
 import PageDesign from '../../../../../public/images/saffron_bg 1.svg'
 import {Typography, TextField, Button} from "@mui/material";
-
+import OtpInput from 'react-otp-input';
 const LoginPage = () => {
     const {setAuthToken} = useContext(ApiContext)
     const navigate = useNavigate();
     const [inputNumber, setInputNumber] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [inputOtp, setInputOtp] = useState('')
+    const [inputOtp, setInputOtp] = useState()
     const [otpSent, setOtpSent] = useState()
     const [otpField, setOtpField] = useState(false)
+
     const inputMobileNumber = (event) => {
         setInputNumber(event.target.value)
     }
 
-    const inputMobileOtp = (event) => {
-        setInputOtp(event.target.value)
+    const inputMobileOtp = (otp) => {
+        setInputOtp(otp)
     }
 
     const sendSubmitOtp = (isPhoneNumber) => {
@@ -31,15 +32,15 @@ const LoginPage = () => {
     const OtpSend = () => {
             setPhoneNumber(inputNumber)
             sendOtp(inputNumber).then((res) => {
-                setInputNumber(res.data.success)
                 if (res.data.success) {
                     showSuccessToast(res.data.message)
                 }
-                setInputNumber('')
             })
         setOtpField(true)
     }
-
+const resendOtp = () => {
+    OtpSend()
+}
     const submitOtp = () => {
         validateOtp(phoneNumber, inputOtp).then((res) => {
             if (res.data.success) {
@@ -69,6 +70,7 @@ const LoginPage = () => {
          }
      }
 
+    // console.log('inputOtp', inputOtp)
     return(
         <div className="login-wrap">
             <div className="login-image">
@@ -79,7 +81,7 @@ const LoginPage = () => {
                 </svg>
             </div>
             <div className="container h-100 login-container d-flex justify-content-center">
-                <div className="col-md-8">
+                <div className="col-md-6">
                     <div className="h-100 justify-content-center align-items-center">
                         <div className="login-form">
                             <Typography variant="h2" className=" text-center my-4">
@@ -102,22 +104,30 @@ const LoginPage = () => {
                                             <Typography variant="h6" className="mt-4 mb-1">
                                                 Enter 6 digit OTP
                                             </Typography>
-                                            <TextField id="outlined-basic"  variant="outlined" className="inputNumber ps-2" autoFocus={true} type="tel"
-                                                       maxLength={ 6}
-                                                       value={inputOtp}
-                                                       onKeyDown={handleOtpEnterKeyPress}
-                                                       placeholder="Enter OTP"
-                                                       onChange={(e)=> inputMobileOtp(e)}
-                                            />
-                                            <div className="text-center mt-4">
-                                                <Button>Re-Send OTP</Button>
+                                            {/*<TextField id="outlined-basic"  variant="outlined" className="inputNumber ps-2" autoFocus={true} type="tel"*/}
+                                            {/*           maxLength={ 6}*/}
+                                            {/*           value={inputOtp}*/}
+                                            {/*           onKeyDown={handleOtpEnterKeyPress}*/}
+                                            {/*           placeholder="Enter OTP"*/}
+                                            {/*           onChange={(e)=> inputMobileOtp(e)}*/}
+                                            {/*/>*/}
+                                            <div className="opt-flields px-1">
+                                                <OtpInput
+                                                    value={inputOtp}
+                                                    onChange={(otp) => inputMobileOtp(otp)}
+                                                    numInputs={6}
+                                                    renderInput={(props) => <input {...props} />}
+                                                />
+                                            </div>
+                                            <div className="text-center mt-4 resend-button">
+                                                <Button onClick={resendOtp}>Re-Send OTP</Button>
                                             </div>
                                         </>
                                     )}
 
                                 </div>
                                 <div className="row h-100 justify-content-center align-items-center pt-2">
-                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!otpSent)}>{otpSent ? 'Submit OTP' : 'Send OTP'}</button>
+                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>{inputOtp ? 'Submit' : 'Send OTP'}</button>
                                 </div>
                             </div>
                         </div>

@@ -84,15 +84,16 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
         })
     }
 
-    const addVacancyTableData = () => {
-        getSlottingPsuData(psuId).then(response => {
-            setSlottingVacancyDetail(response.data.data.slotting);
-        })
-    }
+    // const addVacancyTableData = () => {
+    //     getSlottingPsuData(psuId).then(response => {
+    //         setSlottingVacancyDetail(response.data.data.slotting);
+    //     })
+    // }
 
     const handleDecreaseCount = () => {
         if (vacancyCount - 1 >= 0) {
             setVacancyCount(vacancyCount - 1)
+            setUpdateUnslotted(updateUnslotted  + 1 )
         }
     }
 
