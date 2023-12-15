@@ -22,8 +22,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
       }
       sql = "
         SELECT
-           SUM(CASE WHEN vac.slotting_status IN ('unslotted') IS false THEN 1 ELSE 0 END) AS unslotted,
-           SUM(CASE WHEN vac.slotting_status IN ('slotted', 'outside_saral') IS true THEN 1 ELSE 0 END) AS slotted,
+           SUM(CASE WHEN vac.slotting_status IN ('unslotted') THEN 1 ELSE 0 END) AS unslotted,
+           SUM(CASE WHEN vac.slotting_status IN ('slotted', 'outside_saral') THEN 1 ELSE 0 END) AS slotted,
            SUM(1) AS total
          FROM public.user_ministries AS um
          LEFT JOIN public.vacancies AS vac
@@ -241,7 +241,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
         end
       end
 
-      return render json: { success: true, message: 'Success' }, status: :ok
+      return render json: { success: true, message: "#{vacancy_details.count} vacancies are slotted to #{cs_detail.name} successfully." }, status: :ok
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
@@ -285,7 +285,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
         end
       end
 
-      return render json: { success: true, message: 'Success' }, status: :ok
+      return render json: { success: true, message: 'Vacancies are unslotted successfully.' }, status: :ok
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
@@ -367,7 +367,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
         end
       end
 
-      return render json: { success: true, message: 'Success' }, status: :ok
+      return render json: { success: true, message: "#{vacancy_details.count} vacancies are reslotted to #{cs_detail.name} successfully." }, status: :ok
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end
@@ -417,6 +417,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           AND
           vac.deleted_at IS null
           AND
+          vac.allotment_status = 'vacant'
+          AND
           vac.organization_id = #{params['organization_id']}
           AND
           vac.country_state_id IS NOT null
@@ -431,7 +433,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           vacancy_count: stat.vacancy_count.present? ? stat.vacancy_count : 0,
           country_state_id: stat.country_state_id.present? ? stat.country_state_id : 0,
           country_state_name: stat.country_state_id.present? ? country_state_details[stat.country_state_id] : '',
-          slotting_remarks: stat.slotting_remarks.present? ? stat.slotting_remarks : 0,
+          slotting_remarks: stat.slotting_remarks.present? ? stat.slotting_remarks : '',
           vacancies_id: stat.vacancies_id.present? ? stat.vacancies_id : 0
         }
       end
