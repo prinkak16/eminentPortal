@@ -61,6 +61,7 @@ const Analytics = (props) => {
         getAnalytics()
     },[])
 
+    console.log('callAnalyticsApi',props.callAnalyticsApi)
     useEffect(() => {
         if (props.getAnalitics) {
             getAnalytics()
