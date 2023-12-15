@@ -26,7 +26,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from '@mui/material/TextField';
 import {ApiContext} from "../../../../ApiContext";
 import {isValuePresent} from "../../../../utils";
-function GomPage({ tabId, filterString, clearFilter }) {
+function GomPage({ tabId, filterString, clearFilter, callFetchFunction}) {
     const {resetFilter,setResetFilter} = useContext(ApiContext)
     const [gomTableData, setGomTableData] = useState([]);
     const [pageCount, setPageCount] = useState(0);
@@ -102,6 +102,11 @@ function GomPage({ tabId, filterString, clearFilter }) {
         setResetFilter(false);
     }, [resetFilter]);
 
+    useEffect(() => {
+        if (callFetchFunction) {
+            fetchData();
+        }
+    }, [callFetchFunction]);
 
     const fetchData = async () => {
         try {

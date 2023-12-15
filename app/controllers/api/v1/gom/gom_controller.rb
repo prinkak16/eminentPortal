@@ -180,7 +180,7 @@ class Api::V1::Gom::GomController < BaseApiController
         SELECT
           au.id as user_id,
           au.name AS minister_name,
-          pa.name AS pa_name,
+          CASE WHEN pa.deleted_at IS NULL THEN pa.name ELSE null END AS pa_name,
           mi.name AS ministry_name,
           um.is_minister AS is_minister
     "
@@ -196,7 +196,7 @@ class Api::V1::Gom::GomController < BaseApiController
     WHERE au.assist_to_id IS null "
       sql += " AND LOWER(au.name) LIKE LOWER('%#{minister_name}%') " if minister_name.length > 2
       sql += " AND LOWER(mi.name) LIKE LOWER('%#{ministry_name}%') " if ministry_name.length > 2
-      sql += 'GROUP BY au.id, au.name, pa.name, mi.name, um.is_minister'
+      sql += 'GROUP BY au.id, au.name, pa.name, mi.name, um.is_minister, pa.deleted_at'
       sql += ' ,mi.name' if ministry_name.length > 2
       sql += ' ORDER BY '
       sql += ' ms_minister DESC, ' if minister_name.length > 2
@@ -348,7 +348,7 @@ def upload_minister_assistant_mapping
         if row_data[:action] == 'DELETE'
           user_detail = AuthUser.find_by(phone_number: row_data[:minister_number])
           assist_to_user_detail = AuthUser.find_by(phone_number: row_data[:assist_to_phone_number])
-          if user_detail.present? || assist_to_user_detail.present?
+          if user_detail.present? && assist_to_user_detail.present?
             if user_detail.assist_to_id == assist_to_user_detail.id
               user_detail.destroy!
               row_data[:success] = true
@@ -365,7 +365,6 @@ def upload_minister_assistant_mapping
               phone_number: user_number,
               assist_to_id: assist_to_number_user_id
             )
-
           else
             AuthUser.find_by(id: fetch_user_detail.id).update(
               name: user_number_name,

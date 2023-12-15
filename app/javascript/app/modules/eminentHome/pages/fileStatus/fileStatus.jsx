@@ -28,9 +28,10 @@ const FileStatus = ({filterString, tabId}) => {
     const [fileStatuses, setFileStatuses] =useState([])
     const [eminentData, setEminentData] = useState([])
     const [fileStatusId, setFileStatusId] =useState(null)
-    const [pageCount, setPageCount] = useState(0);
+    const [pageCount, setPageCount] = useState(5);
     const [currentPage, setCurrentPage] = useState(0);
     const [callAnalyticsApi, setCallAnalyticsApi] = useState(false)
+    const [offset, setOffset] = useState(0)
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -74,7 +75,7 @@ const FileStatus = ({filterString, tabId}) => {
         setBackDropToggle(true)
         return axios.get(apiBaseUrl + 'file_status/file_status_members' + `?${filters}`, {
             params: {
-                offset: 0,
+                offset: offset,
                 limit: 10,
                 name: searchedName,
                 id: searchId,
@@ -98,7 +99,7 @@ const FileStatus = ({filterString, tabId}) => {
 
     useEffect(() => {
         getAssignedEminent(filterString)
-    }, [searchedName,searchId,filterString]);
+    }, [searchedName,searchId,filterString, offset]);
 
 
     const updateFileStatus = (fs_level_id, fs_description, fs_id) => {
@@ -155,6 +156,11 @@ const FileStatus = ({filterString, tabId}) => {
     }
 
     const handlePageChange = (selectedPage) => {
+        if (selectedPage.selected === 0) {
+            setOffset(0)
+        } else {
+            setOffset(selectedPage.selected * 10)
+        }
         setCurrentPage(selectedPage.selected);
     };
 
@@ -180,82 +186,95 @@ const FileStatus = ({filterString, tabId}) => {
                 <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus}
                            saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
             </div>
-            <div className='mt-5 border pb-4'>
-                {eminentData && eminentData.map((item, index) => (
-                    <div key={index}
-                         className={`mt-4 w-95  ${index + 1 !== eminentData.length && 'eminent-container pb-4'}`}>
-                        <p className={`eminent-status-tag ${item.file_state}-tag`}>{item.file_state}</p>
-                        <div key={index * index} className='eminent-details-container d-flex'>
-                            <div className='eminent-image-container ml-1rem'>
-                                <img className='eminent-image' src={userPhoto(item.photo)} alt='eminent-image'/>
-                            </div>
-                            <div className='eminent-initial-details'>
-                                <p><b>{item.name}</b></p>
-                                <div className='eminent-mobile-container'>
-                                    <Phone/>
-                                    {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
-                                        <span
-                                            className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`}>{number}</span>
-                                    ))}
-                                </div>
-                                <span className='eminent-user-id'> <span
-                                    className='user-id-tag'>User ID : </span>{item.id}</span>
-                            </div>
 
-                            <div className='eminent-other-details d-flex'>
-                                <span className='vertical-row'></span>
-                                <div className='eminent-ministry-container padding-assign'>
-                                    <span className='user-id-tag d-block'>Ministry</span>
-                                    <span className='fw-bold'>{item.ministry}</span>
+            {eminentData.length === 0 ?
+                <div className="blank-eminent-container">
+                    {searchValue ? (
+                        <span>
+                Your search - {searchValue} did not match any eminent{" "}
+                            {searchType}
+              </span>
+                    ) : (
+                        <span>No eminent found</span>
+                    )}
+                </div> :
+                <div className='mt-5 border pb-4'>
+                    {eminentData && eminentData.map((item, index) => (
+                        <div key={index}
+                             className={`mt-4 w-95  ${index + 1 !== eminentData.length && 'eminent-container pb-4'}`}>
+                            <p className={`eminent-status-tag ${item.file_state}-tag`}>{item.file_state}</p>
+                            <div key={index * index} className='eminent-details-container d-flex'>
+                                <div className='eminent-image-container ml-1rem'>
+                                    <img className='eminent-image' src={userPhoto(item.photo)} alt='eminent-image'/>
                                 </div>
-                                <span className='vertical-row'></span>
-                                <div className='eminent-psu-container padding-assign'>
-                                    <span className='user-id-tag d-block'>PSU</span>
-                                    <span className='fw-bold'>{item.psu}</span>
+                                <div className='eminent-initial-details'>
+                                    <p><b>{item.name}</b></p>
+                                    <div className='eminent-mobile-container'>
+                                        <Phone/>
+                                        {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
+                                            <span
+                                                className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`}>{number}</span>
+                                        ))}
+                                    </div>
+                                    <span className='eminent-user-id'> <span
+                                        className='user-id-tag'>User ID : </span>{item.id}</span>
                                 </div>
-                                <span className='vertical-row'></span>
-                                <div className='eminent-type-container padding-assign'>
-                                    <span className='user-id-tag d-block'>PSU</span>
-                                    <span className='fw-bold'>{item.type}</span>
-                                </div>
-                                <div className='ml-auto'>
-                                    <button className='eminent-update-button'
-                                            onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
-                                            }>Update
-                                    </button>
+
+                                <div className='eminent-other-details d-flex'>
+                                    <span className='vertical-row'></span>
+                                    <div className='eminent-ministry-container padding-assign'>
+                                        <span className='user-id-tag d-block'>Ministry</span>
+                                        <span className='fw-bold'>{item.ministry}</span>
+                                    </div>
+                                    <span className='vertical-row'></span>
+                                    <div className='eminent-psu-container padding-assign'>
+                                        <span className='user-id-tag d-block'>PSU</span>
+                                        <span className='fw-bold'>{item.psu}</span>
+                                    </div>
+                                    <span className='vertical-row'></span>
+                                    <div className='eminent-type-container padding-assign'>
+                                        <span className='user-id-tag d-block'>PSU</span>
+                                        <span className='fw-bold'>{item.type}</span>
+                                    </div>
+                                    <div className='ml-auto'>
+                                        <button className='eminent-update-button'
+                                                onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
+                                                }>Update
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className='d-flex mt-3'>
-                            <div className='eminent-file-status ml-1rem'>
-                                <span className='user-id-tag d-block'>Current Status</span>
-                                <div className='d-flex mt-2'>
+                            <div className='d-flex mt-3'>
+                                <div className='eminent-file-status ml-1rem'>
+                                    <span className='user-id-tag d-block'>Current Status</span>
+                                    <div className='d-flex mt-2'>
                                      <span className='status-btn'>
                                          <span></span>
                                       </span>
-                                    <span>{item.file_status.status}</span>
+                                        <span>{item.file_status.status}</span>
+                                    </div>
+                                </div>
+                                <div className='eminent-file-remark ml-1rem'>
+                                    <span className='user-id-tag d-block state-remark '>Remarks</span>
+                                    <span className='mt-2'>{item.file_status.description}</span>
+                                </div>
+                                <div className='ml-auto mt-auto'>
+                                    <button className='view-history-button' onClick={() => showHistory(item.id)}>View
+                                        Application History
+                                        <span
+                                            className={`${openHistory === item.id ? 'rotate-180' : ''}`}><FontAwesomeIcon
+                                            icon={faChevronDown}/>
+                                    </span>
+                                    </button>
                                 </div>
                             </div>
-                            <div className='eminent-file-remark ml-1rem'>
-                                <span className='user-id-tag d-block state-remark '>Remarks</span>
-                                <span className='mt-2'>{item.file_status.description}</span>
-                            </div>
-                            <div className='ml-auto mt-auto'>
-                                <button className='view-history-button' onClick={() => showHistory(item.id)}>View
-                                    Application History
-                                    <span
-                                        className={`${openHistory === item.id ? 'rotate-180' : ''}`}><FontAwesomeIcon
-                                        icon={faChevronDown}/>
-                                    </span>
-                                </button>
-                            </div>
+                            {openHistory === item.id &&
+                                <VerticalLinearStepper stepperList={item.file_history}/>
+                            }
                         </div>
-                        {openHistory === item.id &&
-                            <VerticalLinearStepper stepperList={item.file_history}/>
-                        }
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            }
             <div>
           <span className="d-flex justify-content-center pageCount">
             {currentPage + 1}&nbsp;of&nbsp;{pageCount}
