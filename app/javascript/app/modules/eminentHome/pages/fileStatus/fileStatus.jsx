@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Analytics from "../../shared/analytics/analytics";
 import SearchIcon from "../../../../../../../public/images/search.svg";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
@@ -12,8 +12,11 @@ import VerticalLinearStepper from "../verticalStepper/verticalStepper";
 import {isValuePresent, showErrorToast} from "../../../utils";
 import axios from "axios";
 import {apiBaseUrl} from "../../../../api/api_endpoints";
+import {ApiContext} from "../../../ApiContext";
+import ReactPaginate from "react-paginate";
 
-const FileStatus = () => {
+const FileStatus = ({filterString}) => {
+    const {setBackDropToggle} = useContext(ApiContext)
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const [searchValue, setSearchValue] =useState('')
     const [searchType, setSearchType] =useState('')
@@ -25,6 +28,8 @@ const FileStatus = () => {
     const [fileStatuses, setFileStatuses] =useState([])
     const [eminentData, setEminentData] = useState([])
     const [fileStatusId, setFileStatusId] =useState(null)
+    const [pageCount, setPageCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
 
     const onSearchNameId = (e, isNameSearch = true) => {
         const value = e.target.value;
@@ -57,37 +62,51 @@ const FileStatus = () => {
                 if (res.data.status) {
                     setFileStatuses(res.data.data)
                 }
-            }
-        )
-    }
-
-    const getAssignedEminent = () => {
-        return axios.get(apiBaseUrl + 'file_status/file_status_members',{
-            params: {
-                offset: 0
-            }
-        }).then(
-            (res) => {
-                if (res.data.status) {
-                    setEminentData(res.data.data)
+                if (eminentData.length > 0) {
+                    setBackDropToggle(false)
                 }
             }
         )
     }
+
+    const getAssignedEminent = (filters) => {
+        setBackDropToggle(true)
+        return axios.get(apiBaseUrl + 'file_status/file_status_members' + `?${filters}`, {
+            params: {
+                offset: 0,
+                limit: 10,
+                name: searchedName,
+                id: searchId,
+            },
+        }).then((res) => {
+            setBackDropToggle(false);
+            if (res.data.status) {
+                setEminentData(res.data.data);
+                let totalEminent = parseInt(res.data.total_eminent) / 10
+                setPageCount( Math.ceil(totalEminent))
+            }
+        }).catch((error) => {
+            setBackDropToggle(false);
+        });
+    };
 
     useEffect(() => {
         getFileStatuses()
         getAssignedEminent()
     },[])
 
+    useEffect(() => {
+        getAssignedEminent(filterString)
+    }, [searchedName,searchId,filterString]);
+
 
     const updateFileStatus = (fs_level_id, fs_description, fs_id) => {
+        setBackDropToggle(true)
         let url = '';
         const formData = new FormData();
         formData.append("fs_id", fs_id);
         formData.append("fs_description", fs_description);
         formData.append("fs_level_id", fs_level_id);
-
         axios.post(apiBaseUrl + 'file_status/update_file_status', formData)
             .then(response => {
                 url = response;
@@ -96,10 +115,10 @@ const FileStatus = () => {
               }
             })
             .catch(error => {
+                setBackDropToggle(false);
                 showErrorToast(error.response.data.message);
             });
     };
-
 
     const openDialogBox = (status, fsId) => {
         setFileStatusId(fsId)
@@ -113,7 +132,6 @@ const FileStatus = () => {
     }
 
     const handleUpdateDetails  = (selectedItem, input, fs_id) => {
-        console.log(fileStatusId,'fileStatusId')
         updateFileStatus(selectedItem, input, fileStatusId)
     }
 
@@ -131,9 +149,13 @@ const FileStatus = () => {
       return   isValuePresent(photo) ? photo :'https://storage.googleapis.com/public-saral/public_document/form_banners/certificate/images/photoIconV2.png'
     }
 
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
+
     return (
         <div className='file-status-component'>
-            <Analytics tabId={'home'} assignShow={true} title="File status Analytics" />
+            <Analytics tabId={'home'} assignShow={true} title="File status Analytics"/>
             <div className='file-status-table mt-5'>
                 <div className="d-flex">
                     <div className='d-flex search-field'>
@@ -150,14 +172,16 @@ const FileStatus = () => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
-                    <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus} saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
+                <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus}
+                           saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
             </div>
             <div className='mt-5 border pb-4'>
                 {eminentData && eminentData.map((item, index) => (
-                    <div key={index} className={`mt-4 w-95  ${index +1 !== eminentData.length && 'eminent-container pb-4'}`}>
-                            <p className={`eminent-status-tag ${item.file_state}-tag`}>{item.file_state}</p>
+                    <div key={index}
+                         className={`mt-4 w-95  ${index + 1 !== eminentData.length && 'eminent-container pb-4'}`}>
+                        <p className={`eminent-status-tag ${item.file_state}-tag`}>{item.file_state}</p>
                         <div key={index * index} className='eminent-details-container d-flex'>
-                            <div className='eminent-image-container ml-1rem' >
+                            <div className='eminent-image-container ml-1rem'>
                                 <img className='eminent-image' src={userPhoto(item.photo)} alt='eminent-image'/>
                             </div>
                             <div className='eminent-initial-details'>
@@ -165,10 +189,12 @@ const FileStatus = () => {
                                 <div className='eminent-mobile-container'>
                                     <Phone/>
                                     {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
-                                        <span className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`} >{number}</span>
+                                        <span
+                                            className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`}>{number}</span>
                                     ))}
                                 </div>
-                                <span className='eminent-user-id'> <span className='user-id-tag'>User ID : </span>{item.id}</span>
+                                <span className='eminent-user-id'> <span
+                                    className='user-id-tag'>User ID : </span>{item.id}</span>
                             </div>
 
                             <div className='eminent-other-details d-flex'>
@@ -188,8 +214,10 @@ const FileStatus = () => {
                                     <span className='fw-bold'>{item.type}</span>
                                 </div>
                                 <div className='ml-auto'>
-                                    <button className='eminent-update-button' onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
-                                        }>Update</button>
+                                    <button className='eminent-update-button'
+                                            onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
+                                            }>Update
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -198,7 +226,7 @@ const FileStatus = () => {
                                 <span className='user-id-tag d-block'>Current Status</span>
                                 <div className='d-flex mt-2'>
                                      <span className='status-btn'>
-                                         <span ></span>
+                                         <span></span>
                                       </span>
                                     <span>{item.file_status.status}</span>
                                 </div>
@@ -208,7 +236,8 @@ const FileStatus = () => {
                                 <span className='mt-2'>{item.file_status.description}</span>
                             </div>
                             <div className='ml-auto mt-auto'>
-                                <button className='view-history-button' onClick={() => showHistory(item.id)}>View Application History
+                                <button className='view-history-button' onClick={() => showHistory(item.id)}>View
+                                    Application History
                                     <span
                                         className={`${openHistory === item.id ? 'rotate-180' : ''}`}><FontAwesomeIcon
                                         icon={faChevronDown}/>
@@ -221,6 +250,29 @@ const FileStatus = () => {
                         }
                     </div>
                 ))}
+            </div>
+            <div>
+          <span className="d-flex justify-content-center pageCount">
+            {currentPage + 1}&nbsp;of&nbsp;{pageCount}
+          </span>
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+                    containerClassName={"pagination justify-content-end"}
+                    onPageChange={handlePageChange}
+                    pageLinkClassName={"page-link"}
+                    pageClassName={"page-item"}
+                    previousClassName={"page-item"}
+                    previousLinkClassName={"page-link"}
+                    nextClassName={"page-item"}
+                    nextLinkClassName={"page-link"}
+                    breakClassName={"page-item"}
+                    breakLinkClassName={"page-link"}
+                    activeClassName={"active"}
+                    pageRangeDisplayed={10}
+                    pageCount={pageCount}
+                    previousLabel="< previous"
+                />
             </div>
         </div>
     )
