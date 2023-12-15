@@ -9,38 +9,25 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       'verified': 0,
     }
 
-    # total_persons = VacancyAllotment.where.not(unoccupied_at: nil).count
-    # total_persons = VacancyAllotment.where.not(unoccupied_at: nil).count
+    result = CustomMemberForm.joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
+                             .where(vacancy_allotments: { unoccupied_at: nil })
+                             .group("file_status_levels.state")
+                             .count
 
-    sql_query = <<~SQL
-      SELECT
-                    fs.*,
-                    COUNT(CASE WHEN fs.file_status = 'dropped' THEN 1 ELSE NULL END) AS count_dropped,
-                    COUNT(CASE WHEN fs.file_status = 'verified' THEN 1 ELSE NULL END) AS count_verified
-                  FROM
-                    file_status fs
-                  JOIN (
-                    SELECT
-                      vacancy_allotment_id,
-                      MAX(created_at) AS max_created_at
-                    FROM
-                      file_status
-                    GROUP BY
-                      vacancy_allotment_id
-                  ) latest ON fs.vacancy_allotment_id = latest.vacancy_allotment_id
-                         AND fs.created_at = latest.max_created_at
-                  GROUP BY
-                        fs.id;
-    SQL
-
-    result = ActiveRecord::Base.connection.execute(sql_query).map(&:symbolize_keys)
-
+    total_count = 0
     if result.present? && result[0].present?
-      stats[:total_persons] = result[0]['total_persons'] || 0
-      stats[:in_progress] = result[0]['in_progress'] || 0
-      stats[:dropped] = result[0]['dropped'] || 0
-      stats[:verified] = result[0]['verified'] || 0
+      stats[:in_progress] = result['In Progress'] || 0
+      stats[:dropped] = result['Rejected'] || 0
+      stats[:verified] = result['Verified'] || 0
+      stats.each do |s, c|
+        total_count += c
+      end
     end
+    stats[:total_persons] = total_count
+
+    render json: { message: 'Analytics list', data: stats, status: true }, status: :ok
+  rescue StandardError => e
+    render json: { message: e.message }, status: :bad_request
   end
 
   def file_status_members
@@ -49,19 +36,22 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     limit = params[:limit].present? ? params[:limit] : 10
     custom_forms = CustomMemberForm
-    data = custom_forms.joins(vacancy_allotments: %i[file_statuses vacancy])
+    data = custom_forms.joins(vacancy_allotments: %i[file_status vacancy])
                        .where(vacancy_allotments: { unoccupied_at: nil })
                        .offset(offset).limit(limit).map do |member|
+      m_relations = member.vacancy_allotments&.first
       {
         id: member.id,
         name: member.data&.dig('name'),
         mobiles: member.data&.dig('mobiles'),
         photo: member.data&.dig('photo'),
-        ministry: member.vacancy_allotments&.vacancy&.ministry&.name,
-        psu: member.vacancy_allotments&.vacancy&.organization&.name,
-        type: member.vacancy_allotments&.vacancy&.organization&.type,
-        status: get_last_file_status(member.vacancy_allotments&.id),
-        file_history: file_history(member.vacancy_allotments&.id)
+        ministry: m_relations&.vacancy&.ministry&.name,
+        psu: m_relations&.vacancy&.organization&.name,
+        type: m_relations&.vacancy&.organization&.type,
+        file_status: get_last_file_status(m_relations&.id),
+        file_state: get_last_file_state(m_relations&.id),
+        file_history: file_history(m_relations&.file_status&.id),
+        fs_id: m_relations&.file_status&.id
       }
     end
     render json: { message: 'Allotted files list', data: data, status: true }, status: :ok
@@ -70,37 +60,46 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def update_status
-    va_id = params[:vacancy_allotment_id]
-    status = params[:file_status]
-    raise StandardError, 'Vacancy Allotment id form is required' if va_id.nil?
-    raise StandardError, 'File Status is required' if status.nil?
+    fs_id = params[:fs_id]
+    fs_description = params[:fs_description]
+    fs_level_id = params[:fs_level_id]
+    raise StandardError, 'File Status is required' if fs_id.nil?
+    raise StandardError, 'File Status level is required' if fs_level_id.nil?
 
-    v_a = VacancyAllotment.find_by(id: va_id)
-    raise StandardError, 'Vacancy Allotment id is invalid' if v_a.nil?
+    file_status = FileStatus.find_by(id: fs_id)
+    raise StandardError, 'File Status id is invalid' if file_status.nil?
 
-    f_a = FileStatus
-    f_a.vacancy_allotment_id = va_id
-    f_a.file_status = status
-    f_a.action_by = current_user
+    file_status.file_status_level_id = fs_level_id
+    file_status.description = fs_description
+    file_status.action_by = current_auth_user
+    file_status.save
+
+    fs_a = FileStatusActivity.new
+    fs_a.file_status = file_status
+    fs_a.vacancy_allotment_id = file_status.vacancy_allotment_id
+    fs_a.file_status_level_id = fs_level_id
+    fs_a.description = fs_description
+    fs_a.save
     render json: { message: 'File status update successfully', status: true }, status: :ok
   rescue StandardError => e
     render json: { message: e.message }, status: :bad_request
   end
 
-  def file_history(va_id)
-    FileStatus.where(vacancy_allotment_id: va_id)
-              .select(:status, :updated_at)
-              .map do |file_status|
-      { status: file_status.status, updated_at: file_status.created_at.strftime('%a %b %d %Y %I:%M:%S %p') }
+  def file_history(fs_id)
+    FileStatusActivity.joins(:file_status_level).where(file_status_id: fs_id).map do |hs|
+      { status: hs.file_status_level.name, updated_at: hs.created_at.strftime('%a %b %d %Y %I:%M:%S %p') }
     end
   end
 
   def get_last_file_status(va_id)
-    FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status
+    FileStatus.joins(:file_status_level).where(vacancy_allotment_id: va_id).select('file_status_levels.name as status,file_status_levels.id as status_id, file_status.description as description').first
   end
 
+  def get_last_file_state(va_id)
+    FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status_level&.state
+  end
   def file_status_levels
-    file_statuses = FileStatusLevel.all.select(:id,:name)
+    file_statuses = FileStatusLevel.all.select(:id,:name).order(:created_at)
     render json: {status: true, data: file_statuses, message: 'File Statuses'}, status: :ok
   end
 end
