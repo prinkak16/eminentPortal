@@ -283,7 +283,7 @@ function GomPage({ tabId, filterString, clearFilter }) {
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{calculateSerialNumber(index)}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.name}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>
-                                                {data.pa_name && data.pa_name.length === 0 ? ' - ' : data.pa_names && data.pa_names.join(', ')}
+                                                {data.pa_names && data.pa_names.length === 0 ? ' - ' : data.pa_names && data.pa_names.join(', ')}
                                             </td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
