@@ -469,7 +469,7 @@ function AllotAssign() {
           <div className="allot-c1">
             <div className="card-cell1">
               <span className="card-span">PSU Name</span>
-              <p className="para">{allotmentCardDetails.organization_name}</p>
+              <p className="para">{allotmentCardDetails.psu_name}</p>
             </div>
             <div className="card-cell2">
               <span className="card-span">Ministry Name</span>
@@ -481,7 +481,7 @@ function AllotAssign() {
             </div>
             <div className="card-cell4">
               <span className="card-span">Vacancy</span>
-              <p className="para">{allotmentCardDetails.total}</p>
+              <p className="para">{allotmentCardDetails.total_vacancy_count}</p>
             </div>
           </div>
           <div className="allot-c2">
