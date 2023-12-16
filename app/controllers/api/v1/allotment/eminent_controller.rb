@@ -143,15 +143,17 @@ class Api::V1::Allotment::EminentController < BaseApiController
         country_states << country_state[:id]
       end
 
-      psu = Organization.joins(:vacancies).where(id: psu_id)
-                        .where(vacancies: { country_state_id: country_states })
-                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' }).distinct
-      if psu.count.positive?
-        if selected_members.count > psu.first.vacancies.count
-          raise "Selected eminent can't be greater than vacancy count"
-        end
+      psu = Organization.where(id: psu_id)
+      raise 'PSU not found.' unless psu.present?
 
-        vacancies_for_allotment = psu.first.vacancies.take(selected_members.length)
+      vacancies = psu.first.vacancies
+      vacancies = vacancies.where(vacancies: { country_state_id: country_states })
+                           .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+
+      raise "Selected eminent can't be greater than vacancy count" if selected_members.count > vacancies.count
+
+      if vacancies.count.positive?
+        vacancies_for_allotment = vacancies.take(selected_members.length)
 
         vacancy_allotment_data = []
         ActiveRecord::Base.transaction do
@@ -242,8 +244,10 @@ class Api::V1::Allotment::EminentController < BaseApiController
       else
         return render json: {
           success: true,
-          message: 'No eminent is assigned.'
-        }
+          message: 'No eminent is assigned.',
+          count: 0,
+          data: []
+        }, status: :ok
       end
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
@@ -269,10 +273,13 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member_allotment = member_allotment.where(unoccupied_at: nil)
 
       if member_allotment.present?
-        member_allotment.first.update!(unoccupied_at: DateTime.now)
-        allotted_vacancy = member_allotment.first.vacancy
+        existing_allotment = member_allotment.first
+        unassigned_allotment = VacancyAllotment.create!(existing_allotment.attributes.except('id', 'created_at', 'updated_at'))
+        existing_allotment.destroy! # deletion is soft delete, here we can track history when it was assigned
+        unassigned_allotment.update!(unoccupied_at: DateTime.now)
+        allotted_vacancy = unassigned_allotment.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
-        file_status = member_allotment.first.file_status
+        file_status = unassigned_allotment.file_status
         file_status.destroy if file_status.present?
 
         return render json: {
@@ -310,11 +317,12 @@ class Api::V1::Allotment::EminentController < BaseApiController
         country_states << country_state[:id]
       end
 
-      vacancy_allotments = VacancyAllotment.joins(vacancy: :organization)
+      vacancy_allotments = VacancyAllotment.with_deleted
+                                           .joins(vacancy: :organization)
                                            .where(vacancies: { organization_id: psu_id, country_state_id: country_states })
                                            .select("vacancies.id as vacancy_id, organizations.id as psu_id, organizations.name as psu_name,
-                                                          vacancy_allotments.unoccupied_at as unoccupied_status, vacancies.designation as vacancy_designation,
-                                                          to_char(vacancy_allotments.updated_at, 'YYYY-MM-DD HH24:MI:SS') as updated_at, vacancy_allotments.id").distinct
+                                                    vacancy_allotments.unoccupied_at as unoccupied_at, vacancies.designation as vacancy_designation,
+                                                    to_char(vacancy_allotments.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, vacancy_allotments.id")
 
       vacancy_allotment_count = vacancy_allotments.size
       vacancy_allotments = vacancy_allotments.limit(limit).offset(offset)
@@ -325,9 +333,9 @@ class Api::V1::Allotment::EminentController < BaseApiController
             vacancy_id: vacancy.vacancy_id,
             psu_id: vacancy.psu_id,
             psu_name: vacancy.psu_name,
-            allotment_status: vacancy.unoccupied_status.nil? ? 'Assigned' : 'Unassigned',
+            allotment_status: vacancy.unoccupied_at.nil? ? 'Assigned' : 'Unassigned',
             vacancy_designation: vacancy.vacancy_designation,
-            created_at: vacancy.updated_at
+            created_at: vacancy.created_at
           }
         end
 
