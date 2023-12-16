@@ -102,8 +102,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
       custom_members = custom_members.where(search_query.join(' OR '))
     end
 
+    custom_members = custom_members.order('created_at desc').distinct
     length = custom_members.length
-    custom_members = custom_members.order('created_at desc')
 
     if !custom_members.blank?
       res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
