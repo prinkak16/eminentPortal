@@ -269,7 +269,6 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
       # check if vacancy count available for unslotting
       vacancies = Vacancy.where(id: params[:vacancies_id])
-                         .where.not(allotment_status: 'occupied')
 
       vacancies_count = vacancies.length
       if vacancies_count < 1
@@ -278,6 +277,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           message: 'No vacancy are available for unslotting.'
         }, status: :bad_request
       end
+
+      raise "Vacancies are occupied, so can't be unslotted" if vacancies.where(allotment_status: 'occupied').present?
 
       vacancies.each do |vacancy|
         if vacancy.may_unslot?
@@ -416,8 +417,6 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           vac.id IS NOT null
           AND
           vac.deleted_at IS null
-          AND
-          vac.allotment_status = 'vacant'
           AND
           vac.organization_id = #{params['organization_id']}
           AND

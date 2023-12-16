@@ -32,23 +32,13 @@ class Api::V1::Allotment::StatsController < BaseApiController
            SUM(CASE WHEN vac.allotment_status IN ('vacant') THEN 1 ELSE 0 END) AS yet_to_assigned,
            SUM(CASE WHEN vac.allotment_status IN ('occupied') THEN 1 ELSE 0 END) AS occupied,
            SUM(1) AS total
-         FROM public.user_ministries AS um
-         LEFT JOIN public.vacancies AS vac
-         ON um.ministry_id = vac.ministry_id
-         LEFT JOIN public.ministries AS ministry
-         ON vac.ministry_id = ministry.id
+         FROM public.vacancies AS vac
          WHERE
-           um.is_minister IS false
-           AND
-           vac.id IS NOT null
-           AND
            vac.deleted_at IS null
            AND
            vac.slotting_status IN ('slotted', 'outside_saral')
            AND
            vac.country_state_id IN (#{country_states.join(',')})
-           AND
-           um.user_id = #{current_user.id}
       "
       results = Vacancy.find_by_sql(sql)
 

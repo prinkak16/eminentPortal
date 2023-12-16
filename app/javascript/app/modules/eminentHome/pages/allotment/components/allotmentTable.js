@@ -140,11 +140,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data.org_name}</TableCell>
                   <TableCell>{data.ministry_name}</TableCell>
-                  <TableCell>
-                    {data.occupied === 0
-                      ? data.vacant
-                      : (data.total - data.vacant) / data.total}
-                  </TableCell>
+                  <TableCell>{data.total}</TableCell>
                   <TableCell>{data.dept_name}</TableCell>
                   <TableCell>{data.assigned_states}</TableCell>
                   <TableCell style={{ textAlign: "center" }}>
