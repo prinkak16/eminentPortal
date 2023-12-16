@@ -206,8 +206,10 @@ class Api::V1::Allotment::EminentController < BaseApiController
         }, status: :unauthorized
       end
 
+      raise "PSU Id can't be blank." unless params[:psu_id].present?
+
       psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
-      raise "PSU Id can't be blank." unless psu.present?
+      raise 'PSU not found.' unless psu.present?
 
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
@@ -309,6 +311,11 @@ class Api::V1::Allotment::EminentController < BaseApiController
       end
 
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
+      raise "PSU Id can't be blank." unless psu_id.present?
+
+      psu = Organization.find_by(id: psu_id)
+      raise 'PSU not found.' unless psu.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
 
@@ -319,10 +326,11 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
       vacancy_allotments = VacancyAllotment.with_deleted
                                            .joins(vacancy: :organization)
-                                           .where(vacancies: { organization_id: psu_id, country_state_id: country_states })
+                                           .where(vacancies: { organization_id: psu, country_state_id: country_states })
                                            .select("vacancies.id as vacancy_id, organizations.id as psu_id, organizations.name as psu_name,
                                                     vacancy_allotments.unoccupied_at as unoccupied_at, vacancies.designation as vacancy_designation,
                                                     to_char(vacancy_allotments.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, vacancy_allotments.id")
+                                           .order(:created_at)
 
       vacancy_allotment_count = vacancy_allotments.size
       vacancy_allotments = vacancy_allotments.limit(limit).offset(offset)
