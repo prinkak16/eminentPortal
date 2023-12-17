@@ -157,7 +157,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
           total: stat.total.present? ? stat.total : 0,
           vacant: stat.vacant.present? ? stat.vacant : 0,
           occupied: stat.occupied.present? ? stat.occupied : 0,
-          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name) : []
+          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name).join(', ') : ''
         }
       end
 

@@ -2,7 +2,9 @@ class Ministry < ApplicationRecord
   self.table_name = 'ministries'
 
   has_many :user_ministries
-  has_many :vacancies
+  has_many :vacancies, dependent: :destroy
+  has_many :departments, dependent: :destroy
+  has_many :organizations, dependent: :destroy
   has_many :user_ministries, dependent: :destroy
 
   scope :name_similar, ->(search) {

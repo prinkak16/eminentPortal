@@ -135,6 +135,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                 <TableCell>PSU/PSB</TableCell>
                 <TableCell>Ministry</TableCell>
                 <TableCell>Vacancy</TableCell>
+                <TableCell>Vacant</TableCell>
                 <TableCell>Department</TableCell>
                 <TableCell>Assigned State</TableCell>
                 <TableCell className="text-center">
@@ -149,6 +150,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                   <TableCell>{data.org_name}</TableCell>
                   <TableCell>{data.ministry_name}</TableCell>
                   <TableCell>{data.total}</TableCell>
+                  <TableCell>{data.vacant}</TableCell>
                   <TableCell>{data.dept_name}</TableCell>
                   <TableCell>{data.assigned_states}</TableCell>
                   <TableCell style={{ textAlign: "center" }}>
