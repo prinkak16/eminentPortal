@@ -32,23 +32,13 @@ class Api::V1::Allotment::StatsController < BaseApiController
            SUM(CASE WHEN vac.allotment_status IN ('vacant') THEN 1 ELSE 0 END) AS yet_to_assigned,
            SUM(CASE WHEN vac.allotment_status IN ('occupied') THEN 1 ELSE 0 END) AS occupied,
            SUM(1) AS total
-         FROM public.user_ministries AS um
-         LEFT JOIN public.vacancies AS vac
-         ON um.ministry_id = vac.ministry_id
-         LEFT JOIN public.ministries AS ministry
-         ON vac.ministry_id = ministry.id
+         FROM public.vacancies AS vac
          WHERE
-           um.is_minister IS false
-           AND
-           vac.id IS NOT null
-           AND
            vac.deleted_at IS null
            AND
            vac.slotting_status IN ('slotted', 'outside_saral')
            AND
            vac.country_state_id IN (#{country_states.join(',')})
-           AND
-           um.user_id = #{current_user.id}
       "
       results = Vacancy.find_by_sql(sql)
 
@@ -90,6 +80,9 @@ class Api::V1::Allotment::StatsController < BaseApiController
 
       # organization id computation
       org_id_search = params[:organization].present? ? params[:organization] : nil
+
+      # search by query
+      query = params[:query].present? ? params[:query] : nil
 
       # ratna type id computation
       ratna_type_search = params[:ratna_type].present? ? params[:ratna_type].split(',') : nil
@@ -140,6 +133,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
       sql += " AND dept.id IN (#{dept_id_search})" unless dept_id_search.nil?
       sql += " AND org.id IN (#{org_id_search})" unless org_id_search.nil?
       sql += " AND org.ratna_type IN (#{ratna_type_search})" unless ratna_type_search.nil?
+      sql += " AND (LOWER(ministry.name) LIKE LOWER('%#{query}%') OR LOWER(org.name) LIKE LOWER('%#{query}%'))" unless query.nil?
       sql += "
           GROUP BY
             ministry.id,
@@ -163,7 +157,7 @@ class Api::V1::Allotment::StatsController < BaseApiController
           total: stat.total.present? ? stat.total : 0,
           vacant: stat.vacant.present? ? stat.vacant : 0,
           occupied: stat.occupied.present? ? stat.occupied : 0,
-          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name) : []
+          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name).join(', ') : ''
         }
       end
 
@@ -287,15 +281,14 @@ class Api::V1::Allotment::StatsController < BaseApiController
         country_states << country_state[:id]
       end
 
-      psu_details = Organization.joins(ministry: :user_ministries)
-                                .joins(:vacancies)
+      psu_details = Organization.joins(:ministry, :vacancies)
                                 .where(id: psu_id)
-                                .where(user_ministries: { user_id: current_user.id })
                                 .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
                                 .group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
                                                 count(distinct vacancies.id) as total_vacancy_count, count(case when vacancies.allotment_status = 'vacant' then 1 end) as vacant_vacancy_count,
-                                                count(case when vacancies.allotment_status = 'occupied' then 1 end) as assigned_vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks")
+                                                count(case when vacancies.allotment_status = 'occupied' then 1 end) as assigned_vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks,
+                                                array_agg(DISTINCT vacancies.country_state_id) as states")
       if psu_details.exists?
         psu_data = {
           psu_id: psu_details.first.psu_id,
@@ -304,7 +297,8 @@ class Api::V1::Allotment::StatsController < BaseApiController
           total_vacancy_count: psu_details.first.total_vacancy_count,
           vacant_vacancy_count: psu_details.first.vacant_vacancy_count,
           assigned_vacancy_count: psu_details.first.assigned_vacancy_count,
-          remarks: psu_details.first.remarks
+          slotting_remark: psu_details.first.remarks,
+          location: CountryState.where(id: psu_details.first.states).pluck(:name)&.join(', ')
         }
 
         return render json: {

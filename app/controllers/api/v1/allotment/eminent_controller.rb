@@ -102,8 +102,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
       custom_members = custom_members.where(search_query.join(' OR '))
     end
 
+    custom_members = custom_members.order('created_at desc').distinct
     length = custom_members.length
-    custom_members = custom_members.order('created_at desc')
 
     if !custom_members.blank?
       res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
@@ -143,37 +143,38 @@ class Api::V1::Allotment::EminentController < BaseApiController
         country_states << country_state[:id]
       end
 
-      psu = Organization.joins(:vacancies).where(id: psu_id)
-                        .where(vacancies: { country_state_id: country_states })
-                        .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' }).distinct
-      if psu.count.positive?
-        if selected_members.count > psu.first.vacancies.count
-          raise "Selected eminent can't be greater than vacancy count"
-        end
+      psu = Organization.where(id: psu_id)
+      raise 'PSU not found.' unless psu.present?
 
-        vacancies_for_allotment = psu.first.vacancies.take(selected_members.length)
+      vacancies = psu.first.vacancies
+      vacancies = vacancies.where(vacancies: { country_state_id: country_states })
+                           .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+
+      raise "Selected eminent can't be greater than vacancy count" if selected_members.count > vacancies.count
+
+      if vacancies.count.positive?
+        vacancies_for_allotment = vacancies.take(selected_members.length)
 
         vacancy_allotment_data = []
         ActiveRecord::Base.transaction do
           selected_members.each_with_index do |member, index|
-            if VacancyAllotment.where(custom_member_form: member, vacancy: vacancies_for_allotment[index], unoccupied_at: nil).count.positive?
-              raise "This eminent having (name: #{member.data['name']} and id: #{member.id}) is already assigned to that vacancy."
-            else
-              allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index], remarks: remarks)
-              file_status_level = FileStatusLevel.first
-              file_status = FileStatus.create!(vacancy_allotment_id: allotment.id, action_by_id: current_user.id, file_status_level_id: file_status_level.id)
-              FileStatusActivity.create!(file_status_id: file_status.id, vacancy_allotment_id: allotment.id, file_status_level_id: file_status_level.id)
-              allotment.update!(file_status_id: file_status.id)
-              vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
-              vacancy_allotment_data << {
-                psu_id: psu.first.id,
-                psu_name: psu.first.name,
-                vacancy_id: vacancies_for_allotment[index].id,
-                member_id: member.id,
-                member_name: member.data['name'],
-                remarks: remarks
-              }
-            end
+            raise "Member having (name: #{member.data['name']} and id: #{member.id} is already assigned.)" if VacancyAllotment.where(custom_member_form: member, unoccupied_at: nil).count.positive?
+            raise "Vacancy having (id: #{vacancies_for_allotment[index].id} is already occupied.)" if VacancyAllotment.where(vacancy: vacancies_for_allotment[index], unoccupied_at: nil).count.positive?
+
+            allotment = VacancyAllotment.create!(custom_member_form: member, vacancy: vacancies_for_allotment[index], remarks: remarks)
+            file_status_level = FileStatusLevel.first
+            file_status = FileStatus.create!(vacancy_allotment_id: allotment.id, action_by_id: current_user.id, file_status_level_id: file_status_level.id)
+            FileStatusActivity.create!(file_status_id: file_status.id, vacancy_allotment_id: allotment.id, file_status_level_id: file_status_level.id)
+            allotment.update!(file_status_id: file_status.id)
+            vacancies_for_allotment[index].assign! if vacancies_for_allotment[index].may_assign?
+            vacancy_allotment_data << {
+              psu_id: psu.first.id,
+              psu_name: psu.first.name,
+              vacancy_id: vacancies_for_allotment[index].id,
+              member_id: member.id,
+              member_name: member.data['name'],
+              remarks: remarks
+            }
           end
         end
 
@@ -204,8 +205,10 @@ class Api::V1::Allotment::EminentController < BaseApiController
         }, status: :unauthorized
       end
 
+      raise "PSU Id can't be blank." unless params[:psu_id].present?
+
       psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
-      raise "PSU Id can't be blank." unless psu.present?
+      raise 'PSU not found.' unless psu.present?
 
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
@@ -242,8 +245,10 @@ class Api::V1::Allotment::EminentController < BaseApiController
       else
         return render json: {
           success: true,
-          message: 'No eminent is assigned.'
-        }
+          message: 'No eminent is assigned.',
+          count: 0,
+          data: []
+        }, status: :ok
       end
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
@@ -269,10 +274,13 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member_allotment = member_allotment.where(unoccupied_at: nil)
 
       if member_allotment.present?
-        member_allotment.first.update!(unoccupied_at: DateTime.now)
-        allotted_vacancy = member_allotment.first.vacancy
+        existing_allotment = member_allotment.first
+        unassigned_allotment = VacancyAllotment.create!(existing_allotment.attributes.except('id', 'created_at', 'updated_at'))
+        existing_allotment.destroy! # deletion is soft delete, here we can track history when it was assigned
+        unassigned_allotment.update!(unoccupied_at: DateTime.now)
+        allotted_vacancy = unassigned_allotment.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
-        file_status = member_allotment.first.file_status
+        file_status = unassigned_allotment.file_status
         file_status.destroy if file_status.present?
 
         return render json: {
@@ -302,6 +310,11 @@ class Api::V1::Allotment::EminentController < BaseApiController
       end
 
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
+      raise "PSU Id can't be blank." unless psu_id.present?
+
+      psu = Organization.find_by(id: psu_id)
+      raise 'PSU not found.' unless psu.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
 
@@ -310,11 +323,13 @@ class Api::V1::Allotment::EminentController < BaseApiController
         country_states << country_state[:id]
       end
 
-      vacancy_allotments = VacancyAllotment.joins(vacancy: :organization)
-                                           .where(vacancies: { organization_id: psu_id, country_state_id: country_states })
+      vacancy_allotments = VacancyAllotment.with_deleted
+                                           .joins(vacancy: :organization)
+                                           .where(vacancies: { organization_id: psu, country_state_id: country_states })
                                            .select("vacancies.id as vacancy_id, organizations.id as psu_id, organizations.name as psu_name,
-                                                          vacancy_allotments.unoccupied_at as unoccupied_status, vacancies.designation as vacancy_designation,
-                                                          to_char(vacancy_allotments.updated_at, 'YYYY-MM-DD HH24:MI:SS') as updated_at, vacancy_allotments.id").distinct
+                                                    vacancy_allotments.unoccupied_at as unoccupied_at, vacancies.designation as vacancy_designation,
+                                                    to_char(vacancy_allotments.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, vacancy_allotments.id")
+                                           .order(:created_at)
 
       vacancy_allotment_count = vacancy_allotments.size
       vacancy_allotments = vacancy_allotments.limit(limit).offset(offset)
@@ -325,9 +340,9 @@ class Api::V1::Allotment::EminentController < BaseApiController
             vacancy_id: vacancy.vacancy_id,
             psu_id: vacancy.psu_id,
             psu_name: vacancy.psu_name,
-            allotment_status: vacancy.unoccupied_status.nil? ? 'Assigned' : 'Unassigned',
+            allotment_status: vacancy.unoccupied_at.nil? ? 'Assigned' : 'Unassigned',
             vacancy_designation: vacancy.vacancy_designation,
-            created_at: vacancy.updated_at
+            created_at: vacancy.created_at
           }
         end
 

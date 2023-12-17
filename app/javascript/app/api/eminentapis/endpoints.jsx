@@ -45,7 +45,7 @@ export const allotmentEminentList = (params) => {
 };
 
 export const allotmentCardData = (params) => {
-  return axios.get(apiBaseUrl + "allotment/assign_position_info/" + params);
+  return axios.get(apiBaseUrl + "allotment/psu_details", { params });
 };
 
 export const allotmentListData = (params, filterString) => {

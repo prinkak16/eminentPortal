@@ -5,4 +5,6 @@ class Department < ApplicationRecord
 
   validates_uniqueness_of :slug, scope: :ministry_id
   belongs_to :ministry, class_name: 'Ministry'
+  has_many :vacancies, dependent: :destroy
+  has_many :organizations, dependent: :destroy
 end

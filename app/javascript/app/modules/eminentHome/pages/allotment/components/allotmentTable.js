@@ -18,7 +18,7 @@ import SearchIcon from "../../../../../../../../public/images/search.svg";
 import ArrowDownward from "../../../../../../../../public/images/si_File_download.svg";
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
-import { debounce } from "lodash";
+import Math, { debounce } from "lodash";
 import {
   allotmentCardData,
   allotmentListData,
@@ -42,7 +42,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
   const itemsPerPage = 10;
 
   function changeHandler(data, id) {
-    allotmentCardData(id)
+    const params = { psu_id: id }
+    allotmentCardData(params)
       .then((res) => {
         setAllotmentCardDetails(res.data.data);
       })
@@ -62,10 +63,17 @@ function AllotmentTable({ setAssignShow, filterString }) {
 
   const searchHandeler = debounce((e) => {
     const searchParams = {
-      ministry_name: e.target.value,
-      organization_name: e.target.value,
+      query: e.target.value
     };
-    allotmentListData(searchParams, filterString);
+    allotmentListData(searchParams, filterString).then(res => {
+      setTableData(res?.data?.data?.value);
+      setIsFetching(false);
+      setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
+    }, error => {
+      setIsFetching(false);
+      setTableData([]);
+      // display toast with error
+    });
   }, 500);
 
   const fetchTableData = () => {
@@ -127,6 +135,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
                 <TableCell>PSU/PSB</TableCell>
                 <TableCell>Ministry</TableCell>
                 <TableCell>Vacancy</TableCell>
+                <TableCell>Vacant</TableCell>
                 <TableCell>Department</TableCell>
                 <TableCell>Assigned State</TableCell>
                 <TableCell className="text-center">
@@ -140,11 +149,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{data.org_name}</TableCell>
                   <TableCell>{data.ministry_name}</TableCell>
-                  <TableCell>
-                    {data.occupied === 0
-                      ? data.vacant
-                      : (data.total - data.vacant) / data.total}
-                  </TableCell>
+                  <TableCell>{data.total}</TableCell>
+                  <TableCell>{data.vacant}</TableCell>
                   <TableCell>{data.dept_name}</TableCell>
                   <TableCell>{data.assigned_states}</TableCell>
                   <TableCell style={{ textAlign: "center" }}>
