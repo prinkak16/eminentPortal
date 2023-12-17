@@ -13,7 +13,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const [inputNumber, setInputNumber] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [inputOtp, setInputOtp] = useState()
+    const [inputOtp, setInputOtp] = useState('')
     const [otpSent, setOtpSent] = useState()
     const [otpField, setOtpField] = useState(false)
 
@@ -62,14 +62,6 @@ const resendOtp = () => {
         }
     }
 
-     function  handleOtpEnterKeyPress(event){
-         if (event.key === "Enter") {
-                 if (inputOtp.length > 5) {
-                     submitOtp();
-                 }
-         }
-     }
-
     return(
         <div className="login-wrap">
             <div className="login-image">
@@ -80,7 +72,7 @@ const resendOtp = () => {
                     <div className="h-100 justify-content-center align-items-center">
                         <div className="login-form">
                             <Typography variant="h2" className=" text-center my-4">
-                                Eminent Personality form
+                                Eminent Personality
                             </Typography>
                             <div className="login-form-wrap">
                                 <Typography variant="h4" >
@@ -115,7 +107,9 @@ const resendOtp = () => {
 
                                 </div>
                                 <div className="row h-100 justify-content-center align-items-center pt-2">
-                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>{inputOtp ? 'Submit' : 'Send OTP'}</button>
+                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>
+                                        { inputOtp.length === 6 ? 'Submit' : 'Send OTP'}
+                                    </button>
                                 </div>
                             </div>
                         </div>
