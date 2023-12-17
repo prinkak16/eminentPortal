@@ -26,6 +26,7 @@ import UnassignModal from "./unassignModal";
 import EllipseBlue from "../../../../../../../../../public/images/Ellipse_blue.svg";
 import Frame from "../../../../../../../../../public/images/Frame.svg";
 import AllotmentContext from "../../context/allotmentContext";
+import { debounce } from "lodash";
 import {
   allotmentEminentList,
   assignAllotment,
@@ -158,11 +159,12 @@ function AllotAssign() {
     return education;
   };
 
-  const searchNameHandeler = (e) => {
-    const searchparams = {
+  const handleChangeSearch = debounce((e) => {
+    const searchParams = {
       query: e.target.value,
     };
-    allotmentEminentList(searchparams)
+
+    allotmentEminentList(searchParams)
       .then((res) => {
         setTableData(res.data.data.members);
         setIsFetching(false);
@@ -171,6 +173,10 @@ function AllotAssign() {
       .catch((err) => {
         setIsFetching(false);
       });
+  }, 500);
+
+  const searchNameHandeler = (e) => {
+    handleChangeSearch(e);
   };
 
   const textareaHandeler = (e) => {
@@ -232,7 +238,9 @@ function AllotAssign() {
     borderRadius: "5px",
   };
 
-  const Vacancy = allotmentCardDetails.total;
+  const Vacancy = allotmentCardDetails.vacant_vacancy_count;
+
+  console.log("havwdggs vacancy", Vacancy);
 
   const crossHandeler = (e, data) => {
     setDataArray(dataArray.filter((item) => item.id !== data.id));
@@ -658,7 +666,9 @@ function AllotAssign() {
             </div>
             <div className="card-cell4">
               <span className="card-span">Vacancy</span>
-              <p className="para">{allotmentCardDetails.total_vacancy_count}</p>
+              <p className="para">
+                {allotmentCardDetails.vacant_vacancy_count}
+              </p>
             </div>
           </div>
           <div className="allot-c2">
