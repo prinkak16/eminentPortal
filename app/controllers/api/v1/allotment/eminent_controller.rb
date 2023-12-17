@@ -330,6 +330,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
       sql = "SELECT
                allotment_history.vacancy_id AS vacancy_id,
                vacancies.designation AS vacancy_designation,
+               custom_member_forms.data->>'name' as member_name,
                organizations.id AS psu_id,
                organizations.name AS psu_name,
                to_char(allotment_history.unoccupied_at, 'YYYY-MM-DD HH24:MI:SS') AS unoccupied_at,
@@ -340,6 +341,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
                     UNION
                     select id, vacancy_id, custom_member_form_id, unoccupied_at, unoccupied_at AS event_time, deleted_at FROM vacancy_allotments where unoccupied_at is not null
                   ) AS allotment_history
+               LEFT JOIN custom_member_forms on custom_member_forms.id = allotment_history.custom_member_form_id
                INNER JOIN vacancies ON vacancies.id = allotment_history.vacancy_id
                INNER JOIN organizations ON organizations.id = vacancies.organization_id
                WHERE allotment_history.deleted_at IS NULL
@@ -356,6 +358,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
         vacancy_allotment_history.each do |vacancy|
           allotment_status = vacancy.unoccupied_at.nil? ? 'Assigned' : (vacancy.unoccupied_at == vacancy.entry_at ? 'Unassigned' : 'Assigned')
           result << {
+            member_name: vacancy.member_name,
             vacancy_id: vacancy.vacancy_id,
             psu_id: vacancy.psu_id,
             psu_name: vacancy.psu_name,

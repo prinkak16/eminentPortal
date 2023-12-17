@@ -467,14 +467,24 @@ function AllotAssign() {
       case 2:
         return (
           <div className="allot-history-div-1">
-            {historyData.map((data) => (
-              <div className="allot-history-div" key={data?.index}>
-                <span>
-                  <EllipseBlue />{" "}
-                  {`${data?.vacancy_designation} in ${data?.psu_name} ${data?.allotment_status}`}
-                </span>
-              </div>
-            ))}
+            {historyData && historyData.map((data) => {
+              const isAssigned = data.allotment_status === 'Assigned';
+              const date = new Date(data.created_at).toLocaleString('en-US',{
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })
+              const time = new Date(data.created_at).toLocaleTimeString();
+              return (
+                  <div className="allot-history-div" key={data?.index}>
+                    <span>
+                      <EllipseBlue/>{" "}
+                      {isAssigned && `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date},  ${time}`}
+                      {!isAssigned && `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date},  ${time}`}
+                    </span>
+                  </div>
+              )
+            })}
           </div>
         );
         break;
@@ -484,17 +494,17 @@ function AllotAssign() {
     }
   };
   const drawerContent = (
-    <Box
-      sx={{
-        width: 955,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "20px",
-      }}
-    >
-      {/* Add your content here */}
-      <div className="drawer-container">
+      <Box
+          sx={{
+            width: 955,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            padding: "20px",
+          }}
+      >
+        {/* Add your content here */}
+        <div className="drawer-container">
         <div className="drawer-head">
           <button
             className="drawer-btn"
