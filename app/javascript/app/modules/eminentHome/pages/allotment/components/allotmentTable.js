@@ -42,7 +42,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
   const itemsPerPage = 10;
 
   function changeHandler(data, id) {
-    const params = { psu_id: id }
+    const params = { psu_id: id };
     allotmentCardData(params)
       .then((res) => {
         setAllotmentCardDetails(res.data.data);
@@ -63,17 +63,20 @@ function AllotmentTable({ setAssignShow, filterString }) {
 
   const searchHandeler = debounce((e) => {
     const searchParams = {
-      query: e.target.value
+      query: e.target.value,
     };
-    allotmentListData(searchParams, filterString).then(res => {
-      setTableData(res?.data?.data?.value);
-      setIsFetching(false);
-      setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
-    }, error => {
-      setIsFetching(false);
-      setTableData([]);
-      // display toast with error
-    });
+    allotmentListData(searchParams, filterString).then(
+      (res) => {
+        setTableData(res?.data?.data?.value);
+        setIsFetching(false);
+        setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
+      },
+      (error) => {
+        setIsFetching(false);
+        setTableData([]);
+        // display toast with error
+      }
+    );
   }, 500);
 
   const fetchTableData = () => {
@@ -127,76 +130,84 @@ function AllotmentTable({ setAssignShow, filterString }) {
           <CircularProgress color="inherit" />
         </Backdrop>
 
-        <TableContainer component={Paper} className="psutable_1">
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>S.no.</TableCell>
-                <TableCell>PSU/PSB</TableCell>
-                <TableCell>Ministry</TableCell>
-                <TableCell>Vacancy</TableCell>
-                <TableCell>Vacant</TableCell>
-                <TableCell>Department</TableCell>
-                <TableCell>Assigned State</TableCell>
-                <TableCell className="text-center">
-                  <IconPark />
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((data, index) => (
-                <TableRow key={index + 1}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{data.org_name}</TableCell>
-                  <TableCell>{data.ministry_name}</TableCell>
-                  <TableCell>{data.total}</TableCell>
-                  <TableCell>{data.vacant}</TableCell>
-                  <TableCell>{data.dept_name}</TableCell>
-                  <TableCell>{data.assigned_states}</TableCell>
-                  <TableCell style={{ textAlign: "center" }}>
-                    <button
-                      variant="contained"
-                      className={
-                        data.vacant / data.total == 1
-                          ? (className = "assign-button")
-                          : data.vacant / data.total <= 1
-                          ? (className = "update-button")
-                          : (className = "update-button-green")
-                      }
-                      onClick={(id) => changeHandler(data, data.org_id)}
-                    >
-                      {data.vacant / data.total == 1 ? "Assign" : "Update"}
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {tableData.length === 0 ? (
+          <div style={{ color: "black" }}>No PSU or Ministry found.</div>
+        ) : (
+          <div>
+            <TableContainer component={Paper} className="psutable_1">
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>S.no.</TableCell>
+                    <TableCell>PSU/PSB</TableCell>
+                    <TableCell>Ministry</TableCell>
+                    <TableCell>Vacancy</TableCell>
+                    <TableCell>Department</TableCell>
+                    <TableCell>Assigned State</TableCell>
+                    <TableCell className="text-center">
+                      <IconPark />
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {tableData.map((data, index) => (
+                    <TableRow key={index + 1}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{data.org_name}</TableCell>
+                      <TableCell>{data.ministry_name}</TableCell>
+                      <TableCell>
+                        {data.total - data.vacant === 0
+                          ? data.total
+                          : `${data.total - data.vacant}/${data.total}`}
+                      </TableCell>
+                      <TableCell>{data.dept_name}</TableCell>
+                      <TableCell>{data.assigned_states}</TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <button
+                          variant="contained"
+                          className={
+                            data.total - data.vacant === 0
+                              ? (className = "assign-button")
+                              : data.vacant / data.total <= 1
+                              ? (className = "update-button")
+                              : (className = "update-button-green")
+                          }
+                          onClick={(id) => changeHandler(data, data.org_id)}
+                        >
+                          {data.vacant / data.total == 1 ? "Assign" : "Update"}
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-        <div>
-          <span className="d-flex justify-content-center pageCount">
-            {currentPage + 1}&nbsp;of&nbsp;{pageCount}
-          </span>
-          <ReactPaginate
-            breakLabel="..."
-            nextLabel="next >"
-            containerClassName={"pagination justify-content-end"}
-            onPageChange={handlePageChange}
-            pageLinkClassName={"page-link"}
-            pageClassName={"page-item"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            activeClassName={"active"}
-            pageRangeDisplayed={3}
-            pageCount={pageCount}
-            previousLabel="< previous"
-          />
-        </div>
+            <div>
+              <span className="d-flex justify-content-center pageCount">
+                {currentPage + 1}&nbsp;of&nbsp;{pageCount}
+              </span>
+              <ReactPaginate
+                breakLabel="..."
+                nextLabel="next >"
+                containerClassName={"pagination justify-content-end"}
+                onPageChange={handlePageChange}
+                pageLinkClassName={"page-link"}
+                pageClassName={"page-item"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                activeClassName={"active"}
+                pageRangeDisplayed={3}
+                pageCount={pageCount}
+                previousLabel="< previous"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
