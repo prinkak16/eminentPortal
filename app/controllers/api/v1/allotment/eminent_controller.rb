@@ -22,7 +22,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
     # compute search by eminent id
     custom_members = CustomMemberForm
     custom_members = custom_members.left_joins(:vacancy_allotments)
-    custom_members = custom_members.where.not('vacancy_allotments.custom_member_form_id is not null and (vacancy_allotments.unoccupied_at is null or vacancy_allotments.unoccupied_at is not null)')
+    custom_members = custom_members.where.not('vacancy_allotments.custom_member_form_id is not null and vacancy_allotments.unoccupied_at is null')
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
     unless eminent_ids.nil?
       eminent_ids = eminent_ids.map(&:to_i)
