@@ -274,13 +274,10 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member_allotment = member_allotment.where(unoccupied_at: nil)
 
       if member_allotment.present?
-        existing_allotment = member_allotment.first
-        unassigned_allotment = VacancyAllotment.create!(existing_allotment.attributes.except('id', 'created_at', 'updated_at'))
-        existing_allotment.destroy! # deletion is soft delete, here we can track history when it was assigned
-        unassigned_allotment.update!(unoccupied_at: DateTime.now)
-        allotted_vacancy = unassigned_allotment.vacancy
+        member_allotment.first.update!(unoccupied_at: DateTime.now)
+        allotted_vacancy = member_allotment.first.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
-        file_status = unassigned_allotment.file_status
+        file_status = member_allotment.first.file_status
         file_status.destroy if file_status.present?
 
         return render json: {
@@ -323,26 +320,41 @@ class Api::V1::Allotment::EminentController < BaseApiController
         country_states << country_state[:id]
       end
 
-      vacancy_allotments = VacancyAllotment.with_deleted
-                                           .joins(vacancy: :organization)
-                                           .where(vacancies: { organization_id: psu, country_state_id: country_states })
-                                           .select("vacancies.id as vacancy_id, organizations.id as psu_id, organizations.name as psu_name,
-                                                    vacancy_allotments.unoccupied_at as unoccupied_at, vacancies.designation as vacancy_designation,
-                                                    to_char(vacancy_allotments.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, vacancy_allotments.id")
-                                           .order(:created_at)
+      sql = "SELECT
+               allotment_history.vacancy_id AS vacancy_id,
+               vacancies.designation AS vacancy_designation,
+               organizations.id AS psu_id,
+               organizations.name AS psu_name,
+               to_char(allotment_history.unoccupied_at, 'YYYY-MM-DD HH24:MI:SS') AS unoccupied_at,
+               to_char(allotment_history.event_time, 'YYYY-MM-DD HH24:MI:SS') AS entry_at
+             FROM
+                  (
+                    SELECT id, vacancy_id, custom_member_form_id, unoccupied_at, created_at AS event_time, deleted_at FROM vacancy_allotments
+                    UNION
+                    select id, vacancy_id, custom_member_form_id, unoccupied_at, unoccupied_at AS event_time, deleted_at FROM vacancy_allotments where unoccupied_at is not null
+                  ) AS allotment_history
+               INNER JOIN vacancies ON vacancies.id = allotment_history.vacancy_id
+               INNER JOIN organizations ON organizations.id = vacancies.organization_id
+               WHERE allotment_history.deleted_at IS NULL
+               AND organizations.id = #{psu.id}
+               AND vacancies.country_state_id IN (#{country_states.join(', ')})
+               ORDER BY allotment_history.event_time
+            "
 
-      vacancy_allotment_count = vacancy_allotments.size
-      vacancy_allotments = vacancy_allotments.limit(limit).offset(offset)
-      if vacancy_allotments.length.positive?
+      vacancy_allotment_history = VacancyAllotment.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
+
+      vacancy_allotment_count = VacancyAllotment.find_by_sql(sql).length
+      if vacancy_allotment_history.length.positive?
         result = []
-        vacancy_allotments.each do |vacancy|
+        vacancy_allotment_history.each do |vacancy|
+          allotment_status = vacancy.unoccupied_at.nil? ? 'Assigned' : (vacancy.unoccupied_at == vacancy.entry_at ? 'Unassigned' : 'Assigned')
           result << {
             vacancy_id: vacancy.vacancy_id,
             psu_id: vacancy.psu_id,
             psu_name: vacancy.psu_name,
-            allotment_status: vacancy.unoccupied_at.nil? ? 'Assigned' : 'Unassigned',
+            allotment_status: allotment_status,
             vacancy_designation: vacancy.vacancy_designation,
-            created_at: vacancy.created_at
+            created_at: vacancy.entry_at
           }
         end
 
