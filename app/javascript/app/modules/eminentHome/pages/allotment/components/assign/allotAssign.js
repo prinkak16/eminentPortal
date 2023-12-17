@@ -34,6 +34,7 @@ import {
   allotmentHistoryData,
 } from "../../../../../../api/eminentapis/endpoints";
 import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
+import { toast } from "react-toastify";
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,17 +84,15 @@ function AllotAssign() {
   }, [currentPage]);
 
   const assignedList = (psuIdAllotment) => {
-    const assignparams = {
+    const assignParams = {
       psu_id: psuIdAllotment,
     };
-    getAssignedAllotment(assignparams)
+    getAssignedAllotment(assignParams)
       .then((res) => {
         setAssignedData(res.data.data);
         setAssignedRemark(res.data.allotment_remark);
       })
-      .catch((err) => {
-        alert(err);
-      });
+      .catch((err) => {});
   };
 
   useEffect(() => {
@@ -194,21 +193,26 @@ function AllotAssign() {
     setIsOpen(open);
   };
 
-  const handleModal = async () => {
+  const handleModal = () => {
     const data = {
       selected_members: selectedMember,
       psu_id: psuIdAllotment,
       remarks: remark,
     };
 
-    try {
-      await assignAllotment(data);
-      setIsOpen(true);
-      setValue(1);
-      setOpen(false);
-    } catch (err) {
-      alert(err.response.data.message);
-    }
+    assignAllotment(data).then(
+      (response) => {
+        setIsOpen(true);
+        setValue(1);
+        setOpen(false);
+        toast(response.data.message);
+      },
+      (error) => {
+        setIsOpen(false);
+        setOpen(false);
+        toast(error.response.data.message);
+      }
+    );
   };
 
   const unassignHandeler = (id) => {
@@ -353,17 +357,17 @@ function AllotAssign() {
       case 1:
         return (
           <>
-            <div className="Remark-div">
-              <span className="remark-span">Remark</span>
-              <div className="textarea-div">
-                <textarea className="textarea-field"></textarea>
-                <div className="btn-div">
-                  <button className="update-btn-1">
-                    <Pencil className="pencil" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/*<div className="Remark-div">*/}
+            {/*  <span className="remark-span">Remark</span>*/}
+            {/*  <div className="textarea-div">*/}
+            {/*    <textarea className="textarea-field"></textarea>*/}
+            {/*    <div className="btn-div">*/}
+            {/*      <button className="update-btn-1">*/}
+            {/*        <Pencil className="pencil" />*/}
+            {/*      </button>*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*</div>*/}
             <div className="table-main-container">
               {assignedData &&
                 assignedData.map((member) => (
@@ -472,14 +476,27 @@ function AllotAssign() {
       case 2:
         return (
           <div className="allot-history-div-1">
-            {historyData.map((data) => (
-              <div className="allot-history-div" key={data?.index}>
-                <span>
-                  <EllipseBlue />{" "}
-                  {`${data?.vacancy_designation} in ${data?.psu_name} ${data?.allotment_status}`}
-                </span>
-              </div>
-            ))}
+            {historyData &&
+              historyData.map((data) => {
+                const isAssigned = data.allotment_status === "Assigned";
+                const date = new Date(data.created_at).toLocaleString("en-US", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+                const time = new Date(data.created_at).toLocaleTimeString();
+                return (
+                  <div className="allot-history-div" key={data?.index}>
+                    <span>
+                      <EllipseBlue />{" "}
+                      {isAssigned &&
+                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date},  ${time}`}
+                      {!isAssigned &&
+                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date},  ${time}`}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
         );
         break;
