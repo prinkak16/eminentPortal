@@ -22,7 +22,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
     # compute search by eminent id
     custom_members = CustomMemberForm
     custom_members = custom_members.left_joins(:vacancy_allotments)
-    custom_members = custom_members.where.not('vacancy_allotments.custom_member_form_id is not null and vacancy_allotments.unoccupied_at is null')
+    custom_members = custom_members.where.not('vacancy_allotments.custom_member_form_id is not null and (vacancy_allotments.unoccupied_at is null or vacancy_allotments.unoccupied_at is not null)')
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
     unless eminent_ids.nil?
       eminent_ids = eminent_ids.map(&:to_i)
@@ -40,7 +40,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
         state_ids << country_state['id']
       end
     end
-    custom_members = custom_members.where(form_type: type, country_state_id: state_ids)
+    custom_members = custom_members.where(form_type: type)
 
     # compute age group filter
     age_groups = params[:age_group].present? ? params[:age_group].split(',') : nil
