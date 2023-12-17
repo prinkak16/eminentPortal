@@ -202,7 +202,7 @@ function AllotAssign() {
       setOpen(false);
       toast(response.data.message);
     }, (error) => {
-      setIsOpen(true);
+      setIsOpen(false);
       setOpen(false);
       toast(error.response.data.message);
     })
