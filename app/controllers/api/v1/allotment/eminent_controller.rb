@@ -116,7 +116,14 @@ class Api::V1::Allotment::EminentController < BaseApiController
         }
       }, status: :ok
     else
-      render json: { success: false, message: 'No member found.' }, status: :not_found
+      render json: {
+        success: false,
+        message: 'No member found.',
+        data: {
+          'members': [],
+          'length': 0
+        }
+      }, status: :ok
     end
   end
 
