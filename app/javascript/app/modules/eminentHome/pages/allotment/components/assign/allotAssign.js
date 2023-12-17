@@ -33,6 +33,7 @@ import {
   allotmentHistoryData,
 } from "../../../../../../api/eminentapis/endpoints";
 import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
+import {toast} from 'react-toastify';
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,16 +83,16 @@ function AllotAssign() {
   }, [currentPage]);
 
   const assignedList = (psuIdAllotment) => {
-    const assignparams = {
+    const assignParams = {
       psu_id: psuIdAllotment,
     };
-    getAssignedAllotment(assignparams)
+    getAssignedAllotment(assignParams)
       .then((res) => {
         setAssignedData(res.data.data);
         setAssignedRemark(res.data.allotment_remark);
       })
       .catch((err) => {
-        alert(err);
+
       });
   };
 
@@ -188,21 +189,23 @@ function AllotAssign() {
     setIsOpen(open);
   };
 
-  const handleModal = async () => {
+  const handleModal = () => {
     const data = {
       selected_members: selectedMember,
       psu_id: psuIdAllotment,
       remarks: remark,
     };
 
-    try {
-      await assignAllotment(data);
+    assignAllotment(data).then((response) => {
       setIsOpen(true);
       setValue(1);
       setOpen(false);
-    } catch (err) {
-      alert(err);
-    }
+      toast(response.data.message);
+    }, (error) => {
+      setIsOpen(true);
+      setOpen(false);
+      toast(error.response.data.message);
+    })
   };
 
   const unassignHandeler = (id) => {
@@ -345,17 +348,17 @@ function AllotAssign() {
       case 1:
         return (
           <>
-            <div className="Remark-div">
-              <span className="remark-span">Remark</span>
-              <div className="textarea-div">
-                <textarea className="textarea-field"></textarea>
-                <div className="btn-div">
-                  <button className="update-btn-1">
-                    <Pencil className="pencil" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/*<div className="Remark-div">*/}
+            {/*  <span className="remark-span">Remark</span>*/}
+            {/*  <div className="textarea-div">*/}
+            {/*    <textarea className="textarea-field"></textarea>*/}
+            {/*    <div className="btn-div">*/}
+            {/*      <button className="update-btn-1">*/}
+            {/*        <Pencil className="pencil" />*/}
+            {/*      </button>*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*</div>*/}
             <div className="table-main-container">
               {assignedData &&
                 assignedData.map((member) => (
