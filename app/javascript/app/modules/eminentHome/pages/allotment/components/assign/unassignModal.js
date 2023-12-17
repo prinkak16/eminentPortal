@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import {toast} from 'react-toastify';
 import {
   allotmentUnassign,
   getAssignedAllotment,
@@ -28,15 +29,14 @@ const style = {
 function unassignModal({ System, setSystem, historyId }) {
   const handleClose = () => setSystem(false);
 
-  const handleModalSystem = async (historyId) => {
+  const handleModalSystem = (historyId) => {
     allotmentUnassign(historyId)
       .then((res) => {
-        if (res?.data?.success) {
-          setSystem(false);
-        }
-      })
-      .catch((err) => {
-        alert(err);
+        setSystem(false);
+        toast(res.data.message);
+      }, (error) => {
+        setSystem(false);
+        toast(error.response.data.message);
       });
   };
 
