@@ -30,6 +30,7 @@ import {
   allotmentEminentList,
   assignAllotment,
   getAssignedAllotment,
+  allotmentHistoryData,
 } from "../../../../../../api/eminentapis/endpoints";
 import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
 
@@ -44,6 +45,10 @@ function AllotAssign() {
   const [isFetching, setIsFetching] = useState(false);
   const [selectedMember, setSelectedmember] = useState([]);
   const [remark, setRemark] = useState(null);
+  const [assignedData, setAssignedData] = useState([]);
+  const [assignedRemark, setAssignedRemark] = useState([]);
+  const [historyData, setHistoryData] = useState([]);
+  const [historyId, setHistoryId] = useState(null);
 
   const {
     allotmentCardDetails,
@@ -81,7 +86,10 @@ function AllotAssign() {
       psu_id: psuIdAllotment,
     };
     getAssignedAllotment(assignparams)
-      .then((res) => {})
+      .then((res) => {
+        setAssignedData(res.data.data);
+        setAssignedRemark(res.data.allotment_remark);
+      })
       .catch((err) => {
         alert(err);
       });
@@ -89,6 +97,23 @@ function AllotAssign() {
 
   useEffect(() => {
     assignedList(psuIdAllotment);
+  }, [System]);
+
+  const getHistory = (psuIdAllotment) => {
+    const historyparams = {
+      psu_id: psuIdAllotment,
+    };
+    allotmentHistoryData(historyparams)
+      .then((res) => {
+        setHistoryData(res.data.data);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  useEffect(() => {
+    getHistory(psuIdAllotment);
   }, []);
 
   const handleOpen = () => {
@@ -132,6 +157,21 @@ function AllotAssign() {
     return education;
   };
 
+  const searchNameHandeler = (e) => {
+    const searchparams = {
+      query: e.target.value,
+    };
+    allotmentEminentList(searchparams)
+      .then((res) => {
+        setTableData(res.data.data.members);
+        setIsFetching(false);
+        setPageCount(Math.ceil(res.data.data.length / itemsPerPage));
+      })
+      .catch((err) => {
+        setIsFetching(false);
+      });
+  };
+
   const textareaHandeler = (e) => {
     setRemark(e.target.value);
   };
@@ -165,9 +205,11 @@ function AllotAssign() {
     }
   };
 
-  const unassignHandeler = () => {
+  const unassignHandeler = (id) => {
+    setHistoryId(id);
     setSystem(true);
   };
+
   const assignedHandeler = () => {
     setIsOpen(true);
     setValue(1);
@@ -300,27 +342,140 @@ function AllotAssign() {
           </>
         );
         break;
+      case 1:
+        return (
+          <>
+            <div className="Remark-div">
+              <span className="remark-span">Remark</span>
+              <div className="textarea-div">
+                <textarea className="textarea-field"></textarea>
+                <div className="btn-div">
+                  <button className="update-btn-1">
+                    <Pencil className="pencil" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="table-main-container">
+              {assignedData &&
+                assignedData.map((member) => (
+                  <div className="user-table-1">
+                    <div
+                      className="table-container mt-4 table-container-1 remove-border"
+                      key={member.member_data.id}
+                    >
+                      <Grid container className="single-row ">
+                        <Grid item xs={3} className="gridItem min-width-24rem">
+                          <div className="row">
+                            <div className="col-md-4 pe-0">
+                              <div className="imgdiv circle">
+                                <img
+                                  className="img"
+                                  src={member.member_data.data.photo}
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-8">
+                              <h2 className="headingName">
+                                {member.member_data.data.name}
+                              </h2>
+                              <div className="row d-flex">
+                                <p>
+                                  Phone : {member.member_data.data.mobiles[0]},{" "}
+                                  {member.member_data.data.mobiles[1]}
+                                </p>
+                                <div />
+                                <div className="d-flex">
+                                  <IdBadge />
+                                  <p className="id-text">
+                                    ID No. - {member.member_data.id}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid
+                          item
+                          xs
+                          className="gridItem education-profession-container"
+                        >
+                          <div className="row">
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Age</p>
+                              <p>
+                                {member?.member_data?.data?.dob
+                                  ? `${calculateAge(
+                                      dobFormat(member?.member_data.data?.dob)
+                                    )} Years`
+                                  : ""}
+                              </p>
+                            </div>
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Profession</p>
+                              <p>
+                                {getUserProfession(
+                                  member.member_data.data.professions
+                                )}
+                              </p>
+                            </div>
+                            <div className="col-md-6 data-display">
+                              <p className="text-labels">Education</p>
+                              <p>
+                                {getUserEducation(
+                                  member.member_data.data.educations
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs className="gridItem">
+                          <div className="row data-display">
+                            <p className="text-labels">Address</p>
+                            <p>
+                              {getAddress(member?.member_data.data?.address)}
+                            </p>
+                          </div>
+                        </Grid>
+                        <Grid item xs className="gridItemLast">
+                          <div className="d-flex">
+                            <div className="row data-display">
+                              <p className="text-labels">Referred by</p>
+                              <p>{member.member_data.data.reference?.name}</p>
+                            </div>
+                          </div>
+                        </Grid>
+                      </Grid>
+                    </div>
+                    <div className="UnAssign-allotment-div">
+                      <button
+                        className="UnAssign-allotment-btn"
+                        onClick={() => unassignHandeler(member.member_data.id)}
+                      >
+                        Unassign
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </>
+        );
+        break;
       case 2:
         return (
           <div className="allot-history-div-1">
-            <div className="allot-history-div">
-              <span>
-                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
-              </span>
-            </div>
-            <div className="allot-history-div">
-              <span>
-                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
-              </span>
-            </div>
-            <div className="allot-history-div">
-              <span>
-                <EllipseBlue /> Independent Director in ONGC Unassigned,11/10/23
-              </span>
-            </div>
+            {historyData.map((data) => (
+              <div className="allot-history-div" key={data?.index}>
+                <span>
+                  <EllipseBlue />{" "}
+                  {`${data?.vacancy_designation} in ${data?.psu_name} ${data?.allotment_status}`}
+                </span>
+              </div>
+            ))}
           </div>
         );
         break;
+
       default:
         return <h1>none</h1>;
     }
@@ -338,7 +493,13 @@ function AllotAssign() {
       {/* Add your content here */}
       <div className="drawer-container">
         <div className="drawer-head">
-          <button className="drawer-btn" onClick={() => setIsOpen(false)}>
+          <button
+            className="drawer-btn"
+            onClick={() => {
+              setIsOpen(false);
+              setValue(0);
+            }}
+          >
             <Arrow className="arrow-pic" />
           </button>
           <h3>Assign positions</h3>
@@ -385,7 +546,11 @@ function AllotAssign() {
 
   return (
     <div>
-      <UnassignModal System={System} setSystem={setSystem} />
+      <UnassignModal
+        System={System}
+        setSystem={setSystem}
+        historyId={historyId}
+      />
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -502,6 +667,7 @@ function AllotAssign() {
               type="text"
               placeholder="Search by Name or phone no.,Id"
               className="allot-searchField search-field-1"
+              onChange={(e) => searchNameHandeler(e)}
             />
           </div>
           <div className="search-box search-cont-2">
