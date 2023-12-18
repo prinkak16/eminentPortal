@@ -52,7 +52,7 @@ function AllotAssign() {
   const [assignedRemark, setAssignedRemark] = useState([]);
   const [historyData, setHistoryData] = useState([]);
   const [historyId, setHistoryId] = useState(null);
-  const [sellect, setSellect] = useState(null);
+  const [tabSelect, setTabSelect] = useState(null);
   const [cardDetail, setCardDetail] = useState([]);
 
   const {
@@ -115,7 +115,7 @@ function AllotAssign() {
 
   useEffect(() => {
     assignedList(psuIdAllotment);
-  }, [System, sellect]);
+  }, [System, tabSelect]);
 
   const getHistory = (psuIdAllotment) => {
     const historyparams = {
@@ -132,7 +132,7 @@ function AllotAssign() {
 
   useEffect(() => {
     getHistory(psuIdAllotment);
-  }, [sellect]);
+  }, [tabSelect]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -226,7 +226,7 @@ function AllotAssign() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setSellect(newValue);
+    setTabSelect(newValue);
   };
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
@@ -269,7 +269,7 @@ function AllotAssign() {
   const assignedHandeler = () => {
     setIsOpen(true);
     setValue(1);
-    setSellect(1);
+    setTabSelect(1);
   };
 
   const style = {
