@@ -19,6 +19,8 @@ import ArrowDownward from "../../../../../../../../public/images/si_File_downloa
 import IconPark from "../../../../../../../../public/images/icon-park_column.svg";
 import EditIcon from "../../../../../../../../public/images/Edit.svg";
 import Math, { debounce } from "lodash";
+import { toast } from "react-toastify";
+
 import {
   allotmentCardData,
   allotmentListData,
@@ -42,15 +44,6 @@ function AllotmentTable({ setAssignShow, filterString }) {
   const itemsPerPage = 10;
 
   function changeHandler(data, id) {
-    const params = { psu_id: id };
-    allotmentCardData(params)
-      .then((res) => {
-        setAllotmentCardDetails(res.data.data);
-      })
-      .catch((err) => {
-        alert(err);
-      });
-
     setPsuIdAllotment(id);
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
@@ -92,7 +85,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
         setPageCount(Math.ceil(res.data.data.count / itemsPerPage));
       })
       .catch((error) => {
-        alert(error);
+        toast(error);
         setIsFetching(false);
       });
   };
