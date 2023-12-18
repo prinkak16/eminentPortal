@@ -159,11 +159,11 @@ function AllotmentTable({ setAssignShow, filterString }) {
                         <button
                           variant="contained"
                           className={
-                            data.total - data.vacant === 0
-                              ? (className = "assign-button")
-                              : data.vacant / data.total <= 1
-                              ? (className = "update-button")
-                              : (className = "update-button-green")
+                            data.total === data.vacant
+                              ? "assign-button"
+                              : data?.vacant > 0
+                              ? "update-button"
+                              : "update-button-green"
                           }
                           onClick={(id) => changeHandler(data, data.org_id)}
                         >

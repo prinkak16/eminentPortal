@@ -34,7 +34,12 @@ import {
   allotmentHistoryData,
   allotmentCardData,
 } from "../../../../../../api/eminentapis/endpoints";
-import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
+import {
+  calculateAge,
+  dobFormat,
+  isValuePresent,
+  showSuccessToast,
+} from "../../../../../utils";
 import { toast } from "react-toastify";
 
 function AllotAssign() {
@@ -54,7 +59,6 @@ function AllotAssign() {
   const [historyId, setHistoryId] = useState(null);
   const [tabSelect, setTabSelect] = useState(null);
   const [cardDetail, setCardDetail] = useState([]);
-
   const {
     allotmentCardDetails,
     setAllotmentCardDetails,
@@ -75,6 +79,16 @@ function AllotAssign() {
       });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Optional: Add smooth scrolling animation
+    });
+  };
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
   const eminentList = () => {
     setIsFetching(true);
     const eminentParams = {
@@ -229,6 +243,9 @@ function AllotAssign() {
     setTabSelect(newValue);
   };
   const toggleDrawer = (open) => () => {
+    showSuccessToast(
+      "You have successfull added the position in the verify section"
+    );
     setIsOpen(open);
   };
 
@@ -298,7 +315,7 @@ function AllotAssign() {
         return (
           <>
             <div className="vacancy-div">
-              <span>Total Vacancy</span>
+              <span>Total Vacant</span>
               <span>{Vacancy}</span>
             </div>
             <div className="table-main-container">
@@ -571,7 +588,7 @@ function AllotAssign() {
           >
             <Arrow className="arrow-pic" />
           </button>
-          <h3>Assign positions</h3>
+          <h3>{value === 0 ? "Assign Positions" : "Assigned Positions"}</h3>
         </div>
         <div className="drawer-tab">
           <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
@@ -747,6 +764,11 @@ function AllotAssign() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="note-allotment-div">
+        Note: Below mentioned list has names & details of “Approved
+        Eminents”only.
       </div>
 
       <div className="middle-div">
