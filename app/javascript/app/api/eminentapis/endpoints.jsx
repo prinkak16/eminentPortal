@@ -48,6 +48,14 @@ export const allotmentCardData = (params) => {
   return axios.get(apiBaseUrl + "allotment/psu_details", { params });
 };
 
+export const allotmentHistoryData = (params) => {
+  return axios.get(apiBaseUrl + "allotment/vacancies_history", { params });
+};
+
+export const allotmentUnassign = (params) => {
+  return axios.get(apiBaseUrl + "allotment/unassign_member/" + params);
+};
+
 export const allotmentListData = (params, filterString) => {
   return axios.get(`${apiBaseUrl}/allotment/list?${filterString}`, { params });
 };

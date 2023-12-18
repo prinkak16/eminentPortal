@@ -109,6 +109,34 @@ module VacancyFilterHelper
     end
     result
   end
+  def fetch_vacancy_department_filters_for_allotted_locations(name)
+    country_states = []
+    fetch_minister_assigned_country_states.each do |country_state|
+      country_states << country_state[:id]
+    end
+
+    result = {
+      'key': 'department',
+      'display_name': 'Department',
+      'type': 'array',
+      'values': []
+    }
+
+    user_departments = Department.joins(:vacancies).where(vacancies: { country_state_id: country_states })
+    if name.present? && name.length > 2
+      user_departments = user_departments.where("LOWER(departments.name) LIKE ?", "%#{name.downcase}%")
+    end
+
+    user_departments = user_departments.select("departments.id as department_id, departments.name as department_name").distinct
+
+    user_departments.each do |user_department|
+      result[:values] << {
+        'value': user_department.department_id,
+        'display_name': user_department.department_name
+      }
+    end
+    result
+  end
   def fetch_all_vacancy_department_filters(name)
     result = {
       'key': 'department',
@@ -165,6 +193,34 @@ module VacancyFilterHelper
       result[:values] << {
         'value': user_organization['id'],
         'display_name': user_organization['name']
+      }
+    end
+    result
+  end
+  def fetch_vacancy_organization_filters_for_user_locations(name)
+    country_states = []
+    fetch_minister_assigned_country_states.each do |country_state|
+      country_states << country_state[:id]
+    end
+
+    result = {
+      'key': 'organization',
+      'display_name': 'PSU/PSB',
+      'type': 'array',
+      'values': []
+    }
+
+    user_organizations = Organization.joins(:vacancies).where(vacancies: { country_state_id: country_states })
+    if name.present? && name.length > 2
+      user_organizations = user_organizations.where("LOWER(organizations.name) LIKE ?", "%#{name.downcase}%")
+    end
+
+    user_organizations = user_organizations.select("organizations.id as organization_id, organizations.name as organization_name").distinct
+
+    user_organizations.each do |user_organization|
+      result[:values] << {
+        'value': user_organization.organization_id,
+        'display_name': user_organization.organization_name
       }
     end
     result
