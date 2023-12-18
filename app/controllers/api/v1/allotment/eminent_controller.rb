@@ -105,7 +105,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
     # compute referred by
     referred_by = params[:referred_by].present? ? params[:referred_by] : nil
     if referred_by.present?
-      custom_members = custom_members.where("data->'reference' ->> 'name' ILIKE ?", referred_by)
+      custom_members = custom_members.where("data->'reference' ->> 'name' ILIKE ?", "%#{referred_by}%")
     end
 
     custom_members = custom_members.order('created_at desc').distinct
