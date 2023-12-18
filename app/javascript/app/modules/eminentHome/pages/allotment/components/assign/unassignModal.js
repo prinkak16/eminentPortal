@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
 import {
   allotmentUnassign,
   getAssignedAllotment,
@@ -26,18 +26,31 @@ const style = {
   borderRadius: "5px",
 };
 
-function unassignModal({ System, setSystem, historyId }) {
+function unassignModal({
+  System,
+  setSystem,
+  historyId,
+  eminentList,
+  cardDetails,
+}) {
+  const { psuIdAllotment } = React.useContext(AllotmentContext);
   const handleClose = () => setSystem(false);
 
   const handleModalSystem = (historyId) => {
-    allotmentUnassign(historyId)
-      .then((res) => {
-        setSystem(false);
-        toast(res.data.message);
-      }, (error) => {
+    allotmentUnassign(historyId).then(
+      (res) => {
+        if (res?.data?.success) {
+          cardDetails(psuIdAllotment);
+          eminentList();
+          setSystem(false);
+          toast(res.data.message);
+        }
+      },
+      (error) => {
         setSystem(false);
         toast(error.response.data.message);
-      });
+      }
+    );
   };
 
   return (
@@ -104,7 +117,12 @@ function unassignModal({ System, setSystem, historyId }) {
                     </button>
                   </div>
                   <div className="modal-5">
-                    <button className="modal-btn-cancel">Cancel</button>
+                    <button
+                      className="modal-btn-cancel"
+                      onClick={() => setSystem(false)}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               </div>

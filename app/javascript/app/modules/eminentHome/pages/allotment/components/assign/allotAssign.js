@@ -32,9 +32,10 @@ import {
   assignAllotment,
   getAssignedAllotment,
   allotmentHistoryData,
+  allotmentCardData,
 } from "../../../../../../api/eminentapis/endpoints";
 import { calculateAge, dobFormat, isValuePresent } from "../../../../../utils";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +52,8 @@ function AllotAssign() {
   const [assignedRemark, setAssignedRemark] = useState([]);
   const [historyData, setHistoryData] = useState([]);
   const [historyId, setHistoryId] = useState(null);
+  const [tabSelect, setTabSelect] = useState(null);
+  const [cardDetail, setCardDetail] = useState([]);
 
   const {
     allotmentCardDetails,
@@ -61,7 +64,19 @@ function AllotAssign() {
     setPsuIdAllotment,
   } = useContext(AllotmentContext);
 
+  const cardDetails = () => {
+    const params = { psu_id: psuIdAllotment };
+    allotmentCardData(params)
+      .then((res) => {
+        setCardDetail(res.data.data);
+      })
+      .catch((err) => {
+        toast(err);
+      });
+  };
+
   const eminentList = () => {
+    setIsFetching(true);
     const eminentParams = {
       offset: itemsPerPage * currentPage,
       limit: itemsPerPage,
@@ -73,15 +88,18 @@ function AllotAssign() {
         setPageCount(Math.ceil(res.data.data.length / itemsPerPage));
       })
       .catch((err) => {
-        alert(err);
+        toast(err);
         setIsFetching(false);
       });
   };
 
   useEffect(() => {
     eminentList();
-    setIsFetching(true);
   }, [currentPage]);
+
+  useEffect(() => {
+    cardDetails();
+  }, []);
 
   const assignedList = (psuIdAllotment) => {
     const assignParams = {
@@ -92,14 +110,12 @@ function AllotAssign() {
         setAssignedData(res.data.data);
         setAssignedRemark(res.data.allotment_remark);
       })
-      .catch((err) => {
-
-      });
+      .catch((err) => {});
   };
 
   useEffect(() => {
     assignedList(psuIdAllotment);
-  }, [System]);
+  }, [System, tabSelect]);
 
   const getHistory = (psuIdAllotment) => {
     const historyparams = {
@@ -110,13 +126,13 @@ function AllotAssign() {
         setHistoryData(res.data.data);
       })
       .catch((err) => {
-        alert(err);
+        toast(err);
       });
   };
 
   useEffect(() => {
     getHistory(psuIdAllotment);
-  }, []);
+  }, [tabSelect]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -179,6 +195,26 @@ function AllotAssign() {
     handleChangeSearch(e);
   };
 
+  const handleSearch = debounce((e) => {
+    const searchParams = {
+      referred_by: e.target.value,
+    };
+
+    allotmentEminentList(searchParams)
+      .then((res) => {
+        setTableData(res.data.data.members);
+        setIsFetching(false);
+        setPageCount(Math.ceil(res.data.data.length / itemsPerPage));
+      })
+      .catch((err) => {
+        setIsFetching(false);
+      });
+  }, 500);
+
+  const searchReferredHandeler = (e) => {
+    handleSearch(e);
+  };
+
   const textareaHandeler = (e) => {
     setRemark(e.target.value);
   };
@@ -190,6 +226,7 @@ function AllotAssign() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setTabSelect(newValue);
   };
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
@@ -202,16 +239,26 @@ function AllotAssign() {
       remarks: remark,
     };
 
-    assignAllotment(data).then((response) => {
-      setIsOpen(true);
-      setValue(1);
-      setOpen(false);
-      toast(response.data.message);
-    }, (error) => {
-      setIsOpen(false);
-      setOpen(false);
-      toast(error.response.data.message);
-    })
+    assignAllotment(data).then(
+      (response) => {
+        // setIsOpen(true);
+        if (response?.data?.success) {
+          eminentList();
+          cardDetails();
+          assignedList(psuIdAllotment);
+          setDataArray([]);
+          setOpen(false);
+        }
+        setValue(1);
+        setOpen(false);
+        toast(response.data.message);
+      },
+      (error) => {
+        // setIsOpen(false);
+        setOpen(false);
+        toast(error.response.data.message);
+      }
+    );
   };
 
   const unassignHandeler = (id) => {
@@ -222,6 +269,7 @@ function AllotAssign() {
   const assignedHandeler = () => {
     setIsOpen(true);
     setValue(1);
+    setTabSelect(1);
   };
 
   const style = {
@@ -238,9 +286,7 @@ function AllotAssign() {
     borderRadius: "5px",
   };
 
-  const Vacancy = allotmentCardDetails.vacant_vacancy_count;
-
-  console.log("havwdggs vacancy", Vacancy);
+  const Vacancy = cardDetail?.vacant_vacancy_count;
 
   const crossHandeler = (e, data) => {
     setDataArray(dataArray.filter((item) => item.id !== data.id));
@@ -475,24 +521,26 @@ function AllotAssign() {
       case 2:
         return (
           <div className="allot-history-div-1">
-            {historyData && historyData.map((data) => {
-              const isAssigned = data.allotment_status === 'Assigned';
-              const date = new Date(data.created_at).toLocaleString('en-US',{
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })
-              const time = new Date(data.created_at).toLocaleTimeString();
-              return (
+            {historyData &&
+              historyData.map((data) => {
+                const isAssigned = data.allotment_status === "Assigned";
+                const date = new Date(data.created_at).toLocaleString("en-US", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+                return (
                   <div className="allot-history-div" key={data?.index}>
                     <span>
-                      <EllipseBlue/>{" "}
-                      {isAssigned && `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date},  ${time}`}
-                      {!isAssigned && `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date},  ${time}`}
+                      <EllipseBlue />{" "}
+                      {isAssigned &&
+                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date}`}
+                      {!isAssigned &&
+                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date}`}
                     </span>
                   </div>
-              )
-            })}
+                );
+              })}
           </div>
         );
         break;
@@ -502,17 +550,17 @@ function AllotAssign() {
     }
   };
   const drawerContent = (
-      <Box
-          sx={{
-            width: 955,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: "20px",
-          }}
-      >
-        {/* Add your content here */}
-        <div className="drawer-container">
+    <Box
+      sx={{
+        width: 955,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      {/* Add your content here */}
+      <div className="drawer-container">
         <div className="drawer-head">
           <button
             className="drawer-btn"
@@ -571,6 +619,9 @@ function AllotAssign() {
         System={System}
         setSystem={setSystem}
         historyId={historyId}
+        eminentList={eminentList}
+        cardDetails={cardDetails}
+        setDataArray={setDataArray}
       />
       <Modal
         aria-labelledby="transition-modal-title"
@@ -618,7 +669,12 @@ function AllotAssign() {
                   </button>
                 </div>
                 <div className="modal-5">
-                  <button className="modal-btn-cancel">Cancel</button>
+                  <button
+                    className="modal-btn-cancel"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
@@ -654,28 +710,39 @@ function AllotAssign() {
           <div className="allot-c1">
             <div className="card-cell1">
               <span className="card-span">PSU Name</span>
-              <p className="para">{allotmentCardDetails.psu_name}</p>
+              <p className="para">{cardDetail?.psu_name}</p>
             </div>
             <div className="card-cell2">
               <span className="card-span">Ministry Name</span>
-              <p className="para">{allotmentCardDetails.ministry_name}</p>
+              <p className="para">{cardDetail?.ministry_name}</p>
             </div>
-            <div className="card-cell3">
+            {/* <div className="card-cell3">
               <span className="card-span">Headquarter</span>
-              <p className="para">{allotmentCardDetails.location}</p>
-            </div>
+              <p className="para">{cardDetail?.location}</p>
+            </div> */}
             <div className="card-cell4">
-              <span className="card-span">Vacancy</span>
-              <p className="para">
-                {allotmentCardDetails.vacant_vacancy_count}
-              </p>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span className="card-span">Total Positions</span>
+                <p className="para">{cardDetail?.total_vacancy_count}</p>
+              </div>
+              {cardDetail?.total_vacancy_count -
+                cardDetail?.vacant_vacancy_count !==
+                0 && (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span className="card-span">Assigned positions</span>
+                  <p className="para">
+                    {cardDetail?.total_vacancy_count -
+                      cardDetail?.vacant_vacancy_count}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <div className="allot-c2">
             <span className="card-remark">Remarks</span>
             <p className="para-remark">
               <pre>
-                <Ellipse /> {allotmentCardDetails.slotting_remark}.
+                <Ellipse /> {cardDetail?.slotting_remark}.
               </pre>
             </p>
           </div>
@@ -699,6 +766,7 @@ function AllotAssign() {
               type="text"
               placeholder="Search by Referred"
               className="allot-searchField search-field-2"
+              onChange={(e) => searchReferredHandeler(e)}
             />
           </div>
         </div>

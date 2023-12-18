@@ -57,7 +57,9 @@
 }
 
 .card-cell4 {
-  width: 12%;
+  width: 25%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .para {
