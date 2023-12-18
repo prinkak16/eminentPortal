@@ -21,8 +21,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
     # compute search by eminent id
     custom_members = CustomMemberForm
-    custom_members = custom_members.left_joins(:vacancy_allotments)
-    custom_members = custom_members.where.not('vacancy_allotments.custom_member_form_id is not null and vacancy_allotments.unoccupied_at is null')
+    assigned_members = VacancyAllotment.where(unoccupied_at: nil).pluck(:custom_member_form_id).uniq
+    custom_members = custom_members.where.not(id: assigned_members)
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
     unless eminent_ids.nil?
       eminent_ids = eminent_ids.map(&:to_i)
@@ -100,6 +100,12 @@ class Api::V1::Allotment::EminentController < BaseApiController
         search_query += modified_names_query
       end
       custom_members = custom_members.where(search_query.join(' OR '))
+    end
+
+    # compute referred by
+    referred_by = params[:referred_by].present? ? params[:referred_by] : nil
+    if referred_by.present?
+      custom_members = custom_members.where("data->'reference' ->> 'name' ILIKE ?", "%#{referred_by}%")
     end
 
     custom_members = custom_members.order('created_at desc').distinct
