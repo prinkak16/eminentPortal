@@ -148,20 +148,19 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
       raise "PSU Id can't be blank." if psu_id.nil?
+      raise "State Id can't be blank." unless params[:state_id].present?
 
       remarks = params[:remarks].present? ? params[:remarks] : nil
-
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
 
       psu = Organization.where(id: psu_id)
       raise 'PSU not found.' unless psu.present?
 
+      country_state = CountryState.find_by(id: params[:state_id])
+      raise 'Country State is not found.' unless country_state.present?
+
       vacancies = psu.first.vacancies
-      vacancies = vacancies.where(vacancies: { country_state_id: country_states })
-                           .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+      vacancies = vacancies.where(vacancies: { country_state_id: country_state.id }) if country_state.present?
+      vacancies = vacancies.where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
 
       raise "Selected eminent can't be greater than vacancy count" if selected_members.count > vacancies.count
 
