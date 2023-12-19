@@ -7,6 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import {useEffect, useState} from "react";
 import './dailogBox.scss'
 import DrawerRectangle from '../../../../../../../public/images/drawerRectangle.svg'
+import {showErrorToast} from "../../../utils";
 
 const DialogBox = ({openDialogue, list, status, onClose, saveData, fileStatusId}) => {
     const [open, setOpen] = React.useState(false);
@@ -18,8 +19,12 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData, fileStatusId}
     }, [openDialogue]);
 
     const handleSave = () => {
-        saveData(selectedItem, input, fileStatusId)
-        handleClose()
+        if (status !== selectedItem) {
+            saveData(selectedItem, input, fileStatusId)
+            handleClose()
+        }else if (status === selectedItem) {
+            showErrorToast('Same status cannot be updated')
+        }
     }
     const handleClose = () => {
         setOpen(false);

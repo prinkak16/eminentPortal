@@ -41,16 +41,15 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     raise StandardError, 'Offset is required' if offset.nil?
 
     limit = params[:limit].present? ? params[:limit] : 10
-    custom_forms = CustomMemberForm
+    custom_forms = CustomMemberForm.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
     custom_forms = custom_forms.where("LOWER(data->>'name') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
     custom_forms = custom_forms.where("CAST(custom_member_forms.id AS TEXT) LIKE ?", "%#{member_id}%") if member_id.present?
-    custom_forms = custom_forms.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
     custom_forms = custom_forms.where(vacancy: { ministry_id: ministry_id.split(',') }) if ministry_id.present?
     custom_forms = custom_forms.where(vacancy: { organization_id: psu_psb_id.split(',') }) if psu_psb_id.present?
     custom_forms = custom_forms.where(file_status: { file_status_level_id: fs_level_id.split(',') }) if fs_level_id.present?
     total_count = custom_forms.count
     data = custom_forms.offset(offset).limit(limit).map do |member|
-      m_relations = member.vacancy_allotments&.first
+      m_relations = member.vacancy_allotments&.where(unoccupied_at: nil).first
       {
         id: member.id,
         name: member.data&.dig('name'),
@@ -113,5 +112,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     file_statuses = get_file_status_levels
     render json: { status: true, data: file_statuses, message: 'File Statuses' }, status: :ok
   end
+
+
 end
 
