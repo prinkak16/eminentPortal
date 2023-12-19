@@ -95,6 +95,8 @@ export default function PersistentDrawerLeft() {
     setShowAssignAllotmentBtn(false);
   };
 
+  console.log(open, 'eminent-container-max-wid-filter')
+
   const handleDrawerClose = () => {
     setOpen(false);
     setShowAssignAllotmentBtn(true);

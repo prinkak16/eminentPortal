@@ -183,12 +183,20 @@ $whiteColor:#fff;
   min-width: 16rem !important;
 }
 
+.eminent-container-max-wid-filter {
+  min-width: 13rem !important;
+}
+
 .fw-weight {
   font-weight: 600!important;
 }
 
-@media screen and (min-width: 1233px) {
+
+@media screen and (max-width: 1234px) {
   .eminent-container-max-wid {
     min-width: 13rem !important;
+  }
+  .eminent-container-max-wid-filter {
+    min-width: 9rem!important;
   }
 }

@@ -15,7 +15,7 @@ import {apiBaseUrl} from "../../../../api/api_endpoints";
 import {ApiContext} from "../../../ApiContext";
 import ReactPaginate from "react-paginate";
 
-const FileStatus = ({filterString, tabId}) => {
+const FileStatus = ({filterString, tabId,openFilter}) => {
     const {setBackDropToggle} = useContext(ApiContext)
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const [searchValue, setSearchValue] =useState('')
@@ -224,17 +224,17 @@ const FileStatus = ({filterString, tabId}) => {
 
                                 <div className='eminent-other-details d-flex'>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-ministry-container padding-assign eminent-container-max-wid'>
+                                    <div className={`eminent-ministry-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
                                         <span className='user-id-tag d-block'>Ministry</span>
                                         <span className='fw-weight'>{item.ministry}</span>
                                     </div>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-psu-container padding-assign eminent-container-max-wid'>
+                                    <div className={`eminent-psu-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
                                         <span className='user-id-tag d-block'>PSU</span>
                                         <span className='fw-weight'>{item.psu}</span>
                                     </div>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-type-container padding-assign eminent-container-max-wid'>
+                                    <div className={`eminent-type-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
                                         <span className='user-id-tag d-block'>Type</span>
                                         <span className='fw-weight'>{item.type}</span>
                                     </div>
