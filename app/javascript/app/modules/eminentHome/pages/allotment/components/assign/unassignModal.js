@@ -32,6 +32,7 @@ function unassignModal({
   historyId,
   eminentList,
   cardDetails,
+  psuName,
 }) {
   const { psuIdAllotment } = React.useContext(AllotmentContext);
   const handleClose = () => setSystem(false);
@@ -89,14 +90,8 @@ function unassignModal({
                   <div className="modal-2">
                     <p style={{ fontWeight: "400" }}>
                       PSU Name -{" "}
-                      <span style={{ fontWeight: "600" }}>
-                        Law Enforcement Training Institute
-                      </span>
+                      <span style={{ fontWeight: "600" }}>{psuName}</span>
                     </p>
-                  </div>
-
-                  <div className="unassign-location-div">
-                    <span>Location - New Delhi</span>
                   </div>
                 </div>
 

@@ -409,10 +409,9 @@
 
 .textarea-div {
   border: 1px solid #d9d3d3;
-  height: 70px;
   border-radius: 10px;
-  display: flex;
   align-items: center;
+  padding: 12px;
 }
 
 .Remark-div {
@@ -523,4 +522,10 @@
 }
 .frame-icon-allotment {
   color: #ff9559 !important;
+}
+
+.note-allotment-div {
+  margin-top: 55px;
+  font-weight: 500;
+  font-size: larger;
 }
