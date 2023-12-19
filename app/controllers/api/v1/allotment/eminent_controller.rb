@@ -159,8 +159,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
       raise 'Country State is not found.' unless country_state.present?
 
       vacancies = psu.first.vacancies
-      vacancies = vacancies.where(vacancies: { country_state_id: country_state.id }) if country_state.present?
-      vacancies = vacancies.where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+      vacancies = vacancies.where(vacancies: { country_state_id: country_state.id, allotment_status: 'vacant', slotting_status: 'slotted' })
 
       raise "Selected eminent can't be greater than vacancy count" if selected_members.count > vacancies.count
 
@@ -222,17 +221,16 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
       raise 'PSU not found.' unless psu.present?
 
+      raise "State Id can't be blank." unless params[:state_id].present?
+
+      state = CountryState.find_by(id: params[:state_id])
+      raise 'Country state is not found.' unless state.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
 
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
-
-
       assigned_members = CustomMemberForm.joins(vacancy_allotments: [vacancy: :organization])
-                                         .where(vacancies: { organization_id: psu, country_state_id: country_states })
+                                         .where(vacancies: { organization_id: psu, country_state_id: state.id })
                                          .where(vacancy_allotments: { unoccupied_at: nil })
                                          .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id, vacancy_allotments.remarks as allotment_remarks')
       assigned_members_count = assigned_members.length
