@@ -18,6 +18,7 @@ import AllotAssign from "../app/modules/eminentHome/pages/allotment/components/a
 import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFormSubmit";
 import Header from "./modules/eminentpersonalityhome/header/header";
 import {eminentAdminDetails, getLocationsData} from "./api/stepperApiEndpoints/stepperapiendpoints";
+import ProfilePage from "./modules/eminentHome/pages/profile/profilePage";
 
 const beforeLoginRoutes = (
     <Routes>
@@ -30,6 +31,7 @@ const afterLoginRoutes = (
         <Route path="/eminent_personality" element={<EminentPersonality/>}/>
         <Route path="/*" element={<Navigate to="/eminent_personality"/>}/>
         <Route path="/form_submitted" element={<AfterFormSubmit/>}/>
+        <Route path="/profile" element={<ProfilePage/>}/>
     </Routes>
 );
 
