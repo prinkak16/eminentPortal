@@ -278,20 +278,15 @@ class Api::V1::Allotment::StatsController < BaseApiController
       psu_id = params[:psu_id]
       raise "PSU Id can't be blank." unless psu_id.present?
 
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
+      raise "State Id can't be blank." unless params[:state_id].present?
 
-      state_id = params[:state_id].present? ? params[:state_id] : nil
+      country_state = CountryState.find_by(id: params[:state_id])
+      raise 'Country state is not found.' unless country_state.present?
 
       psu_details = Organization.joins(:ministry, :vacancies)
                                 .where(id: psu_id)
-                                .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
-
-      psu_details = psu_details.where(vacancies: { country_state_id: state_id }) if state_id.present?
-
-      psu_details = psu_details.group('organizations.id, organizations.name, ministries.name')
+                                .where(vacancies: { country_state_id: country_state.id, slotting_status: 'slotted' })
+                                .group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
                                                 count(distinct vacancies.id) as total_vacancy_count, count(case when vacancies.allotment_status = 'vacant' then 1 end) as vacant_vacancy_count,
                                                 count(case when vacancies.allotment_status = 'occupied' then 1 end) as assigned_vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks,
