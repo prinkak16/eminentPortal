@@ -40,7 +40,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
         state_ids << country_state['id']
       end
     end
-    custom_members = custom_members.where(form_type: type)
+    custom_members = custom_members.where(form_type: type, country_state_id: state_ids)
 
     # compute age group filter
     age_groups = params[:age_group].present? ? params[:age_group].split(',') : nil
@@ -353,7 +353,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
                WHERE allotment_history.deleted_at IS NULL
                AND organizations.id = #{psu.id}
                AND vacancies.country_state_id IN (#{country_states.join(', ')})
-               ORDER BY allotment_history.event_time
+               ORDER BY allotment_history.event_time DESC
             "
 
       vacancy_allotment_history = VacancyAllotment.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")

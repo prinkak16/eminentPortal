@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_14_105335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -103,13 +103,32 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
 
   create_table "file_status", force: :cascade do |t|
     t.integer "vacancy_allotment_id"
-    t.string "file_status"
     t.bigint "action_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.integer "file_status_level_id"
+    t.string "description"
     t.index ["action_by_id"], name: "index_file_status_on_action_by_id"
     t.index ["vacancy_allotment_id"], name: "index_file_status_on_vacancy_allotment_id"
+  end
+
+  create_table "file_status_activities", force: :cascade do |t|
+    t.integer "file_status_id"
+    t.bigint "vacancy_allotment_id", null: false
+    t.bigint "file_status_level_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "description"
+    t.index ["file_status_level_id"], name: "index_file_status_activities_on_file_status_level_id"
+    t.index ["vacancy_allotment_id"], name: "index_file_status_activities_on_vacancy_allotment_id"
+  end
+
+  create_table "file_status_levels", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "state"
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -183,6 +202,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.string "allotment_remark"
     t.index ["country_state_id"], name: "index_vacancies_on_country_state_id"
     t.index ["department_id"], name: "index_vacancies_on_department_id"
     t.index ["ministry_id"], name: "index_vacancies_on_ministry_id"
@@ -193,7 +213,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
     t.integer "vacancy_id"
     t.integer "custom_member_form_id"
     t.string "remarks", default: ""
-    t.string "file_status"
+    t.integer "file_status_id"
     t.datetime "unoccupied_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -202,4 +222,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_05_061144) do
     t.index ["vacancy_id"], name: "index_vacancy_allotments_on_vacancy_id"
   end
 
+  add_foreign_key "file_status_activities", "file_status_levels"
+  add_foreign_key "file_status_activities", "vacancy_allotments"
 end

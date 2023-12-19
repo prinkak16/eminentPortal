@@ -109,10 +109,10 @@ class Api::V1::Allotment::StatsController < BaseApiController
             org.id AS org_id,
             org.name AS org_name,
             org.is_listed AS is_listed,
+            vac.country_state_id AS state_id,
             SUM(1) AS total,
             SUM(CASE WHEN vac.allotment_status = 'vacant' THEN 1 ELSE 0 END) AS vacant,
-            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied,
-            ARRAY_AGG(distinct vac.country_state_id) as state_ids
+            SUM(CASE WHEN vac.allotment_status = 'occupied' THEN 1 ELSE 0 END) AS occupied
           FROM public.vacancies AS vac
           LEFT JOIN public.ministries AS ministry
           ON vac.ministry_id = ministry.id
@@ -141,7 +141,8 @@ class Api::V1::Allotment::StatsController < BaseApiController
             org.id,
             org.name,
             dept.id,
-            dept.name
+            dept.name,
+            vac.country_state_id
       "
       stats = Vacancy.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
@@ -157,7 +158,8 @@ class Api::V1::Allotment::StatsController < BaseApiController
           total: stat.total.present? ? stat.total : 0,
           vacant: stat.vacant.present? ? stat.vacant : 0,
           occupied: stat.occupied.present? ? stat.occupied : 0,
-          assigned_states: stat.state_ids.present? ? CountryState.where(id: stat.state_ids).pluck(:name).join(', ') : ''
+          assigned_states: stat.state_id.present? ? CountryState.find_by(id: stat.state_id)&.name : '',
+          assigned_state_id: stat.state_id
         }
       end
 
@@ -281,10 +283,15 @@ class Api::V1::Allotment::StatsController < BaseApiController
         country_states << country_state[:id]
       end
 
+      state_id = params[:state_id].present? ? params[:state_id] : nil
+
       psu_details = Organization.joins(:ministry, :vacancies)
                                 .where(id: psu_id)
                                 .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
-                                .group('organizations.id, organizations.name, ministries.name')
+
+      psu_details = psu_details.where(vacancies: { country_state_id: state_id }) if state_id.present?
+
+      psu_details = psu_details.group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
                                                 count(distinct vacancies.id) as total_vacancy_count, count(case when vacancies.allotment_status = 'vacant' then 1 end) as vacant_vacancy_count,
                                                 count(case when vacancies.allotment_status = 'occupied' then 1 end) as assigned_vacancy_count, string_agg(distinct vacancies.slotting_remarks, ', ') AS remarks,
