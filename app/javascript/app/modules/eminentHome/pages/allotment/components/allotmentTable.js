@@ -35,6 +35,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
     allotmentCardDetails,
     setAllotmentCardDetails,
     setPsuIdAllotment,
+    stateIdAllotment,
+    setStateIdAllotment,
   } = useContext(AllotmentContext);
 
   const [tableData, setTableData] = useState([]);
@@ -45,6 +47,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
 
   function changeHandler(data, id) {
     setPsuIdAllotment(id);
+    setStateIdAllotment(data.assigned_state_id);
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
       setAssignBreadCrums(true);

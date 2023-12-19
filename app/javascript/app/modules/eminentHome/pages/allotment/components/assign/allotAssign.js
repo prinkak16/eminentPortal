@@ -67,10 +67,12 @@ function AllotAssign() {
     setShowAssignAllotmentBtn,
     psuIdAllotment,
     setPsuIdAllotment,
+    stateIdAllotment,
+    setStateIdAllotment,
   } = useContext(AllotmentContext);
 
   const cardDetails = () => {
-    const params = { psu_id: psuIdAllotment };
+    const params = { psu_id: psuIdAllotment, state_id: stateIdAllotment };
     allotmentCardData(params)
       .then((res) => {
         setCardDetail(res.data.data);
