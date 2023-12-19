@@ -106,7 +106,7 @@ Rails.application.routes.draw do
         get '/eminent_list', to: 'eminent#list'
         post '/assign_vacancy', to: 'eminent#assign_vacancy'
         get '/assigned_members', to: 'eminent#assigned_members'
-        get '/unassign_member/:member_id', to: 'eminent#unassign_member'
+        get '/unassign_member', to: 'eminent#unassign_member'
         get '/vacancies_history', to: 'eminent#vacancies_history'
       end
 
