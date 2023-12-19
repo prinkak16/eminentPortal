@@ -213,7 +213,7 @@ const FileStatus = ({filterString, tabId}) => {
                                         <Phone/>
                                         {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
                                             <span
-                                                className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`}>{number}</span>
+                                                className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 && index === 0  ? 'br-label' : ''}`}>{number}</span>
                                         ))}
                                     </div>
                                     <span className='eminent-user-id'> <span
