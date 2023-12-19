@@ -35,6 +35,8 @@ function AllotmentTable({ setAssignShow, filterString }) {
     allotmentCardDetails,
     setAllotmentCardDetails,
     setPsuIdAllotment,
+    stateIdAllotment,
+    setStateIdAllotment,
   } = useContext(AllotmentContext);
 
   const [tableData, setTableData] = useState([]);
@@ -45,6 +47,7 @@ function AllotmentTable({ setAssignShow, filterString }) {
 
   function changeHandler(data, id) {
     setPsuIdAllotment(id);
+    setStateIdAllotment(data.assigned_state_id);
     if (data.vacant / data.total == 1) {
       setAssignShow(true);
       setAssignBreadCrums(true);
@@ -159,11 +162,11 @@ function AllotmentTable({ setAssignShow, filterString }) {
                         <button
                           variant="contained"
                           className={
-                            data.total - data.vacant === 0
-                              ? (className = "assign-button")
-                              : data.vacant / data.total <= 1
-                              ? (className = "update-button")
-                              : (className = "update-button-green")
+                            data.total === data.vacant
+                              ? "assign-button"
+                              : data?.vacant > 0
+                              ? "update-button"
+                              : "update-button-green"
                           }
                           onClick={(id) => changeHandler(data, data.org_id)}
                         >

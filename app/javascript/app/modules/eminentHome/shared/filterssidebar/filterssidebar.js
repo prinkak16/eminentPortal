@@ -41,11 +41,13 @@ export default function FiltersSidebar(props) {
   const [inputSearch, setInputSearch] = useState({});
   const [filtersKey, setFiltersKey] = useState([]);
   const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
-        if (!appliedFilterKey || !appliedKeyOptions) {
-            return;
-        }
-        const appliedFiltersValue = appliedFilters;
-        const foundKey = appliedFiltersValue?.find((item) => item.parent_key === appliedFilterKey);
+    if (!appliedFilterKey || !appliedKeyOptions) {
+      return;
+    }
+    const appliedFiltersValue = appliedFilters;
+    const foundKey = appliedFiltersValue?.find(
+      (item) => item.parent_key === appliedFilterKey
+    );
     if (foundKey) {
       const newValues = foundKey.selectedValues.find(
         (item) => item === appliedKeyOptions
@@ -239,6 +241,7 @@ export default function FiltersSidebar(props) {
                     <FormControl variant="outlined" className="mb-4 srchfilter">
                       <Input
                         id={filter?.display_name}
+                        placeholder="Search"
                         startAdornment={
                           <InputAdornment position="start">
                             <SearchIcon />
@@ -260,6 +263,7 @@ export default function FiltersSidebar(props) {
                     <FormControl variant="outlined" className="mb-4 srchfilter">
                       <Input
                         id={filter?.display_name}
+                        placeholder="Search"
                         startAdornment={
                           <InputAdornment position="start">
                             <SearchIcon />
@@ -280,6 +284,7 @@ export default function FiltersSidebar(props) {
                     <FormControl variant="outlined" className="mb-4 srchfilter">
                       <Input
                         id={filter?.display_name}
+                        placeholder="Search"
                         startAdornment={
                           <InputAdornment position="start">
                             <SearchIcon />
@@ -299,6 +304,7 @@ export default function FiltersSidebar(props) {
                     <FormControl variant="outlined" className="mb-4 srchfilter">
                       <Input
                         id={filter?.display_name}
+                        placeholder="Search"
                         startAdornment={
                           <InputAdornment position="start">
                             <SearchIcon />
@@ -317,6 +323,7 @@ export default function FiltersSidebar(props) {
                     <FormControl variant="outlined" className="mb-4 srchfilter">
                       <Input
                         id={filter?.display_name}
+                        placeholder="Search"
                         startAdornment={
                           <InputAdornment position="start">
                             <SearchIcon />

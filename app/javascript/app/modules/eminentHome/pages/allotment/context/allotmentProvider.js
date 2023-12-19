@@ -7,6 +7,7 @@ const AllotmentProvider = ({ children }) => {
   const [allotmentCardDetails, setAllotmentCardDetails] = useState([]);
   const [showAssignAllotmentBtn, setShowAssignAllotmentBtn] = useState([]);
   const [psuIdAllotment, setPsuIdAllotment] = useState(null);
+  const [stateIdAllotment, setStateIdAllotment] = useState(null);
 
   return (
     <AllotmentContext.Provider
@@ -21,6 +22,8 @@ const AllotmentProvider = ({ children }) => {
         setShowAssignAllotmentBtn,
         psuIdAllotment,
         setPsuIdAllotment,
+        stateIdAllotment,
+        setStateIdAllotment,
       }}
     >
       {children}
