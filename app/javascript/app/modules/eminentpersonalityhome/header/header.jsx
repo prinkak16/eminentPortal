@@ -5,7 +5,7 @@ import HeaderArrowDown from '../../../../../../public/images/downarrow.svg';
 import './header.scss';
 import {Select, MenuItem,Box,InputLabel,FormControl} from "@mui/material";
 import axios from "axios";
-import Menu from '@mui/material/Menu';
+import {Menu, Link} from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {useNavigate} from 'react-router-dom';
@@ -71,7 +71,7 @@ function Header({userData}){
                         horizontal: 'right',
                     }}
                 >
-                    <MenuItem className='logout-navbar-text' >{<><FaceIcon/>&emsp;Profile</>}</MenuItem>
+                    <MenuItem className='logout-navbar-text' ><Link to="profile">{<><FaceIcon/>&emsp;Profile</>}</Link></MenuItem>
                     <MenuItem className='logout-navbar-text' onClick={() => logout()}>{<><LogoutIcon/>&emsp;Logout</>}</MenuItem>
                 </Menu>
             </div>
