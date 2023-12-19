@@ -278,18 +278,25 @@ class Api::V1::Allotment::StatsController < BaseApiController
       psu_id = params[:psu_id]
       raise "PSU Id can't be blank." unless psu_id.present?
 
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
+      raise "State Id can't be blank." unless params[:state_id].present?
 
-      state_id = params[:state_id].present? ? params[:state_id] : nil
+      country_state_ids = []
+      if params[:state_id].present?
+        country_state_ids << params[:state_id]
+      else
+        fetch_minister_assigned_country_states.each do |country_state|
+          country_state_ids << country_state[:id]
+        end
+      end
+      
+      country_states = CountryState.where(id: country_state_ids)
+      raise 'Country state is not found.' unless country_states.present?
 
       psu_details = Organization.joins(:ministry, :vacancies)
                                 .where(id: psu_id)
-                                .where(vacancies: { country_state_id: country_states, slotting_status: 'slotted' })
+                                .where(vacancies: { slotting_status: 'slotted' })
 
-      psu_details = psu_details.where(vacancies: { country_state_id: state_id }) if state_id.present?
+      psu_details = psu_details.where(vacancies: { country_state_id: country_states.pluck(:id) }) if country_states.present?
 
       psu_details = psu_details.group('organizations.id, organizations.name, ministries.name')
                                 .select("organizations.id as psu_id, organizations.name as psu_name, ministries.name as ministry_name,
