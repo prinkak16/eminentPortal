@@ -238,7 +238,7 @@ const FileStatus = ({filterString, tabId}) => {
                                     </div>
                                     <div className='ml-auto'>
                                         <button className='eminent-update-button'
-                                                onClick={() => openDialogBox(item.file_status.status_id, item.fs_id)
+                                                onClick={() => openDialogBox(item.file_status?.status_id, item.fs_id)
                                                 }>Update
                                         </button>
                                     </div>
@@ -251,12 +251,12 @@ const FileStatus = ({filterString, tabId}) => {
                                      <span className='status-btn'>
                                          <span></span>
                                       </span>
-                                        <span>{item.file_status.status}</span>
+                                        <span>{item.file_status?.status}</span>
                                     </div>
                                 </div>
                                 <div className='eminent-file-remark ml-1rem'>
                                     <span className='user-id-tag d-block state-remark '>Remarks</span>
-                                    <span className='mt-2'>{item.file_status.description}</span>
+                                    <span className='mt-2'>{item.file_status?.description}</span>
                                 </div>
                                 <div className='ml-auto mt-auto'>
                                     <button className='view-history-button' onClick={() => showHistory(item.id)}>View
