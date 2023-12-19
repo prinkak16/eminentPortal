@@ -281,10 +281,12 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member_allotment = VacancyAllotment.where(custom_member_form_id: member)
       raise 'Eminent is not assigned yet.' unless member_allotment.present?
 
+      unassign_remark = params[:remarks].present? ? params[:remarks] : nil
+
       member_allotment = member_allotment.where(unoccupied_at: nil)
 
       if member_allotment.present?
-        member_allotment.first.update!(unoccupied_at: DateTime.now)
+        member_allotment.first.update!(unoccupied_at: DateTime.now, remarks: unassign_remark)
         allotted_vacancy = member_allotment.first.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
         file_status = member_allotment.first.file_status
@@ -322,13 +324,13 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu = Organization.find_by(id: psu_id)
       raise 'PSU not found.' unless psu.present?
 
+      raise "State Id can't be blank." unless params[:state_id].present?
+
+      state = CountryState.find_by(id: params[:state_id])
+      raise 'Country state is not found' unless state.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
-
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
 
       sql = "SELECT
                allotment_history.vacancy_id AS vacancy_id,
@@ -349,7 +351,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
                INNER JOIN organizations ON organizations.id = vacancies.organization_id
                WHERE allotment_history.deleted_at IS NULL
                AND organizations.id = #{psu.id}
-               AND vacancies.country_state_id IN (#{country_states.join(', ')})
+               AND vacancies.country_state_id IN (#{state.id})
                ORDER BY allotment_history.event_time DESC
             "
 
