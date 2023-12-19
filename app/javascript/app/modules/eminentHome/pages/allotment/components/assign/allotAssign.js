@@ -41,6 +41,7 @@ import {
   showSuccessToast,
 } from "../../../../../utils";
 import { toast } from "react-toastify";
+import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 function AllotAssign() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +52,7 @@ function AllotAssign() {
   const [System, setSystem] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
-  const [selectedMember, setSelectedmember] = useState([]);
+  const [selectedMember, setSelectedMember] = useState([]);
   const [remark, setRemark] = useState(null);
   const [assignedData, setAssignedData] = useState([]);
   const [assignedRemark, setAssignedRemark] = useState([]);
@@ -122,7 +123,7 @@ function AllotAssign() {
     getAssignedAllotment(assignParams)
       .then((res) => {
         setAssignedData(res.data.data);
-        setAssignedRemark(res.data.allotment_remark);
+        setAssignedRemark(res.data.allotment_remarks);
       })
       .catch((err) => {});
   };
@@ -307,6 +308,7 @@ function AllotAssign() {
 
   const crossHandeler = (e, data) => {
     setDataArray(dataArray.filter((item) => item.id !== data.id));
+    setSelectedMember(selectedMember.filter((id) => id !== data.id));
   };
 
   const Conditional = () => {
@@ -319,6 +321,11 @@ function AllotAssign() {
               <span>{Vacancy}</span>
             </div>
             <div className="table-main-container">
+              {dataArray.length === 0 && (
+                <span style={{ fontWeight: "500", fontSize: "larger" }}>
+                  No Added Eminent.
+                </span>
+              )}
               {dataArray &&
                 dataArray.map((member) => (
                   <div className="user-table-1">
@@ -419,18 +426,30 @@ function AllotAssign() {
       case 1:
         return (
           <>
-            {/*<div className="Remark-div">*/}
-            {/*  <span className="remark-span">Remark</span>*/}
-            {/*  <div className="textarea-div">*/}
-            {/*    <textarea className="textarea-field"></textarea>*/}
-            {/*    <div className="btn-div">*/}
-            {/*      <button className="update-btn-1">*/}
-            {/*        <Pencil className="pencil" />*/}
-            {/*      </button>*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*</div>*/}
+            <br />
+            <span className="remark-span">Remark</span>
+            <div className="textarea-div">
+              {assignedRemark?.map((data) => (
+                <ul style={{ marginTop: "0", marginBottom: "0" }}>
+                  <li key={data?.index} style={{ fontWeight: "400" }}>
+                    {data}
+                  </li>
+                </ul>
+              ))}
+
+              {/* <textarea className="textarea-field"></textarea>
+                <div className="btn-div">
+                  <button className="update-btn-1">
+                    <Pencil className="pencil" />
+                  </button>
+                </div> */}
+            </div>
             <div className="table-main-container">
+              {assignedData.length === 0 && (
+                <span style={{ fontWeight: "500", fontSize: "larger" }}>
+                  No Eminents Assigned yet.
+                </span>
+              )}
               {assignedData &&
                 assignedData.map((member) => (
                   <div className="user-table-1">
@@ -612,7 +631,7 @@ function AllotAssign() {
         return prevDataArray.filter((item) => item.id !== data.id);
       }
     });
-    setSelectedmember((preData) => {
+    setSelectedMember((preData) => {
       if (e.target.checked) {
         return [...preData, data.id];
       } else {
@@ -639,6 +658,7 @@ function AllotAssign() {
         eminentList={eminentList}
         cardDetails={cardDetails}
         setDataArray={setDataArray}
+        psuName={cardDetail?.psu_name}
       />
       <Modal
         aria-labelledby="transition-modal-title"
@@ -668,15 +688,16 @@ function AllotAssign() {
                   <p style={{ fontWeight: "400" }}>
                     PSU Name -{" "}
                     <span style={{ fontWeight: "600" }}>
-                      Law Enforcement Training Institute
+                      {cardDetail?.psu_name}
                     </span>
                   </p>
                 </div>
                 <div className="modal-3">
                   <textarea
-                    placeholder="Write something…"
+                    placeholder="Write something in 50 letters..."
                     className="modal-textarea"
                     onChange={(e) => textareaHandeler(e)}
+                    maxLength={75}
                   />
                 </div>
 
@@ -733,13 +754,13 @@ function AllotAssign() {
               <span className="card-span">Ministry Name</span>
               <p className="para">{cardDetail?.ministry_name}</p>
             </div>
-            {/* <div className="card-cell3">
-              <span className="card-span">Headquarter</span>
+            <div className="card-cell3">
+              <span className="card-span">Assigned State</span>
               <p className="para">{cardDetail?.location}</p>
-            </div> */}
+            </div>
             <div className="card-cell4">
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span className="card-span">Total Positions</span>
+                <span className="card-span">Total Vacancy</span>
                 <p className="para">{cardDetail?.total_vacancy_count}</p>
               </div>
               {cardDetail?.total_vacancy_count -
