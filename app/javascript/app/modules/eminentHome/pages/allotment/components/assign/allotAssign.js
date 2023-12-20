@@ -122,6 +122,7 @@ function AllotAssign({filterString}) {
   const assignedList = (psuIdAllotment) => {
     const assignParams = {
       psu_id: psuIdAllotment,
+      state_id: stateIdAllotment,
     };
     getAssignedAllotment(assignParams)
       .then((res) => {
@@ -136,10 +137,11 @@ function AllotAssign({filterString}) {
   }, [System, tabSelect]);
 
   const getHistory = (psuIdAllotment) => {
-    const historyparams = {
+    const historyParams = {
       psu_id: psuIdAllotment,
+      state_id: stateIdAllotment,
     };
-    allotmentHistoryData(historyparams)
+    allotmentHistoryData(historyParams)
       .then((res) => {
         setHistoryData(res.data.data);
       })
@@ -258,6 +260,7 @@ function AllotAssign({filterString}) {
       selected_members: selectedMember,
       psu_id: psuIdAllotment,
       remarks: remark,
+      state_id: stateIdAllotment,
     };
 
     assignAllotment(data).then(
@@ -319,10 +322,24 @@ function AllotAssign({filterString}) {
       case 0:
         return (
           <>
-            <div className="vacancy-div">
-              <span>Total Vacant</span>
-              <span>{Vacancy}</span>
+            <div style={{ display: "flex", gap: "30px" }}>
+              <div className="vacancy-div">
+                <span>Total Vacant</span>
+                <span>{Vacancy}</span>
+              </div>
+
+              <div
+                className="vacancy-div-allotment"
+                style={{
+                  width: "169px !important",
+                  color: "#FFF7E2 !important",
+                }}
+              >
+                <span>Remark:</span>
+                <span>{cardDetail?.slotting_remark}</span>
+              </div>
             </div>
+
             <div className="table-main-container">
               {dataArray.length === 0 && (
                 <span style={{ fontWeight: "500", fontSize: "larger" }}>
@@ -573,9 +590,12 @@ function AllotAssign({filterString}) {
                     <span>
                       <EllipseBlue />{" "}
                       {isAssigned &&
-                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date}`}
+                        `${data.vacancy_designation}  (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" on ${date}`}
                       {!isAssigned &&
-                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date}`}
+                        `${data.vacancy_designation} (${data.vacancy_id}) in ${data.psu_name} is ${data.allotment_status} on ${date}`}
+                      <div style={{ paddingLeft: "10px", marginTop: "5px" }}>
+                        {!isAssigned && ` Remark : ${data.remarks}`}
+                      </div>
                     </span>
                   </div>
                 );
@@ -697,10 +717,10 @@ function AllotAssign({filterString}) {
                 </div>
                 <div className="modal-3">
                   <textarea
-                    placeholder="Write something in 50 letters..."
+                    placeholder="Write something not more than 100 character..."
                     className="modal-textarea"
                     onChange={(e) => textareaHandeler(e)}
-                    maxLength={75}
+                    maxLength={100}
                   />
                 </div>
 
