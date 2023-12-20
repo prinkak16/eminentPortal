@@ -529,8 +529,9 @@ export default function BasicTabs({
                   </div>
                   <p
                     style={{
-                      marginLeft: "300px",
-                      color: "blue",
+                      marginLeft: "310px",
+                      marginTop: "20px",
+                      color: "black",
                       cursor: "pointer",
                     }}
                     onClick={() => handleDownload()}
