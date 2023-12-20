@@ -108,7 +108,6 @@ function AllotAssign({ filterString }) {
         toast(err);
         setIsFetching(false);
       });
-    console.log("filterString", filterString);
   };
 
   useEffect(() => {
