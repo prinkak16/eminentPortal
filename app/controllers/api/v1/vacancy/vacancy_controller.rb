@@ -6,7 +6,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def position_analytics
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -43,7 +43,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def vacant_overview_by_state
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -80,7 +80,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def list
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
       if permission_exist.nil?
         return render json: {
           success: false,
