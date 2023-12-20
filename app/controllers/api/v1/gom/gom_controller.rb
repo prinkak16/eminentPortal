@@ -161,6 +161,7 @@ class Api::V1::Gom::GomController < BaseApiController
         array_remove(array_agg(DISTINCT info.pa_name),null) as pa_name,
         array_remove(
           array_agg(
+           DISTINCT
             CASE
             WHEN info.is_minister IS false THEN info.ministry_name
             ELSE null
@@ -169,6 +170,7 @@ class Api::V1::Gom::GomController < BaseApiController
         ) AS assigned_ministries,
         array_remove(
           array_agg(
+           DISTINCT
             CASE
             WHEN info.is_minister THEN info.ministry_name
             ELSE null
@@ -203,7 +205,7 @@ class Api::V1::Gom::GomController < BaseApiController
       sql += ' ms_ministry DESC, ' if ministry_name.length > 2
       sql += 'MAX(um.created_at) IS null, MAX(um.created_at) DESC'
       sql += ') AS info
-      GROUP BY info.user_id, info.minister_name, info.pa_name'
+      GROUP BY info.user_id, info.minister_name'
     user_ministries = UserMinistry.find_by_sql(sql + " LIMIT #{limit} OFFSET #{offset};")
 
     # fetch all the user ids
