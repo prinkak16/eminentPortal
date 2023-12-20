@@ -517,10 +517,10 @@ export default function BasicTabs({
                       value={email}
                       onChange={(e) => handleEmailChange(e)}
                       required
-                      style={{ width: "300px", marginLeft: "15px" }} // Adjust the width value as needed
+                      style={{ width: "300px", marginLeft: "15px", marginBottom: "10px" }} // Adjust the width value as needed
                     />
                     <button
-                      style={{ marginLeft: "20px" }}
+                      style={{ marginLeft: "20px", marginBottom: "10px"}}
                       className="Submit"
                       onClick={handleSubmitUpload}
                     >
