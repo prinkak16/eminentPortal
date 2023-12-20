@@ -8,17 +8,33 @@ import BarImage from "../../../../../public/images/bar.svg"
 import {ApiContext} from "../ApiContext";
 import {Typography, TextField, Button} from "@mui/material";
 import OtpInput from 'react-otp-input';
+const mobileRegex = /^[5-9]\d{0,9}$/;
 const LoginPage = () => {
+
     const {setAuthToken} = useContext(ApiContext)
     const navigate = useNavigate();
     const [inputNumber, setInputNumber] = useState('');
+    const [error, setError] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputOtp, setInputOtp] = useState('')
     const [otpSent, setOtpSent] = useState()
     const [otpField, setOtpField] = useState(false)
 
+
     const inputMobileNumber = (event) => {
-        setInputNumber(event.target.value)
+        const mobileValue = event.target.value
+        if (mobileRegex.test(mobileValue) && mobileValue[0] >= 5 && mobileValue.length <= 10) {
+            setInputNumber(mobileValue);
+            setError('Mobile number should be 10 digits long.');
+        }
+        else if(mobileValue.length < 10  ) {
+            setInputNumber('')
+            setError('');
+        }
+       else {
+            setError('');
+        }
+
     }
 
     const inputMobileOtp = (otp) => {
@@ -30,17 +46,27 @@ const LoginPage = () => {
     }
 
     const OtpSend = () => {
-            setPhoneNumber(inputNumber)
-            sendOtp(inputNumber).then((res) => {
-                if (res.data.success) {
-                    showSuccessToast(res.data.message)
-                }
-            })
-        setOtpField(true)
+        setPhoneNumber(inputNumber)
+        sendOtp(inputNumber).then((res) => {
+            if (res.data.success) {
+                showSuccessToast(res.data.message)
+            }
+            setOtpField(true)
+        })
+
     }
-const resendOtp = () => {
-    OtpSend()
-}
+    const resendOtp = () => {
+        OtpSend()
+    }
+
+    function handleEnterKeyPress(event) {
+        if (event.key === "Enter") {
+                if (inputNumber.length > 9) {
+                    OtpSend();
+                }
+        }
+    }
+
     const submitOtp = () => {
         validateOtp(phoneNumber, inputOtp).then((res) => {
             if (res.data.success) {
@@ -54,18 +80,10 @@ const resendOtp = () => {
         })
         setOtpField(false)
     }
-    function handleEnterKeyPress(event) {
-        if (event.key === "Enter") {
-                if (inputNumber.length > 9) {
-                    OtpSend();
-                }
-        }
-    }
-
     return(
         <div className="login-wrap">
             <div className="login-image">
-               <BarImage/>
+                <BarImage/>
             </div>
             <div className="container h-100 login-container d-flex justify-content-center">
                 <div className="col-md-6">
@@ -79,12 +97,20 @@ const resendOtp = () => {
                                     Login with Mobile Number
                                 </Typography>
                                 <div className="justify-content-start my-4 text-start number-filed">
-                                    <TextField id="outlined-basic" label="Enter Phone Number" variant="outlined" className="inputNumber ps-2" autoFocus={true} type="tel"
-                                               maxLength={10}
-                                               value={inputNumber}
-                                               onKeyDown={handleEnterKeyPress}
-                                               placeholder= "Enter Phone number"
-                                               onChange={(e)=> inputMobileNumber(e)}
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Enter Phone Number"
+                                        variant="outlined"
+                                        className="inputNumber ps-2"
+                                        autoFocus={true}
+                                        type="tel"
+                                        value={inputNumber}
+                                        onKeyDown={handleEnterKeyPress}
+                                        placeholder="Enter Phone number"
+                                        onChange={(e)=>inputMobileNumber(e)}
+                                        helperText={error}
+                                        error={Boolean(error)}
+                                        maxLength={10}
                                     />
                                     {otpField && (
                                         <>
