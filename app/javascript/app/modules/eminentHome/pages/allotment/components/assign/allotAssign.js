@@ -252,6 +252,7 @@ function AllotAssign({ filterString }) {
       "You have successfull added the position in the verify section"
     );
     setIsOpen(open);
+    setValue(0);
   };
 
   const handleModal = () => {
