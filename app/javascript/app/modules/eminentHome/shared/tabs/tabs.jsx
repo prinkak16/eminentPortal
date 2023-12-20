@@ -80,7 +80,6 @@ export default function BasicTabs({
   useEffect(() => {
     if (isValuePresent(localStorage.getItem('user_permissions'))) {
       setUserPermissions(JSON.parse(localStorage.getItem('user_permissions')))
-      console.log(JSON.parse(localStorage.getItem('user_permissions')))
     } else  {
       getUserPermissions().then(
           (res) => {
