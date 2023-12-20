@@ -2,6 +2,14 @@
 class Api::V1::FileStatus::FileStatusController < BaseApiController
   include ApplicationHelper
   def analytics
+    permission_exist = is_permissible('Eminent', 'FileStatus')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     stats = {
       'total_persons': 0,
       'in_progress': 0,
@@ -34,6 +42,14 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def file_status_members
+    permission_exist = is_permissible('Eminent', 'FileStatus')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     offset = params[:offset]
     member_name = params[:name]
     member_id = params[:id]
@@ -75,6 +91,14 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def update_status
+    permission_exist = is_permissible('Eminent', 'FileStatus')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     fs_id = params[:fs_id]
     fs_description = params[:fs_description]
     fs_level_id = params[:fs_level_id]
@@ -114,6 +138,14 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status_level&.state
   end
   def file_status_levels
+    permission_exist = is_permissible('Eminent', 'FileStatus')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     file_statuses = get_file_status_levels
     render json: { status: true, data: file_statuses, message: 'File Statuses' }, status: :ok
   end
