@@ -108,6 +108,7 @@ Rails.application.routes.draw do
         get '/assigned_members', to: 'eminent#assigned_members'
         get '/unassign_member', to: 'eminent#unassign_member'
         get '/vacancies_history', to: 'eminent#vacancies_history'
+        get '/eminent_filters',to: 'eminent#eminent_filters'
       end
 
       namespace :file_status, path: 'file_status' do
