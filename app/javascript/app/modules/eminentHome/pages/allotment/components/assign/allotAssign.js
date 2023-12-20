@@ -589,9 +589,12 @@ function AllotAssign() {
                     <span>
                       <EllipseBlue />{" "}
                       {isAssigned &&
-                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" at ${date}`}
+                        `${data.vacancy_designation}  (${data.vacancy_id}) in ${data.psu_name} is Assigned to "${data.member_name}" on ${date}`}
                       {!isAssigned &&
-                        `${data.vacancy_designation} of vacancy (${data.vacancy_id}) in ${data.psu_name} ${data.allotment_status} at ${date}`}
+                        `${data.vacancy_designation} (${data.vacancy_id}) in ${data.psu_name} is ${data.allotment_status} on ${date}`}
+                      <div style={{ paddingLeft: "10px", marginTop: "5px" }}>
+                        {!isAssigned && ` Remark : ${data.remarks}`}
+                      </div>
                     </span>
                   </div>
                 );
@@ -713,10 +716,10 @@ function AllotAssign() {
                 </div>
                 <div className="modal-3">
                   <textarea
-                    placeholder="Write something in 50 letters..."
+                    placeholder="Write something not more than 100 character..."
                     className="modal-textarea"
                     onChange={(e) => textareaHandeler(e)}
-                    maxLength={75}
+                    maxLength={100}
                   />
                 </div>
 

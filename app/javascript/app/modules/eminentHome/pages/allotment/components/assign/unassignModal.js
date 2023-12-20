@@ -106,9 +106,10 @@ function unassignModal({
 
                 <div className="modal-3">
                   <textarea
-                    placeholder="Write something…"
+                    placeholder="Write something not more than 100 character..."
                     className="modal-textarea"
                     onChange={(e) => handleText(e)}
+                    maxLength={100}
                   />
                 </div>
 
