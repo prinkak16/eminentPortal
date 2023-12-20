@@ -54,4 +54,17 @@ module AuthHelper
       AuthUser.where(id: user_id).update(is_admin: true)
     end
   end
+
+  def sync_ministries_to_pa(user_id)
+    auth_user = AuthUser.find_by(id: user_id)
+    if auth_user.present?
+      assisted_minister = auth_user.assist_to
+      if assisted_minister.present?
+        assisted_minister.user_ministries.each do |user_ministry|
+          UserMinistry.where(user_id: auth_user.id, ministry_id: user_ministry.ministry_id, is_minister: user_ministry.is_minister)
+                      .first_or_create!
+        end
+      end
+    end
+  end
 end
