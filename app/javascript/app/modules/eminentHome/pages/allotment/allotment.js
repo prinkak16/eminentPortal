@@ -13,7 +13,6 @@ function Allotment({ tabId, filterString }) {
   useEffect(() => {
     setAssignShow(false);
   }, [crumbsState]);
-
   return (
     <div>
       {!assignShow ? (

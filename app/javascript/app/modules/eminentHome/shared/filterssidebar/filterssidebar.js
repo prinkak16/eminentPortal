@@ -123,14 +123,11 @@ export default function FiltersSidebar(props) {
 
       case "allotment":
         if(assignBreadCrums){
-          const alotmentParams = {
-            ministry_name: searchMinisterName,
-            department_name: searchDepartmentName,
-          };
-          getFiltersForAllotment(alotmentParams).then((response) => {
+          allotmentSidebarFilters().then((response) => {
             setFiltersList(response.data.data);
-            console.log('allotmenthome', assignBreadCrums)
-          });
+            console.log('allotmentsidebarfiters', response.data.data)
+          })
+
         }
         else{
           const alotmentParams = {
@@ -139,7 +136,6 @@ export default function FiltersSidebar(props) {
           };
           getFiltersForAllotment(alotmentParams).then((response) => {
             setFiltersList(response.data.data);
-            console.log('allotmenthome', assignBreadCrums)
           });
         }
         break;
@@ -170,6 +166,7 @@ export default function FiltersSidebar(props) {
     searchMinisterName,
     searchDepartmentName,
     searchOrganizationName,
+    assignBreadCrums
   ]);
 
   const handleChange = (value) => (event, isExpanded) => {

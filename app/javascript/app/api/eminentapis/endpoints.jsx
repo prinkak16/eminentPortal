@@ -13,6 +13,10 @@ export const getFiltersForAllotment = (params) => {
   return axios.get(apiBaseUrl + "filters/allotment", { params });
 };
 
+export const allotmentEminentList = (params, filterPrams) => {
+  return axios.get(`${apiBaseUrl}allotment/eminent_list?${filterPrams}`, { params });
+};
+
 export const getAssignedAllotment = (params) => {
   return axios.get(apiBaseUrl + "allotment/assigned_members", { params });
 };
@@ -38,10 +42,6 @@ export const statsData = () => {
 
 export const allotmentBoxData = () => {
   return axios.get(apiBaseUrl + "allotment/position_analytics");
-};
-
-export const allotmentEminentList = (params) => {
-  return axios.get(apiBaseUrl + "allotment/eminent_list", { params });
 };
 
 export const allotmentCardData = (params) => {
