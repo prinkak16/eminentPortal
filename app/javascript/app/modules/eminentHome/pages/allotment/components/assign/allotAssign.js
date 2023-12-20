@@ -43,7 +43,7 @@ import {
 import { toast } from "react-toastify";
 import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
-function AllotAssign() {
+function AllotAssign({filterString}) {
   const [isOpen, setIsOpen] = useState(false);
   const [dataArray, setDataArray] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -98,7 +98,7 @@ function AllotAssign() {
       offset: itemsPerPage * currentPage,
       limit: itemsPerPage,
     };
-    allotmentEminentList(eminentParams)
+    allotmentEminentList(eminentParams, filterString)
       .then((res) => {
         setTableData(res.data.data.members);
         setIsFetching(false);
@@ -108,11 +108,12 @@ function AllotAssign() {
         toast(err);
         setIsFetching(false);
       });
+    console.log('filterString', filterString)
   };
 
   useEffect(() => {
     eminentList();
-  }, [currentPage]);
+  }, [currentPage, filterString]);
 
   useEffect(() => {
     cardDetails();
