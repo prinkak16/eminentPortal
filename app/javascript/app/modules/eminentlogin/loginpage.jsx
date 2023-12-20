@@ -31,7 +31,7 @@ const LoginPage = () => {
             setInputNumber('')
             setError('');
         }
-       else {
+        else {
             setError('');
         }
 
@@ -61,9 +61,9 @@ const LoginPage = () => {
 
     function handleEnterKeyPress(event) {
         if (event.key === "Enter") {
-                if (inputNumber.length > 9) {
-                    OtpSend();
-                }
+            if (inputNumber.length > 9) {
+                OtpSend();
+            }
         }
     }
 
