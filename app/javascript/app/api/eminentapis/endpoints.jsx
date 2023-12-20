@@ -85,6 +85,9 @@ export const assignAllotment = (data) => {
   return axios.post(apiBaseUrl + "allotment/assign_vacancy", data);
 };
 
+export const allotmentSidebarFilters = () => {
+  return axios.get(apiBaseUrl + "allotment/eminent_filters")
+}
 export const fetchMobile = (number) => {
   return axios.get(apiBaseUrl + "custom_member_forms/fetch_by_number", {
     params: {

@@ -43,7 +43,8 @@ import {
 import { toast } from "react-toastify";
 import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
-function AllotAssign() {
+function AllotAssign({filterString}) {
+  console.log('filterString', filterString)
   const [isOpen, setIsOpen] = useState(false);
   const [dataArray, setDataArray] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);

@@ -29,7 +29,7 @@ function Allotment({ tabId, filterString }) {
           />
         </div>
       ) : (
-        <AllotAssign setAssignShow={setAssignShow} />
+        <AllotAssign setAssignShow={setAssignShow} filterString={filterString}/>
       )}
     </div>
   );
