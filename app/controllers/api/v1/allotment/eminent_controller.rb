@@ -5,6 +5,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
   include MinistryHelper
   include UserHelper
   include MailHelper
+  include FilterHelper
 
   def list
     permission_exist = is_permissible('Eminent', 'ViewAll')
@@ -148,20 +149,18 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
       psu_id = params[:psu_id].present? ? params[:psu_id] : nil
       raise "PSU Id can't be blank." if psu_id.nil?
+      raise "State Id can't be blank." unless params[:state_id].present?
 
       remarks = params[:remarks].present? ? params[:remarks] : nil
-
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
 
       psu = Organization.where(id: psu_id)
       raise 'PSU not found.' unless psu.present?
 
+      country_state = CountryState.find_by(id: params[:state_id])
+      raise 'Country State is not found.' unless country_state.present?
+
       vacancies = psu.first.vacancies
-      vacancies = vacancies.where(vacancies: { country_state_id: country_states })
-                           .where(vacancies: { allotment_status: 'vacant', slotting_status: 'slotted' })
+      vacancies = vacancies.where(vacancies: { country_state_id: country_state.id, allotment_status: 'vacant', slotting_status: 'slotted' })
 
       raise "Selected eminent can't be greater than vacancy count" if selected_members.count > vacancies.count
 
@@ -223,17 +222,16 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu = params[:psu_id].present? ? Organization.find_by(id: params[:psu_id]) : nil
       raise 'PSU not found.' unless psu.present?
 
+      raise "State Id can't be blank." unless params[:state_id].present?
+
+      state = CountryState.find_by(id: params[:state_id])
+      raise 'Country state is not found.' unless state.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
 
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
-
-
       assigned_members = CustomMemberForm.joins(vacancy_allotments: [vacancy: :organization])
-                                         .where(vacancies: { organization_id: psu, country_state_id: country_states })
+                                         .where(vacancies: { organization_id: psu, country_state_id: state.id })
                                          .where(vacancy_allotments: { unoccupied_at: nil })
                                          .select('custom_member_forms.*, organizations.id as psu_id, organizations.name as psu_name, vacancies.id as vacancy_id, vacancy_allotments.remarks as allotment_remarks')
       assigned_members_count = assigned_members.length
@@ -284,10 +282,12 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member_allotment = VacancyAllotment.where(custom_member_form_id: member)
       raise 'Eminent is not assigned yet.' unless member_allotment.present?
 
+      unassign_remark = params[:remarks].present? ? params[:remarks] : nil
+
       member_allotment = member_allotment.where(unoccupied_at: nil)
 
       if member_allotment.present?
-        member_allotment.first.update!(unoccupied_at: DateTime.now)
+        member_allotment.first.update!(unoccupied_at: DateTime.now, remarks: unassign_remark)
         allotted_vacancy = member_allotment.first.vacancy
         allotted_vacancy.unassign! if allotted_vacancy.may_unassign?
         file_status = member_allotment.first.file_status
@@ -325,13 +325,13 @@ class Api::V1::Allotment::EminentController < BaseApiController
       psu = Organization.find_by(id: psu_id)
       raise 'PSU not found.' unless psu.present?
 
+      raise "State Id can't be blank." unless params[:state_id].present?
+
+      state = CountryState.find_by(id: params[:state_id])
+      raise 'Country state is not found' unless state.present?
+
       limit = params[:limit].present? ? params[:limit] : 10
       offset = params[:offset].present? ? params[:offset] : 0
-
-      country_states = []
-      fetch_minister_assigned_country_states.each do |country_state|
-        country_states << country_state[:id]
-      end
 
       sql = "SELECT
                allotment_history.vacancy_id AS vacancy_id,
@@ -340,19 +340,20 @@ class Api::V1::Allotment::EminentController < BaseApiController
                organizations.id AS psu_id,
                organizations.name AS psu_name,
                to_char(allotment_history.unoccupied_at, 'YYYY-MM-DD HH24:MI:SS') AS unoccupied_at,
-               to_char(allotment_history.event_time, 'YYYY-MM-DD HH24:MI:SS') AS entry_at
+               to_char(allotment_history.event_time, 'YYYY-MM-DD HH24:MI:SS') AS entry_at,
+               allotment_history.remarks AS remarks
              FROM
                   (
-                    SELECT id, vacancy_id, custom_member_form_id, unoccupied_at, created_at AS event_time, deleted_at FROM vacancy_allotments
+                    SELECT id, vacancy_id, custom_member_form_id, unoccupied_at, remarks, created_at AS event_time, deleted_at FROM vacancy_allotments
                     UNION
-                    select id, vacancy_id, custom_member_form_id, unoccupied_at, unoccupied_at AS event_time, deleted_at FROM vacancy_allotments where unoccupied_at is not null
+                    select id, vacancy_id, custom_member_form_id, unoccupied_at, remarks, unoccupied_at AS event_time, deleted_at FROM vacancy_allotments where unoccupied_at is not null
                   ) AS allotment_history
                LEFT JOIN custom_member_forms on custom_member_forms.id = allotment_history.custom_member_form_id
                INNER JOIN vacancies ON vacancies.id = allotment_history.vacancy_id
                INNER JOIN organizations ON organizations.id = vacancies.organization_id
                WHERE allotment_history.deleted_at IS NULL
                AND organizations.id = #{psu.id}
-               AND vacancies.country_state_id IN (#{country_states.join(', ')})
+               AND vacancies.country_state_id IN (#{state.id})
                ORDER BY allotment_history.event_time DESC
             "
 
@@ -370,7 +371,8 @@ class Api::V1::Allotment::EminentController < BaseApiController
             psu_name: vacancy.psu_name,
             allotment_status: allotment_status,
             vacancy_designation: vacancy.vacancy_designation,
-            created_at: vacancy.entry_at
+            created_at: vacancy.entry_at,
+            remarks: vacancy.remarks
           }
         end
 
@@ -390,4 +392,19 @@ class Api::V1::Allotment::EminentController < BaseApiController
       return render json: { success: false, message: e.message }, status: :bad_request
     end
   end
+  def eminent_filters
+    result = {
+      'filters': [
+        get_entry_type_filter,
+        get_age_group_filter,
+        get_qualification_filter,
+        get_gender_filter,
+        get_profession_filter,
+        get_category_filter
+      ]
+    }
+
+    render json: { success: true, data: result, message: 'Home filters.' }, status: 200
+  end
+
 end

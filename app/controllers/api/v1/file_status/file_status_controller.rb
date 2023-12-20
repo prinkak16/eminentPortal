@@ -9,10 +9,13 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       'verified': 0,
     }
 
-    result = CustomMemberForm.joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
-                             .where(vacancy_allotments: { unoccupied_at: nil })
-                             .group("file_status_levels.state")
-                             .count
+
+    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    result = CustomMemberForm
+               .joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
+               .where(vacancy_allotments: { unoccupied_at: nil }, vacancy: { ministry_id: assigned_ministries_ids })
+               .group("file_status_levels.state")
+               .count
 
     total_count = 0
     if result.present?
@@ -42,6 +45,8 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     limit = params[:limit].present? ? params[:limit] : 10
     custom_forms = CustomMemberForm.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
+    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    custom_forms = custom_forms.where(vacancy: { ministry_id: assigned_ministries_ids})
     custom_forms = custom_forms.where("LOWER(data->>'name') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
     custom_forms = custom_forms.where("CAST(custom_member_forms.id AS TEXT) LIKE ?", "%#{member_id}%") if member_id.present?
     custom_forms = custom_forms.where(vacancy: { ministry_id: ministry_id.split(',') }) if ministry_id.present?
@@ -96,8 +101,8 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def file_history(fs_id)
-    FileStatusActivity.joins(:file_status_level).where(file_status_id: fs_id).map do |hs|
-      { status: hs.file_status_level.name, updated_at: hs.created_at.strftime('%a %b %d %Y %I:%M:%S %p') }
+    FileStatusActivity.joins(:file_status_level).where(file_status_id: fs_id).order(created_at: :asc).map do |hs|
+      { status: hs.file_status_level.name, updated_at: hs.created_at.in_time_zone('Asia/Kolkata').strftime('%a %b %d %Y %I:%M %p') }
     end
   end
 

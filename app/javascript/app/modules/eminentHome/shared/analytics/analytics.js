@@ -49,7 +49,6 @@ const Analytics = (props) => {
         break;
       case "file_status":
         getFileStatusAnalytics().then((res) => {
-          console.log("anhy");
           setHomeStats(res.data.data);
         });
         break;

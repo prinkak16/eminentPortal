@@ -167,14 +167,36 @@ $whiteColor:#fff;
   margin-bottom: 0.5rem !important;
 }
 
-.eminent-ministry-container {
+//.eminent-ministry-container {
+//  min-width: 14rem !important;
+//}
+//
+//.eminent-psu-container {
+//  min-width: 14rem !important;
+//}
+//
+//.eminent-type-container {
+//  min-width: 14rem !important;
+//}
+
+.eminent-container-max-wid {
   min-width: 16rem !important;
 }
 
-.eminent-psu-container {
-  min-width: 16rem !important;
+.eminent-container-max-wid-filter {
+  min-width: 13rem !important;
 }
 
-.eminent-type-container {
-  min-width: 16rem !important;
+.fw-weight {
+  font-weight: 600!important;
+}
+
+
+@media screen and (max-width: 1234px) {
+  .eminent-container-max-wid {
+    min-width: 13rem !important;
+  }
+  .eminent-container-max-wid-filter {
+    min-width: 9rem!important;
+  }
 }
