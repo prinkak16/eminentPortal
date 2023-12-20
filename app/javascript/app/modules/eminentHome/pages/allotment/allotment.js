@@ -8,8 +8,7 @@ function Allotment({ tabId, filterString }) {
   const [assignShow, setAssignShow] = useState(false);
   const { crumbsState } = useContext(AllotmentContext);
 
-  const {setAssignBreadCrums} = useContext(AllotmentContext);
-
+  const { setAssignBreadCrums } = useContext(AllotmentContext);
 
   useEffect(() => {
     setAssignShow(false);
@@ -22,7 +21,7 @@ function Allotment({ tabId, filterString }) {
           <Analytics
             tabId={tabId}
             assignShow={assignShow}
-            title="Allotment Analytics"
+            title="Position Analytics"
           />
           <AllotmentTable
             filterString={filterString}

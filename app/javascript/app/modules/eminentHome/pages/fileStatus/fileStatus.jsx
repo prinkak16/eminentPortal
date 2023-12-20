@@ -9,13 +9,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
 import VerticalLinearStepper from "../verticalStepper/verticalStepper";
-import {isValuePresent, showErrorToast} from "../../../utils";
+import {isValuePresent, showErrorToast, showSuccessToast} from "../../../utils";
 import axios from "axios";
 import {apiBaseUrl} from "../../../../api/api_endpoints";
 import {ApiContext} from "../../../ApiContext";
 import ReactPaginate from "react-paginate";
 
-const FileStatus = ({filterString, tabId}) => {
+const FileStatus = ({filterString, tabId,openFilter}) => {
     const {setBackDropToggle} = useContext(ApiContext)
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
     const [searchValue, setSearchValue] =useState('')
@@ -118,6 +118,7 @@ const FileStatus = ({filterString, tabId}) => {
                   setTimeout(() => {
                       setCallAnalyticsApi(false)
                   }, "1000");
+                  showSuccessToast('You have successfully update the status ')
               }
             })
             .catch(error => {
@@ -127,6 +128,7 @@ const FileStatus = ({filterString, tabId}) => {
     };
 
     const openDialogBox = (status, fsId) => {
+        setOpenHistory(null)
         setFileStatusId(fsId)
         setUpdateStatus(true);
         setEminentStatus(status)
@@ -166,7 +168,7 @@ const FileStatus = ({filterString, tabId}) => {
 
     return (
         <div className='file-status-component'>
-            <Analytics tabId={tabId} assignShow={true} getAnalitics={callAnalyticsApi} title="File status Analytics"/>
+            <Analytics tabId={tabId} assignShow={true} getAnalitics={callAnalyticsApi} title="Analytics"/>
             <div className='file-status-table mt-5'>
                 <div className="d-flex">
                     <div className='d-flex search-field'>
@@ -176,7 +178,7 @@ const FileStatus = ({filterString, tabId}) => {
                     </div>
                     <div className='d-flex search-field ms-5'>
                         <SearchIcon className='search-icon'/>
-                        <input className="input-field " placeholder="Search by ID"
+                        <input className="input-field " placeholder="Search by User ID"
                                onChange={(e) => onSearchNameId(e, false)}/>
                     </div>
                 </div>
@@ -213,7 +215,7 @@ const FileStatus = ({filterString, tabId}) => {
                                         <Phone/>
                                         {item.mobiles && item.mobiles?.slice(0, 2).map((number, index) => (
                                             <span
-                                                className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 ? 'br-label' : ''}`}>{number}</span>
+                                                className={`ml-2 ${index === 0 ? 'eminent-first-number' : 'pt-5 ml-1rem'} ${item.mobiles.length > 1 && index === 0  ? 'br-label' : ''}`}>{number}</span>
                                         ))}
                                     </div>
                                     <span className='eminent-user-id'> <span
@@ -222,19 +224,19 @@ const FileStatus = ({filterString, tabId}) => {
 
                                 <div className='eminent-other-details d-flex'>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-ministry-container padding-assign'>
+                                    <div className={`eminent-ministry-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
                                         <span className='user-id-tag d-block'>Ministry</span>
-                                        <span className='fw-bold'>{item.ministry}</span>
+                                        <span className='fw-weight'>{item.ministry}</span>
                                     </div>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-psu-container padding-assign'>
+                                    <div className={`eminent-psu-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
                                         <span className='user-id-tag d-block'>PSU</span>
-                                        <span className='fw-bold'>{item.psu}</span>
+                                        <span className='fw-weight'>{item.psu}</span>
                                     </div>
                                     <span className='vertical-row'></span>
-                                    <div className='eminent-type-container padding-assign'>
-                                        <span className='user-id-tag d-block'>PSU</span>
-                                        <span className='fw-bold'>{item.type}</span>
+                                    <div className={`eminent-type-container padding-assign eminent-container-max-wid${openFilter ? '-filter' : '' }`}>
+                                        <span className='user-id-tag d-block'>Type</span>
+                                        <span className='fw-weight'>{item.type}</span>
                                     </div>
                                     <div className='ml-auto'>
                                         <button className='eminent-update-button'

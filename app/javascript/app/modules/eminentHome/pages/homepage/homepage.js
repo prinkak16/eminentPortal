@@ -95,6 +95,7 @@ export default function PersistentDrawerLeft() {
     setShowAssignAllotmentBtn(false);
   };
 
+
   const handleDrawerClose = () => {
     setOpen(false);
     setShowAssignAllotmentBtn(true);
@@ -125,6 +126,7 @@ export default function PersistentDrawerLeft() {
         <Box sx={{ display: "flex" }} className="mt-5">
           <Drawer
             sx={{
+              display: open ? '' : 'none',
               width: drawerWidth,
               flexShrink: 0,
               "& .MuiDrawer-paper": {

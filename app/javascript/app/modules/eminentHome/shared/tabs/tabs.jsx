@@ -80,7 +80,6 @@ export default function BasicTabs({
   useEffect(() => {
     if (isValuePresent(localStorage.getItem('user_permissions'))) {
       setUserPermissions(JSON.parse(localStorage.getItem('user_permissions')))
-      console.log(JSON.parse(localStorage.getItem('user_permissions')))
     } else  {
       getUserPermissions().then(
           (res) => {
@@ -627,7 +626,7 @@ export default function BasicTabs({
             <Allotment filterString={filterString} tabId={value} />
           </TabPanel>
           <TabPanel value="file_status">
-            <FileStatus filterString={filterString} tabId={value} />
+            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} />
           </TabPanel>
           <TabPanel value="master_of_vacancies">
             <MasterVacancies filterString={filterString} tabId={value} />
