@@ -53,7 +53,7 @@ export const allotmentHistoryData = (params) => {
 };
 
 export const allotmentUnassign = (params) => {
-  return axios.get(apiBaseUrl + "allotment/unassign_member/" + params);
+  return axios.get(apiBaseUrl + "allotment/unassign_member/", { params });
 };
 
 export const allotmentListData = (params, filterString) => {

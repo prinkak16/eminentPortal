@@ -121,6 +121,7 @@ function AllotAssign() {
   const assignedList = (psuIdAllotment) => {
     const assignParams = {
       psu_id: psuIdAllotment,
+      state_id: stateIdAllotment,
     };
     getAssignedAllotment(assignParams)
       .then((res) => {
@@ -135,10 +136,11 @@ function AllotAssign() {
   }, [System, tabSelect]);
 
   const getHistory = (psuIdAllotment) => {
-    const historyparams = {
+    const historyParams = {
       psu_id: psuIdAllotment,
+      state_id: stateIdAllotment,
     };
-    allotmentHistoryData(historyparams)
+    allotmentHistoryData(historyParams)
       .then((res) => {
         setHistoryData(res.data.data);
       })
@@ -257,6 +259,7 @@ function AllotAssign() {
       selected_members: selectedMember,
       psu_id: psuIdAllotment,
       remarks: remark,
+      state_id: stateIdAllotment,
     };
 
     assignAllotment(data).then(
@@ -318,10 +321,24 @@ function AllotAssign() {
       case 0:
         return (
           <>
-            <div className="vacancy-div">
-              <span>Total Vacant</span>
-              <span>{Vacancy}</span>
+            <div style={{ display: "flex", gap: "30px" }}>
+              <div className="vacancy-div">
+                <span>Total Vacant</span>
+                <span>{Vacancy}</span>
+              </div>
+
+              <div
+                className="vacancy-div-allotment"
+                style={{
+                  width: "169px !important",
+                  color: "#FFF7E2 !important",
+                }}
+              >
+                <span>Remark:</span>
+                <span>{cardDetail?.slotting_remark}</span>
+              </div>
             </div>
+
             <div className="table-main-container">
               {dataArray.length === 0 && (
                 <span style={{ fontWeight: "500", fontSize: "larger" }}>

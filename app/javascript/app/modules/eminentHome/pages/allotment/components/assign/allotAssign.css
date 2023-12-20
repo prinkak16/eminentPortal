@@ -262,6 +262,20 @@
   padding-left: 6px;
 }
 
+.vacancy-div-allotment {
+  display: flex;
+  flex-direction: column;
+  height: 65px;
+  border: none;
+  width: 169px;
+  margin-top: 25px;
+  margin-left: 1px;
+  background-color: #fff7e2;
+  border-radius: 10px;
+  justify-content: center;
+  padding-left: 6px;
+}
+
 .table-main-container {
   margin-top: 28px;
   display: flex;
