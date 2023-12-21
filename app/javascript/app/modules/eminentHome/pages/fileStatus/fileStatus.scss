@@ -158,6 +158,9 @@ $whiteColor:#fff;
 .Rejected-tag {
   background:#FF595A !important;
 }
+.Pending-tag {
+  background:#FF595A !important;
+}
 
 .ml-1rem {
   margin-left:1rem;
@@ -191,8 +194,11 @@ $whiteColor:#fff;
   font-weight: 600!important;
 }
 
+.data-container {
+  border-radius: 12px 12px 0px 0px;
+}
 
-@media screen and (max-width: 1234px) {
+@media screen and (max-width: 1280px) {
   .eminent-container-max-wid {
     min-width: 13rem !important;
   }
