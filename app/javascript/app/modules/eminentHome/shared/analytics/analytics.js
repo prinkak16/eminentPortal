@@ -171,7 +171,7 @@ const Analytics = (props) => {
         case "slotting":
           switch (value) {
             case "total": {
-              label = "Total Position";
+              label = "Total Vacancy";
               icon = <TotalVacancy />;
               break;
             }
