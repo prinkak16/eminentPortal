@@ -158,6 +158,9 @@ export const getSlottingAnalytics = () => {
   return axios.get(apiBaseUrl + "slotting/position_analytics");
 };
 
+export const getProfileData = () => {
+  return axios.get(apiBaseUrl + "user_profile");
+}
 export const getGOMTableData = () => {
   return axios
     .get(apiBaseUrl + "gom/assigned_ministries")
