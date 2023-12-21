@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'auth_user/details' => 'auth_user#fetch_details'
       delete 'auth_user/logout' => 'auth_user#logout'
+      get 'user_profile', to: 'auth_user#user_profile'
 
       post 'eminent_auth/send_otp', to: 'eminent_auth#send_otp'
       post 'eminent_auth/validate_otp', to: 'eminent_auth#validate_otp'
