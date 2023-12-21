@@ -366,26 +366,26 @@ const PersonalDetails = (props) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    {/*<Grid item xs={4}>*/}
-                    {/*    <div className='image-container'>*/}
-                    {/*        <div className="user-photo-container" >*/}
-                    {/*            {isValuePresent(userPhoto) ?*/}
-                    {/*                <img className="user-image" src={userPhoto} alt='eminent-profile'/>*/}
-                    {/*                :  <UserIcon className="mt-2rem" />*/}
-                    {/*            }*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*    <div className='photo-btn'>*/}
-                    {/*        <Button disabled={isViewDisabled} component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >*/}
-                    {/*            Add Photo*/}
-                    {/*            <VisuallyHiddenInput accept="image/*"  type="file"/>*/}
-                    {/*        </Button>*/}
-                    {/*    </div>*/}
+                    <Grid item xs={4}>
+                        <div className='image-container'>
+                            <div className="user-photo-container" >
+                                {isValuePresent(userPhoto) ?
+                                    <img className="user-image" src={userPhoto} alt='eminent-profile'/>
+                                    :  <UserIcon className="mt-2rem" />
+                                }
+                            </div>
+                        </div>
+                        <div className='photo-btn'>
+                            <Button disabled={isViewDisabled} component="label" variant="contained" startIcon={<PhotoCameraIcon />} onChange={updatePhotoUrl} className="user-upload-photo" >
+                                Add Photo
+                                <VisuallyHiddenInput accept="image/*"  type="file"/>
+                            </Button>
+                        </div>
 
-                    {/*    <div className="photo-error-container">*/}
-                    {/*        <p className='photo-error'>This field is mandatory <mark>*</mark></p>*/}
-                    {/*    </div>*/}
-                    {/*</Grid>*/}
+                        <div className="photo-error-container">
+                            <p className='photo-error'>This field is mandatory <mark>*</mark></p>
+                        </div>
+                    </Grid>
                 </Grid>
 
             </Box>
