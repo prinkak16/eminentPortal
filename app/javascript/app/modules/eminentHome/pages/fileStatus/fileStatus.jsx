@@ -185,8 +185,10 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
+                {updateStatus &&
                 <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus}
                            saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
+                }
             </div>
 
             {eminentData.length === 0 ?
