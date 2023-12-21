@@ -66,7 +66,7 @@ const SlottingTabPage =({tabId, filterString})=>{
                                 <TableCell>S.no.</TableCell>
                                 <TableCell>PSU/PSB</TableCell>
                                 <TableCell>Ministry</TableCell>
-                                <TableCell>Vacant</TableCell>
+                                <TableCell>Vacancy</TableCell>
                                 <TableCell>Assigned to State</TableCell>
                                 <TableCell>PSU Listed</TableCell>
                                 <TableCell>Last Updated</TableCell>
