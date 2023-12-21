@@ -275,7 +275,7 @@ module FilterHelper
   end
 
 
-  def get_ministries_pus_filters(name)
+  def get_ministries_psu_filters(name)
     result = {
       'key': 'organization',
       'display_name': 'PSU/PSB',

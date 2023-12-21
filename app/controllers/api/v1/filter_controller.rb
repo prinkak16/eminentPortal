@@ -158,7 +158,7 @@ class Api::V1::FilterController < BaseApiController
       'filters': [
         file_status_ministries(ministry_name),
         get_file_statuses_filters(file_status),
-        get_ministries_pus_filters(org_name),
+        get_ministries_psu_filters(org_name)
       ]
     }
 
