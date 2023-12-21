@@ -17,7 +17,7 @@ import {useNavigate} from "react-router-dom";
 
 // newSteps=[PersonalDetails]
 const FormWrap = ({userData, stateId, viewMode}) => {
-    const {config, isCandidateLogin, setBackDropToggle, setEminentData} = useContext(ApiContext)
+    const {config, isCandidateLogin, setAuthToken, setBackDropToggle, setEminentData} = useContext(ApiContext)
     const Item = styled(Paper)(({theme}) => ({
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -127,6 +127,11 @@ const FormWrap = ({userData, stateId, viewMode}) => {
                     navigate({
                         pathname: '/'
                     });
+                    localStorage.setItem('auth_token', '')
+                    localStorage.setItem('eminent_number', '')
+                    localStorage.setItem('view_mode', '')
+                    setAuthToken('')
+                    setEminentData({})
                 }
             } else if (activeStep + 1 === 6) {
                 values = {}

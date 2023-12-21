@@ -148,7 +148,7 @@ class Api::V1::FilterController < BaseApiController
     org_name = params[:organization_name].present? ? params[:organization_name] : ''
     result = {
       'filters': [
-        get_ministry_filters(ministry_name),
+        file_status_ministries(ministry_name),
         get_file_statuses_filters(file_status),
         fetch_all_vacancy_organization_filters(org_name),
       ]

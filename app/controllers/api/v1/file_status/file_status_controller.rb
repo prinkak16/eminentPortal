@@ -62,9 +62,9 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
         photo: member.data&.dig('photo'),
         ministry: m_relations&.vacancy&.ministry&.name,
         psu: m_relations&.vacancy&.organization&.name,
-        type: m_relations&.vacancy&.organization&.type,
+        type: m_relations&.vacancy&.organization&.ratna_type,
         file_status: get_last_file_status(m_relations&.id),
-        file_state: get_last_file_state(m_relations&.id),
+        file_state: get_last_file_state(m_relations&.id) || 'Pending',
         file_history: file_history(m_relations&.file_status&.id),
         fs_id: m_relations&.file_status&.id
       }

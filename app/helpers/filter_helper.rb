@@ -249,4 +249,28 @@ module FilterHelper
     end
     result
   end
+
+  def file_status_ministries(search)
+    result = {
+      'key': 'ministry_ids',
+      'display_name': 'Ministry',
+      'type': 'array',
+      'values': []
+    }
+
+
+    user_assigned_ministries = current_auth_user.assigned_ministry.pluck(:ministry_id)
+    ministry_details = Ministry.where(id:user_assigned_ministries)
+    if search.length > 2
+      ministry_details = ministry_details.name_similar(search)
+    end
+
+    ministry_details.each do |ministry_info|
+      result[:values] << {
+        'value': ministry_info[:id],
+        'display_name': ministry_info[:name]
+      }
+    end
+    result
+  end
 end
