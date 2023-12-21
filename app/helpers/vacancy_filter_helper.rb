@@ -311,4 +311,6 @@ module VacancyFilterHelper
       ]
     }
   end
+
+
 end

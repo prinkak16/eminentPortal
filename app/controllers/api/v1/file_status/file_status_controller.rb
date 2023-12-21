@@ -146,7 +146,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       }, status: :unauthorized
     end
 
-    file_statuses = get_file_status_levels
+    file_statuses = get_file_status_levels.where.not(name: "Pending")
     render json: { status: true, data: file_statuses, message: 'File Statuses' }, status: :ok
   end
 

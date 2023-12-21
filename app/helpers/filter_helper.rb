@@ -273,4 +273,25 @@ module FilterHelper
     end
     result
   end
+
+
+  def get_ministries_pus_filters(name)
+    result = {
+      'key': 'organization',
+      'display_name': 'PSU/PSB',
+      'type': 'array',
+      'values': []
+    }
+
+    user_assigned_ministries = current_auth_user.assigned_ministry.pluck(:ministry_id)
+    organizations = Organization.where(ministry_id:user_assigned_ministries)
+    organizations = organizations.where("LOWER(data->>'name') LIKE ?", "%#{name.downcase}%") if name.present?
+    organizations.each do |organization|
+      result[:values] << {
+        'value': organization['id'],
+        'display_name': organization['name']
+      }
+    end
+    result
+  end
 end
