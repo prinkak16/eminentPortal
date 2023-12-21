@@ -17,8 +17,8 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       'verified': 0,
     }
 
-
-    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    puts "dsbcjdh #{current_auth_user.id}"
+    assigned_ministries_ids = current_auth_user.assigned_ministry.pluck(:ministry_id)
     result = CustomMemberForm
                .joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
                .where(vacancy_allotments: { unoccupied_at: nil }, vacancy: { ministry_id: assigned_ministries_ids })
@@ -27,7 +27,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     total_count = 0
     if result.present?
-      stats[:in_progress] = result['In Progress'] || 0
+      stats[:in_progress] = result['In Progress'] + result['Pending'] || 0
       stats[:dropped] = result['Rejected'] || 0
       stats[:verified] = result['Verified'] || 0
       stats.each do |s, c|
@@ -61,7 +61,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     limit = params[:limit].present? ? params[:limit] : 10
     custom_forms = CustomMemberForm.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
-    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    assigned_ministries_ids = current_auth_user.assigned_ministry.pluck(:ministry_id)
     custom_forms = custom_forms.where(vacancy: { ministry_id: assigned_ministries_ids})
     custom_forms = custom_forms.where("LOWER(data->>'name') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
     custom_forms = custom_forms.where("CAST(custom_member_forms.id AS TEXT) LIKE ?", "%#{member_id}%") if member_id.present?
