@@ -17,7 +17,6 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       'verified': 0,
     }
 
-    puts "dsbcjdh #{current_auth_user.id}"
     assigned_ministries_ids = current_auth_user.assigned_ministry.pluck(:ministry_id)
     result = CustomMemberForm
                .joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
