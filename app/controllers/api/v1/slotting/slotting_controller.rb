@@ -422,6 +422,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           AND
           vac.country_state_id IS NOT null
           AND
+          vac.allotment_status = 'vacant'
+          AND
           um.user_id = #{current_user.id}
         GROUP BY country_state_id, slotting_remarks
       "
@@ -455,6 +457,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           vac.id IS NOT null
           AND
           vac.deleted_at IS null
+          AND
+          vac.allotment_status = 'vacant'
           AND
           vac.organization_id = #{params['organization_id']}
           AND
