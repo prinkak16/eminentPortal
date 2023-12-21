@@ -37,6 +37,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
            AND
            vac.deleted_at IS null
            AND
+           vac.allotment_status = 'vacant'
+           AND
            um.user_id = #{current_user.id}
       "
       results = Vacancy.find_by_sql(sql)
@@ -138,6 +140,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           vac.id IS NOT null
           AND
           vac.deleted_at IS null
+          AND
+          vac.allotment_status = 'vacant'
           AND
           um.user_id = #{current_user.id}
       "
