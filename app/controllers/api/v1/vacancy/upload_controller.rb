@@ -7,7 +7,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
   def manual_upload
     begin
-      permission_exist = is_permissible('GOMManagement', 'MinisterAssistantMapping')
+      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -64,7 +64,8 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           department_name: row[3],
           organization_name: row[4],
           is_listed: row[5],
-          designation: row[6],
+          psu_type: row[6],
+          designation: row[7],
           error: '',
           success: false
         }
@@ -89,6 +90,18 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
         unless %w[YES NO].include? row_data[:is_listed]
           row_data[:error] = 'Please provide a valid is listed(YES/NO).'
+          upload_result << row_data
+          next
+        end
+
+        unless row_data[:psu_type].present?
+          row_data[:error] = 'Please provide a psu type.'
+          upload_result << row_data
+          next
+        end
+
+        unless %w[Maharatna Navratna Miniratna].include? row_data[:psu_type]
+          row_data[:error] = 'Please provide a valid psu type.'
           upload_result << row_data
           next
         end
@@ -136,6 +149,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             slug: organization_slug
           ).first_or_create!
           organization_details.update(is_listed: row_data[:is_listed] == 'YES')
+          organization_details.update(ratna_type: row_data[:psu_type])
           organization_id_v = organization_details[:id].present? ? organization_details[:id] : nil
         end
 
@@ -211,6 +225,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           'Ministry Name',
           'Department Name',
           'Organization Name',
+          'Organization Type',
           'Is Listed(YES/NO)',
           'Designation',
           'Error',
@@ -223,6 +238,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
             csv_row_data[:ministry_name],
             csv_row_data[:department_name],
             csv_row_data[:organization_name],
+            csv_row_data[:psu_type],
             csv_row_data[:is_listed],
             csv_row_data[:designation],
             csv_row_data[:error],

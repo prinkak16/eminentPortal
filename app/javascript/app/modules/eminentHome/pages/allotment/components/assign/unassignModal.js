@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -36,9 +36,18 @@ function unassignModal({
 }) {
   const { psuIdAllotment } = React.useContext(AllotmentContext);
   const handleClose = () => setSystem(false);
+  const [unassignText, setUnassignText] = useState("");
+
+  const handleText = (e) => {
+    setUnassignText(e.target.value);
+  };
 
   const handleModalSystem = (historyId) => {
-    allotmentUnassign(historyId).then(
+    const unassignParams = {
+      member_id: historyId,
+      remarks: unassignText,
+    };
+    allotmentUnassign(unassignParams).then(
       (res) => {
         if (res?.data?.success) {
           cardDetails(psuIdAllotment);
@@ -97,8 +106,10 @@ function unassignModal({
 
                 <div className="modal-3">
                   <textarea
-                    placeholder="Write something…"
+                    placeholder="Write something not more than 100 character..."
                     className="modal-textarea"
+                    onChange={(e) => handleText(e)}
+                    maxLength={100}
                   />
                 </div>
 

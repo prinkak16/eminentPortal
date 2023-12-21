@@ -13,6 +13,10 @@ export const getFiltersForAllotment = (params) => {
   return axios.get(apiBaseUrl + "filters/allotment", { params });
 };
 
+export const allotmentEminentList = (params, filterPrams) => {
+  return axios.get(`${apiBaseUrl}allotment/eminent_list?${filterPrams}`, { params });
+};
+
 export const getAssignedAllotment = (params) => {
   return axios.get(apiBaseUrl + "allotment/assigned_members", { params });
 };
@@ -40,10 +44,6 @@ export const allotmentBoxData = () => {
   return axios.get(apiBaseUrl + "allotment/position_analytics");
 };
 
-export const allotmentEminentList = (params) => {
-  return axios.get(apiBaseUrl + "allotment/eminent_list", { params });
-};
-
 export const allotmentCardData = (params) => {
   return axios.get(apiBaseUrl + "allotment/psu_details", { params });
 };
@@ -53,7 +53,7 @@ export const allotmentHistoryData = (params) => {
 };
 
 export const allotmentUnassign = (params) => {
-  return axios.get(apiBaseUrl + "allotment/unassign_member/" + params);
+  return axios.get(apiBaseUrl + "allotment/unassign_member/", { params });
 };
 
 export const allotmentListData = (params, filterString) => {
@@ -85,6 +85,9 @@ export const assignAllotment = (data) => {
   return axios.post(apiBaseUrl + "allotment/assign_vacancy", data);
 };
 
+export const allotmentSidebarFilters = () => {
+  return axios.get(apiBaseUrl + "allotment/eminent_filters")
+}
 export const fetchMobile = (number) => {
   return axios.get(apiBaseUrl + "custom_member_forms/fetch_by_number", {
     params: {

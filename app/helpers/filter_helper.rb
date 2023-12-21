@@ -9,7 +9,7 @@ module FilterHelper
       'values': []
     }
 
-    fetch_user_assigned_country_states.each do |country_state|
+    fetch_minister_assigned_country_states.each do |country_state|
       result[:values] << {
         'value': country_state['id'],
         'display_name': country_state['name']

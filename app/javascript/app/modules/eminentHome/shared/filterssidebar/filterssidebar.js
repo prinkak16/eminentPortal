@@ -13,6 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import "./filterssidebar.scss";
 import { useContext, useEffect, useState, useRef } from "react";
 import {
+  allotmentSidebarFilters,
   getData,
   getFilters,
   getFiltersFileStatus,
@@ -28,6 +29,7 @@ import { debounce } from "lodash";
 import { string } from "yup";
 import { ApiContext } from "../../../ApiContext";
 import { isValuePresent } from "../../../utils";
+import AllotmentContext from "../../pages/allotment/context/allotmentContext";
 
 export default function FiltersSidebar(props) {
   const homeContext = useContext(HomeContext);
@@ -40,6 +42,7 @@ export default function FiltersSidebar(props) {
   const [searchOrganizationName, setSearchOrganizationName] = useState("");
   const [inputSearch, setInputSearch] = useState({});
   const [filtersKey, setFiltersKey] = useState([]);
+  const {assignBreadCrums} = useContext(AllotmentContext);
   const applyFilter = (appliedFilterKey, appliedKeyOptions) => {
     if (!appliedFilterKey || !appliedKeyOptions) {
       return;
@@ -119,14 +122,24 @@ export default function FiltersSidebar(props) {
         break;
 
       case "allotment":
-        const alotmentParams = {
-          ministry_name: searchMinisterName,
-          department_name: searchDepartmentName,
-        };
-        getFiltersForAllotment(alotmentParams).then((response) => {
-          setFiltersList(response.data.data);
-        });
+        if(assignBreadCrums){
+          allotmentSidebarFilters().then((response) => {
+            setFiltersList(response.data.data);
+            console.log('allotmentsidebarfiters', response.data.data)
+          })
+
+        }
+        else{
+          const alotmentParams = {
+            ministry_name: searchMinisterName,
+            department_name: searchDepartmentName,
+          };
+          getFiltersForAllotment(alotmentParams).then((response) => {
+            setFiltersList(response.data.data);
+          });
+        }
         break;
+
       case "gom_management":
         getFiltersForGOM().then((response) => {
           setFiltersList(response.data.data);
@@ -153,6 +166,7 @@ export default function FiltersSidebar(props) {
     searchMinisterName,
     searchDepartmentName,
     searchOrganizationName,
+    assignBreadCrums
   ]);
 
   const handleChange = (value) => (event, isExpanded) => {

@@ -7,6 +7,14 @@ class Api::V1::FilterController < BaseApiController
   include VacancyFilterHelper
 
   def home
+    permission_exist = is_permissible('Eminent', 'Home')
+    if permission_exist.nil?
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     result = {
       'filters': [
         get_entry_type_filter,
