@@ -101,4 +101,21 @@ module ApplicationHelper
     FileStatusLevel.all.select(:id,:name).order(:created_at)
   end
 
+  def get_user_assigned_ministries
+    ministries = []
+    if current_user.present?
+      auth_user = AuthUser.find_by(id: current_user.id)
+      if auth_user.present?
+        assigned_ministries = auth_user.user_ministries.where(is_minister: false)
+        assigned_ministries.each do |user_ministry|
+          ministries << {
+            ministry_id: user_ministry.ministry.id,
+            ministry_name: user_ministry.ministry.name
+          }
+        end
+      end
+    end
+    ministries
+  end
+
 end
