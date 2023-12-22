@@ -332,6 +332,11 @@ button.cancelbtn{
   margin-bottom: 0.5rem;
 }
 
+.mobile-label-mobile-view {
+  margin-bottom: 2rem !important;
+}
+
+
 .mobiles-container {
   display: flex;
   gap: 2rem;
@@ -340,6 +345,11 @@ button.cancelbtn{
   box-shadow: rgba(0, 0, 0, 0.19) 0px 0px 1px;
   width: 100%;
 }
+
+.mobiles-container-mobile {
+  display: grid !important;
+}
+
 
 .add-delete-btns {
   display: flex;
@@ -559,15 +569,27 @@ button.cancelbtn{
   margin-right: 1.5rem;
 }
 
+.image-container-mobile {
+  width: 7rem;
+  height: 7rem;
+  background: #e9ecef;
+  margin-left: 1rem;
+}
+
 .user-photo-container {
   display: flex;
   justify-content: center;
+}
+.user-photo-container-mobile {
+  display: flex;
 }
 
 .photo-btn {
   justify-content: center;
   display: flex;
 }
+
+
 
 .user-upload-photo {
   color: #FF9559 !important;
@@ -578,6 +600,20 @@ button.cancelbtn{
   margin-top: -1.3rem !important;
 }
 
+.mobile-upload-btn {
+  justify-content: center !important;
+  display: flex !important;
+
+}
+
+.user-upload-photo-mobile {
+  color: #FF9559 !important;
+  background: none !important;
+  width: 10rem;
+  box-shadow: none !important;
+  text-decoration: underline !important;
+}
+
 .mt-2rem {
   margin-top: 2rem;
 }
@@ -586,6 +622,12 @@ button.cancelbtn{
   height: 15rem !important;
   width: 15rem !important;
 }
+
+.user-image-mobile {
+  height: 7rem !important;
+  width: 7rem !important;
+}
+
 
 .photo-error-container {
   display: flex;
@@ -694,4 +736,8 @@ margin-bottom: auto;
 .components-dropdown .css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root {
   height: 3.3rem;
   margin-top: 9px;
+}
+
+.section-2-head {
+  margin-left: 0.8rem!important;
 }

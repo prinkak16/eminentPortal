@@ -562,4 +562,6 @@ export const convertToCamelCase = (inputString) => {
     });
 }
 
+export const isMobileUser = window.innerWidth < 420
+
 

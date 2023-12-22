@@ -24,7 +24,7 @@ import * as Yup from "yup";
 import {
     calculateAge, disabledSaveProgressButton,
     dobFormat,
-    formFilledValues,
+    formFilledValues, isMobileUser,
     isValuePresent,
     languagesName, saveProgress,
     saveProgressButton, VisuallyHiddenInput
@@ -179,6 +179,20 @@ const PersonalDetails = (props) => {
         return  dayjs(date)
     }
 
+    const dropDownView = (type) => {
+        let size  = isMobileUser ? 11 : 6
+        if (!isMobileUser) {
+            if (type === 'name' ) {
+                size = 12
+            }
+            if (type === 'language' ) {
+                size = 4
+            }
+        }
+
+        return size
+    }
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -195,11 +209,32 @@ const PersonalDetails = (props) => {
                     </Item>
                 </Stack>
                 <Grid className='detailFrom' container spacing={2}>
-                    <Grid item xs={8}>
-                        <Grid className="grid-wrap" container spacing={2} sx={{mb: 5}}>
-                            <Grid item xs={12}>
+                    <Grid className="" item xs={isMobileUser ? 12 : 8}>
+                        <Grid className={`grid-wrap ${isMobileUser ? 'justify-content-center': ''}`} container spacing={2} sx={{mb: 5}}>
+                            {isMobileUser &&
+                                <Grid item xs={12}>
+                                    <div className='image-container-mobile d-flex' >
+                                        <div className="user-photo-container-mobile">
+                                            {isValuePresent(userPhoto) ?
+                                                <img className="user-image-mobile" src={userPhoto}
+                                                     alt='eminent-profile'/>
+                                                : <UserIcon className="mt-2rem"/>
+                                            }
+                                        </div>
+                                        <div className='mobile-upload-btn'>
+                                            <Button disabled={isViewDisabled} component="label" variant="contained" onChange={updatePhotoUrl}
+                                                    className="user-upload-photo-mobile">
+                                                Upload Photo
+                                                <VisuallyHiddenInput accept="image/*" type="file"/>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Grid>
+                            }
+                            <Grid item xs={dropDownView('name')}>
                                 <FormLabel>Name <mark>*</mark></FormLabel>
-                                <Inputfield disabled={isViewDisabled} type="text" name="name" placeholder="Full Name (As per PAN Card)"
+                                <Inputfield disabled={isViewDisabled} type="text" name="name"
+                                            placeholder="Full Name (As per PAN Card)"
                                             value={props.formValues.name} onKeyPress={(e) => {
                                     const key = e.key;
                                     if (!/^[A-Za-z\s]+$/.test(key)) {
@@ -208,7 +243,7 @@ const PersonalDetails = (props) => {
                                 }}/>
                                 <ErrorMessage name="name" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={dropDownView()}>
                                 <FormLabel>Religion <mark>*</mark></FormLabel>
                                 <SelectField disabled={isViewDisabled} name="religion" selectedvalues={selectedOption}
                                              value={props.formValues.religion}
@@ -218,7 +253,7 @@ const PersonalDetails = (props) => {
                                 />
                                 <ErrorMessage name="religion" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={dropDownView()}>
                                 <FormLabel>Gender <mark>*</mark></FormLabel>
                                 <SelectField
                                             disabled={isViewDisabled}
@@ -229,7 +264,7 @@ const PersonalDetails = (props) => {
                                              optionList={GenderData}/>
                                 <ErrorMessage name="gender" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={dropDownView()}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
                                 <SelectField disabled={isViewDisabled} name="category" selectedvalues={selectedOption}
                                              value={props.formValues.category}
@@ -238,7 +273,7 @@ const PersonalDetails = (props) => {
                                              optionList={dropDownDataCategory}/>
                                 <ErrorMessage name="category" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={dropDownView()}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
                                 <Inputfield
                                     disabled={isViewDisabled}
@@ -255,7 +290,7 @@ const PersonalDetails = (props) => {
                                 />
                                 <ErrorMessage name="caste" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={6} className="mb-md-0">
+                            <Grid item xs={dropDownView()} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
                                 <Inputfield
                                     disabled={isViewDisabled}
@@ -270,7 +305,7 @@ const PersonalDetails = (props) => {
                                                 }
                                             }}/>
                             </Grid>
-                            <Grid item xs={6} className="mb-md-0">
+                            <Grid item xs={dropDownView()} className="mb-md-0">
                                 <FormLabel>Date of birth <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
@@ -292,7 +327,7 @@ const PersonalDetails = (props) => {
                                 <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                                 <ErrorMessage name="dob" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={dropDownView('language')}>
                                 <FormLabel>Languages known <mark>*</mark></FormLabel>
                                 <ErrorMessage name="languages" style={{color:'red'}} component="p" />
                                 <div className="language-container" onClick={() => openLangDrawer()}>
@@ -332,11 +367,11 @@ const PersonalDetails = (props) => {
                                 }
                             </Grid>
                         </Grid>
-                        <Grid container spacing={2} sx={{mb: 5}}>
-                            <Grid item xs={12}>
+                        <Grid container className={isMobileUser ? 'justify-content-center' : ''} spacing={2} sx={{mb: 5}}>
+                            <Grid className="section-2-head" item xs={12}>
                                 <Formheading number="2" heading="ID Proof"/>
                             </Grid>
-                            <Grid item xs={6} className='d-grid'>
+                            <Grid item xs={dropDownView()} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     disabled={isViewDisabled}
@@ -351,7 +386,7 @@ const PersonalDetails = (props) => {
                                 <ErrorMessage name="aadhaar" style={{color:'red'}} component="p" />
 
                             </Grid>
-                            <Grid item xs={6} className='d-grid'>
+                            <Grid item xs={dropDownView()} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
                                     disabled={isViewDisabled}
@@ -366,6 +401,8 @@ const PersonalDetails = (props) => {
                             </Grid>
                         </Grid>
                     </Grid>
+
+                    {!isMobileUser &&
                     <Grid item xs={4}>
                         <div className='image-container'>
                             <div className="user-photo-container" >
@@ -386,6 +423,7 @@ const PersonalDetails = (props) => {
                             <p className='photo-error'>This field is mandatory <mark>*</mark></p>
                         </div>
                     </Grid>
+                    }
                 </Grid>
 
             </Box>
