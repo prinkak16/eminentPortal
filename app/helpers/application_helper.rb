@@ -97,6 +97,13 @@ module ApplicationHelper
       .first
   end
 
+  def is_permissible?(permission_name, action_name)
+    ClientApp
+      .joins("LEFT JOIN user_permissions ON client_apps.id = user_permissions.client_app_id")
+      .joins("LEFT JOIN app_permissions ON user_permissions.app_permission_id = app_permissions.id")
+      .where("client_apps.name = '#{ENV['CLIENT_APP_PERMISSION']}' AND user_permissions.user_id = 17295 AND user_permissions.deleted_at IS null AND app_permissions.permission_name = '#{permission_name}' AND app_permissions.action = '#{action_name}'").exists?
+  end
+
   def get_file_status_levels
     FileStatusLevel.all.select(:id,:name).order(:created_at)
   end

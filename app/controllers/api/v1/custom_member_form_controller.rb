@@ -387,8 +387,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def list
-    permission_exist = is_permissible('Eminent', 'Home')
-    if permission_exist.nil?
+    unless is_permissible?('Home', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'

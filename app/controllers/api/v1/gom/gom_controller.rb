@@ -8,7 +8,7 @@ class Api::V1::Gom::GomController < BaseApiController
 
   def minister_list
     begin
-      permission_exist = is_permissible('GOMManagement', 'MinisterList')
+      permission_exist = is_permissible('GOMManagement', 'View')
       if permission_exist.nil?
         return render json: {
           success: false,

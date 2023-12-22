@@ -7,8 +7,7 @@ class Api::V1::FilterController < BaseApiController
   include VacancyFilterHelper
 
   def home
-    permission_exist = is_permissible('Eminent', 'Home')
-    if permission_exist.nil?
+    unless is_permissible?('Home', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -32,6 +31,13 @@ class Api::V1::FilterController < BaseApiController
   end
 
   def gom_management
+    unless is_permissible?('GOMManagement', 'View')
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     minister_name = params[:minister_name].present? ? params[:minister_name] : ''
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
 
@@ -46,6 +52,13 @@ class Api::V1::FilterController < BaseApiController
   end
 
   def vacancy_ministry_wise
+    unless is_permissible?('MasterOfVacancies', 'View')
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
     department_name = params[:department_name].present? ? params[:department_name] : ''
     org_name = params[:organization_name].present? ? params[:organization_name] : ''
@@ -100,6 +113,13 @@ class Api::V1::FilterController < BaseApiController
   end
 
   def slotting
+    unless is_permissible?('Slotting', 'View')
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
     department_name = params[:department_name].present? ? params[:department_name] : ''
     org_name = params[:organization_name].present? ? params[:organization_name] : ''
@@ -118,6 +138,13 @@ class Api::V1::FilterController < BaseApiController
   end
 
   def allotment
+    unless is_permissible?('Allotment', 'View')
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
     department_name = params[:department_name].present? ? params[:department_name] : ''
     org_name = params[:organization_name].present? ? params[:organization_name] : ''
@@ -151,6 +178,13 @@ class Api::V1::FilterController < BaseApiController
   end
 
   def file_status
+    unless is_permissible?('FileStatus', 'View')
+      return render json: {
+        success: false,
+        message: 'Access to this is restricted. Please check with the site administrator.'
+      }, status: :unauthorized
+    end
+
     ministry_name = params[:ministry_name].present? ? params[:ministry_name] : ''
     file_status = params[:file_status].present? ? params[:file_status] : ''
     org_name = params[:organization_name].present? ? params[:organization_name] : ''
