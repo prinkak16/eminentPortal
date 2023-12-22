@@ -235,7 +235,7 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                         <TableHead>
                             <TableRow>
                                 <TableCell>PSU Name</TableCell>
-                                <TableCell>Total Position</TableCell>
+                                <TableCell>Total Vacancy</TableCell>
                                 <TableCell>Slotted</TableCell>
                                 <TableCell>Unslotted</TableCell>
                             </TableRow>

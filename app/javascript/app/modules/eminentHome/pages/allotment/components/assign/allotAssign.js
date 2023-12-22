@@ -60,6 +60,7 @@ function AllotAssign({ filterString }) {
   const [historyId, setHistoryId] = useState(null);
   const [tabSelect, setTabSelect] = useState(null);
   const [cardDetail, setCardDetail] = useState([]);
+  const [name, setName] = useState("");
   const {
     allotmentCardDetails,
     setAllotmentCardDetails,
@@ -252,6 +253,7 @@ function AllotAssign({ filterString }) {
       "You have successfull added the position in the verify section"
     );
     setIsOpen(open);
+    setValue(0);
   };
 
   const handleModal = () => {
@@ -285,7 +287,8 @@ function AllotAssign({ filterString }) {
     );
   };
 
-  const unassignHandeler = (id) => {
+  const unassignHandeler = (id, member) => {
+    setName(member.member_data.data.name);
     setHistoryId(id);
     setSystem(true);
   };
@@ -563,7 +566,9 @@ function AllotAssign({ filterString }) {
                     <div className="UnAssign-allotment-div">
                       <button
                         className="UnAssign-allotment-btn"
-                        onClick={() => unassignHandeler(member.member_data.id)}
+                        onClick={() =>
+                          unassignHandeler(member.member_data.id, member)
+                        }
                       >
                         Unassign
                       </button>
@@ -682,6 +687,7 @@ function AllotAssign({ filterString }) {
         cardDetails={cardDetails}
         setDataArray={setDataArray}
         psuName={cardDetail?.psu_name}
+        name={name}
       />
       <Modal
         aria-labelledby="transition-modal-title"

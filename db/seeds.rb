@@ -6,7 +6,9 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-file_status = [{name: 1,state:'In Progress'},
+file_status = [
+               {name: 'Pending',state:'Pending'},
+               {name: 1,state:'In Progress'},
                {name: 2,state: 'In Progress'},
                {name: 'A', state: 'In Progress'},
                {name: 3, state: 'In Progress' },

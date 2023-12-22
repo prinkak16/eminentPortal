@@ -7,7 +7,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def position_analytics
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -37,6 +37,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
            AND
            vac.deleted_at IS null
            AND
+           vac.allotment_status = 'vacant'
+           AND
            um.user_id = #{current_user.id}
       "
       results = Vacancy.find_by_sql(sql)
@@ -54,7 +56,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def list
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -139,6 +141,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           AND
           vac.deleted_at IS null
           AND
+          vac.allotment_status = 'vacant'
+          AND
           um.user_id = #{current_user.id}
       "
       sql += " AND vac.country_state_id IN (#{state_id_search})" unless state_id_search.nil?
@@ -188,7 +192,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def slot
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -249,7 +253,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def unslot
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -294,7 +298,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def reslot
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -376,7 +380,7 @@ class Api::V1::Slotting::SlottingController < BaseApiController
 
   def stats
     begin
-      permission_exist = is_permissible('Eminent', 'ViewAll')
+      permission_exist = is_permissible('Eminent', 'Slotting')
       if permission_exist.nil?
         return render json: {
           success: false,
@@ -422,6 +426,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           AND
           vac.country_state_id IS NOT null
           AND
+          vac.allotment_status = 'vacant'
+          AND
           um.user_id = #{current_user.id}
         GROUP BY country_state_id, slotting_remarks
       "
@@ -455,6 +461,8 @@ class Api::V1::Slotting::SlottingController < BaseApiController
           vac.id IS NOT null
           AND
           vac.deleted_at IS null
+          AND
+          vac.allotment_status = 'vacant'
           AND
           vac.organization_id = #{params['organization_id']}
           AND

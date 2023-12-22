@@ -185,8 +185,10 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
+                {updateStatus &&
                 <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus}
                            saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
+                }
             </div>
 
             {eminentData.length === 0 ?
@@ -200,7 +202,7 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                         <span>No eminent found</span>
                     )}
                 </div> :
-                <div className='mt-5 border pb-4'>
+                <div className='data-container mt-5 border pb-4'>
                     {eminentData && eminentData.map((item, index) => (
                         <div key={index}
                              className={`mt-4 w-95  ${index + 1 !== eminentData.length && 'eminent-container pb-4'}`}>

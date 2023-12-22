@@ -387,7 +387,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def list
-    permission_exist = is_permissible('Eminent', 'ViewAll')
+    permission_exist = is_permissible('Eminent', 'Home')
     if permission_exist.nil?
       return render json: {
         success: false,
