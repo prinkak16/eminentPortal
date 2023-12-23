@@ -18,6 +18,8 @@ import BasicTabs from "../../shared/tabs/tabs";
 import { HomeContext } from "../../../../context/tabdataContext";
 import { ApiContext } from "../../../ApiContext";
 import AllotmentContext from "../allotment/context/allotmentContext";
+import {isValuePresent} from "../../../utils";
+import {getUserPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 
 const drawerWidth = 240;
 
@@ -81,6 +83,7 @@ export default function PersistentDrawerLeft() {
   const [tabId, setTabId] = useState("home");
   const [movTabId, setMovTabId] = useState("ministry_wise");
   const [clearFilter, setClearFilter] = useState(false);
+  const [fetchedUserPermissions, setFetchedUserPermissions] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -88,6 +91,16 @@ export default function PersistentDrawerLeft() {
     localStorage.setItem("eminent_number", "");
     localStorage.setItem("view_mode", "");
     setEminentData({});
+    if (!isValuePresent(localStorage.getItem('user_permissions'))) {
+      setFetchedUserPermissions(true);
+    } else {
+      getUserPermissions().then(response => {
+        if (response.data.success) {
+          localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
+          setFetchedUserPermissions(true);
+        }
+      })
+    }
   }, []);
 
   const handleDrawerOpen = () => {
@@ -122,38 +135,38 @@ export default function PersistentDrawerLeft() {
 
   return (
     <>
-      <HomeContext.Provider value={{ movTabId, handleMovTabsFilter }}>
+      {fetchedUserPermissions && <HomeContext.Provider value={{ movTabId, handleMovTabsFilter }}>
         <Box sx={{ display: "flex" }} className="mt-5">
           <Drawer
-            sx={{
-              display: open ? '' : 'none',
-              width: drawerWidth,
-              flexShrink: 0,
-              "& .MuiDrawer-paper": {
+              sx={{
+                display: open ? '' : 'none',
                 width: drawerWidth,
-                boxSizing: "border-box",
-              },
-            }}
-            variant="persistent"
-            anchor="left"
-            open={open}
-            className="filtersidebar"
+                flexShrink: 0,
+                "& .MuiDrawer-paper": {
+                  width: drawerWidth,
+                  boxSizing: "border-box",
+                },
+              }}
+              variant="persistent"
+              anchor="left"
+              open={open}
+              className="filtersidebar"
           >
             <div>
               <DrawerHeader className="d-flex justify-content-between mt-1.7 ms-4 ps-0">
                 <h2 className="filter">Filters</h2>
                 <IconButton className="chevronicon" onClick={handleDrawerClose}>
                   {theme.direction === "ltr" ? (
-                    <ChevronLeftIcon />
+                      <ChevronLeftIcon />
                   ) : (
-                    <ChevronRightIcon />
+                      <ChevronRightIcon />
                   )}
                 </IconButton>
               </DrawerHeader>
               <FiltersSidebar
-                setFilterString={setFilterString}
-                tabId={tabId}
-                filterClear={filterClear}
+                  setFilterString={setFilterString}
+                  tabId={tabId}
+                  filterClear={filterClear}
               />
             </div>
           </Drawer>
@@ -164,48 +177,48 @@ export default function PersistentDrawerLeft() {
                   <p className="heading">
                     <span>
                       <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={{ mr: 2, ...(open && { display: "none" }) }}
+                          color="inherit"
+                          aria-label="open drawer"
+                          onClick={handleDrawerOpen}
+                          edge="start"
+                          sx={{ mr: 2, ...(open && { display: "none" }) }}
                       >
                         <SideBarIcon />
                       </IconButton>
                     </span>
                     {assignBreadCrums ? (
-                      <>
-                        <Link
-                          onClick={crumbsHandeler}
-                          style={{
-                            textDecoration: "underline",
-                            fontWeight: "300 !important",
-                          }}
-                        >
-                          Allotment
-                        </Link>
-                        <span style={{ fontWeight: "500 !important" }}>
+                        <>
+                          <Link
+                              onClick={crumbsHandeler}
+                              style={{
+                                textDecoration: "underline",
+                                fontWeight: "300 !important",
+                              }}
+                          >
+                            Allotment
+                          </Link>
+                          <span style={{ fontWeight: "500 !important" }}>
                           {" "}
-                          / Assign position
+                            / Assign position
                         </span>
-                      </>
+                        </>
                     ) : (
-                      "Eminent Personalities"
+                        "Eminent Personalities"
                     )}
                   </p>
                 </div>
               </div>
 
               <BasicTabs
-                filterString={filterString}
-                onSwitchTab={switchTabHandler}
-                openFilter={open}
-                filterClear={clearFilter}
+                  filterString={filterString}
+                  onSwitchTab={switchTabHandler}
+                  openFilter={open}
+                  filterClear={clearFilter}
               />
             </Typography>
           </Main>
         </Box>
-      </HomeContext.Provider>
+      </HomeContext.Provider>}
     </>
   );
 }

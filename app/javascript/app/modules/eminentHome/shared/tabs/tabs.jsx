@@ -75,22 +75,6 @@ export default function BasicTabs({
   const navigate = useNavigate();
   const [callFetchFunction, setCallFetchFunction] = useState(false)
 
-  const [userPermissions, setUserPermissions] = useState()
-
-  useEffect(() => {
-    if (isValuePresent(localStorage.getItem('user_permissions'))) {
-      setUserPermissions(JSON.parse(localStorage.getItem('user_permissions')))
-    } else  {
-      getUserPermissions().then(
-          (res) => {
-            if (res.data.success) {
-              localStorage.setItem('user_permissions', JSON.stringify(res.data.data))
-              setUserPermissions(res.data.data)
-            }
-          }
-      )
-    }
-  },[])
   const notify = () => toast("CSV file Uploaded successfully");
   const { assignBreadCrums, setAssignBreadCrums } =
     useContext(AllotmentContext);
