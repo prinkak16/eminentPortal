@@ -62,7 +62,6 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
 
     const handleFieldChange = (value, name, valueType, index) => {
-        debugger
         if (valueType === 'State') {
             let field = jsonForm?.fields?.find((item) => item.key === 'State')
             if (isValuePresent(field.combo_fields)) {

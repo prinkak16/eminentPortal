@@ -21,7 +21,7 @@ function Header({userData}){
           setAuthToken('')
       } else {
           eminentAdminLogout().then((res) => {
-              localStorage.setItem('user_permissions', '')
+              localStorage.removeItem('user_permissions');
               window.location.reload()
           })
       }

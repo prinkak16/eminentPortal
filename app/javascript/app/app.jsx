@@ -43,8 +43,8 @@ const adminRoutes = (
         <Route path="/gom" element={<GomPage/>}/>
         <Route path="/allotment/assign" element={<AllotAssign/>}/>
         <Route path="/form_submitted" element={<AfterFormSubmit/>}/>
-        <Route path="/*" element={<Navigate to="/"/>}/>
         <Route path="/profile" element={<ProfilePage/>}/>
+        <Route path="/*" element={<Navigate to="/"/>}/>
     </Routes>
 );
 
