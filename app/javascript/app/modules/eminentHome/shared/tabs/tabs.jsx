@@ -259,11 +259,9 @@ export default function BasicTabs({
     setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
   };
   const handleChange = (event, newValue) => {
-    if (checkPermission('Eminent', convertToCamelCase(newValue))) {
-      handleBasicTabChange({ basicTabId: newValue });
-      setValue(newValue);
-      onSwitchTab(newValue);
-    }
+    handleBasicTabChange({ basicTabId: newValue });
+    setValue(newValue);
+    onSwitchTab(newValue);
   };
 
   const handleDownload = () => {
@@ -596,12 +594,12 @@ export default function BasicTabs({
 
   const tabsView = () => {
     return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
-                {checkPermission('Eminent','Home') && <Tab label="Home" value="home"/>}
-                {checkPermission('Eminent','Allotment') && <Tab label="Allotment" value="allotment"/>}
-                {checkPermission('Eminent','FileStatus') && <Tab label="File Status" value="file_status"/>}
-                {checkPermission('Eminent','MasterOfVacancies') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
-                {checkPermission('Eminent','Slotting') && <Tab label="Slotting" value="slotting"/>}
-                {checkPermission('Eminent','GomManagement') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
+                {checkPermission('Home','View') && <Tab label="Home" value="home"/>}
+                {checkPermission('Allotment','View') && <Tab label="Allotment" value="allotment"/>}
+                {checkPermission('FileStatus','View') && <Tab label="File Status" value="file_status"/>}
+                {checkPermission('MasterOfVacancies','View') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
+                {checkPermission('Slotting','View') && <Tab label="Slotting" value="slotting"/>}
+                {checkPermission('GOMManagement','View') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
           </TabList>)
   }
 
