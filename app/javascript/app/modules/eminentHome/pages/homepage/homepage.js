@@ -91,16 +91,12 @@ export default function PersistentDrawerLeft() {
     localStorage.setItem("eminent_number", "");
     localStorage.setItem("view_mode", "");
     setEminentData({});
-    if (!isValuePresent(localStorage.getItem('user_permissions'))) {
-      setFetchedUserPermissions(true);
-    } else {
-      getUserPermissions().then(response => {
-        if (response.data.success) {
-          localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
-          setFetchedUserPermissions(true);
-        }
-      })
-    }
+    getUserPermissions().then(response => {
+      if (response.data.success) {
+        localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
+        setFetchedUserPermissions(true);
+      }
+    })
   }, []);
 
   const handleDrawerOpen = () => {

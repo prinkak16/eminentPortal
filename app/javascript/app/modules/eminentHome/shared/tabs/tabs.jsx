@@ -597,34 +597,38 @@ export default function BasicTabs({
             {tabsView()}
             {buttonContent}
           </Box>
-          <TabPanel value="home">
+          {checkPermission('Home','View') && <TabPanel value="home">
             <HomeTable
-              filterString={filterString}
-              tabId={value}
-              clearFilter={clearFilter}
+                filterString={filterString}
+                tabId={value}
+                clearFilter={clearFilter}
             />
-          </TabPanel>
+          </TabPanel>}
 
-          <TabPanel value="allotment">
-            <Allotment filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="file_status">
-            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} />
-          </TabPanel>
-          <TabPanel value="master_of_vacancies">
-            <MasterVacancies filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="slotting">
-            <SlottingTabPage filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="gom_management">
+          {checkPermission('Allotment','View') && <TabPanel value="allotment">
+            <Allotment filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('FileStatus','View') && <TabPanel value="file_status">
+            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter}/>
+          </TabPanel>}
+
+          {checkPermission('MasterOfVacancies','View') && <TabPanel value="master_of_vacancies">
+            <MasterVacancies filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('Slotting','View') && <TabPanel value="slotting">
+            <SlottingTabPage filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('GOMManagement','View') && <TabPanel value="gom_management">
             <GomPage
-              filterString={filterString}
-              clearFilter={clearFilter}
-              tabId={value}
-              callFetchFunction={callFetchFunction}
+                filterString={filterString}
+                clearFilter={clearFilter}
+                tabId={value}
+                callFetchFunction={callFetchFunction}
             />
-          </TabPanel>
+          </TabPanel>}
         </TabContext>
 
       <Modal
