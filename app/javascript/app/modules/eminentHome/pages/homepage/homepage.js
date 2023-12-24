@@ -84,7 +84,7 @@ export default function PersistentDrawerLeft() {
   const [movTabId, setMovTabId] = useState("ministry_wise");
   const [clearFilter, setClearFilter] = useState(false);
   const [fetchedUserPermissions, setFetchedUserPermissions] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({ basicTabId: 'home' });
 
   useEffect(() => {
     switchTabHandler(searchParams.get("basicTabId"));
@@ -117,6 +117,7 @@ export default function PersistentDrawerLeft() {
 
   const switchTabHandler = (id) => {
     setTabId(id);
+    setSearchParams({ basicTabId: id });
   };
   const handleMovTabsFilter = (newValue) => {
     setMovTabId(newValue);
