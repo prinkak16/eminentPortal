@@ -71,7 +71,7 @@ const Analytics = (props) => {
   const tooltipTitle = {
     "Total Eminent Personality": "Total count of eminents.",
     "Total Completed Form": "Forms which are submitted.",
-    "Total Incompleted Form": "Forms with empty mandatory fields.",
+    "Total Incomplete Form": "Forms with empty mandatory fields.",
   };
 
   const createAnalyticCard = () => {
