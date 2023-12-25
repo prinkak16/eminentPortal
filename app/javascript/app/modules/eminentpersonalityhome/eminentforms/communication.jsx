@@ -14,7 +14,7 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
 import {
-    disabledSaveProgressButton,
+    disabledSaveProgressButton, dropDownView,
     formFilledValues, isMobileUser,
     isValuePresent,
     saveProgress,
@@ -231,33 +231,7 @@ const Communicationform =(props)=>{
         }
     }
 
-    const dropDownView = (type) => {
-        let size  = isMobileUser ? 11 : 6
 
-        if (isMobileUser) {
-            if (type === 'std' || type === 'landline' ) {
-                size = 6
-            }
-        }
-
-        if (!isMobileUser) {
-            if (type === 'mobiles' ) {
-                size = 8
-            }
-            if (type === 'std' ) {
-                size = 4
-            }
-            if ( type === 'landline' ) {
-                size = 6
-            }
-            if ( type === 'flat' ) {
-                size = 12
-            }
-
-        }
-
-        return size
-    }
 
     return(
         <>

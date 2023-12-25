@@ -23,7 +23,7 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {
     calculateAge, disabledSaveProgressButton,
-    dobFormat,
+    dobFormat, dropDownView,
     formFilledValues, isMobileUser,
     isValuePresent,
     languagesName, saveProgress,
@@ -179,19 +179,6 @@ const PersonalDetails = (props) => {
         return  dayjs(date)
     }
 
-    const dropDownView = (type) => {
-        let size  = isMobileUser ? 11 : 6
-        if (!isMobileUser) {
-            if (type === 'name' ) {
-                size = 12
-            }
-            if (type === 'language' ) {
-                size = 4
-            }
-        }
-
-        return size
-    }
 
     return (
         <>

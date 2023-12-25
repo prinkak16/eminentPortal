@@ -387,13 +387,13 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def list
-    permission_exist = is_permissible('Eminent', 'Home')
-    if permission_exist.nil?
-      return render json: {
-        success: false,
-        message: 'Access to this is restricted. Please check with the site administrator.'
-      }, status: :unauthorized
-    end
+    # permission_exist = is_permissible('Eminent', 'Home')
+    # if permission_exist.nil?
+    #   return render json: {
+    #     success: false,
+    #     message: 'Access to this is restricted. Please check with the site administrator.'
+    #   }, status: :unauthorized
+    # end
 
     # compute limit and offset
     limit = params[:limit].present? ? params[:limit] : 10

@@ -564,4 +564,37 @@ export const convertToCamelCase = (inputString) => {
 
 export const isMobileUser = window.innerWidth < 520
 
+export const dropDownView = (type) => {
+    let size  = isMobileUser ? 11 : 6
+
+    if (isMobileUser) {
+        if (type === 'std' || type === 'landline' ) {
+            size = 6
+        }
+    }
+
+    if (!isMobileUser) {
+        if (type === 'name' ) {
+            size = 12
+        }
+        if (type === 'language' ) {
+            size = 4
+        }
+        if (type === 'mobiles' ) {
+            size = 8
+        }
+        if (type === 'std' ) {
+            size = 4
+        }
+        if ( type === 'landline' ) {
+            size = 6
+        }
+        if ( type === 'flat' ) {
+            size = 12
+        }
+
+    }
+    return size
+}
+
 
