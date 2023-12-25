@@ -59,7 +59,7 @@ const DialogBox = ({openDialogue, list, status, onClose, saveData, fileStatusId}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <div className='list-container'>
+                        <div className='main-dialog-list-container'>
                             {list && list.map((item) => (
                                 <div className='dialog-list-container' onClick={() => setListItem(item.id)}>
                                     <input className='dialog-list-input' checked={selectedItem === item.id} type='radio'/>

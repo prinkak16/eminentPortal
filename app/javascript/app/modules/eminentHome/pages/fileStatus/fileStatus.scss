@@ -140,7 +140,7 @@ $whiteColor:#fff;
   span {
     height: 0.75rem;
     width: 0.75rem;
-    background: #A3ADA6;
+    background: red;
     margin: auto;
     border-radius: 50%;
   }
@@ -205,4 +205,19 @@ $whiteColor:#fff;
   .eminent-container-max-wid-filter {
     min-width: 9rem!important;
   }
+}
+
+@keyframes blinker {
+  0%, 20%, 50%, 80%, 100% {
+    transform: scale(1);
+  }
+  40%, 60% {
+    transform: scale(1.2);
+  }
+}
+
+.blinking-element-fs {
+  display: block!important;
+  //border-radius: 50%;
+  animation: blinker 3s infinite!important;
 }

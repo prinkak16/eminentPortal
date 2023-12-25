@@ -125,7 +125,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
   def file_history(fs_id)
     FileStatusActivity.joins(:file_status_level).where(file_status_id: fs_id).order(created_at: :asc).map do |hs|
-      { status: hs.file_status_level.name, updated_at: hs.created_at.in_time_zone('Asia/Kolkata').strftime('%a %b %d %Y %I:%M %p') }
+      { status: hs.file_status_level.name, description: hs.description, updated_at: hs.created_at.in_time_zone('Asia/Kolkata').strftime('%a %b %d %Y %I:%M %p') }
     end
   end
 

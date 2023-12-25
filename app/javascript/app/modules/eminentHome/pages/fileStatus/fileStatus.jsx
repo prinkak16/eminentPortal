@@ -252,8 +252,8 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                                 <div className='eminent-file-status ml-1rem'>
                                     <span className='user-id-tag d-block'>Current Status</span>
                                     <div className='d-flex mt-2'>
-                                     <span className='status-btn'>
-                                         <span></span>
+                                     <span className='status-btn '>
+                                         <span className='blinking-element-fs'></span>
                                       </span>
                                         <span>{item.file_status?.status}</span>
                                     </div>
