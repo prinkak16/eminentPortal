@@ -105,7 +105,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     raise StandardError, 'File Status is required' if fs_id.nil?
     raise StandardError, 'File Status level is required' if fs_level_id.nil?
 
-    file_status = FileStatus.find_by(id: 1)
+    file_status = FileStatus.find_by(id: fs_id)
     raise StandardError, 'File Status id is invalid' if file_status.nil?
     file_status.file_status_level_id = fs_level_id
     file_status.description = fs_description
