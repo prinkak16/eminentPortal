@@ -122,7 +122,9 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     drop_status_ids = FileStatusLevel.where(state: 'Rejected').pluck(:id)
     if drop_status_ids.include?(fs_level_id.to_i)
-      VacancyAllotment.find_by(id: file_status.vacancy_allotment_id).update(unoccupied_at:DateTime.now)
+      v_a = VacancyAllotment.find_by(id: file_status.vacancy_allotment_id)
+      v_a.update(unoccupied_at: DateTime.now)
+      v_a.vacancy.unassign! if v_a.vacancy.may_unassign?
       file_status.destroy
     end
     render json: { message: 'File status update successfully', status: true }, status: :ok
