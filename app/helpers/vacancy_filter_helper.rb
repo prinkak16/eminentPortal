@@ -15,7 +15,7 @@ module VacancyFilterHelper
       LEFT JOIN public.ministries AS ministry
       ON um.ministry_id = ministry.id
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id}"
+    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND ministry.deleted_at IS NULL"
     sql += " AND LOWER(ministry.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_ministries = UserMinistry.find_by_sql(sql)
@@ -66,7 +66,8 @@ module VacancyFilterHelper
     sql += "
       FROM public.ministries AS ministry
     "
-    sql += " WHERE LOWER(ministry.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+    sql += " WHERE ministry.deleted_at IS NULL"
+    sql += " AND LOWER(ministry.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     ministries = Ministry.find_by_sql(sql)
 
@@ -96,7 +97,7 @@ module VacancyFilterHelper
       LEFT JOIN public.departments AS department
       ON um.ministry_id = department.ministry_id
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND department.id IS NOT null"
+    sql += " WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND department.id IS NOT null AND department.deleted_at IS null"
     sql += " AND LOWER(department.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_departments = UserMinistry.find_by_sql(sql)
@@ -152,7 +153,8 @@ module VacancyFilterHelper
       LEFT JOIN public.departments AS department
       ON ministry.id = department.ministry_id
     "
-    sql += " WHERE LOWER(department.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+    sql += " WHERE department.deleted_at IS NULL"
+    sql += " AND LOWER(department.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     departments = Ministry.find_by_sql(sql)
 
@@ -184,7 +186,7 @@ module VacancyFilterHelper
       LEFT JOIN public.organizations AS org
       ON (um.ministry_id = org.ministry_id AND dept.id = org.department_id)
     "
-    sql += "WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND org.id IS NOT null"
+    sql += " WHERE um.is_minister IS false AND um.user_id = #{current_user.id} AND org.id IS NOT null AND org.deleted_at IS null"
     sql += " AND LOWER(org.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     user_organizations = UserMinistry.find_by_sql(sql)
@@ -242,7 +244,8 @@ module VacancyFilterHelper
       LEFT JOIN public.organizations AS org
       ON (ministry.id = org.ministry_id AND dept.id = org.department_id)
     "
-    sql += " WHERE LOWER(org.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
+    sql += " WHERE org.deleted_at IS NULL"
+    sql += " AND LOWER(org.name) LIKE LOWER('%#{name}%') ORDER BY ms DESC" if name.length > 2
 
     organizations = Ministry.find_by_sql(sql)
 
