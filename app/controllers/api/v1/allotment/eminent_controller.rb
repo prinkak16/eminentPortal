@@ -279,7 +279,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
       member = params[:member_id].present? ? CustomMemberForm.find_by(id: params[:member_id]) : nil
       raise "Eminent doesn't exist." unless member.present?
 
-      member_allotment = VacancyAllotment.where(custom_member_form_id: 160)
+      member_allotment = VacancyAllotment.where(custom_member_form_id: member)
       raise 'Eminent is not assigned yet.' unless member_allotment.present?
 
       unassign_remark = params[:remarks].present? ? params[:remarks] : nil
