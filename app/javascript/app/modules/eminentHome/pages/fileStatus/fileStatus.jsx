@@ -196,7 +196,11 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                     {searchValue ? (
                         <span>
                 Your search - {searchValue} did not match any eminent{" "}
-                            {searchType}
+                            {searchType === 'Name' ?
+
+                                /\d/.test(searchValue) ? 'Number' : searchType
+                                : searchType
+                            }
               </span>
                     ) : (
                         <span>No eminent found</span>
