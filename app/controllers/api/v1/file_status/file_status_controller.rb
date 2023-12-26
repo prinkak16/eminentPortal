@@ -104,9 +104,8 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     raise StandardError, 'File Status is required' if fs_id.nil?
     raise StandardError, 'File Status level is required' if fs_level_id.nil?
 
-    file_status = FileStatus.find_by(id: fs_id)
+    file_status = FileStatus.find_by(id: 1)
     raise StandardError, 'File Status id is invalid' if file_status.nil?
-
     file_status.file_status_level_id = fs_level_id
     file_status.description = fs_description
     file_status.action_by = current_auth_user
@@ -118,6 +117,13 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     fs_a.file_status_level_id = fs_level_id
     fs_a.description = fs_description
     fs_a.save
+
+
+    drop_status_ids = FileStatusLevel.where(state: "Rejected").pluck(:id)
+    if drop_status_ids.include?(fs_level_id.to_i)
+      VacancyAllotment.find_by(id: file_status.vacancy_allotment_id).update(unoccupied_at:DateTime.now)
+      file_status.destroy
+    end
     render json: { message: 'File status update successfully', status: true }, status: :ok
   rescue StandardError => e
     render json: { message: e.message }, status: :bad_request
