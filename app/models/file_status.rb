@@ -1,5 +1,6 @@
 class FileStatus < ApplicationRecord
   self.table_name = 'file_status'
+  acts_as_paranoid
 
   belongs_to :vacancy_allotment, class_name: 'VacancyAllotment'
   belongs_to :action_by, class_name: 'AuthUser'
