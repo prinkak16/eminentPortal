@@ -7,6 +7,8 @@ import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import BarImage from "../../../../../public/images/bar.svg"
 import {ApiContext} from "../ApiContext";
 import {Typography, TextField, Button} from "@mui/material";
+import ModijiImage from "../../../../../public/images/Modiji.svg"
+import NaddaImage from "../../../../../public/images/Naddaji.svg"
 import OtpInput from 'react-otp-input';
 const mobileRegex = /^[5-9]\d{0,9}$/;
 const LoginPage = () => {
@@ -93,7 +95,7 @@ const LoginPage = () => {
             <div className="login-image">
                 <BarImage/>
             </div>
-            <div className="container h-100 login-container d-flex justify-content-center">
+            <div className="container login-container d-flex justify-content-center">
                 <div className="col-md-6">
                     <div className="h-100 justify-content-center align-items-center">
                         <div className="login-form">
@@ -101,7 +103,7 @@ const LoginPage = () => {
                                 Eminent Personality
                             </Typography>
                             <div className="login-form-wrap">
-                                <Typography variant="h4" >
+                                <Typography variant="h4">
                                     Login with Mobile Number
                                 </Typography>
                                 <div className="justify-content-start my-4 text-start number-filed">
@@ -115,7 +117,7 @@ const LoginPage = () => {
                                         value={inputNumber}
                                         onKeyDown={handleEnterKeyPress}
                                         placeholder="Enter Phone number"
-                                        onChange={(e)=>inputMobileNumber(e)}
+                                        onChange={(e) => inputMobileNumber(e)}
                                         helperText={error}
                                         error={Boolean(error)}
                                         maxLength={10}
@@ -141,9 +143,16 @@ const LoginPage = () => {
 
                                 </div>
                                 <div className="row h-100 justify-content-center align-items-center pt-2">
-                                    <button id="submit" className="btn btn-warning otpBtn" onClick={() => sendSubmitOtp(!inputOtp)}>
-                                        { inputOtp && inputOtp.length === 6 ? 'Submit' : 'Send OTP'}
+                                    <button id="submit" className="btn btn-warning otpBtn"
+                                            onClick={() => sendSubmitOtp(!inputOtp)}>
+                                        {inputOtp && inputOtp.length === 6 ? 'Submit' : 'Send OTP'}
                                     </button>
+                                </div>
+                                <div className="login-govt-image left">
+                                    <ModijiImage/>
+                                </div>
+                                <div className="login-govt-image right">
+                                    <NaddaImage/>
                                 </div>
                             </div>
                         </div>

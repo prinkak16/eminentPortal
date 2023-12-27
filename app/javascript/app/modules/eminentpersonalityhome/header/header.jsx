@@ -3,7 +3,7 @@ import React, {useContext, useState} from 'react';
 import Saral from '../../../../../../public/images/Logo.svg'
 import HeaderArrowDown from '../../../../../../public/images/downarrow.svg';
 import './header.scss';
-import {Select, MenuItem,Box,InputLabel,FormControl} from "@mui/material";
+import {Select, MenuItem,Box,InputLabel,FormControl,Tab} from "@mui/material";
 import axios from "axios";
 import {Menu} from '@mui/material';
 import FaceIcon from '@mui/icons-material/Face';
@@ -13,7 +13,13 @@ import {ApiContext} from "../../ApiContext";
 import UserIcon from '../../../../../../public/images/user-profile-icon1.svg';
 import {eminentAdminDetails, eminentAdminLogout} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import { Link } from "react-router-dom";
+import {HomeContext} from "../../../context/tabdataContext";
+import Tabs from "@mui/material/Tabs";
 function Header({userData}){
+    const {
+        setTabId,
+        tabId
+    } = useContext(HomeContext)
     const {isCandidateLogin, setAuthToken} = useContext(ApiContext)
     const logout = () => {
       if (isCandidateLogin) {
@@ -37,14 +43,19 @@ function Header({userData}){
         setAnchorEl(null);
     };
 
+    const handleLogoClick = () => {
+
+        setTabId('home');
+    };
+
     return(
   
 
         <div className='saral-notify-header'>
-            <div className='header-left-part' onClick={() =>  navigate('/')} >
+            <Link to='/' className='header-left-part' onClick={handleLogoClick}>
                 <Saral/>
                 <span className='bjp-text'>भारतीय जनता पार्टी</span>
-            </div>
+            </Link>
 
             <div className='header-right-part'>
                 <div className='navbar-profile'>
@@ -68,7 +79,6 @@ function Header({userData}){
                     }}
                     transformOrigin={{
                         vertical: 'top',
-
                         horizontal: 'right',
                     }}
                 >

@@ -19,6 +19,7 @@ import AfterFormSubmit from "./modules/eminentpersonalityhome/finalPage/afterFor
 import Header from "./modules/eminentpersonalityhome/header/header";
 import {eminentAdminDetails, getLocationsData} from "./api/stepperApiEndpoints/stepperapiendpoints";
 import ProfilePage from "./modules/eminentHome/pages/profile/profilePage";
+import {HomeContext} from "./context/tabdataContext";
 
 const beforeLoginRoutes = (
     <Routes>
@@ -59,6 +60,7 @@ function App() {
     const [userData, setUserData] = useState()
     const [ resetFilter, setResetFilter] = useState(false)
     const [eminentData, setEminentData] = useState()
+    const [tabId, setTabId] = useState("home");
     const config = {
         headers: {
             Authorization: authToken,
@@ -80,6 +82,7 @@ function App() {
             })
         }
     }, []);
+    console.log('headerid', tabId)
     return (
         <>
             <ToastContainer/>
@@ -99,9 +102,11 @@ function App() {
                     setResetFilter
                 }}
             >
+                <HomeContext.Provider value={{tabId}}>
                 {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/> : null :
                     <Header userData={userData}/>}
                 {routesOfProjects()}
+                </HomeContext.Provider>
             </ApiContext.Provider>
         </>
     );
