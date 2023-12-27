@@ -276,7 +276,7 @@ function GomPage({ tabId, filterString, clearFilter, callFetchFunction}) {
                                 <table className="mt-4" style={{ color: "#343434", fontFamily: "Barlow", fontSize: "14px", fontStyle: "normal", fontWeight: "500", lineHeight: "normal" }}>
                                     <tr style={{ borderBottom: "1px solid #F8F8F8", height: "50px" }}>
                                         <th style={{ backgroundColor: "#F8F8F8", height: "50px", textAlign: "left" }}>S.No. </th>
-                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Minister Name</th>
+                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Minister/Admin</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>PA Name(s)</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned Ministry</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Their own ministry</th>

@@ -185,8 +185,10 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                 {profilePhotoUrl &&
                     <PhotoDialog imageUrl={profilePhotoUrl} openDialogue={profilePhotoUrl} onClose={clearPhotoUrl}/>
                 }
+                {updateStatus &&
                 <DialogBox openDialogue={updateStatus} list={fileStatuses} onClose={closeDialog} status={eminentStatus}
                            saveData={handleUpdateDetails} fileStatusId={fileStatusId}/>
+                }
             </div>
 
             {eminentData.length === 0 ?
@@ -194,13 +196,17 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                     {searchValue ? (
                         <span>
                 Your search - {searchValue} did not match any eminent{" "}
-                            {searchType}
+                            {searchType === 'Name' ?
+
+                                /\d/.test(searchValue) ? 'Number' : searchType
+                                : searchType
+                            }
               </span>
                     ) : (
                         <span>No eminent found</span>
                     )}
                 </div> :
-                <div className='mt-5 border pb-4'>
+                <div className='data-container mt-5 border pb-4'>
                     {eminentData && eminentData.map((item, index) => (
                         <div key={index}
                              className={`mt-4 w-95  ${index + 1 !== eminentData.length && 'eminent-container pb-4'}`}>
@@ -250,8 +256,8 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                                 <div className='eminent-file-status ml-1rem'>
                                     <span className='user-id-tag d-block'>Current Status</span>
                                     <div className='d-flex mt-2'>
-                                     <span className='status-btn'>
-                                         <span></span>
+                                     <span className='status-btn '>
+                                         <span className='blinking-element-fs'></span>
                                       </span>
                                         <span>{item.file_status?.status}</span>
                                     </div>

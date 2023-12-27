@@ -427,7 +427,7 @@ const HomeTable = (props) => {
                                   sx={{ p: 2 }}
                                   className="tableiconlist"
                                 >
-                                  {member.aasm_state !== "approved" && (
+                                  {(
                                     <p
                                       onClick={() =>
                                         editUser(member.phone, member)

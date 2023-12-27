@@ -33,6 +33,7 @@ function unassignModal({
   eminentList,
   cardDetails,
   psuName,
+  name,
 }) {
   const { psuIdAllotment } = React.useContext(AllotmentContext);
   const handleClose = () => setSystem(false);
@@ -91,7 +92,7 @@ function unassignModal({
               <div className="modal-body-123-1">
                 <div className="modal-1">
                   <h4>
-                    Are you sure you want to unassign "Narendra Huda" for this
+                    Are you sure you want to unassign "{name}" for this
                     position?
                   </h4>
                 </div>

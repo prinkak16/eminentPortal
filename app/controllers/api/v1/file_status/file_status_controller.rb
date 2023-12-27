@@ -17,12 +17,11 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       'verified': 0,
     }
 
-
-    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    assigned_ministries_ids = current_auth_user.assigned_ministry.pluck(:ministry_id)
     result = CustomMemberForm
                .joins(vacancy_allotments: [{ file_status: :file_status_level }, :vacancy])
                .where(vacancy_allotments: { unoccupied_at: nil }, vacancy: { ministry_id: assigned_ministries_ids })
-               .group("file_status_levels.state")
+               .group('file_status_levels.state')
                .count
 
     total_count = 0
@@ -52,6 +51,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     offset = params[:offset]
     member_name = params[:name]
+    is_number = member_name =~ /\d/
     member_id = params[:id]
     ministry_id = params[:ministry_ids]
     fs_level_id = params[:file_status_ids]
@@ -61,10 +61,10 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     limit = params[:limit].present? ? params[:limit] : 10
     custom_forms = CustomMemberForm.joins(vacancy_allotments: %i[file_status vacancy]).where(vacancy_allotments: { unoccupied_at: nil })
-    assigned_ministries_ids = UserMinistry.where(user_id: current_auth_user.id, is_minister: false).pluck(:ministry_id)
+    assigned_ministries_ids = current_auth_user.assigned_ministry.pluck(:ministry_id)
     custom_forms = custom_forms.where(vacancy: { ministry_id: assigned_ministries_ids})
-    custom_forms = custom_forms.where("LOWER(data->>'name') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
-    custom_forms = custom_forms.where("CAST(custom_member_forms.id AS TEXT) LIKE ?", "%#{member_id}%") if member_id.present?
+    custom_forms = custom_forms.where("LOWER(data->>'#{is_number === nil ? 'name' : 'mobiles'}') LIKE ?", "%#{member_name.downcase}%") if member_name.present?
+    custom_forms = custom_forms.where('CAST(custom_member_forms.id AS TEXT) LIKE ?', "%#{member_id}%") if member_id.present?
     custom_forms = custom_forms.where(vacancy: { ministry_id: ministry_id.split(',') }) if ministry_id.present?
     custom_forms = custom_forms.where(vacancy: { organization_id: psu_psb_id.split(',') }) if psu_psb_id.present?
     custom_forms = custom_forms.where(file_status: { file_status_level_id: fs_level_id.split(',') }) if fs_level_id.present?
@@ -78,9 +78,9 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
         photo: member.data&.dig('photo'),
         ministry: m_relations&.vacancy&.ministry&.name,
         psu: m_relations&.vacancy&.organization&.name,
-        type: m_relations&.vacancy&.organization&.type,
+        type: m_relations&.vacancy&.organization&.ratna_type,
         file_status: get_last_file_status(m_relations&.id),
-        file_state: get_last_file_state(m_relations&.id),
+        file_state: get_last_file_state(m_relations&.id) || 'Pending',
         file_history: file_history(m_relations&.file_status&.id),
         fs_id: m_relations&.file_status&.id
       }
@@ -107,7 +107,6 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
     file_status = FileStatus.find_by(id: fs_id)
     raise StandardError, 'File Status id is invalid' if file_status.nil?
-
     file_status.file_status_level_id = fs_level_id
     file_status.description = fs_description
     file_status.action_by = current_auth_user
@@ -119,6 +118,15 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     fs_a.file_status_level_id = fs_level_id
     fs_a.description = fs_description
     fs_a.save
+
+
+    drop_status_ids = FileStatusLevel.where(state: 'Rejected').pluck(:id)
+    if drop_status_ids.include?(fs_level_id.to_i)
+      v_a = VacancyAllotment.find_by(id: file_status.vacancy_allotment_id)
+      v_a.update(unoccupied_at: DateTime.now)
+      v_a.vacancy.unassign! if v_a.vacancy.may_unassign?
+      file_status.destroy
+    end
     render json: { message: 'File status update successfully', status: true }, status: :ok
   rescue StandardError => e
     render json: { message: e.message }, status: :bad_request
@@ -126,7 +134,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
 
   def file_history(fs_id)
     FileStatusActivity.joins(:file_status_level).where(file_status_id: fs_id).order(created_at: :asc).map do |hs|
-      { status: hs.file_status_level.name, updated_at: hs.created_at.in_time_zone('Asia/Kolkata').strftime('%a %b %d %Y %I:%M %p') }
+      { status: hs.file_status_level.name, description: hs.description, updated_at: hs.created_at.in_time_zone('Asia/Kolkata').strftime('%a %b %d %Y %I:%M %p') }
     end
   end
 
@@ -146,7 +154,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
       }, status: :unauthorized
     end
 
-    file_statuses = get_file_status_levels
+    file_statuses = get_file_status_levels.where.not(name: 'Pending')
     render json: { status: true, data: file_statuses, message: 'File Statuses' }, status: :ok
   end
 

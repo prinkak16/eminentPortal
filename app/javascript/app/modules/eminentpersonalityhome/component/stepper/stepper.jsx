@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './stepper.scss';
 import {
     Typography,
@@ -13,6 +13,7 @@ import {
 import DeviceInfo from "../../eminentforms/deviceinfo";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {ApiContext} from "../../../ApiContext";
 
 const FormStepper = ({
                          viewMode,
@@ -37,6 +38,7 @@ const FormStepper = ({
 
                      }) => {
     const [cumulativeData, setCumulativeData] = useState({});
+    const {isCandidateLogin} = useContext(ApiContext)
     const [completed, setCompleted] = React.useState({});
     const [notification, setNotification] = React.useState(true);
 
@@ -59,6 +61,18 @@ const FormStepper = ({
         }
         values.mobiles = userData.mobiles
     }, []);
+
+    const buttonText = isLastStep()
+        ? viewMode === 'view'
+            ? isCandidateLogin
+                ? 'Go Back'
+                : 'Back to Home'
+            : 'Submit'
+        : viewMode === 'view'
+            ? 'Next'
+            : 'Save & Next';
+
+
     return (
         <>
             <div className="stepperwrap">
@@ -128,7 +142,7 @@ const FormStepper = ({
                             Step {activeStep + 1} of {steps.length}
                         </Typography>
                         <Button className="nextbtn" type="submit"  >
-                            {isLastStep() ? `${viewMode === 'view' ? 'Back to home' : 'Submit'}` : `${viewMode === 'view' ? 'Next' : 'Save & Next'}`}
+                            {buttonText}
                         </Button>
                     </Box>
                 </div>

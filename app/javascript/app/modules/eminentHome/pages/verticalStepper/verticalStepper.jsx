@@ -22,10 +22,15 @@ export default function VerticalLinearStepper({stepperList}) {
         <Box className='vertical-stepper-container' sx={{ maxWidth: 400}}>
             <Stepper className='vertical-stepper' activeStep={activeStep}  orientation="vertical">
                 {stepperList && stepperList.map((step, index) => (
-                    <Step key={`${step.status}${index}`} className={`${step.updated_at !== '' ? 'completed-steps' : 'uncompleted-steps'} ${index > 0 && 'after-first-step'}`}>
+                    <Step key={`${step.status}${index}`}
+                          className={`${step.updated_at !== '' ? 'completed-steps' : 'uncompleted-steps'}
+                           ${index > 0 && 'after-first-step'}
+                           ${step.description ? 'description-details' : ''}
+                           ${index+1 === stepperList.length ? 'blinking-element' : ''}`}>
                         <StepLabel>
                             {step.status}
                         </StepLabel>
+                            <Typography className='vertical-stepper-description'>{(step.description)}</Typography>
                             <Typography className='vertical-stepper-description'>{step.updated_at}</Typography>
                     </Step>
                 ))}
