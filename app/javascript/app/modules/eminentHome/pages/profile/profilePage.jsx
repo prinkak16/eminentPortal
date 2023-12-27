@@ -40,52 +40,55 @@ const Profile = () => {
     useEffect(() => {
         profileData()
     }, []);
-    console.log('permissions', permissions)
+
     return (
-        <Box sx={profileStyle}>
-            <Grid container spacing={2} className="justify-content-center">
-                {profileDetail && (
-                    <Grid item xs={12} md={7}>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Name:</b> {profileDetail.name}</Typography>
+        <>
+                <Box sx={profileStyle}>
+                <Grid container spacing={2} className="justify-content-center">
+                    {profileDetail && (
+                        <Grid item xs={12} md={7}>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Name:</b> {profileDetail.name}</Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Email:</b> {profileDetail.email}</Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Phone:</b> {profileDetail.phone}</Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Role:</b> {profileDetail.role}</Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p" sx={profileStyle.permission}><b>Permissions: </b>
+                                    {permissions.map(permission => (
+                                        <span>{permission.action} - {permission.permission_name}, </span>
+                                    ))}
+                                </Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Allotted States: </b>
+                                    {allottedStates.map(states => (
+                                        <span> {states.name},</span>
+                                    ))}
+                                </Typography>
+                            </Grid>
+                            <Grid sx={profileStyle.card}>
+                                <Typography variant="p"><b>Assigned Ministries: </b>
+                                    {ministries.map(ministry => (
+                                        <span>{ministry.ministry_name}, </span>
+                                    ))}
+                                </Typography>
+                            </Grid>
                         </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Email:</b> {profileDetail.email}</Typography>
-                        </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Phone:</b> {profileDetail.phone}</Typography>
-                        </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Role:</b> {profileDetail.role}</Typography>
-                        </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p" sx={profileStyle.permission}><b>Permissions: </b>
-                                {permissions.map(permission => (
-                                   <span>{permission.action} - {permission.permission_name}, </span>
-                                ))}
-                            </Typography>
-                        </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Allotted States: </b>
-                                {allottedStates.map(states => (
-                                    <span> {states.name},</span>
-                                ))}
-                            </Typography>
-                        </Grid>
-                        <Grid sx={profileStyle.card}>
-                            <Typography variant="p"><b>Assigned Ministries: </b>
-                                {ministries.map(ministry => (
-                                    <span>{ministry.ministry_name}, </span>
-                                ))}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                )}
+                    )}
 
 
 
-            </Grid>
-        </Box>
+                </Grid>
+            </Box>
+        </>
+
     );
 }
 export default Profile
