@@ -40,7 +40,6 @@ export default function FiltersSidebar(props) {
   const [searchMinisterName, setSearchMinisterName] = useState("");
   const [searchDepartmentName, setSearchDepartmentName] = useState("");
   const [searchOrganizationName, setSearchOrganizationName] = useState("");
-  const [appliedFiltersMap, setAppliedFiltersMap] = useState({});
   const [inputSearch, setInputSearch] = useState({});
   const [filtersKey, setFiltersKey] = useState([]);
   const {assignBreadCrums} = useContext(AllotmentContext);
@@ -79,11 +78,8 @@ export default function FiltersSidebar(props) {
           )}`;
         });
     props.setFilterString(filterString);
-    setAppliedFiltersMap((prev) => ({
-      ...prev,
-      [props.tabId]: appliedFiltersValue,
-    }));
   };
+
 
   const handleChange = (value) => (event, isExpanded) => {
     if (filtersKey.includes(value)) {
@@ -121,23 +117,18 @@ export default function FiltersSidebar(props) {
     return parentOption && parentOption.selectedValues.includes(optionValue);
   };
 
-
   const handleClearFilter = () => {
-    setAppliedFiltersMap((prev) => ({
-      ...prev,
-      [props.tabId]: [],
-    }));
     props.setFilterString("");
+    setResetFilter(true);
+    setInputSearch({});
+    setAppliedFilters([]);
+    setSearchMinisterName("");
+    setSearchDepartmentName("");
+    setSearchOrganizationName("");
   };
   useEffect(() => {
-    if (isValuePresent(filtersList.filters)) {
-      const keys = filtersList.filters?.map((item) => item.key);
-      setFiltersKey(keys);
-    }
-
-  },[filtersList.filters])
-  useEffect(() => {
-
+    handleClearFilter()
+    props.setFilterString("");
     switch (props.tabId) {
       case "master_of_vacancies":
         if (homeContext.movTabId === "ministry_wise") {
@@ -146,7 +137,6 @@ export default function FiltersSidebar(props) {
           };
           getMinistryWiseFilterData(params).then((response) => {
             setFiltersList(response.data.data);
-            handleClearFilter()
           });
         } else if (homeContext.movTabId === "psu_wise") {
           setResetFilter(true);
@@ -170,7 +160,6 @@ export default function FiltersSidebar(props) {
         }
         break;
       case "slotting":
-
         const slottingParams = {
           ministry_name: searchMinisterName,
           department_name: searchDepartmentName,
@@ -178,7 +167,6 @@ export default function FiltersSidebar(props) {
         };
         getSlottingFilters(slottingParams).then((response) => {
           setFiltersList(response.data.data);
-          handleClearFilter()
         });
         break;
 
@@ -216,25 +204,26 @@ export default function FiltersSidebar(props) {
         });
         break;
       default:
-
         getFilters().then((res) => {
           setFiltersList(res.data.data);
         });
-
     }
-    setAppliedFilters(appliedFiltersMap[props.tabId] || []);
+    applyFilter();
   }, [
-      props.tabId,
+    props.tabId,
     homeContext.movTabId,
     searchMinisterName,
     searchDepartmentName,
     searchOrganizationName,
-    assignBreadCrums,
-
+    assignBreadCrums
   ]);
-
-
-  console.log('value', isValuePresent)
+  useEffect(() => {
+    if (isValuePresent(filtersList.filters)) {
+      const keys = filtersList.filters?.map((item) => item.key);
+      setFiltersKey(keys);
+    }
+  }, [filtersList.filters]);
+  console.log('filters', filtersList.filters )
   return (
       <div className="filter-container">
         <div className="d-flex justify-content-between mt-4 ms-4">

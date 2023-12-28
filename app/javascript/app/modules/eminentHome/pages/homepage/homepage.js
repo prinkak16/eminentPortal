@@ -81,7 +81,6 @@ const {
   userData,
   eminentData,
 } = useContext(ApiContext)
-  console.log('isCandidateLogin', isCandidateLogin)
   const { resetFilter, setEminentData } = useContext(ApiContext);
 
   const theme = useTheme();
@@ -117,6 +116,7 @@ const {
 
   const switchTabHandler = (id) => {
     setTabId(id);
+    setFilterString("")
   };
   const handleMovTabsFilter = (newValue) => {
     setMovTabId(newValue);
