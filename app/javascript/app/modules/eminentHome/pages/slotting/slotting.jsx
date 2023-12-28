@@ -47,13 +47,14 @@ const SlottingTabPage =({tabId, filterString})=>{
         }
         getSlottingTable(slottingParams, filterString).then(res => {
             setSlottingTableData(res.data.data)
-            console.log('date format', res.data.data)
         })
     }
 
+
     useEffect(() => {
         slottingTable()
-    }, [currentPage, filterString]);
+    }, [ currentPage, filterString]);
+
     return (
         <>
             <Analytics tabId={tabId} title="Position Analytics" slottingAnalytics={slottingAnalytics}/>
@@ -76,7 +77,7 @@ const SlottingTabPage =({tabId, filterString})=>{
                         <TableBody>
                             {slottingTableData?.value.map((slotting, index) =>
                                 <TableRow key={slotting.org_id}>
-                                <TableCell>{currentPage * limit + index + 1}</TableCell>
+                                <TableCell>{(currentPage * limit) + index + 1}</TableCell>
                                 <TableCell>{slotting.org_name}</TableCell>
                                 <TableCell>{slotting.ministry_name}</TableCell>
                                 <TableCell>{slotting.vacant}</TableCell>
