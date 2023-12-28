@@ -243,9 +243,11 @@ export default function BasicTabs({
     setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
   };
   const handleChange = (event, newValue) => {
-    handleBasicTabChange({ basicTabId: newValue });
-    setValue(newValue);
-    onSwitchTab(newValue);
+    if (checkPermission('Eminent', convertToCamelCase(newValue))) {
+      handleBasicTabChange({ basicTabId: newValue });
+      setValue(newValue);
+      onSwitchTab(newValue);
+    }
   };
 
   const handleDownload = () => {
@@ -578,12 +580,12 @@ export default function BasicTabs({
 
   const tabsView = () => {
     return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
-                {checkPermission('Home','View') && <Tab label="Home" value="home"/>}
-                {checkPermission('Allotment','View') && <Tab label="Allotment" value="allotment"/>}
-                {checkPermission('FileStatus','View') && <Tab label="File Status" value="file_status"/>}
-                {checkPermission('MasterOfVacancies','View') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
-                {checkPermission('Slotting','View') && <Tab label="Slotting" value="slotting"/>}
-                {checkPermission('GOMManagement','View') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
+                {checkPermission('Eminent','Home') && <Tab label="Home" value="home"/>}
+                {checkPermission('Eminent','Allotment') && <Tab label="Allotment" value="allotment"/>}
+                {checkPermission('Eminent','FileStatus') && <Tab label="File Status" value="file_status"/>}
+                {checkPermission('Eminent','MasterOfVacancies') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
+                {checkPermission('Eminent','Slotting') && <Tab label="Slotting" value="slotting"/>}
+                {checkPermission('Eminent','GomManagement') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
           </TabList>)
   }
 
@@ -597,38 +599,34 @@ export default function BasicTabs({
             {tabsView()}
             {buttonContent}
           </Box>
-          {checkPermission('Home','View') && <TabPanel value="home">
+          <TabPanel value="home">
             <HomeTable
-                filterString={filterString}
-                tabId={value}
-                clearFilter={clearFilter}
+              filterString={filterString}
+              tabId={value}
+              clearFilter={clearFilter}
             />
-          </TabPanel>}
+          </TabPanel>
 
-          {checkPermission('Allotment','View') && <TabPanel value="allotment">
-            <Allotment filterString={filterString} tabId={value}/>
-          </TabPanel>}
-
-          {checkPermission('FileStatus','View') && <TabPanel value="file_status">
-            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter}/>
-          </TabPanel>}
-
-          {checkPermission('MasterOfVacancies','View') && <TabPanel value="master_of_vacancies">
-            <MasterVacancies filterString={filterString} tabId={value}/>
-          </TabPanel>}
-
-          {checkPermission('Slotting','View') && <TabPanel value="slotting">
-            <SlottingTabPage filterString={filterString} tabId={value}/>
-          </TabPanel>}
-
-          {checkPermission('GOMManagement','View') && <TabPanel value="gom_management">
+          <TabPanel value="allotment">
+            <Allotment filterString={filterString} tabId={value} />
+          </TabPanel>
+          <TabPanel value="file_status">
+            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} />
+          </TabPanel>
+          <TabPanel value="master_of_vacancies">
+            <MasterVacancies filterString={filterString} tabId={value} />
+          </TabPanel>
+          <TabPanel value="slotting">
+            <SlottingTabPage filterString={filterString} tabId={value} />
+          </TabPanel>
+          <TabPanel value="gom_management">
             <GomPage
-                filterString={filterString}
-                clearFilter={clearFilter}
-                tabId={value}
-                callFetchFunction={callFetchFunction}
+              filterString={filterString}
+              clearFilter={clearFilter}
+              tabId={value}
+              callFetchFunction={callFetchFunction}
             />
-          </TabPanel>}
+          </TabPanel>
         </TabContext>
 
       <Modal

@@ -1,3 +1,8 @@
+.login-wrap{
+  position: relative;
+  height: 100vh;
+  overflow-y: hidden;
+}
 .inputNumber{
   border-radius: 5px;
   border-color: red;
@@ -16,7 +21,6 @@
 }
 
 .login-container {
-  height: 100vh !important;
   overflow-y: clip;
 }
 .otpBtn, .otpBtn:hover{
@@ -81,4 +85,14 @@
   line-height: 27.179px;
   background:#fff;
   padding: 0 0.5rem;
+}
+.login-govt-image{
+  position: absolute;
+  bottom: -8%;
+}
+.login-govt-image.left{
+  left:-3%
+}
+.login-govt-image.right{
+  right:0
 }

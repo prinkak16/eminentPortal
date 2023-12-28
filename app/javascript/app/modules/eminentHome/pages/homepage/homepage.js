@@ -74,7 +74,13 @@ export default function PersistentDrawerLeft() {
     setCrumbsState,
     setShowAssignAllotmentBtn,
   } = useContext(AllotmentContext);
-
+const {
+  authToken,
+  isCandidateLogin,
+  userData,
+  eminentData,
+} = useContext(ApiContext)
+  console.log('isCandidateLogin', isCandidateLogin)
   const { resetFilter, setEminentData } = useContext(ApiContext);
 
   const theme = useTheme();
@@ -132,7 +138,9 @@ export default function PersistentDrawerLeft() {
 
   return (
     <>
-      {fetchedUserPermissions && <HomeContext.Provider value={{ movTabId, handleMovTabsFilter }}>
+      {fetchedUserPermissions && <HomeContext.Provider value={{tabId, movTabId, handleMovTabsFilter }}>
+        {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/> : null :
+            <Header userData={userData}/>}
         <Box sx={{ display: "flex" }} className="mt-5">
           <Drawer
               sx={{
@@ -212,6 +220,7 @@ export default function PersistentDrawerLeft() {
                   openFilter={open}
                   filterClear={clearFilter}
               />
+
             </Typography>
           </Main>
         </Box>
