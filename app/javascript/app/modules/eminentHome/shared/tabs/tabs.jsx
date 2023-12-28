@@ -91,6 +91,7 @@ export default function BasicTabs({
       )
     }
   },[])
+
   const notify = () => toast("CSV file Uploaded successfully");
   const { assignBreadCrums, setAssignBreadCrums } =
     useContext(AllotmentContext);
@@ -593,7 +594,6 @@ export default function BasicTabs({
       },
     })
   );
-
   const tabsView = () => {
     return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
                 {checkPermission('Eminent','Home') && <Tab label="Home" value="home"/>}
@@ -627,7 +627,7 @@ export default function BasicTabs({
             <Allotment filterString={filterString} tabId={value} />
           </TabPanel>
           <TabPanel value="file_status">
-            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} />
+            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} clearFilter={clearFilter}/>
           </TabPanel>
           <TabPanel value="master_of_vacancies">
             <MasterVacancies filterString={filterString} tabId={value} />

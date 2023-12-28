@@ -40,6 +40,7 @@ export default function FiltersSidebar(props) {
   const [searchMinisterName, setSearchMinisterName] = useState("");
   const [searchDepartmentName, setSearchDepartmentName] = useState("");
   const [searchOrganizationName, setSearchOrganizationName] = useState("");
+  const [appliedFiltersMap, setAppliedFiltersMap] = useState({});
   const [inputSearch, setInputSearch] = useState({});
   const [filtersKey, setFiltersKey] = useState([]);
   const {assignBreadCrums} = useContext(AllotmentContext);
@@ -49,15 +50,15 @@ export default function FiltersSidebar(props) {
     }
     const appliedFiltersValue = appliedFilters;
     const foundKey = appliedFiltersValue?.find(
-      (item) => item.parent_key === appliedFilterKey
+        (item) => item.parent_key === appliedFilterKey
     );
     if (foundKey) {
       const newValues = foundKey.selectedValues.find(
-        (item) => item === appliedKeyOptions
+          (item) => item === appliedKeyOptions
       );
       if (newValues) {
         foundKey.selectedValues = foundKey?.selectedValues?.filter(
-          (item) => item !== appliedKeyOptions
+            (item) => item !== appliedKeyOptions
         );
       } else {
         foundKey.selectedValues.push(appliedKeyOptions);
@@ -71,15 +72,72 @@ export default function FiltersSidebar(props) {
     setAppliedFilters(appliedFiltersValue);
     let filterString = "";
     appliedFiltersValue
-      .filter((item) => item.selectedValues.length > 0)
-      .forEach((value) => {
-        filterString += `&${value.parent_key}=${value.selectedValues.join(
-          ","
-        )}`;
-      });
+        .filter((item) => item.selectedValues.length > 0)
+        .forEach((value) => {
+          filterString += `&${value.parent_key}=${value.selectedValues.join(
+              ","
+          )}`;
+        });
     props.setFilterString(filterString);
+    setAppliedFiltersMap((prev) => ({
+      ...prev,
+      [props.tabId]: appliedFiltersValue,
+    }));
+  };
+
+  const handleChange = (value) => (event, isExpanded) => {
+    if (filtersKey.includes(value)) {
+      const keys = filtersKey.filter((item) => item !== value);
+      setFiltersKey(keys);
+    } else {
+      setFiltersKey([...filtersKey, value]);
+    }
+  };
+
+  const handleSearchFilter = debounce((event, identifier) => {
+    const inputValue = event.target.value;
+    if (identifier === "Ministry") {
+      setSearchMinisterName(inputValue);
+    } else if (identifier === "Department") {
+      setSearchDepartmentName(inputValue);
+    } else if (identifier === "Organization") {
+      setSearchOrganizationName(inputValue);
+    }
+  }, 1000);
+
+  const handleInputSearch = (event, key) => {
+    const { value } = event.target;
+    setInputSearch((prevData) => {
+      return { ...prevData, [key]: value };
+    });
+    handleSearchFilter(event, key);
+    handleSearchFilter(event, key);
+  };
+
+  const isChecked = (parentKey, optionValue) => {
+    const parentOption = appliedFilters.find(
+        (item) => item.parent_key === parentKey
+    );
+    return parentOption && parentOption.selectedValues.includes(optionValue);
+  };
+
+
+  const handleClearFilter = () => {
+    setAppliedFiltersMap((prev) => ({
+      ...prev,
+      [props.tabId]: [],
+    }));
+    props.setFilterString("");
   };
   useEffect(() => {
+    if (isValuePresent(filtersList.filters)) {
+      const keys = filtersList.filters?.map((item) => item.key);
+      setFiltersKey(keys);
+    }
+
+  },[filtersList.filters])
+  useEffect(() => {
+
     switch (props.tabId) {
       case "master_of_vacancies":
         if (homeContext.movTabId === "ministry_wise") {
@@ -88,6 +146,7 @@ export default function FiltersSidebar(props) {
           };
           getMinistryWiseFilterData(params).then((response) => {
             setFiltersList(response.data.data);
+            handleClearFilter()
           });
         } else if (homeContext.movTabId === "psu_wise") {
           setResetFilter(true);
@@ -111,6 +170,7 @@ export default function FiltersSidebar(props) {
         }
         break;
       case "slotting":
+
         const slottingParams = {
           ministry_name: searchMinisterName,
           department_name: searchDepartmentName,
@@ -118,6 +178,7 @@ export default function FiltersSidebar(props) {
         };
         getSlottingFilters(slottingParams).then((response) => {
           setFiltersList(response.data.data);
+          handleClearFilter()
         });
         break;
 
@@ -155,220 +216,172 @@ export default function FiltersSidebar(props) {
         });
         break;
       default:
+
         getFilters().then((res) => {
           setFiltersList(res.data.data);
         });
+
     }
-    applyFilter();
+    setAppliedFilters(appliedFiltersMap[props.tabId] || []);
   }, [
-    props.tabId,
+      props.tabId,
     homeContext.movTabId,
     searchMinisterName,
     searchDepartmentName,
     searchOrganizationName,
-    assignBreadCrums
+    assignBreadCrums,
+
   ]);
 
-  const handleChange = (value) => (event, isExpanded) => {
-    if (filtersKey.includes(value)) {
-      const keys = filtersKey.filter((item) => item !== value);
-      setFiltersKey(keys);
-    } else {
-      setFiltersKey([...filtersKey, value]);
-    }
-  };
 
-  const handleSearchFilter = debounce((event, identifier) => {
-    const inputValue = event.target.value;
-    if (identifier === "Ministry") {
-      setSearchMinisterName(inputValue);
-    } else if (identifier === "Department") {
-      setSearchDepartmentName(inputValue);
-    } else if (identifier === "Organization") {
-      setSearchOrganizationName(inputValue);
-    }
-  }, 1000);
-
-  const handleInputSearch = (event, key) => {
-    const { value } = event.target;
-    setInputSearch((prevData) => {
-      return { ...prevData, [key]: value };
-    });
-    handleSearchFilter(event, key);
-    handleSearchFilter(event, key);
-  };
-
-  const isChecked = (parentKey, optionValue) => {
-    const parentOption = appliedFilters.find(
-      (item) => item.parent_key === parentKey
-    );
-    return parentOption && parentOption.selectedValues.includes(optionValue);
-  };
-
-  const handleClearFilter = () => {
-    props.setFilterString("");
-    setResetFilter(true);
-    setInputSearch({});
-    setAppliedFilters([]);
-    setSearchMinisterName("");
-    setSearchDepartmentName("");
-    setSearchOrganizationName("");
-  };
-
-  useEffect(() => {
-    if (isValuePresent(filtersList.filters)) {
-      const keys = filtersList.filters?.map((item) => item.key);
-      setFiltersKey(keys);
-    }
-  }, [filtersList.filters]);
-
+  console.log('value', isValuePresent)
   return (
-    <div className="filter-container">
-      <div className="d-flex justify-content-between mt-4 ms-4">
-        <p className="refineoption">Refine by</p>
-        <p className="clearoption me-4" onClick={handleClearFilter}>
-          Clear
-        </p>
+      <div className="filter-container">
+        <div className="d-flex justify-content-between mt-4 ms-4">
+          <p className="refineoption">Refine by</p>
+          <p className="clearoption me-4" onClick={handleClearFilter}>
+            Clear
+          </p>
+        </div>
+        {filtersList?.filters &&
+            filtersList.filters.map((filter) => (
+                <Accordion
+                    className={`accordion accordian-with-bt `}
+                    expanded={filtersKey.includes(filter.key)}
+                    onChange={handleChange(filter.key)}
+                    key={filter.key}
+                >
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                  >
+                    <Typography className="filterType ms-2">
+                      {filter.display_name}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails className="filteraccord">
+                    <Typography className="ms-2 filterTypeOptions">
+                      {props.tabId === "master_of_vacancies" &&
+                          homeContext.movTabId === "ministry_wise" &&
+                          ["Ministry"].includes(filter.display_name) && (
+                              <FormControl variant="outlined" className="mb-4 srchfilter">
+                                <Input
+                                    id={filter?.display_name}
+                                    placeholder="Search"
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <SearchIcon />
+                                      </InputAdornment>
+                                    }
+                                    value={inputSearch[filter?.display_name]}
+                                    onChange={(event) =>
+                                        handleInputSearch(event, filter.display_name)
+                                    }
+                                />
+                              </FormControl>
+                          )}
+
+                      {props.tabId === "master_of_vacancies" &&
+                          homeContext.movTabId === "psu_wise" &&
+                          ["Ministry", "Department", "Organization"].includes(
+                              filter.display_name
+                          ) && (
+                              <FormControl variant="outlined" className="mb-4 srchfilter">
+                                <Input
+                                    id={filter?.display_name}
+                                    placeholder="Search"
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <SearchIcon />
+                                      </InputAdornment>
+                                    }
+                                    value={inputSearch[filter?.display_name]}
+                                    onChange={(e) =>
+                                        handleInputSearch(e, filter.display_name)
+                                    }
+                                />
+                              </FormControl>
+                          )}
+                      {props.tabId === "master_of_vacancies" &&
+                          homeContext.movTabId === "vacancy_wise" &&
+                          ["Ministry", "Department", "Organization"].includes(
+                              filter.display_name
+                          ) && (
+                              <FormControl variant="outlined" className="mb-4 srchfilter">
+                                <Input
+                                    id={filter?.display_name}
+                                    placeholder="Search"
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <SearchIcon />
+                                      </InputAdornment>
+                                    }
+                                    value={inputSearch[[filter?.display_name]]}
+                                    onChange={(e) =>
+                                        handleInputSearch(e, filter.display_name)
+                                    }
+                                />
+                              </FormControl>
+                          )}
+                      {props.tabId === "slotting" &&
+                          ["Ministry", "Department", "Organization"].includes(
+                              filter.display_name
+                          ) && (
+                              <FormControl variant="outlined" className="mb-4 srchfilter">
+                                <Input
+                                    id={filter?.display_name}
+                                    placeholder="Search"
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <SearchIcon />
+                                      </InputAdornment>
+                                    }
+                                    value={inputSearch[filter?.display_name]}
+                                    onChange={(e) =>
+                                        handleInputSearch(e, filter.display_name)
+                                    }
+                                />
+                              </FormControl>
+                          )}
+
+                      {props.tabId === "allotment" &&
+                          ["Ministry", "Department"].includes(filter.display_name) && (
+                              <FormControl variant="outlined" className="mb-4 srchfilter">
+                                <Input
+                                    id={filter?.display_name}
+                                    placeholder="Search"
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <SearchIcon />
+                                      </InputAdornment>
+                                    }
+                                    value={inputSearch[filter?.display_name]}
+                                    onChange={(e) =>
+                                        handleInputSearch(e, filter.display_name)
+                                    }
+                                />
+                              </FormControl>
+                          )}
+                      <div className="scrollFilter">
+                        {filter?.values &&
+                            filter.values.map((filterOption) => (
+                                <p key={filterOption.value}>
+                                  <input
+                                      type="checkbox"
+                                      checked={isChecked(filter.key, filterOption.value)}
+                                      onClick={() =>
+                                          applyFilter(filter.key, filterOption.value)
+                                      }
+                                  />
+                                  {filterOption.display_name}
+                                </p>
+                            ))}
+                      </div>
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+            ))}
       </div>
-      {filtersList?.filters &&
-        filtersList.filters.map((filter) => (
-          <Accordion
-            className={`accordion accordian-with-bt `}
-            expanded={filtersKey.includes(filter.key)}
-            onChange={handleChange(filter.key)}
-            key={filter.key}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1bh-content"
-              id="panel1bh-header"
-            >
-              <Typography className="filterType ms-2">
-                {filter.display_name}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails className="filteraccord">
-              <Typography className="ms-2 filterTypeOptions">
-                {props.tabId === "master_of_vacancies" &&
-                  homeContext.movTabId === "ministry_wise" &&
-                  ["Ministry"].includes(filter.display_name) && (
-                    <FormControl variant="outlined" className="mb-4 srchfilter">
-                      <Input
-                        id={filter?.display_name}
-                        placeholder="Search"
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        }
-                        value={inputSearch[filter?.display_name]}
-                        onChange={(event) =>
-                          handleInputSearch(event, filter.display_name)
-                        }
-                      />
-                    </FormControl>
-                  )}
-
-                {props.tabId === "master_of_vacancies" &&
-                  homeContext.movTabId === "psu_wise" &&
-                  ["Ministry", "Department", "Organization"].includes(
-                    filter.display_name
-                  ) && (
-                    <FormControl variant="outlined" className="mb-4 srchfilter">
-                      <Input
-                        id={filter?.display_name}
-                        placeholder="Search"
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        }
-                        value={inputSearch[filter?.display_name]}
-                        onChange={(e) =>
-                          handleInputSearch(e, filter.display_name)
-                        }
-                      />
-                    </FormControl>
-                  )}
-                {props.tabId === "master_of_vacancies" &&
-                  homeContext.movTabId === "vacancy_wise" &&
-                  ["Ministry", "Department", "Organization"].includes(
-                    filter.display_name
-                  ) && (
-                    <FormControl variant="outlined" className="mb-4 srchfilter">
-                      <Input
-                        id={filter?.display_name}
-                        placeholder="Search"
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        }
-                        value={inputSearch[[filter?.display_name]]}
-                        onChange={(e) =>
-                          handleInputSearch(e, filter.display_name)
-                        }
-                      />
-                    </FormControl>
-                  )}
-                {props.tabId === "slotting" &&
-                  ["Ministry", "Department", "Organization"].includes(
-                    filter.display_name
-                  ) && (
-                    <FormControl variant="outlined" className="mb-4 srchfilter">
-                      <Input
-                        id={filter?.display_name}
-                        placeholder="Search"
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        }
-                        value={inputSearch[filter?.display_name]}
-                        onChange={(e) =>
-                          handleInputSearch(e, filter.display_name)
-                        }
-                      />
-                    </FormControl>
-                  )}
-
-                {props.tabId === "allotment" &&
-                  ["Ministry", "Department"].includes(filter.display_name) && (
-                    <FormControl variant="outlined" className="mb-4 srchfilter">
-                      <Input
-                        id={filter?.display_name}
-                        placeholder="Search"
-                        startAdornment={
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        }
-                        value={inputSearch[filter?.display_name]}
-                        onChange={(e) =>
-                          handleInputSearch(e, filter.display_name)
-                        }
-                      />
-                    </FormControl>
-                  )}
-                <div className="scrollFilter">
-                  {filter?.values &&
-                    filter.values.map((filterOption) => (
-                      <p key={filterOption.value}>
-                        <input
-                          type="checkbox"
-                          checked={isChecked(filter.key, filterOption.value)}
-                          onClick={() =>
-                            applyFilter(filter.key, filterOption.value)
-                          }
-                        />
-                        {filterOption.display_name}
-                      </p>
-                    ))}
-                </div>
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-    </div>
   );
 }

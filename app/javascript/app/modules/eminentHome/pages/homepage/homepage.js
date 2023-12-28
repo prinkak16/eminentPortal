@@ -18,6 +18,9 @@ import BasicTabs from "../../shared/tabs/tabs";
 import { HomeContext } from "../../../../context/tabdataContext";
 import { ApiContext } from "../../../ApiContext";
 import AllotmentContext from "../allotment/context/allotmentContext";
+import {isValuePresent} from "../../../utils";
+import Header from "../../../eminentpersonalityhome/header/header";
+import ProfilePage from "../profile/profilePage";
 
 const drawerWidth = 240;
 
@@ -72,7 +75,13 @@ export default function PersistentDrawerLeft() {
     setCrumbsState,
     setShowAssignAllotmentBtn,
   } = useContext(AllotmentContext);
-
+const {
+  authToken,
+  isCandidateLogin,
+  userData,
+  eminentData,
+} = useContext(ApiContext)
+  console.log('isCandidateLogin', isCandidateLogin)
   const { resetFilter, setEminentData } = useContext(ApiContext);
 
   const theme = useTheme();
@@ -122,7 +131,9 @@ export default function PersistentDrawerLeft() {
 
   return (
     <>
-      <HomeContext.Provider value={{ movTabId, handleMovTabsFilter }}>
+      <HomeContext.Provider value={{tabId, movTabId, handleMovTabsFilter }}>
+        {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/> : null :
+            <Header userData={userData}/>}
         <Box sx={{ display: "flex" }} className="mt-5">
           <Drawer
             sx={{
@@ -202,6 +213,7 @@ export default function PersistentDrawerLeft() {
                 openFilter={open}
                 filterClear={clearFilter}
               />
+
             </Typography>
           </Main>
         </Box>

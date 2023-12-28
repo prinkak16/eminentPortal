@@ -29,7 +29,8 @@ class Api::V1::AuthUserController < BaseApiController
       phone: nil,
       role: nil,
       permissions: nil,
-      allotted_states: nil
+      allotted_states: nil,
+      assigned_ministries: nil
     }
 
     if current_user.present?
@@ -39,6 +40,7 @@ class Api::V1::AuthUserController < BaseApiController
       data[:role] = 'Manager'
       data[:permissions] = user_permissions
       data[:allotted_states] = fetch_user_assigned_country_states
+      data[:assigned_ministries] = get_user_assigned_ministries
 
       render json: {
         success: true,

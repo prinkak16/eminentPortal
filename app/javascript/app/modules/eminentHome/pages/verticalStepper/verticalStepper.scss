@@ -22,6 +22,7 @@
     color: #4cd964 !important;
 }
 
+
 .vertical-stepper-description {
     margin-left: 2rem !important;
     font-size: 0.8rem !important;
@@ -38,6 +39,11 @@
     margin-top: -2rem !important;
 }
 
+.description-details + .MuiStepConnector-root span {
+    margin-top: -3rem !important;
+    border-color: #4cd964 !important;
+}
+
 
 .uncompleted-steps + .MuiStepConnector-root span {
     margin-top: -0.5rem !important;
@@ -45,4 +51,21 @@
 
 .after-first-step span {
     margin-top: -0.25rem;
+}
+
+@keyframes blinker {
+    0%, 20%, 50%, 80%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 149, 89, 1);
+    }
+    40%, 60% {
+        transform: scale(1.2);
+        box-shadow: 0 0 20px rgba(255, 149, 89, 1);
+    }
+}
+
+.blinking-element .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed{
+    display: block!important;
+    border-radius: 50%;
+    animation: blinker 3s infinite!important;
 }
