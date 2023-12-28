@@ -23,7 +23,7 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import {
     calculateAge, disabledSaveProgressButton,
-    dobFormat, dropDownView,
+    dobFormat, mobileView,
     formFilledValues, isMobileUser,
     isValuePresent,
     languagesName, saveProgress,
@@ -218,7 +218,7 @@ const PersonalDetails = (props) => {
                                     </div>
                                 </Grid>
                             }
-                            <Grid item xs={dropDownView('name')}>
+                            <Grid item xs={mobileView('name')}>
                                 <FormLabel>Name <mark>*</mark></FormLabel>
                                 <Inputfield disabled={isViewDisabled} type="text" name="name"
                                             placeholder="Full Name (As per PAN Card)"
@@ -230,7 +230,7 @@ const PersonalDetails = (props) => {
                                 }}/>
                                 <ErrorMessage name="name" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView()}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>Religion <mark>*</mark></FormLabel>
                                 <SelectField disabled={isViewDisabled} name="religion" selectedvalues={selectedOption}
                                              value={props.formValues.religion}
@@ -240,7 +240,7 @@ const PersonalDetails = (props) => {
                                 />
                                 <ErrorMessage name="religion" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView()}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>Gender <mark>*</mark></FormLabel>
                                 <SelectField
                                             disabled={isViewDisabled}
@@ -251,7 +251,7 @@ const PersonalDetails = (props) => {
                                              optionList={GenderData}/>
                                 <ErrorMessage name="gender" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView()}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>Category <mark>*</mark></FormLabel>
                                 <SelectField disabled={isViewDisabled} name="category" selectedvalues={selectedOption}
                                              value={props.formValues.category}
@@ -260,7 +260,7 @@ const PersonalDetails = (props) => {
                                              optionList={dropDownDataCategory}/>
                                 <ErrorMessage name="category" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView()}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>Caste <mark>*</mark></FormLabel>
                                 <Inputfield
                                     disabled={isViewDisabled}
@@ -277,7 +277,7 @@ const PersonalDetails = (props) => {
                                 />
                                 <ErrorMessage name="caste" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView()} className="mb-md-0">
+                            <Grid item xs={mobileView()} className="mb-md-0">
                                 <FormLabel>Sub Caste</FormLabel>
                                 <Inputfield
                                     disabled={isViewDisabled}
@@ -292,7 +292,7 @@ const PersonalDetails = (props) => {
                                                 }
                                             }}/>
                             </Grid>
-                            <Grid item xs={dropDownView()} className="mb-md-0">
+                            <Grid item xs={mobileView()} className="mb-md-0">
                                 <FormLabel>Date of birth <mark>*</mark></FormLabel>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['DatePicker']}>
@@ -314,7 +314,7 @@ const PersonalDetails = (props) => {
                                 <Typography><Age alt='age'/> {eminentAge ? `${calculateAge(dobFormat(eminentAge))} Years` : ''}</Typography>
                                 <ErrorMessage name="dob" style={{color:'red'}} component="p" />
                             </Grid>
-                            <Grid item xs={dropDownView('language')}>
+                            <Grid item xs={mobileView('language')}>
                                 <FormLabel>Languages known <mark>*</mark></FormLabel>
                                 <ErrorMessage name="languages" style={{color:'red'}} component="p" />
                                 <div className="language-container" onClick={() => openLangDrawer()}>
@@ -358,7 +358,7 @@ const PersonalDetails = (props) => {
                             <Grid className="section-2-head" item xs={12}>
                                 <Formheading number="2" heading="ID Proof"/>
                             </Grid>
-                            <Grid item xs={dropDownView()} className='d-grid'>
+                            <Grid item xs={mobileView()} className='d-grid'>
                                 <FormLabel>Aadhaar No. (optional)</FormLabel>
                                 <NumberField
                                     disabled={isViewDisabled}
@@ -373,7 +373,7 @@ const PersonalDetails = (props) => {
                                 <ErrorMessage name="aadhaar" style={{color:'red'}} component="p" />
 
                             </Grid>
-                            <Grid item xs={dropDownView()} className='d-grid'>
+                            <Grid item xs={mobileView()} className='d-grid'>
                                 <FormLabel>Voter Id. (optional)</FormLabel>
                                 <Field
                                     disabled={isViewDisabled}

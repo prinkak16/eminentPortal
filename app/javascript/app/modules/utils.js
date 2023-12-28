@@ -564,12 +564,15 @@ export const convertToCamelCase = (inputString) => {
 
 export const isMobileUser = window.innerWidth < 520
 
-export const dropDownView = (type) => {
+export const mobileView = (type) => {
     let size  = isMobileUser ? 11 : 6
 
     if (isMobileUser) {
         if (type === 'std' || type === 'landline' ) {
             size = 6
+        }
+        if (type === 'bjp' || type === 'rss' ) {
+            size = 4
         }
     }
 
@@ -591,6 +594,12 @@ export const dropDownView = (type) => {
         }
         if ( type === 'flat' ) {
             size = 12
+        }
+        if (type === 'bjp' || type === 'rss' ) {
+            size = 2
+        }
+        if ('organization') {
+            size = 4
         }
 
     }

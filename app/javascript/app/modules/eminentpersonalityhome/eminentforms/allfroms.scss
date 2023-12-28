@@ -463,6 +463,9 @@ button.cancelbtn{
   width: 45rem;
   height: 8rem;
 }
+.organization-description-grid-mobile div {
+  height: 8rem;
+}
 
 .organization-description-grid textarea {
   height: 100px;
@@ -748,4 +751,9 @@ margin-bottom: auto;
 
 .detailFrom-mobile .css-mhc70k-MuiGrid-root {
   margin-left: 0rem;
+}
+
+.political-mobile-view {
+  padding: 1rem;
+  justify-content: center;
 }

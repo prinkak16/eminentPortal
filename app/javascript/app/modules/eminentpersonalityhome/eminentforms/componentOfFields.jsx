@@ -10,7 +10,7 @@ import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
 import {
-    dropDownView,
+    mobileView,
     educationDetailsJson, isMobileUser,
     isValuePresent,
     showErrorToast,
@@ -262,7 +262,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     <>
                         {
                             f.type === 'dropdown' &&
-                            <Grid item xs={dropDownView()}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                 <div className='components-dropdown'>
                                     <AutoCompleteDropdown
@@ -277,7 +277,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         }
                         {
                             f.type === "textField" &&
-                                <Grid item xs={dropDownView()}>
+                                <Grid item xs={mobileView()}>
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <div style={{marginTop:'7px'}}>
                                         <OtherInputField
@@ -293,7 +293,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         }
                         { !resetYear &&
                             f.type === "date" &&
-                                <Grid item xs={dropDownView()} className='d-grid'>
+                                <Grid item xs={mobileView()} className='d-grid'>
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%', marginTop: '-5px'}}>
                                         <DemoContainer components={['DatePicker']} style={{width: '100%'}} sx={{width: '100%'}}>
@@ -338,7 +338,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     jsonForm.title === 'Profession Profile' &&  <Grid item xs={4} className='d-grid'> </Grid>}
                 {
                     jsonForm.title === 'Profession Profile' &&
-                    <Grid item xs={dropDownView()} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
+                    <Grid item xs={mobileView()} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
                         <FormLabel className='mr-1'>Please Select if this is your Main Profession </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['main_profession']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'main_profession', 'main_profession')} />

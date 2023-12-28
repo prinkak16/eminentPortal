@@ -14,8 +14,8 @@ import {Edit} from "@mui/icons-material";
 import {
     disabledSaveProgressButton,
     electionTypeList,
-    electionWiseJson, formFilledValues,
-    isValuePresent, ministerPortfolioArray,
+    electionWiseJson, formFilledValues, isMobileUser,
+    isValuePresent, ministerPortfolioArray, mobileView,
     otherPartyJson,
     politicalProfileJson,
     saveProgress, saveProgressButton, showErrorToast, toSnakeCase
@@ -331,7 +331,7 @@ const PolticalandGovrnform =(props)=>{
 
     return(
         <>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1}} className={`${isMobileUser ? 'political-mobile-view' : ''}`}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Profile" /></Item>
                     <Item sx={{textAlign: 'right'}}>
@@ -398,8 +398,8 @@ const PolticalandGovrnform =(props)=>{
                                                notApplicable={NAFields} isViewDisabled={isViewDisabled}/>}
                     </>
                 }
-                <Grid container sx={{my:3}} spacing={2}>
-                    <Grid item xs={2}>
+                <Grid container sx={{my:mobileView()}} spacing={2}>
+                    <Grid item xs={mobileView('bjp')}>
                         <FormLabel>Years with BJP</FormLabel>
                         <NumberField
                             disabled={isViewDisabled}
@@ -412,7 +412,7 @@ const PolticalandGovrnform =(props)=>{
                             }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={mobileView('rss')}>
                         <FormLabel>Years with RSS</FormLabel>
                         <NumberField
                             disabled={isViewDisabled}
@@ -491,7 +491,7 @@ const PolticalandGovrnform =(props)=>{
                 }
 
 
-                <Grid container className="grid-wrap">
+                <Grid container className="grid-wrap" sx={{padding: isMobileUser ? '1rem' : ''}} xs={mobileView()}>
                     <Grid item  container sx={{my:3}} spacing={2}>
                         {socialFields && socialFields.map((field, index) => (
                             <Grid container className='mb-5'>
@@ -502,7 +502,7 @@ const PolticalandGovrnform =(props)=>{
                                         </Tooltip>
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={4} sx={{mb:2}} className='organization-grid'>
+                                <Grid item xs={mobileView('organization')} sx={{mb:2}} className='organization-grid'>
                                     <FormLabel>Organization </FormLabel>
                                     <OtherInputField
                                         disabled={isViewDisabled}
@@ -513,13 +513,14 @@ const PolticalandGovrnform =(props)=>{
                                         textType="organization"
                                         placeholder="Enter Organization "/>
                                 </Grid>
-                                <Grid item xs={12} className='organization-description-grid'>
+                                <Grid item xs={12} className={`organization-description-grid${isMobileUser ? '-mobile' : ''}`}>
                                     <FormLabel>Description
                                         <Tooltip title="Write upto 500 words.">
                                             <InfoOutlinedIcon/>
                                         </Tooltip>
                                     </FormLabel>
                                     <TextField
+                                        sx={{mt:2}}
                                         disabled={isViewDisabled}
                                         className='p-0'
                                         fullWidth

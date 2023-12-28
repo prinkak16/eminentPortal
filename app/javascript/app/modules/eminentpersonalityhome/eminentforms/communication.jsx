@@ -14,7 +14,7 @@ import NumberField from "../component/numberfield/numberfield";
 import * as Yup from "yup";
 import axios from "axios";
 import {
-    disabledSaveProgressButton, dropDownView,
+    disabledSaveProgressButton, mobileView,
     formFilledValues, isMobileUser,
     isValuePresent,
     saveProgress,
@@ -250,7 +250,7 @@ const Communicationform =(props)=>{
                 </Stack>
                 <div className={`detailFrom ${isMobileUser ? 'detailFrom-mobile' : ''}`}>
                     <Grid container spacing={2}>
-                        <Grid className={`${isMobileUser ? 'justify-content-center': ''}`} item xs={dropDownView('mobiles')}>
+                        <Grid className={`${isMobileUser ? 'justify-content-center': ''}`} item xs={mobileView('mobiles')}>
                             <div className={`mobiles-container ${isMobileUser ? 'mobiles-container-mobile' : ''}`}>
                                 {mobileFields && mobileFields.map((field, i) =>(
                                     <div className='mobile-number-field'>
@@ -285,10 +285,10 @@ const Communicationform =(props)=>{
                                 ))}
                              </div>
                             <Grid container spacing={2} className="grid-wrap mt-3">
-                                <Grid item xs={dropDownView()}>
+                                <Grid item xs={mobileView()}>
                                     <FormLabel className='mobile-label'>Landline</FormLabel>
                                     <Grid className='detailFrom' container spacing={2}>
-                                        <Grid item xs={dropDownView('std')}>
+                                        <Grid item xs={mobileView('std')}>
                                             <NumberField
                                                 disabled={isViewDisabled}
                                                 className='std-code-input'
@@ -302,7 +302,7 @@ const Communicationform =(props)=>{
                                             />
                                             <ErrorMessage name="std_code" style={{color:'red', marginBottom: '0px'}} component="p" />
                                         </Grid>
-                                        <Grid item xs={dropDownView('landline')}>
+                                        <Grid item xs={mobileView('landline')}>
                                             <NumberField
                                                 disabled={isViewDisabled}
                                                 name="landline"
@@ -318,7 +318,7 @@ const Communicationform =(props)=>{
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={dropDownView()}>
+                                <Grid item xs={mobileView()}>
                                     <FormLabel className='mobile-label'>Email Id  <mark>*</mark></FormLabel>
                                     <Inputfield type="text"
                                                 disabled={isViewDisabled}
@@ -359,7 +359,7 @@ const Communicationform =(props)=>{
                                                     </Grid>
 
                                                     {element.address_type !== 'Home Town Address' &&  element.address_type !== 'Current Address' &&
-                                                        <Grid item xs={dropDownView()}>
+                                                        <Grid item xs={mobileView()}>
                                                             <FormLabel>Type of Address
                                                                 <mark>*</mark>
                                                             </FormLabel>
@@ -375,7 +375,7 @@ const Communicationform =(props)=>{
                                                             }
                                                         </Grid>
                                                     }
-                                                    <Grid item xs={dropDownView('flat')}>
+                                                    <Grid item xs={mobileView('flat')}>
                                                         <FormLabel>Flat, House no., Building, Company, Apartment <mark>*</mark></FormLabel>
                                                         <OtherInputField
                                                                     type="text"
@@ -388,7 +388,7 @@ const Communicationform =(props)=>{
                                                             : null
                                                         }
                                                     </Grid>
-                                                    <Grid item xs={dropDownView()} className='d-grid'>
+                                                    <Grid item xs={mobileView()} className='d-grid'>
                                                         <FormLabel>PIN Code <mark>*</mark></FormLabel>
                                                         <OtherNumberField
                                                             disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
@@ -407,7 +407,7 @@ const Communicationform =(props)=>{
                                                             : null
                                                         }
                                                     </Grid>
-                                                    <Grid item xs={dropDownView()}>
+                                                    <Grid item xs={mobileView()}>
                                                         <FormLabel>Area, Street, Sector, Village <mark>*</mark></FormLabel>
                                                         <OtherInputField type="text"
                                                                          disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
@@ -420,7 +420,7 @@ const Communicationform =(props)=>{
                                                             : null
                                                         }
                                                     </Grid>
-                                                    <Grid item xs={dropDownView()}>
+                                                    <Grid item xs={mobileView()}>
                                                         <FormLabel>Town/City <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
                                                             disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
@@ -434,7 +434,7 @@ const Communicationform =(props)=>{
                                                             : null
                                                         }
                                                     </Grid>
-                                                    <Grid item xs={dropDownView()}>
+                                                    <Grid item xs={mobileView()}>
                                                         <FormLabel>State <mark>*</mark></FormLabel>
                                                         <AutoCompleteDropdown
                                                             disabled={(element.address_type === 'Home Town Address' ? sameAddress : false) || isViewDisabled}
