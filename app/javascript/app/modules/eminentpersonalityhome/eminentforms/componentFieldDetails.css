@@ -1,0 +1,39 @@
+.main-container {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.details-container {
+    padding: 1rem;
+}
+
+.header {
+    color: gray;
+}
+
+.header-value {
+    font-weight: 600;
+}
+
+.details-length {
+    margin-left: auto;
+    margin-right: 1rem;
+    cursor: pointer;
+    color: #0a53be;
+    font-weight: 500;
+}
+
+.min-wid-11 {
+    min-width: 11rem!important;
+}
+
+.details-edit-buttons {
+    font-size: 0.7rem !important;
+    gap: 0.3rem !important;
+    display: flex;
+}
+
+.details-edit-button-icons {
+    width: 0.7rem !important;
+}

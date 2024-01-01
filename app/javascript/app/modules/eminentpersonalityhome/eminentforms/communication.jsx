@@ -285,10 +285,10 @@ const Communicationform =(props)=>{
                                 ))}
                              </div>
                             <Grid container spacing={2} className="grid-wrap mt-3">
-                                <Grid item xs={mobileView()}>
+                                <Grid item xs={mobileView()} >
                                     <FormLabel className='mobile-label'>Landline</FormLabel>
                                     <Grid className='detailFrom' container spacing={2}>
-                                        <Grid item xs={mobileView('std')}>
+                                        <Grid item xs={mobileView('std')} className={`${isMobileUser ? 'landline-mobile-view' : ''}`}>
                                             <NumberField
                                                 disabled={isViewDisabled}
                                                 className='std-code-input'

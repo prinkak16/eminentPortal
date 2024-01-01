@@ -22,11 +22,12 @@ import {
     isValuePresent,
     saveProgress,
     formFilledValues,
-    saveProgressButton, showErrorToast, disabledSaveProgressButton
+    saveProgressButton, showErrorToast, disabledSaveProgressButton, isMobileUser
 } from "../../utils";
 import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import RadioButton from "./radioButton";
+import ComponentFieldDetails from "./componentFieldDetails";
 
 const Educationform = (props) => {
     const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
@@ -238,7 +239,7 @@ const Educationform = (props) => {
 
     const editForm = (type,id) => {
         setShowList(null)
-        if (type === 'education') {
+        if (type === 'educations') {
             scrollToBottom(500)
             setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
@@ -267,7 +268,7 @@ const Educationform = (props) => {
 
     const deleteFields = (type, id) => {
         setShowList(null)
-        if (type === 'education') {
+        if (type === 'educations') {
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
                 setEducationDetails(form)
@@ -308,7 +309,7 @@ const Educationform = (props) => {
 
     return (
         <>
-            <Box sx={{flexGrow: 1}}>
+            <Box sx={{flexGrow: 1}} className={`${isMobileUser ? 'edu-prof-mobile-view' : ''}`}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Education Details"/></Item>
                     <Item sx={{textAlign: 'right'}}>
@@ -323,54 +324,70 @@ const Educationform = (props) => {
                 </Stack>
                 <Grid container sx={{mb: 5}}>
                 </Grid>
-                {educationDetails.length > 0 && (
-                    <div className="data-table">
-                        <table className="w-100 table-responsive text-center">
-                            <thead>
-                            <tr>
-                                <th>Qualification</th>
-                                <th>Course/Branch/Subject</th>
-                                <th>University/Board Name</th>
-                                <th>College/ School Name</th>
-                                <th>Start Year</th>
-                                <th>End Year</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {educationDetails.map((data, index) => (
-                                <tr>
-                                    <td>
-                                        <div className='qualification-name'>
+                {isMobileUser ?
+                    <ComponentFieldDetails data={educationDetails} type={'educations'} disabled={isViewDisabled}
+                                           openList={openList} editForm={editForm} deleteFields={deleteFields}/>
+                    :
+                    <>
+                        {
+                            educationDetails.length > 0 && (
+                                <div className="data-table">
+                                    <table className="w-100 table-responsive text-center">
+                                        <thead>
+                                        <tr>
+                                            <th>Qualification</th>
+                                            <th>Course/Branch/Subject</th>
+                                            <th>University/Board Name</th>
+                                            <th>College/ School Name</th>
+                                            <th>Start Year</th>
+                                            <th>End Year</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {educationDetails.map((data, index) => (
+                                            <tr>
+                                                <td>
+                                                    <div className='qualification-name'>
                                             <span className='highest-qualification-radio'>
-                                               <input disabled={isViewDisabled} type='radio' checked={data.highest_qualification}
-                                                       onClick={(e) => setHighestQualification(data.id)}/>
+                                               <input disabled={isViewDisabled} type='radio'
+                                                      checked={data.highest_qualification}
+                                                      onClick={(e) => setHighestQualification(data.id)}/>
                                              </span>
-                                            {data.qualification}
-                                        </div>
-                                    </td>
-                                    <td>{data.course}</td>
-                                    <td>{data.university}</td>
-                                    <td>{data.college}</td>
-                                    <td>{data.start_year}</td>
-                                    <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' id='list-container'>
-                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon id='list-icon'/>
-                                            </Button>
-                                            {showList === data.id && (
-                                                <Paper className='details-edit-list'>
-                                                    <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('education', data.id)}><Edit/>Edit</Typography>
-                                                    <Typography onClick={() => deleteFields('education', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
-                                                </Paper>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                                                        {data.qualification}
+                                                    </div>
+                                                </td>
+                                                <td>{data.course}</td>
+                                                <td>{data.university}</td>
+                                                <td>{data.college}</td>
+                                                <td>{data.start_year}</td>
+                                                <td className='end-date-td'>{data.end_year}
+                                                    <div className='edit-button-logo' id='list-container'>
+                                                        <Button id='list-icon-button' disabled={isViewDisabled}
+                                                                onClick={() => openList(data.id)}
+                                                                className="bg-transparent text-black display-contents">
+                                                            <MoreVertIcon id='list-icon'/>
+                                                        </Button>
+                                                        {showList === data.id && (
+                                                            <Paper className='details-edit-list'>
+                                                                <Typography sx={{p: 2}} className='edit-buttons'
+                                                                            onClick={() => editForm('education', data.id)}><Edit/>Edit</Typography>
+                                                                <Typography
+                                                                    onClick={() => deleteFields('education', data.id)}
+                                                                    className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                            </Paper>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )
+                        }
+                    </>
+                }
+
                 {!backDropToggle &&
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
                                        isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>

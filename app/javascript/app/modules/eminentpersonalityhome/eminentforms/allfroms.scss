@@ -492,9 +492,12 @@ button.cancelbtn{
 }
 
 .electoral-form-fields {
-  display: flex;
   gap: 2rem;
   margin-top: 1rem;
+}
+
+.electoral-form-fields-mobile-view {
+  margin-top: 0rem!important;
 }
 
 .websites {
@@ -756,4 +759,17 @@ margin-bottom: auto;
 .political-mobile-view {
   padding: 1rem;
   justify-content: center;
+}
+
+.edu-prof-mobile-view {
+  padding: 1rem;
+  justify-content: center;
+}
+.resume-mobile-view {
+  padding: 1rem !important;
+  justify-content: center !important;
+}
+
+.landline-mobile-view {
+  padding-left: 0px !important;
 }

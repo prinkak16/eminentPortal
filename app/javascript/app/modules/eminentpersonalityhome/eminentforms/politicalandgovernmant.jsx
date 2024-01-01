@@ -496,7 +496,7 @@ const PolticalandGovrnform =(props)=>{
                         {socialFields && socialFields.map((field, index) => (
                             <Grid container className='mb-5'>
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
-                                    <Typography className='social-affiliation' variant="h5" content="h5">
+                                    <Typography className='social-affiliation' variant={`isMobileUser ? 'h6' : 'h5'`} content={`isMobileUser ? 'h6' : 'h5'`}>
                                         <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
                                         <Box className="detailnumbers social-affiliation-box" component="div" sx={{ display: 'inline-block' }}>{index+3}</Box> Social Affiliation <InfoOutlinedIcon/>
                                         </Tooltip>
