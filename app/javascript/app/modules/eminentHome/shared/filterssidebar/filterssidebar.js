@@ -174,7 +174,6 @@ export default function FiltersSidebar(props) {
         if(assignBreadCrums){
           allotmentSidebarFilters().then((response) => {
             setFiltersList(response.data.data);
-            console.log('allotmentsidebarfiters', response.data.data)
           })
 
         }
@@ -223,7 +222,6 @@ export default function FiltersSidebar(props) {
       setFiltersKey(keys);
     }
   }, [filtersList.filters]);
-  console.log('filters', filtersList.filters )
   return (
       <div className="filter-container">
         <div className="d-flex justify-content-between mt-4 ms-4">

@@ -82,7 +82,6 @@ function App() {
             })
         }
     }, []);
-    console.log('headerid', tabId)
     return (
         <>
             <ToastContainer/>
