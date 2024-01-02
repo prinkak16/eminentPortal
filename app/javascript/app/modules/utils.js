@@ -553,7 +553,7 @@ export const checkPermission = (name, action) => {
     }
 }
 
-export const firstPermittedTab = () => {
+export const permittedTab = () => {
     const tabPermissions = [
         { permission_name: 'Home', action: 'View', tabName: 'home'},
         { permission_name: 'Allotment', action: 'View', tabName: 'allotment'},

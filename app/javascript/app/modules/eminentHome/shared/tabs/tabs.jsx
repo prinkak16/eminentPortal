@@ -584,7 +584,7 @@ export default function BasicTabs({
                 {checkPermission('FileStatus','View') && <Tab label="File Status" value="file_status"/>}
                 {checkPermission('MasterOfVacancies','View') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
                 {checkPermission('Slotting','View') && <Tab label="Slotting" value="slotting"/>}
-                {checkPermission('GomManagement','View') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
+                {checkPermission('GOMManagement','View') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
           </TabList>)
   }
 
@@ -622,7 +622,7 @@ export default function BasicTabs({
             <SlottingTabPage filterString={filterString} tabId={value}/>
           </TabPanel>}
 
-          {checkPermission('GomManagement','View') && <TabPanel value="gom_management">
+          {checkPermission('GOMManagement','View') && <TabPanel value="gom_management">
             <GomPage
                 filterString={filterString}
                 clearFilter={clearFilter}
