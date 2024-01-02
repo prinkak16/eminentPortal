@@ -32,8 +32,15 @@
     font-size: 0.7rem !important;
     gap: 0.3rem !important;
     display: flex;
+    align-items: center;
 }
 
 .details-edit-button-icons {
     width: 0.7rem !important;
+}
+
+.details-edit-list-component {
+    position: absolute;
+    z-index: 1;
+    right: 30px;
 }

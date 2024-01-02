@@ -625,6 +625,19 @@ export const componentsFieldHeaders = {
             "End Year",
         main_profession:
             "Main Profession"
+    },
+    political: {
+        party_level: "Party level",
+        unit: "Unit",
+        designation: "Designation",
+        start_year: "Start Year",
+        end_year: "End Year",
+    },
+    other_party: {
+        party: "Party",
+        position: "Position",
+        start_year: "Start Year",
+        end_year: "End Year",
     }
 }
 

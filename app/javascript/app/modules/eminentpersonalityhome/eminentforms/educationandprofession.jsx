@@ -28,6 +28,8 @@ import {ApiContext} from "../../ApiContext";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import RadioButton from "./radioButton";
 import ComponentFieldDetails from "./componentFieldDetails";
+import Primarybutton from "../component/primarybutton/primarybutton";
+import AddIcon from "@mui/icons-material/Add";
 
 const Educationform = (props) => {
     const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
@@ -37,11 +39,11 @@ const Educationform = (props) => {
     const [professionData, setProfessionData] = useState([])
     const [professionDetails, setProfessionDetails] = useState([]);
     const [educationDetails, setEducationDetails] = useState([]);
-    const [educationsList, setEducationsList] = useState([]);
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
-    const [educationLevel, setEducationLevel] = useState(props?.formValues?.education_level);
     const [showList, setShowList] = useState()
     const [isViewDisabled, setIsViewDisabled] = useState(false)
+    const [showEducationForm, setShowEducationForm] = useState(false)
+    const [showProfessionForm, setShowProfessionForm] = useState(false)
 
     useEffect(() => {
         if (props.viewMode === 'view') {
@@ -164,14 +166,15 @@ const Educationform = (props) => {
     },[])
 
     const handleSave = ( title, formData, id) => {
-        setBackDropToggle(true)
         setTimeout(function() {
             if (title === 'Education Details') {
+                setShowEducationForm(false)
                 educationSave(formData, id)
                 setEducationEditField({})
             }
 
             if (title === 'Profession Profile') {
+                setShowProfessionForm(false)
                 professionSave(formData, id)
                 setProfessionEditField({})
             }
@@ -238,8 +241,10 @@ const Educationform = (props) => {
     }, [professionDetails]);
 
     const editForm = (type,id) => {
+        showFormFields(type)
         setShowList(null)
         if (type === 'educations') {
+
             scrollToBottom(500)
             setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
@@ -258,6 +263,7 @@ const Educationform = (props) => {
     };
 
     const saveProgress = () => {
+
         if (!isViewDisabled) {
             const fieldsWithValues = formFilledValues(props.formValues);
             getFormData(fieldsWithValues, props.activeStep + 1, config, true, isCandidateLogin, props.stateId, setBackDropToggle).then(response => {
@@ -306,6 +312,14 @@ const Educationform = (props) => {
         });
     };
 
+    const showFormFields = (type) => {
+        if (type === 'educations') {
+            setShowEducationForm(true)
+        }else {
+            setShowProfessionForm(true)
+        }
+    }
+
 
     return (
         <>
@@ -325,8 +339,11 @@ const Educationform = (props) => {
                 <Grid container sx={{mb: 5}}>
                 </Grid>
                 {isMobileUser ?
-                    <ComponentFieldDetails data={educationDetails} type={'educations'} disabled={isViewDisabled}
-                                           openList={openList} editForm={editForm} deleteFields={deleteFields}/>
+                    <> {educationDetails.length > 0 &&
+                        <ComponentFieldDetails data={educationDetails} type={'educations'} disabled={isViewDisabled}
+                                               openList={openList} editForm={editForm} deleteFields={deleteFields}/>
+                    }
+                    </>
                     :
                     <>
                         {
@@ -388,9 +405,18 @@ const Educationform = (props) => {
                     </>
                 }
 
-                {!backDropToggle &&
+                {showEducationForm ?
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
-                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>
+                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>:
+                    <Grid item xs={12} className="d-flex align-items-center">
+                        <div>
+                            <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                           starticon={<AddIcon/>}
+                                           buttonlabel="Add Aducation"
+                                           handleclick={() => showFormFields('educations')}
+                            />
+                        </div>
+                    </Grid>
                 }
 
                 <Grid item sx={{mb: 2}} xs={12} className='mt-4'>
@@ -399,59 +425,79 @@ const Educationform = (props) => {
                              sx={{display: 'inline-block'}}>2</Box> Professional Profile
                     </Typography>
                 </Grid>
-                {professionDetails.length > 0 && (
-                    <div className="data-table mt-5">
-                        <table className="w-100 table-responsive text-center">
-                            <thead>
-                            <tr>
-                                <th>Profession</th>
-                                <th>Position</th>
-                                <th>Organization Name</th>
-                                <th>Start Year</th>
-                                <th>End Year</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {professionDetails.map((data, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        <div className='qualification-name'>
+                {isMobileUser ?
+                    <> {professionDetails.length > 0 &&
+                        <ComponentFieldDetails data={professionDetails} type={'professions'} disabled={isViewDisabled}
+                                               openList={openList} editForm={editForm} deleteFields={deleteFields}/>
+                    }
+                    </>
+                    : <>
+                        {
+                            professionDetails.length > 0 && (
+                            <div className="data-table mt-5">
+                                <table className="w-100 table-responsive text-center">
+                                    <thead>
+                                    <tr>
+                                        <th>Profession</th>
+                                        <th>Position</th>
+                                        <th>Organization Name</th>
+                                        <th>Start Year</th>
+                                        <th>End Year</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {professionDetails.map((data, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <div className='qualification-name'>
                                             <span className='highest-qualification-radio'>
                                                <input disabled={isViewDisabled} type='radio'
                                                       checked={data.main_profession}
                                                       onClick={(e) => setMainProfession(data.id)}/>
                                              </span>
-                                            {data.profession}
-                                        </div>
-                                    </td>
-                                    <td>{data.position}</td>
-                                    <td>{data.organization}</td>
-                                    <td>{data.start_year}</td>
-                                    <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' id='list-container'>
-                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon id='list-icon'/>
-                                            </Button>
-                                            {showList === data.id && (
-                                                <Paper className='details-edit-list'>
-                                                    <Typography className='edit-buttons' sx={{p: 2}} onClick={() => editForm('profession', data.id)}><Edit/>Edit</Typography>
-                                                    <Typography className='edit-buttons' onClick={() => deleteFields('profession', data.id)} sx={{p: 2}}><DeleteIcon/>Delete</Typography>
-                                                </Paper>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-                {!backDropToggle &&
-                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData}/>
+                                                    {data.profession}
+                                                </div>
+                                            </td>
+                                            <td>{data.position}</td>
+                                            <td>{data.organization}</td>
+                                            <td>{data.start_year}</td>
+                                            <td className='end-date-td'>{data.end_year}
+                                                <div className='edit-button-logo' id='list-container'>
+                                                    <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                        <MoreVertIcon id='list-icon'/>
+                                                    </Button>
+                                                    {showList === data.id && (
+                                                        <Paper className='details-edit-list'>
+                                                            <Typography className='edit-buttons' sx={{p: 2}} onClick={() => editForm('profession', data.id)}><Edit/>Edit</Typography>
+                                                            <Typography className='edit-buttons' onClick={() => deleteFields('profession', data.id)} sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                        </Paper>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>)
+                        }
+                    </>
                 }
-                {/*<Grid container sx={{my: 5}} className="grid-wrap">*/}
-                {/*</Grid>*/}
+
+                { showProfessionForm ?
+                    <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData}/> :
+                        <Grid item xs={12} className="d-flex align-items-center">
+                            <div>
+                                <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                               starticon={<AddIcon/>}
+                                               buttonlabel="Add Profession"
+                                               handleclick={() => showFormFields('professions')}
+                                />
+                                {/*<Typography>( As Delhi Address, Office Address etc.)</Typography>*/}
+                            </div>
+                        </Grid>
+
+                }
                 <Grid container sx={{spacing: 0}} className='mt-4'>
                     <Grid item xs={8}>
                         <div className=''>

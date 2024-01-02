@@ -30,6 +30,7 @@ import {ApiContext} from "../../ApiContext";
 import {getFormData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import NumberField from "../component/numberfield/numberfield";
 import Tooltip from "@mui/material/Tooltip";
+import ComponentFieldDetails from "./componentFieldDetails";
 
 const PolticalandGovrnform =(props)=>{
     const {config, isCandidateLogin, setBackDropToggle,backDropToggle} = useContext(ApiContext)
@@ -51,10 +52,12 @@ const PolticalandGovrnform =(props)=>{
     const [electoralDetails, setElectoralDetails] = useState(props?.formValues?.election_fought)
     const [electionContested, setElectionContested] = useState(props?.formValues?.election_contested ? "Yes" : "No")
     const [showList, setShowList] = useState()
-    const componentRef = useRef(null);
     const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
     const [isViewDisabled, setIsViewDisabled] = useState(false)
     const [formResetIndex, setFormResetIndex] = useState(null)
+    const [showPoliticalForm, setShowPoliticalForm] = useState(props.formValues.political_profile?.length === 0)
+    const [showOtherPartyForm, setShowOtherPartyForm] = useState(props.formValues.other_parties?.length === 0)
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -97,12 +100,14 @@ const PolticalandGovrnform =(props)=>{
         setBackDropToggle(true)
         setTimeout(function() {
             if (title === 'Political Profile') {
+                setShowPoliticalForm(false)
                 politicalProfileSave(formData, id)
                 setEditableProfileField({})
             }
 
             if (title === 'Other Party Profile') {
                 setEditableProfileField({})
+                setShowOtherPartyForm(false)
                 otherPartiProfileSave(formData, id)
             }
         }, 50)
@@ -111,8 +116,9 @@ const PolticalandGovrnform =(props)=>{
     };
 
     const editForm = (type,id) => {
+        showFormFields(type)
         setShowList(null)
-        if (type === 'Political Profile') {
+        if (type === 'political') {
             scrollToBottom(400)
             setEditableProfileField({})
             const form = politicalProfileDetails.find((item) => item.id === id);
@@ -131,9 +137,11 @@ const PolticalandGovrnform =(props)=>{
 
     };
 
+
+
     const deleteFormFields = (type, id) => {
         setShowList(null)
-        if (type === 'Political Profile') {
+        if (type === 'political') {
             const form = politicalProfileDetails.filter((item) => item.id !== id);
             if (form) {
                 setPoliticalProfileDetails(form)
@@ -328,6 +336,13 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
+    const showFormFields = (type) => {
+        if (type === 'political') {
+            setShowPoliticalForm(true)
+        }else {
+            setShowOtherPartyForm(true)
+        }
+    }
 
     return(
         <>
@@ -344,44 +359,54 @@ const PolticalandGovrnform =(props)=>{
                         </div>
                     </Item>
                 </Stack>
-                {politicalProfileDetails.length > 0 && (
-                    <div className="data-table">
-                        <table className="w-100 table-responsive text-center">
-                            <thead>
-                            <tr key={'otherPartyDetails'}>
-                                <th>Party level</th>
-                                <th>Unit</th>
-                                <th>Designation</th>
-                                <th>Start Year</th>
-                                <th>End Year</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {politicalProfileDetails.map((data, index) => (
-                            <tr key={index}>
-                                <td>{data.party_level}</td>
-                                <td>{data.unit}</td>
-                                <td>{data.designation}</td>
-                                <td>{data.start_year}</td>
-                                <td className='end-date-td'>{data.end_year}
-                                    <div className='edit-button-logo' id='list-container'>
-                                        <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                            <MoreVertIcon id='list-icon'/>
-                                        </Button>
-                                        {showList === data.id && (
-                                            <Paper className='details-edit-list'>
-                                                <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('Political Profile', data.id)}><Edit/>Edit</Typography>
-                                                <Typography onClick={() => deleteFormFields('Political Profile', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
-                                            </Paper>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                {isMobileUser ?
+                    <> {politicalProfileDetails.length > 0 &&
+                        <ComponentFieldDetails data={politicalProfileDetails} type={'political'} disabled={isViewDisabled}
+                                               openList={openList} editForm={editForm} deleteFields={deleteFormFields}/>
+                       }
+                       </>
+                    :
+                    <>
+                        {politicalProfileDetails.length > 0 && (
+                            <div className="data-table">
+                                <table className="w-100 table-responsive text-center">
+                                    <thead>
+                                    <tr key={'otherPartyDetails'}>
+                                        <th>Party level</th>
+                                        <th>Unit</th>
+                                        <th>Designation</th>
+                                        <th>Start Year</th>
+                                        <th>End Year</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {politicalProfileDetails.map((data, index) => (
+                                        <tr key={index}>
+                                            <td>{data.party_level}</td>
+                                            <td>{data.unit}</td>
+                                            <td>{data.designation}</td>
+                                            <td>{data.start_year}</td>
+                                            <td className='end-date-td'>{data.end_year}
+                                                <div className='edit-button-logo' id='list-container'>
+                                                    <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                        <MoreVertIcon id='list-icon'/>
+                                                    </Button>
+                                                    {showList === data.id && (
+                                                        <Paper className='details-edit-list'>
+                                                            <Typography sx={{p: 2}} className='edit-buttons' onClick={() => editForm('political', data.id)}><Edit/>Edit</Typography>
+                                                            <Typography onClick={() => deleteFormFields('Political Profile', data.id)} className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                        </Paper>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </>
+                }
                 {politicalProfileDetails.length === 0 &&
                     <div className='date-na-button date-na-button-out-side'>
                          <span className='na-check-box'>
@@ -390,13 +415,23 @@ const PolticalandGovrnform =(props)=>{
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
                 }
-                {!backDropToggle &&
+
+                {showPoliticalForm ?
                     <>
                         {!NAFields &&
                             <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave}
                                                isEditable={editableProfileField}
                                                notApplicable={NAFields} isViewDisabled={isViewDisabled}/>}
-                    </>
+                    </> :
+                    <Grid item xs={12} className="d-flex align-items-center">
+                        <div>
+                            <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                           starticon={<AddIcon/>}
+                                           buttonlabel="Add Aducation"
+                                           handleclick={() => showFormFields('political')}
+                            />
+                        </div>
+                    </Grid>
                 }
                 <Grid container sx={{my:mobileView()}} spacing={2}>
                     <Grid item xs={mobileView('bjp')}>
@@ -433,46 +468,58 @@ const PolticalandGovrnform =(props)=>{
                     </Typography>
                 </Grid>
 
-                {otherPartyDetails.length > 0 && (
-                    <div className="data-table">
-                        <table className="w-100 table-responsive text-center">
-                            <thead>
-                            <tr key={'otherPartyDetails'}>
-                                <th>Party</th>
-                                <th>Position</th>
-                                <th>Start Year</th>
-                                <th>End Year</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {otherPartyDetails.map((data, index) => (
-                                <tr key={index}>
-                                    <td>{data.party}</td>
-                                    <td>{data.position}</td>
-                                    <td>{data.start_year}</td>
-                                    <td className='end-date-td'>{data.end_year}
-                                        <div className='edit-button-logo' id='list-container'>
-                                            <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
-                                                <MoreVertIcon id='list-icon'/>
-                                            </Button>
-                                            {showList === data.id && (
-                                                <Paper className='details-edit-list'>
-                                                    <Typography sx={{p: 2}}
-                                                                className='edit-buttons'
-                                                                onClick={() => editForm('Other Party Profile',data.id)}><Edit/>Edit</Typography>
-                                                    <Typography onClick={() => deleteFormFields('Other Party Profile',data.id)}
-                                                                className='edit-buttons'
-                                                                sx={{p: 2}}><DeleteIcon/>Delete</Typography>
-                                                </Paper>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                {isMobileUser ?
+                    <> {otherPartyDetails.length > 0 &&
+                        <ComponentFieldDetails data={otherPartyDetails} type={'other_party'} disabled={isViewDisabled}
+                                               openList={openList} editForm={editForm} deleteFields={deleteFormFields}/>
+                    }
+                    </>
+                    :
+                    <>
+                        {otherPartyDetails.length > 0 && (
+                            <div className="data-table">
+                                <table className="w-100 table-responsive text-center">
+                                    <thead>
+                                    <tr key={'otherPartyDetails'}>
+                                        <th>Party</th>
+                                        <th>Position</th>
+                                        <th>Start Year</th>
+                                        <th>End Year</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {otherPartyDetails.map((data, index) => (
+                                        <tr key={index}>
+                                            <td>{data.party}</td>
+                                            <td>{data.position}</td>
+                                            <td>{data.start_year}</td>
+                                            <td className='end-date-td'>{data.end_year}
+                                                <div className='edit-button-logo' id='list-container'>
+                                                    <Button id='list-icon-button' disabled={isViewDisabled} onClick={() => openList(data.id)} className="bg-transparent text-black display-contents">
+                                                        <MoreVertIcon id='list-icon'/>
+                                                    </Button>
+                                                    {showList === data.id && (
+                                                        <Paper className='details-edit-list'>
+                                                            <Typography sx={{p: 2}}
+                                                                        className='edit-buttons'
+                                                                        onClick={() => editForm('other_party',data.id)}><Edit/>Edit</Typography>
+                                                            <Typography onClick={() => deleteFormFields('other_party',data.id)}
+                                                                        className='edit-buttons'
+                                                                        sx={{p: 2}}><DeleteIcon/>Delete</Typography>
+                                                        </Paper>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </>
+                }
+
+
                 {otherPartyDetails.length === 0 &&
                     <div className='date-na-button date-na-button-out-side'>
                          <span className='na-check-box'>
@@ -481,12 +528,27 @@ const PolticalandGovrnform =(props)=>{
                         <span className='na-check-msg'>Not Applicable</span>
                     </div>
                 }
-                {!NAFieldOther &&
-                    <Grid  className="grid-wrap">
-                        {!backDropToggle &&
-                            <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
-                                               isEditable={editableOtherPartyField} isViewDisabled={isViewDisabled}/>
-                        }
+
+
+                {showOtherPartyForm ?
+                    <>
+                        {!NAFieldOther &&
+                            <Grid className="grid-wrap">
+                                {!backDropToggle &&
+                                    <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
+                                                       isEditable={editableOtherPartyField}
+                                                       isViewDisabled={isViewDisabled}/>
+                                }
+                            </Grid>
+                        } </> :
+                    <Grid item xs={12} className="d-flex align-items-center">
+                        <div>
+                            <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
+                                           starticon={<AddIcon/>}
+                                           buttonlabel="Add Aducation"
+                                           handleclick={() => showFormFields('political')}
+                            />
+                        </div>
                     </Grid>
                 }
 
