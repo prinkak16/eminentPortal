@@ -53,9 +53,7 @@ export default function BasicTabs({
   openFilter,
   clearFilter
 }) {
-  const [basicTabId, setBasicTabId] = useSearchParams({
-    basicTabId: "home",
-  });
+  const [basicTabId, setBasicTabId] = useSearchParams();
   const [value, setValue] = React.useState(basicTabId.get("basicTabId"));
   const [wantToAddNew, setWantToAddNew] = useState(false);
   const [inputNumber, setInputNumber] = useState("");

@@ -18,7 +18,7 @@ import BasicTabs from "../../shared/tabs/tabs";
 import { HomeContext } from "../../../../context/tabdataContext";
 import { ApiContext } from "../../../ApiContext";
 import AllotmentContext from "../allotment/context/allotmentContext";
-import {isValuePresent} from "../../../utils";
+import {isValuePresent, permittedTab} from "../../../utils";
 import {getUserPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
 
@@ -90,10 +90,9 @@ const {
   const [movTabId, setMovTabId] = useState("ministry_wise");
   const [clearFilter, setClearFilter] = useState(false);
   const [fetchedUserPermissions, setFetchedUserPermissions] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams({ basicTabId: 'home' });
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    switchTabHandler(searchParams.get("basicTabId"));
     localStorage.setItem("eminent_number", "");
     localStorage.setItem("view_mode", "");
     setEminentData({});
@@ -101,8 +100,10 @@ const {
       if (response.data.success) {
         localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
         setFetchedUserPermissions(true);
+        setSearchParams({ basicTabId: permittedTab() });
       }
     })
+    switchTabHandler(searchParams.get("basicTabId"));
   }, []);
 
   const handleDrawerOpen = () => {
@@ -123,7 +124,6 @@ const {
 
   const switchTabHandler = (id) => {
     setTabId(id);
-    setSearchParams({ basicTabId: id });
   };
   const handleMovTabsFilter = (newValue) => {
     setMovTabId(newValue);
