@@ -90,9 +90,18 @@ mark {
   padding: 10px 14px !important;
 }
 
-//.stepperwrap-mobile .css-z7uhs0-MuiStepConnector-line {
-//  border-top: dotted !important;
-//}
+
+
+.stepperwrap-mobile .Mui-active .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted ($basicColor) !important;
+}
+.stepperwrap-mobile .Mui-completed .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted ($basicColor) !important;
+}
+
+.stepperwrap-mobile .css-ascpo7-MuiStepLabel-root {
+  max-width: 1rem;
+}
 
 .stepperwrap-mobile .MuiSvgIcon-root {
     height: 1.8rem !important;
@@ -107,7 +116,16 @@ mark {
   width: 30px !important;
   left: calc(-73% + 36px) !important;
   right: calc(28% + 37px) !important;
-  border-top: dotted !important;
   color: lightgray !important;
   z-index: 100
 }
+.stepperwrap-mobile .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted !important;
+ }
+
+.stepperwrap-mobile .css-1vyamtt-MuiStepLabel-labelContainer.MuiStepLabel-alternativeLabel {
+  z-index: 1000;
+  position: absolute;
+  margin-top: 1rem;
+}
+

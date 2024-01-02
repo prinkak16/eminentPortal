@@ -75,47 +75,56 @@ const FormStepper = ({
 
     const muiDisabledHeight = {height: '2rem'}
 
+    const getStepStyles = () => {
+        const styles = {
+            '& .MuiStepLabel-root .Mui-completed': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-root .Mui-active' : { color: '#FF9559',},
+            '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+                fill: '#fff',
+            },
+            '& .MuiStepConnector-root': {
+                left: 'calc(-54% + 20px)',
+                right: 'calc(46% + 20px)',
+                zIndex: '-1',
+                height: '4px',
+            },
+            '& .MuiStepConnector-line': {
+                // borderTopWidth: '4px',
+            },
+        };
+
+        // Conditionally add styles for mobile users
+        if (isMobileUser) {
+            styles['& .MuiStepLabel-root .Mui-disabled'] = {
+                fontSize: '0.7rem',
+                height: '2rem' ,
+                width:  '2rem' ,
+            };
+            styles['& .MuiStepLabel-root .Mui-active'] = {
+                fontSize: '0.7rem' ,
+                height:  '2rem' ,
+                color: '#FF9559',
+            };
+        }
+
+        return styles;
+    };
+
     return (
         <>
             <div className={`stepperwrap ${isMobileUser ? 'stepperwrap-mobile' :''}`}>
                 <Stepper alternativeLabel activeStep={activeStep}>
                     {steps.map((step, index) => (
                         <Step key={index} completed={completed[index]}>
-                            <StepButton onClick={() => handleStep(index)}  sx={{
-                                '& .MuiStepLabel-root .Mui-completed': {
-                                    color: '#FF9559',
-                                },
-                                '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel':
-                                    {
-                                        color: '#FF9559', // Just text label (COMPLETED)
-                                    },
-                                '& .MuiStepLabel-root .Mui-active': {
-                                    fontSize:  isMobileUser ? '0.7rem' : '',
-                                    height: isMobileUser ? '2rem': '',
-                                    color: '#FF9559', // circle color (ACTIVE)
-                                },
-                                '& .MuiStepLabel-root .Mui-disabled': {
-                                     fontSize:  isMobileUser ? '0.7rem' : '',
-                                     height: isMobileUser ? '2rem' : '',
-                                     width: isMobileUser ? '2rem' : '',
-                                 },
-                                '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
-                                    {
-                                        color: '#FF9559', // Just text label (ACTIVE)
-                                    },
-                                '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
-                                    fill: '#fff', // circle's number (ACTIVE)
-                                },
-                                '& .MuiStepConnector-root': {
-                                    left: 'calc(-54% + 20px)',
-                                    right: 'calc(46% + 20px)',
-                                    zIndex: '-1',
-                                    height: '4px',
-                                },
-                                '& .MuiStepConnector-line': {
-                                    borderTopWidth: '4px',
-                                },
-                            }}>
+                            <StepButton onClick={() => handleStep(index)}  sx={getStepStyles()}>
                                <span> {isMobileUser ? activeStep === index ? steps[index].label : null : steps[index].label} </span>
                             </StepButton>
                         </Step>
