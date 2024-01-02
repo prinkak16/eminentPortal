@@ -96,3 +96,45 @@
 .login-govt-image.right{
   right:0
 }
+@media screen and (max-width: 1499px) {
+  .login-govt-image {
+    bottom: -15%;
+  }
+  .login-govt-image svg{
+    width: 75%;
+  }
+  .login-govt-image.right svg {
+    width: 457px !important;
+    height: 574px !important;
+  }
+}
+@media screen and (max-width: 1366px) {
+  .login-govt-image {
+    bottom: -28%;
+  }
+  .login-govt-image svg{
+    width: 55%;
+  }
+  .login-govt-image.right{
+    bottom: -10%;
+  }
+  .login-govt-image.right svg {
+    width: 418px !important;
+    height: 473px !important;
+  }
+}
+@media screen and (max-width: 1366px) {
+  .login-govt-image {
+    bottom: -35%;
+  }
+  .login-govt-image svg{
+    width: 55%;
+  }
+  .login-govt-image.right{
+    bottom: -10%;
+  }
+  .login-govt-image.right svg {
+    width: 318px !important;
+    height: 373px !important;
+  }
+}
