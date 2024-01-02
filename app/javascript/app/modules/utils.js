@@ -562,4 +562,89 @@ export const convertToCamelCase = (inputString) => {
     });
 }
 
+export const isMobileUser = window.innerWidth < 520
+
+export const mobileView = (type) => {
+    let size  = isMobileUser ? 11 : 6
+
+    if (isMobileUser) {
+        if (type === 'std' || type === 'landline' ) {
+            size = 6
+        }
+        if (type === 'bjp' || type === 'rss' ) {
+            size = 4
+        }
+    }
+
+    if (!isMobileUser) {
+        if (type === 'name' || type === 'profile' || type === 'flat' ) {
+            size = 12
+        }
+        if (type === 'language'|| type === 'std'|| type === 'organization' || type === 'social' ) {
+            size = 4
+        }
+        if (type === 'mobiles' ) {
+            size = 8
+        }
+        if ( type === 'landline' ) {
+            size = 6
+        }
+        if (type === 'bjp' || type === 'rss' ) {
+            size = 2
+        }
+
+    }
+    return size
+}
+
+export const componentsFieldHeaders = {
+    educations: {
+        qualification: "Qualification",
+        course:
+            "Course/Branch/Subject",
+        university:
+            "University/Board Name",
+        college:
+            "College/ School Name",
+        start_year:
+            "Start Year",
+        end_year:
+            "End Year",
+        highest_qualification:
+            "Highest Qualification"
+    },
+    professions: {
+        profession: "Profession",
+        position:
+            "Position",
+        organization:
+            "Organization Name",
+        start_year:
+            "Start Year",
+        end_year:
+            "End Year",
+        main_profession:
+            "Main Profession"
+    },
+    political: {
+        party_level: "Party level",
+        unit: "Unit",
+        designation: "Designation",
+        start_year: "Start Year",
+        end_year: "End Year",
+    },
+    other_party: {
+        party: "Party",
+        position: "Position",
+        start_year: "Start Year",
+        end_year: "End Year",
+    }
+}
+
+
+const componentFieldDetailsHeaders = () => {
+
+
+}
+
 

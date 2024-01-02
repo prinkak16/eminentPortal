@@ -14,6 +14,7 @@ import DeviceInfo from "../../eminentforms/deviceinfo";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {ApiContext} from "../../../ApiContext";
+import {isMobileUser} from "../../../utils";
 
 const FormStepper = ({
                          viewMode,
@@ -72,42 +73,59 @@ const FormStepper = ({
             ? 'Next'
             : 'Save & Next';
 
+    const muiDisabledHeight = {height: '2rem'}
+
+    const getStepStyles = () => {
+        const styles = {
+            '& .MuiStepLabel-root .Mui-completed': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-root .Mui-active' : { color: '#FF9559',},
+            '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel': {
+                color: '#FF9559',
+            },
+            '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+                fill: '#fff',
+            },
+            '& .MuiStepConnector-root': {
+                left: 'calc(-54% + 20px)',
+                right: 'calc(46% + 20px)',
+                zIndex: '-1',
+                height: '4px',
+            },
+            '& .MuiStepConnector-line': {
+                // borderTopWidth: '4px',
+            },
+        };
+
+        // Conditionally add styles for mobile users
+        if (isMobileUser) {
+            styles['& .MuiStepLabel-root .Mui-disabled'] = {
+                fontSize: '0.7rem',
+                height: '2rem' ,
+                width:  '2rem' ,
+            };
+            styles['& .MuiStepLabel-root .Mui-active'] = {
+                fontSize: '0.7rem' ,
+                height:  '2rem' ,
+                color: '#FF9559',
+            };
+        }
+
+        return styles;
+    };
 
     return (
         <>
-            <div className="stepperwrap">
+            <div className={`stepperwrap ${isMobileUser ? 'stepperwrap-mobile' :''}`}>
                 <Stepper alternativeLabel activeStep={activeStep}>
                     {steps.map((step, index) => (
                         <Step key={index} completed={completed[index]}>
-                            <StepButton onClick={() => handleStep(index)}  sx={{
-                                '& .MuiStepLabel-root .Mui-completed': {
-                                    color: '#FF9559',
-                                },
-                                '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel':
-                                    {
-                                        color: '#FF9559', // Just text label (COMPLETED)
-                                    },
-                                '& .MuiStepLabel-root .Mui-active': {
-                                    color: '#FF9559', // circle color (ACTIVE)
-                                },
-                                '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
-                                    {
-                                        color: '#FF9559', // Just text label (ACTIVE)
-                                    },
-                                '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
-                                    fill: '#fff', // circle's number (ACTIVE)
-                                },
-                                '& .MuiStepConnector-root': {
-                                    left: 'calc(-54% + 20px)',
-                                    right: 'calc(46% + 20px)',
-                                    zIndex: '-1',
-                                    height: '4px',
-                                },
-                                '& .MuiStepConnector-line': {
-                                    borderTopWidth: '4px',
-                                },
-                            }}>
-                                {steps[index].label}
+                            <StepButton onClick={() => handleStep(index)}  sx={getStepStyles()}>
+                               <span> {isMobileUser ? activeStep === index ? steps[index].label : null : steps[index].label} </span>
                             </StepButton>
                         </Step>
                     ))}
@@ -130,18 +148,18 @@ const FormStepper = ({
                                 formValues={values}
                                 viewMode={viewMode}
                                 onUpdate={updateCumulativeData} setFieldValue={setFieldValue} />
-                    <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between">
+                    <Box mt={2} className="mb-5 d-flex align-items-center justify-content-between p-2">
                         <Button
                             disabled={activeStep === 0 || isSubmitting}
                             onClick={handlePrev}
-                            className="backbtn"
+                            className={`backbtn ${isMobileUser ? ' mobile-next-btn' : ''}`}
                         >
                             Previous
                         </Button>
                         <Typography variant="p" component="p">
                             Step {activeStep + 1} of {steps.length}
                         </Typography>
-                        <Button className="nextbtn" type="submit"  >
+                        <Button className={`nextbtn ${isMobileUser ? ' mobile-next-btn' : ''}`} type="submit"  >
                             {buttonText}
                         </Button>
                     </Box>
