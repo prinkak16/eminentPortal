@@ -81,30 +81,6 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           next
         end
 
-        unless row_data[:is_listed].present?
-          row_data[:error] = 'Please provide a valid is listed(YES/NO).'
-          upload_result << row_data
-          next
-        end
-
-        unless %w[YES NO].include? row_data[:is_listed]
-          row_data[:error] = 'Please provide a valid is listed(YES/NO).'
-          upload_result << row_data
-          next
-        end
-
-        unless row_data[:psu_type].present?
-          row_data[:error] = 'Please provide a psu type.'
-          upload_result << row_data
-          next
-        end
-
-        unless %w[Maharatna Navratna Miniratna].include? row_data[:psu_type]
-          row_data[:error] = 'Please provide a valid psu type.'
-          upload_result << row_data
-          next
-        end
-
         # compute ministry
         ministry_id_v = nil
         if !row_data[:ministry_name].present?
@@ -119,11 +95,7 @@ class Api::V1::Vacancy::UploadController < BaseApiController
 
         # compute departments
         department_id_v = nil
-        if !row_data[:department_name].present?
-          row_data[:error] = 'Please provide department name.'
-          upload_result << row_data
-          next
-        else
+        if row_data[:department_name].present?
           department_slug = convert_to_snake_case(row_data[:department_name])
           department_details = Department.where(
             ministry_id: ministry_id_v,
@@ -143,10 +115,10 @@ class Api::V1::Vacancy::UploadController < BaseApiController
           organization_slug = convert_to_snake_case(row_data[:organization_name])
           organization_details = Organization.where(
             ministry_id: ministry_id_v,
-            department_id: department_id_v,
             name: row_data[:organization_name],
             slug: organization_slug
           ).first_or_create!
+          organization_details.update(department_id: department_id_v)
           organization_details.update(is_listed: row_data[:is_listed] == 'YES')
           organization_details.update(ratna_type: row_data[:psu_type])
           organization_id_v = organization_details[:id].present? ? organization_details[:id] : nil
