@@ -26,6 +26,7 @@ import {
   allotmentListData,
 } from "../../../../../api/eminentapis/endpoints";
 import AllotmentContext from "../context/allotmentContext";
+import {checkPermission} from "../../../../utils";
 function AllotmentTable({ setAssignShow, filterString }) {
   const {
     crumbsState,
@@ -159,19 +160,21 @@ function AllotmentTable({ setAssignShow, filterString }) {
                       <TableCell>{data.dept_name}</TableCell>
                       <TableCell>{data.assigned_states}</TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        <button
-                          variant="contained"
-                          className={
-                            data.total === data.vacant
-                              ? "assign-button"
-                              : data?.vacant > 0
-                              ? "update-button"
-                              : "update-button-green"
-                          }
-                          onClick={(id) => changeHandler(data, data.org_id)}
-                        >
-                          {data.vacant / data.total == 1 ? "Assign" : "Update"}
-                        </button>
+                        {checkPermission('Allotment', 'Assign') &&
+                          <button
+                            variant="contained"
+                            className={
+                              data.total === data.vacant
+                                ? "assign-button"
+                                : data?.vacant > 0
+                                ? "update-button"
+                                : "update-button-green"
+                            }
+                            onClick={(id) => changeHandler(data, data.org_id)}
+                          >
+                            {data.vacant / data.total == 1 ? "Assign" : "Update"}
+                          </button>
+                        }
                       </TableCell>
                     </TableRow>
                   ))}

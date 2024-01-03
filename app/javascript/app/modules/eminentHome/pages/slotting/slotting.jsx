@@ -15,6 +15,7 @@ import ReactPaginate from "react-paginate";
 import Analytics from "../../shared/analytics/analytics";
 import {getSlottingTable} from "../../../../api/eminentapis/endpoints";
 import AssignBtnSidebar from "./comoponent/slottingSidebar";
+import {checkPermission} from "../../../utils";
 
 const SlottingTabPage =({tabId, filterString})=>{
     const [currentPage, setCurrentPage] = useState(0);
@@ -71,7 +72,9 @@ const SlottingTabPage =({tabId, filterString})=>{
                                 <TableCell>Assigned to State</TableCell>
                                 <TableCell>PSU Listed</TableCell>
                                 <TableCell>Last Updated</TableCell>
+                                {checkPermission('Slotting', 'AssignUpdate') &&
                                 <TableCell className="text-center">Assign</TableCell>
+                                }
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -88,12 +91,18 @@ const SlottingTabPage =({tabId, filterString})=>{
                                     month: 'short',
                                     year: 'numeric',
                                 })}</TableCell>
-                                    <TableCell className="text-center"><Button className="assignButton" aria-label="open drawer"
+                                    {checkPermission('Slotting', 'AssignUpdate') &&
+                                    <TableCell className="text-center">
+
+                                        <Button className="assignButton" aria-label="open drawer"
                                                                                edge="end"
                                                                                onClick={() => {
                                                                                    handleDrawerOpen(slotting.org_id, slotting.ministry_id, slotting.slotted)
                                                                                }}
-                                                                               sx={{ ...(open && { display: 'none' }) }}>{slotting.slotted === 0 ? 'Assign' : 'Update'}</Button></TableCell>
+                                                                               sx={{ ...(open && { display: 'none' }) }}>{slotting.slotted === 0 ? 'Assign' : 'Update'}</Button>
+
+                                    </TableCell>
+                                    }
                             </TableRow>)}
                         </TableBody>
                     </Table>
