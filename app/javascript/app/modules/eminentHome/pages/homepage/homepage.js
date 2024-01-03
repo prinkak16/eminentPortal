@@ -100,7 +100,7 @@ const {
       if (response.data.success) {
         localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
         setFetchedUserPermissions(true);
-        setSearchParams({ basicTabId: permittedTab() });
+        setSearchParams({ basicTabId: permittedTab(searchParams.get('basicTabId')) });
       }
     })
     switchTabHandler(searchParams.get("basicTabId"));

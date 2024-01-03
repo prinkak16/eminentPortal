@@ -553,7 +553,7 @@ export const checkPermission = (name, action) => {
     }
 }
 
-export const permittedTab = () => {
+export const permittedTab = (currentTab) => {
     const tabPermissions = [
         { permission_name: 'Home', action: 'View', tabName: 'home'},
         { permission_name: 'Allotment', action: 'View', tabName: 'allotment'},
@@ -562,6 +562,11 @@ export const permittedTab = () => {
         { permission_name: 'Slotting', action: 'View', tabName: 'slotting'},
         { permission_name: 'GOMManagement', action: 'View', tabName: 'gom_management'},
     ]
+
+    const tabData = tabPermissions.find(tab => tab.tabName === currentTab)
+    if (!!tabData && checkPermission(tabData.permission_name, tabData.action)) {
+        return currentTab;
+    }
 
     for (const obj of tabPermissions) {
         if (checkPermission(obj.permission_name, obj.action)) {
