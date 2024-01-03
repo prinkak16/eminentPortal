@@ -34,6 +34,7 @@ import FileStatus from "../../pages/fileStatus/fileStatus";
 import Tabs from "@mui/material/Tabs";
 import {checkPermission, isValuePresent, convertToCamelCase} from "../../../utils";
 import AllotmentContext from "../../pages/allotment/context/allotmentContext";
+import Unauthorized from "../unathorized/Unauthorized";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -587,11 +588,13 @@ export default function BasicTabs({
   }
 
   return (
-    <Box sx={{ width: "100%", typography: "body1" }}>
+    <>
+      {basicTabId.get("basicTabId") === '' && <Unauthorized/>}
+      <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value}>
           <Box
-            sx={{ borderBottom: 1, borderColor: "divider" }}
-            className="hometabs d-flex justify-content-between align-items-center"
+              sx={{ borderBottom: 1, borderColor: "divider" }}
+              className="hometabs d-flex justify-content-between align-items-center"
           >
             {tabsView()}
             {buttonContent}
@@ -631,41 +634,42 @@ export default function BasicTabs({
 
         </TabContext>
 
-      <Modal
-        contentClassName="deleteModal"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={wantToAddNew}
-      >
-        <Modal.Body>
-          <h4>Enter phone no.</h4>
-          <label>
-            Mobile Number<span className="text-danger">*</span>
-          </label>
-          <input
-            className="addNewInput ps-2"
-            type="tel"
-            maxLength={10}
-            value={inputNumber}
-            placeholder="Enter mobile number"
-            onChange={(e) => changeInputNumber(e.target.value)}
-          />
-          {eminentMsg && <span>{eminentMsg}</span>}
-          {errorNumber && errorNumber.length > 0 && <span>{errorNumber}</span>}
-        </Modal.Body>
-        <Modal.Footer>
-          <button className="btn" onClick={cancelAddNew}>
-            Cancel
-          </button>
-          <button
-            className="btn addNewSubmit"
-            onClick={navigateForm}
-            disabled={submitDisabled}
-          >
-            Submit
-          </button>
-        </Modal.Footer>
-      </Modal>
-    </Box>
+        <Modal
+            contentClassName="deleteModal"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            show={wantToAddNew}
+        >
+          <Modal.Body>
+            <h4>Enter phone no.</h4>
+            <label>
+              Mobile Number<span className="text-danger">*</span>
+            </label>
+            <input
+                className="addNewInput ps-2"
+                type="tel"
+                maxLength={10}
+                value={inputNumber}
+                placeholder="Enter mobile number"
+                onChange={(e) => changeInputNumber(e.target.value)}
+            />
+            {eminentMsg && <span>{eminentMsg}</span>}
+            {errorNumber && errorNumber.length > 0 && <span>{errorNumber}</span>}
+          </Modal.Body>
+          <Modal.Footer>
+            <button className="btn" onClick={cancelAddNew}>
+              Cancel
+            </button>
+            <button
+                className="btn addNewSubmit"
+                onClick={navigateForm}
+                disabled={submitDisabled}
+            >
+              Submit
+            </button>
+          </Modal.Footer>
+        </Modal>
+      </Box>
+    </>
   );
 }

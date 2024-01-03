@@ -1,6 +1,13 @@
 import * as React from "react";
 export default function Unauthorized() {
     return (
-        <h1 className="text-center h-100 d-flex justify-content-center align-items-center">You are not authorized</h1>
+        <div style={{
+            height: '30rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
+            <p className="h1">You are not authorized</p>
+        </div>
     )
 }
