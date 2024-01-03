@@ -31,6 +31,7 @@ import Paper from '@mui/material/Paper';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import ReactPaginate from "react-paginate";
+import {checkPermission} from "../../../../utils";
 
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
@@ -344,10 +345,12 @@ const AssignBtnSidebar = ({open, handleDrawerClose, psuId, slottingMinistryId}) 
                                             <TableCell>{vacancy.country_state_name}</TableCell>
                                             <TableCell>{vacancy.slotting_remarks}</TableCell>
                                             <TableCell>
-                                                <Button
-                                                    onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
-                                                <Button
-                                                    onClick={() =>  handleOpen(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
+                                                {checkPermission('Slotting', 'Edit') &&
+                                                    <Button onClick={() => handleEdit(vacancy)}><ModeEditOutlineOutlinedIcon/></Button>
+                                                }
+                                                {checkPermission('Slotting', 'Delete') &&
+                                                    <Button onClick={() =>  handleOpen(vacancy.vacancies_id)}><DeleteForeverOutlinedIcon/></Button>
+                                                }
                                             </TableCell>
                                         </TableRow>)
                                     )

@@ -25,7 +25,7 @@ import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from '@mui/material/TextField';
 import {ApiContext} from "../../../../ApiContext";
-import {isValuePresent} from "../../../../utils";
+import {checkPermission, isValuePresent} from "../../../../utils";
 function GomPage({ tabId, filterString, clearFilter, callFetchFunction}) {
     const {resetFilter,setResetFilter} = useContext(ApiContext)
     const [gomTableData, setGomTableData] = useState([]);
@@ -281,7 +281,9 @@ function GomPage({ tabId, filterString, clearFilter, callFetchFunction}) {
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned Ministry</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Their own ministry</th>
                                         <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Assigned States</th>
-                                        <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Action</th>
+                                        {checkPermission('GOMManagement', 'Edit') &&
+                                            <th style={{ backgroundColor: "#F8F8F8", textAlign: "left" }}>Action</th>
+                                        }
                                     </tr>
                                     {gomTableData.map((data, index) => (
                                         <tr key={data} style={{ border: "2px solid #F8F8F8", padding: "5px", height: "40px" }}>
@@ -293,9 +295,11 @@ function GomPage({ tabId, filterString, clearFilter, callFetchFunction}) {
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_ministries.length === 0 ? ' - ' : data.assigned_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.allocated_ministries.length === 0 ? ' - ' : data.allocated_ministries.join(', ')}</td>
                                             <td style={{ textAlign: "left", fontWeight: "normal" }}>{data.assigned_states.length === 0 ? ' - ' : data.assigned_states.join(', ')}</td>
+                                            {checkPermission('GOMManagement', 'Edit') &&
                                             <td onClick={() => handleEditClick(data)} style={{ cursor: "pointer", textAlign: "left" }}>
                                                 <EditIcon />
                                             </td>
+                                            }
                                         </tr>
                                     ))}
                                 </table>

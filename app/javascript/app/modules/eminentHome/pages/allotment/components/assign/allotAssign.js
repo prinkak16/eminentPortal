@@ -35,7 +35,7 @@ import {
   allotmentCardData,
 } from "../../../../../../api/eminentapis/endpoints";
 import {
-  calculateAge,
+  calculateAge, checkPermission,
   dobFormat,
   isValuePresent,
   showSuccessToast,
@@ -564,14 +564,16 @@ function AllotAssign({ filterString }) {
                       </Grid>
                     </div>
                     <div className="UnAssign-allotment-div">
-                      <button
-                        className="UnAssign-allotment-btn"
-                        onClick={() =>
-                          unassignHandeler(member.member_data.id, member)
-                        }
-                      >
-                        Unassign
-                      </button>
+                      {checkPermission('Allotment', 'Unassign') &&
+                        <button
+                          className="UnAssign-allotment-btn"
+                          onClick={() =>
+                            unassignHandeler(member.member_data.id, member)
+                          }
+                        >
+                          Unassign
+                        </button>
+                      }
                     </div>
                   </div>
                 ))}

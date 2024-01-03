@@ -311,6 +311,7 @@ export default function BasicTabs({
     if (!isValuePresent(openFilter)) {
       buttonContent = (
         <>
+          {checkPermission('MasterOfVacancies','Upload') &&
           <Button
             className="downloadBtn"
             variant="primary"
@@ -318,7 +319,7 @@ export default function BasicTabs({
           >
             <ArrowUpwardIcon /> Upload CSV File
           </Button>
-
+          }
           <Modal
             show={show}
             onHide={handleClose}
@@ -408,9 +409,11 @@ export default function BasicTabs({
     if (!isValuePresent(openFilter)) {
       buttonContent = (
         <>
+          {checkPermission('GOMManagement','MinisterAssistantMapping') &&
           <button className="button-upload" onClick={handleClick}>
             <UploadIcon /> PA/OSD mapping
           </button>
+          }
           <input
             key={wantToUpload}
             type="file"
@@ -419,6 +422,7 @@ export default function BasicTabs({
             ref={hiddenFileInput}
             style={{ display: "none" }}
           />
+
           <Modal
             aria-labelledby="contained-modal-title-vcenter"
             centered

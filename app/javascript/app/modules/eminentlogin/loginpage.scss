@@ -116,25 +116,15 @@
     width: 55%;
   }
   .login-govt-image.right{
-    bottom: -10%;
+    bottom: -5%;
   }
   .login-govt-image.right svg {
-    width: 418px !important;
+    width: 400px !important;
     height: 473px !important;
   }
 }
-@media screen and (max-width: 1366px) {
+@media screen and (max-width: 1199px) {
   .login-govt-image {
-    bottom: -35%;
-  }
-  .login-govt-image svg{
-    width: 55%;
-  }
-  .login-govt-image.right{
-    bottom: -10%;
-  }
-  .login-govt-image.right svg {
-    width: 318px !important;
-    height: 373px !important;
+  display: none;
   }
 }
