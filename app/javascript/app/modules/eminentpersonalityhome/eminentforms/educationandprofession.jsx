@@ -42,8 +42,8 @@ const Educationform = (props) => {
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
     const [showList, setShowList] = useState()
     const [isViewDisabled, setIsViewDisabled] = useState(false)
-    const [showEducationForm, setShowEducationForm] = useState(false)
-    const [showProfessionForm, setShowProfessionForm] = useState(false)
+    const [showEducationForm, setShowEducationForm] = useState(props.formValues.educations.length === 0)
+    const [showProfessionForm, setShowProfessionForm] = useState(props.formValues.professions.length === 0)
 
     useEffect(() => {
         if (props.viewMode === 'view') {
@@ -244,7 +244,6 @@ const Educationform = (props) => {
         showFormFields(type)
         setShowList(null)
         if (type === 'educations') {
-
             scrollToBottom(500)
             setEducationEditField({})
             const form = educationDetails.find((item) => item.id === id);
@@ -387,9 +386,9 @@ const Educationform = (props) => {
                                                         {showList === data.id && (
                                                             <Paper className='details-edit-list'>
                                                                 <Typography sx={{p: 2}} className='edit-buttons'
-                                                                            onClick={() => editForm('education', data.id)}><Edit/>Edit</Typography>
+                                                                            onClick={() => editForm('educations', data.id)}><Edit/>Edit</Typography>
                                                                 <Typography
-                                                                    onClick={() => deleteFields('education', data.id)}
+                                                                    onClick={() => deleteFields('educations', data.id)}
                                                                     className='edit-buttons' sx={{p: 2}}><DeleteIcon/>Delete</Typography>
                                                             </Paper>
                                                         )}
