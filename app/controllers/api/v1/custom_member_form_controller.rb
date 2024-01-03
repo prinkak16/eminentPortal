@@ -5,8 +5,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   include MetadataHelper
 
   def fetch_by_number
-    permission_exist = is_permissible('Eminent', 'View')
-    if permission_exist.nil?
+    unless is_permissible?('Home', 'Edit')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -305,9 +304,9 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def update_aasm_state
     begin
-      approve_permission_exist = is_permissible('Eminent', 'FreezeForm')
-      re_edit_permission_exist = is_permissible('Eminent', 'ReEditForm')
-      if approve_permission_exist.nil? && re_edit_permission_exist.nil?
+      approve_permission_exist = is_permissible?('Home', 'Freeze')
+      re_edit_permission_exist = is_permissible?('Home', 'ReEdit')
+      unless approve_permission_exist || re_edit_permission_exist
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -361,8 +360,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def delete_member
     begin
-      permission_exist = is_permissible('Eminent', 'Delete')
-      if permission_exist.nil?
+      unless is_permissible?('Home', 'Delete')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -387,8 +385,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def list
-    permission_exist = is_permissible('Eminent', 'Home')
-    if permission_exist.nil?
+    unless is_permissible?('Home', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'

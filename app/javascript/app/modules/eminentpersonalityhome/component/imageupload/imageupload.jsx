@@ -18,9 +18,7 @@ const ImageUpload=(props)=>{
     const [imageUrl, setImageUrl] = useState()
     const maxNumber = 3;
     const handleImageUpload = (image) => {
-        console.log("Uploaded file:", image.file);
         getFileUpload(image.file,config,isCandidateLogin).then(res => {
-            console.log('API response:', res.data.file_path);
             props.setFieldValue('photo', res.data.file_path);
         });
     };

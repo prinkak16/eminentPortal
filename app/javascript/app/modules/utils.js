@@ -545,12 +545,35 @@ export const VisuallyHiddenInput = styled('input')({
 
 
 export const checkPermission = (name, action) => {
-    if (isValuePresent(localStorage.getItem('user_permissions'))) {
+    if (localStorage.getItem('user_permissions') !== null) {
         const userPermissions = JSON.parse(localStorage.getItem('user_permissions'))
-        return userPermissions.filter(item => item.permission_name === name).find(item => item.action === action);
+        return userPermissions.some(permission => (permission.permission_name === name && permission.action === action))
     } else {
         return false
     }
+}
+
+export const permittedTab = (currentTab) => {
+    const tabPermissions = [
+        { permission_name: 'Home', action: 'View', tabName: 'home'},
+        { permission_name: 'Allotment', action: 'View', tabName: 'allotment'},
+        { permission_name: 'FileStatus', action: 'View', tabName: 'file_status'},
+        { permission_name: 'MasterOfVacancies', action: 'View', tabName: 'master_of_vacancies'},
+        { permission_name: 'Slotting', action: 'View', tabName: 'slotting'},
+        { permission_name: 'GOMManagement', action: 'View', tabName: 'gom_management'},
+    ]
+
+    const tabData = tabPermissions.find(tab => tab.tabName === currentTab)
+    if (!!tabData && checkPermission(tabData.permission_name, tabData.action)) {
+        return currentTab;
+    }
+
+    for (const obj of tabPermissions) {
+        if (checkPermission(obj.permission_name, obj.action)) {
+            return obj.tabName;
+        }
+    }
+    return '';
 }
 
 

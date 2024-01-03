@@ -8,8 +8,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
   include FilterHelper
 
   def list
-    permission_exist = is_permissible('Eminent', 'Allotment')
-    if permission_exist.nil?
+    unless is_permissible?('Allotment', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -136,8 +135,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
   def assign_vacancy
     begin
-      permission_exist = is_permissible('Eminent', 'Allotment')
-      if permission_exist.nil?
+      unless is_permissible?('Allotment', 'Assign')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -209,8 +207,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
   def assigned_members
     begin
-      permission_exist = is_permissible('Eminent', 'Allotment')
-      if permission_exist.nil?
+      unless is_permissible?('Allotment', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -268,8 +265,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
   def unassign_member
     begin
-      permission_exist = is_permissible('Eminent', 'Allotment')
-      if permission_exist.nil?
+      unless is_permissible?('Allotment', 'Unassign')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -311,8 +307,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
 
   def vacancies_history
     begin
-      permission_exist = is_permissible('Eminent', 'Allotment')
-      if permission_exist.nil?
+      unless is_permissible?('Allotment', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -393,8 +388,7 @@ class Api::V1::Allotment::EminentController < BaseApiController
     end
   end
   def eminent_filters
-    permission_exist = is_permissible('Eminent', 'Allotment')
-    if permission_exist.nil?
+    unless is_permissible?('Allotment', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'

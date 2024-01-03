@@ -116,7 +116,6 @@ const HomeTable = (props) => {
       .then((res) => {
         setWantToChangeStatus(false);
         prepareToGetDisplayData();
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);

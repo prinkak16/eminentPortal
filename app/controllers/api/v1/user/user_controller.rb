@@ -40,6 +40,13 @@ class Api::V1::User::UserController < BaseApiController
 
   def assign_ministries
     begin
+      unless is_permissible?('GOMManagement', 'Edit')
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :bad_request
+      end
+
       # check validations
       params['user_id'] = params['user_id'].to_i
       is_param_data_is_valid = validate_form(user_ministry_validator, params.as_json)

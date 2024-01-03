@@ -6,8 +6,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def position_analytics
     begin
-      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
-      if permission_exist.nil?
+      unless is_permissible?('MasterOfVacancies', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -80,8 +79,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def list
     begin
-      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
-      if permission_exist.nil?
+      unless is_permissible?('MasterOfVacancies', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'

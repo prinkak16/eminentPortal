@@ -212,7 +212,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 }
             }
         }
-        console.log(formValue)
         saveData(jsonForm.title,formValue, id)
         resetFieldsToBlank()
     }
