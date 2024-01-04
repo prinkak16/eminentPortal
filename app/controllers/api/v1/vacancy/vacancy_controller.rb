@@ -351,7 +351,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       return render json: { success: false, message: e.message }, status: :bad_request
     end
   end
-  def mov_download
+  def mov_excel_download
     begin
       unless is_permissible?('MasterOfVacancies', 'Download')
         return render json: {

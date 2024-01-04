@@ -16,7 +16,7 @@ import './masterVacancies.css'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
-import {downloadMOV} from "../../../../api/eminentapis/endpoints";
+import {downloadMOVExcel} from "../../../../api/eminentapis/endpoints";
 import {downloadFile} from "../../../utils";
 import {toast} from 'react-toastify';
 
@@ -63,9 +63,9 @@ const MasterVacancies = ({ tabId, filterString }) => {
         setMasterTabName({basicTabId: masterTabName.get('basicTabId'), masterOfVacancies: tabValue})
     }
 
-    const downloadMOVData = () => {
+    const downloadMOVExcelData = () => {
         setIsFetching(true);
-        downloadMOV().then(response => {
+        downloadMOVExcel().then(response => {
             setIsFetching(false);
             // Create a Blob from the binary data
             const blobData = new Blob([response.data], { type: 'application/octet-stream' });
@@ -94,7 +94,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
                             <Tab label="PSU wise" value="psu_wise" />
                             <Tab label="Position Wise" value="vacancy_wise" />
                         </TabList>
-                        <Button className="download_btn" onClick={downloadMOVData}>Download <ArrowDownwardIcon/></Button>
+                        <Button className="download_btn" onClick={downloadMOVExcelData}>Download <ArrowDownwardIcon/></Button>
                     </Box>
                     <TabPanel value="ministry_wise"  className="p-0">
                         <MinistryTable filterString={filterString} ministryId={ministryId} onSwitchTab={switchTabDataHandler} />
