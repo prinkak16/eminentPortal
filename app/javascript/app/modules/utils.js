@@ -576,6 +576,16 @@ export const permittedTab = (currentTab) => {
     return '';
 }
 
+export const downloadFile = (blobData, filename) => {
+    // Create a link to trigger the download
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blobData);
+    link.download = `${filename}.xlsx`;
+
+    // Trigger the download
+    link.click();
+}
+
 
 export const convertToCamelCase = (inputString) => {
     return inputString.replace(/_(\w)/g, function (match, group) {

@@ -88,6 +88,7 @@ Rails.application.routes.draw do
         get '/position_analytics', to: 'vacancy#position_analytics'
         get '/vacant_overview/by_state', to: 'vacancy#vacant_overview_by_state'
         get '/list', to: 'vacancy#list'
+        get '/mov_excel_download', to: 'vacancy#mov_excel_download'
       end
 
       namespace :slotting, path: 'slotting' do
