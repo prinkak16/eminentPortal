@@ -3,7 +3,7 @@ import {useNavigate, useLocation, useSearchParams} from 'react-router-dom';
 import {
     Box,
     Tab,
-    Button
+    Button, Backdrop, CircularProgress
 } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -16,6 +16,9 @@ import './masterVacancies.css'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
+import {downloadMOV} from "../../../../api/eminentapis/endpoints";
+import {downloadFile} from "../../../utils";
+import {toast} from 'react-toastify';
 
 const MasterVacancies = ({ tabId, filterString }) => {
     const [masterTabName, setMasterTabName] = useSearchParams({basicTabId: '4', masterOfVacancies: 'ministry_wise'});
@@ -24,7 +27,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
     const [tabData, setTabData] = useState([]);
     const [ministryId, setMinistryId] = useState(null);
     const [organizationId, setOrganizationId] = useState(null)
-    const [movSearchParams , setMovSearchParams] = useSearchParams()
+    const [movSearchParams , setMovSearchParams] = useSearchParams();
+    const [isFetching, setIsFetching] = useState(false);
 
     const handleChange = (event, newValue) => {
         setMinistryId(null);
@@ -59,8 +63,28 @@ const MasterVacancies = ({ tabId, filterString }) => {
         setMasterTabName({basicTabId: masterTabName.get('basicTabId'), masterOfVacancies: tabValue})
     }
 
+    const downloadMOVData = () => {
+        setIsFetching(true);
+        downloadMOV().then(response => {
+            setIsFetching(false);
+            // Create a Blob from the binary data
+            const blobData = new Blob([response.data], { type: 'application/octet-stream' });
+            downloadFile(blobData, 'mov_data');
+        }, error => {
+            setIsFetching(false);
+            if (error.response.status === 401) {
+                toast('You are not authorized to download');
+            }
+        })
+    }
+
     return (
         <>
+            <Backdrop
+                open={isFetching}
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Analytics tabId={tabId} title="Postiton Analytics"/>
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>
@@ -70,7 +94,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
                             <Tab label="PSU wise" value="psu_wise" />
                             <Tab label="Position Wise" value="vacancy_wise" />
                         </TabList>
-                        <Button className="download_btn">Download <ArrowDownwardIcon/></Button>
+                        <Button className="download_btn" onClick={downloadMOVData}>Download <ArrowDownwardIcon/></Button>
                     </Box>
                     <TabPanel value="ministry_wise"  className="p-0">
                         <MinistryTable filterString={filterString} ministryId={ministryId} onSwitchTab={switchTabDataHandler} />
