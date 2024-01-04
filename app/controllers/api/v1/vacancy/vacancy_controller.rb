@@ -373,8 +373,8 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
       current_time = Time.now.in_time_zone('Asia/Kolkata')
       today_date_string = current_time.strftime('%d/%m/%Y')
       filename = 'mov_data.xlsx'
-      xlsx_headers = ['Ministry', 'Department', 'Organisation', 'Category/Type',
-                      'Listed', 'Sanctioned Positions', 'Appointed', "Vacancies as on (#{today_date_string})", 'Requirements']
+      xlsx_headers = ['Ministry', 'Department', 'Organisation', 'Category/Type', 'Listed', 'Sanctioned Positions',
+                      'Appointed', "Vacancies as on (#{today_date_string})", 'Requirements']
 
       package = Axlsx::Package.new
       workbook = package.workbook
