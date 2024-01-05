@@ -241,11 +241,9 @@ export default function BasicTabs({
     setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
   };
   const handleChange = (event, newValue) => {
-    if (checkPermission('Eminent', convertToCamelCase(newValue))) {
-      handleBasicTabChange({ basicTabId: newValue });
-      setValue(newValue);
-      onSwitchTab(newValue);
-    }
+    handleBasicTabChange({ basicTabId: newValue });
+    setValue(newValue);
+    onSwitchTab(newValue);
   };
 
   const handleDownload = () => {
