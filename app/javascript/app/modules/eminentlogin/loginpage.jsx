@@ -7,7 +7,7 @@ import OrangeSideWall from "../../../../../public/images/saffron_bg 1.svg"
 import BarImage from "../../../../../public/images/bar.svg"
 import {ApiContext} from "../ApiContext";
 import {Typography, TextField, Button} from "@mui/material";
-import ModijiImage from "../../../../../public/images/Modiji-2.svg"
+import ModijiImage from "../../../../../public/images/Modiji.svg"
 import NaddaImage from "../../../../../public/images/Naddaji.svg"
 import OtpInput from 'react-otp-input';
 const mobileRegex = /^[5-9]\d{0,9}$/;
