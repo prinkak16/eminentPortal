@@ -1,7 +1,13 @@
-.login-wrap{
-  position: relative;
-  height: 100vh;
-  overflow-y: hidden;
+//.login-wrap{
+//  position: relative;
+//  display: flex;
+//  flex-direction: column;
+//  min-height: 100vh;
+//}
+#app {
+position: relative;
+  min-height: 100vh;
+  height: initial;
 }
 .inputNumber{
   border-radius: 5px;
@@ -88,42 +94,21 @@
 }
 .login-govt-image{
   position: absolute;
-  bottom: -8%;
+  //bottom: -4.2%;
+  bottom: 0;
 }
 .login-govt-image.left{
-  left:-3%
+  left:1%
 }
 .login-govt-image.right{
   right:0
 }
-@media screen and (max-width: 1499px) {
-  .login-govt-image {
-    bottom: -15%;
-  }
-  .login-govt-image svg{
-    width: 75%;
-  }
-  .login-govt-image.right svg {
-    width: 457px !important;
-    height: 574px !important;
+@media screen and (max-width: 1450px) {
+  .login-wrap{
+   position: relative;
   }
 }
-@media screen and (max-width: 1366px) {
-  .login-govt-image {
-    bottom: -28%;
-  }
-  .login-govt-image svg{
-    width: 55%;
-  }
-  .login-govt-image.right{
-    bottom: -5%;
-  }
-  .login-govt-image.right svg {
-    width: 400px !important;
-    height: 473px !important;
-  }
-}
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 992px) {
   .login-govt-image {
   display: none;
   }
