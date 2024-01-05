@@ -107,7 +107,7 @@ const LoginPage = () => {
                                     <Typography variant="h4">
                                         Login with Mobile Number
                                     </Typography>
-                                    <div className="justify-content-start my-4 text-start number-filed">
+                                    <div className="justify-content-start  my-md-2  my-lg-4 text-start number-filed">
                                         <TextField
                                             id="outlined-basic"
                                             label="Enter Phone Number"
