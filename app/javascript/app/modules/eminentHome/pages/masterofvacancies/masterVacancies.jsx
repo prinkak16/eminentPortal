@@ -65,7 +65,7 @@ const MasterVacancies = ({ tabId, filterString }) => {
 
     const downloadMOVExcelData = () => {
         setIsFetching(true);
-        downloadMOVExcel().then(response => {
+        downloadMOVExcel(filterString).then(response => {
             setIsFetching(false);
             // Create a Blob from the binary data
             const blobData = new Blob([response.data], { type: 'application/octet-stream' });

@@ -362,13 +362,21 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
       organizations = Organization.joins(:ministry, :vacancies)
                                   .left_joins(:department)
-                                  .group('ministries.name, departments.name, organizations.name, organizations.ratna_type, organizations.is_listed')
-                                  .select("ministries.name as m_name, departments.name as d_name, organizations.name as o_name, organizations.ratna_type as ratna_type,
+
+      organizations = organizations.where(ministries: { id: params[:ministry] }) if params[:ministry].present?
+      organizations = organizations.where(vacancies: { allotment_status: params[:position_status] }) if params[:position_status].present?
+      organizations = organizations.where(vacancies: { country_state_id: params[:country_state_id] }) if params[:country_state_id].present?
+      organizations = organizations.where(departments: { id: params[:department] }) if params[:department].present?
+      organizations = organizations.where(id: params[:organization]) if params[:organization].present?
+      organizations = organizations.where(ratna_type: params[:ratna_type]) if params[:ratna_type].present?
+
+      organizations = organizations.group('ministries.name, departments.name, organizations.name, organizations.ratna_type, organizations.is_listed')
+                                   .select("ministries.name as m_name, departments.name as d_name, organizations.name as o_name, organizations.ratna_type as ratna_type,
                                                  organizations.is_listed as is_listed, COUNT(vacancies.id) as total,
                                                  SUM(CASE WHEN vacancies.allotment_status = 'occupied' THEN 1 ELSE 0 END) as appointed,
                                                  SUM(CASE WHEN vacancies.allotment_status = 'vacant' THEN 1 ELSE 0 END) as vacant,
                                                  STRING_AGG(DISTINCT vacancies.slotting_remarks, ', ') as remarks")
-                                  .order('ministries.name, departments.name, organizations.name')
+                                   .order('ministries.name, departments.name, organizations.name')
 
       current_time = Time.now.in_time_zone('Asia/Kolkata')
       today_date_string = current_time.strftime('%d/%m/%Y')
