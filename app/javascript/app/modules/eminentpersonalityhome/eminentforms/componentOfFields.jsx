@@ -96,19 +96,19 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
     const handleFieldChange = (value, name, valueType) => {
         if (valueType === 'profession') {
-            setFieldsData({})
+            setFieldsData({});
         }
 
         if (valueType === 'qualification') {
-            setFieldsData({})
-            const fields = []
+            setFieldsData({});
+            const fields = [];
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
-                fields.push('start_year','course')
+                fields.push('start_year', 'course');
                 fieldsData.start_year = '-';
                 fieldsData.course = '-';
             } else if (value === '12th Pass') {
-                fields.push('start_year')
+                fields.push('start_year');
                 fieldsData.start_year = '-';
             } else {
                 fieldsData.start_year = '';
@@ -116,12 +116,42 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             }
             setDisabledFields(fields)
         }
-
+        const dropdownList = isValuePresent(getList(valueType)) ? getList(valueType) : [];
+        if (!dropdownList.includes(value)) {
+            // Send the new entry to the backend
+            sendNewEntryToBackend(value, valueType); // Call the function to send the entry to the backend
+        }
         setFieldsData((prevFieldsData) => ({
             ...prevFieldsData,
             [valueType]: value,
         }));
     };
+
+// Create a function to send the new entry to the backend
+    const sendNewEntryToBackend = (newValue, valueType) => {
+        // Make an API call to send the new entry to the backend
+        // Adjust the endpoint and payload based on your backend requirements
+        fetch('your-backend-endpoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers if needed
+            },
+            body: JSON.stringify({
+                valueType: valueType,
+                newValue: newValue,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend if needed
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error sending new entry to backend:', error);
+            });
+    };
+
 
     const handleEduStartDateChange = (field) => (date) => {
         handleFieldChange(date.$y, '', field)
@@ -231,10 +261,17 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return isValuePresent(state) ? <mark>*</mark> : ''
     }
 
-    const getList = () => {
+    const getList = (e) => {
         let list = []
         if (jsonForm.title === 'Education Details') {
-            list = educationsList
+            if (e.key === 'qualification'){
+            list = educationsList }
+            if(e.key === 'university'){
+                list = [];
+            }
+            if (e.key === 'college'){
+                list = [];
+            }
         } else if (jsonForm.title === 'Profession Profile') {
             list = professionList
         }
@@ -262,8 +299,8 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         disabled={isViewDisabled}
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
-                                        listArray={isValuePresent(getList()) ? getList() : f.list}
-                                        onChangeValue={handleFieldChange}
+                                        listArray={isValuePresent(getList(f)) ? getList(f) : f.list}
+                                        onChangeValue={(value) => handleFieldChange(value, f.name, f.key)}
                                         dropDownType={f.key}/>
                                 </div>
                             </Grid>
@@ -321,7 +358,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 {
                     jsonForm.title === 'Education Details' &&
                     <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
-                        <FormLabel className='mr-1'>Please Select if this is your Highest Qualification </FormLabel>
+                        <FormLabel className='mr-1'  style={{ fontSize: '0.9rem' }}>Please Select if this is your Highest Qualification </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>
@@ -332,7 +369,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 {
                     jsonForm.title === 'Profession Profile' &&
                     <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
-                        <FormLabel className='mr-1'>Please Select if this is your Main Profession </FormLabel>
+                        <FormLabel className='mr-1'  style={{ fontSize: '0.9rem' }}>Please Select if this is your Main Profession </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['main_profession']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'main_profession', 'main_profession')} />
                     </Grid>

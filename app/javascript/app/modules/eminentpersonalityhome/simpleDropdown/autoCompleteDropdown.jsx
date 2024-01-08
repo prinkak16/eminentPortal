@@ -9,6 +9,11 @@ const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dro
         onChangeValue(value, name, dropDownType,formIndex)
     }
 
+    const onInputChange = (event, newInputValue) => {
+        // Call onChangeValue to update the selected value as the user types
+        onChangeValue(newInputValue, name, dropDownType, formIndex);
+    };
+
     return (
         <div>
             <Autocomplete
@@ -17,8 +22,22 @@ const AutoCompleteDropdown = ({listArray,name, onChangeValue ,selectedValue, dro
                 className={classes}
                 value={selectedValue}
                 onChange={onChange}
+                onInputChange={onInputChange}
                 id="autocomplete"
+                freeSolo={true}
                 options={listArray}
+                filterOptions={(options, { inputValue }) => {
+                    // If the user has input text, include it in the options
+                    if (inputValue && !listArray.includes(inputValue)) {
+                        options.push(inputValue);
+                      options = options.filter(option =>
+                            option.toLowerCase().startsWith(inputValue.toLowerCase()));
+
+                    }
+
+                  return options;
+                }
+                }
                 renderInput={(params) => <TextField {...params}  placeholder={`Select ${name}`} />}
             />
         </div>

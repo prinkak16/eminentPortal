@@ -134,7 +134,7 @@ const {
       <HomeContext.Provider value={{tabId, movTabId, handleMovTabsFilter }}>
         {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/> : null :
             <Header userData={userData}/>}
-        <Box sx={{ display: "flex" }} className="mt-5">
+        <Box sx={{ display: "flex", width: "100%" }} className="mt-5">
           <Drawer
             sx={{
               display: open ? '' : 'none',
