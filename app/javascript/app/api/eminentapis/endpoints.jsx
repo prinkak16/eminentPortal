@@ -126,8 +126,8 @@ export const getSlottingFilters = (params) => {
 export const getMinistryWiseData = (params, queryParams) => {
   return axios.get(`${apiBaseUrl}vacancy/list?${queryParams}`, { params });
 };
-export const downloadMOVExcel = () => {
-  return axios.get(`${apiBaseUrl}vacancy/mov_excel_download`, {
+export const downloadMOVExcel = (filterString) => {
+  return axios.get(`${apiBaseUrl}vacancy/mov_excel_download?${filterString}`, {
     responseType: 'arraybuffer'
   });
 }
