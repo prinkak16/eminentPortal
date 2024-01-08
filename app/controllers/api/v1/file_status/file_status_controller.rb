@@ -2,8 +2,7 @@
 class Api::V1::FileStatus::FileStatusController < BaseApiController
   include ApplicationHelper
   def analytics
-    permission_exist = is_permissible('Eminent', 'FileStatus')
-    if permission_exist.nil?
+    unless is_permissible?('FileStatus', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -41,8 +40,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def file_status_members
-    permission_exist = is_permissible('Eminent', 'FileStatus')
-    if permission_exist.nil?
+    unless is_permissible?('FileStatus', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -91,8 +89,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
   end
 
   def update_status
-    permission_exist = is_permissible('Eminent', 'FileStatus')
-    if permission_exist.nil?
+    unless is_permissible?('FileStatus', 'Edit')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -146,8 +143,7 @@ class Api::V1::FileStatus::FileStatusController < BaseApiController
     FileStatus.where(vacancy_allotment_id: va_id).order(created_at: :desc).first&.file_status_level&.state
   end
   def file_status_levels
-    permission_exist = is_permissible('Eminent', 'FileStatus')
-    if permission_exist.nil?
+    unless is_permissible?('FileStatus', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'

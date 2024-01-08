@@ -18,9 +18,9 @@ import BasicTabs from "../../shared/tabs/tabs";
 import { HomeContext } from "../../../../context/tabdataContext";
 import { ApiContext } from "../../../ApiContext";
 import AllotmentContext from "../allotment/context/allotmentContext";
-import {isValuePresent} from "../../../utils";
+import {isValuePresent, permittedTab} from "../../../utils";
+import {getUserPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
 import Header from "../../../eminentpersonalityhome/header/header";
-import ProfilePage from "../profile/profilePage";
 
 const drawerWidth = 240;
 
@@ -89,13 +89,21 @@ const {
   const [tabId, setTabId] = useState("home");
   const [movTabId, setMovTabId] = useState("ministry_wise");
   const [clearFilter, setClearFilter] = useState(false);
+  const [fetchedUserPermissions, setFetchedUserPermissions] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    switchTabHandler(searchParams.get("basicTabId"));
     localStorage.setItem("eminent_number", "");
     localStorage.setItem("view_mode", "");
     setEminentData({});
+    getUserPermissions().then(response => {
+      if (response.data.success) {
+        localStorage.setItem('user_permissions', JSON.stringify(response.data.data))
+        setFetchedUserPermissions(true);
+        setSearchParams({ basicTabId: permittedTab(searchParams.get('basicTabId')) });
+      }
+    })
+    switchTabHandler(searchParams.get("basicTabId"));
   }, []);
 
   const handleDrawerOpen = () => {
@@ -116,7 +124,6 @@ const {
 
   const switchTabHandler = (id) => {
     setTabId(id);
-    setFilterString("")
   };
   const handleMovTabsFilter = (newValue) => {
     setMovTabId(newValue);
@@ -131,40 +138,40 @@ const {
 
   return (
     <>
-      <HomeContext.Provider value={{tabId, movTabId, handleMovTabsFilter }}>
+      {fetchedUserPermissions && <HomeContext.Provider value={{tabId, movTabId, handleMovTabsFilter }}>
         {isCandidateLogin ? isValuePresent(authToken) ? <Header userData={eminentData}/> : null :
             <Header userData={userData}/>}
         <Box sx={{ display: "flex", width: "100%" }} className="mt-5">
           <Drawer
-            sx={{
-              display: open ? '' : 'none',
-              width: drawerWidth,
-              flexShrink: 0,
-              "& .MuiDrawer-paper": {
+              sx={{
+                display: open ? '' : 'none',
                 width: drawerWidth,
-                boxSizing: "border-box",
-              },
-            }}
-            variant="persistent"
-            anchor="left"
-            open={open}
-            className="filtersidebar"
+                flexShrink: 0,
+                "& .MuiDrawer-paper": {
+                  width: drawerWidth,
+                  boxSizing: "border-box",
+                },
+              }}
+              variant="persistent"
+              anchor="left"
+              open={open}
+              className="filtersidebar"
           >
             <div>
               <DrawerHeader className="d-flex justify-content-between mt-1.7 ms-4 ps-0">
                 <h2 className="filter">Filters</h2>
                 <IconButton className="chevronicon" onClick={handleDrawerClose}>
                   {theme.direction === "ltr" ? (
-                    <ChevronLeftIcon />
+                      <ChevronLeftIcon />
                   ) : (
-                    <ChevronRightIcon />
+                      <ChevronRightIcon />
                   )}
                 </IconButton>
               </DrawerHeader>
               <FiltersSidebar
-                setFilterString={setFilterString}
-                tabId={tabId}
-                filterClear={filterClear}
+                  setFilterString={setFilterString}
+                  tabId={tabId}
+                  filterClear={filterClear}
               />
             </div>
           </Drawer>
@@ -175,49 +182,49 @@ const {
                   <p className="heading">
                     <span>
                       <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={{ mr: 2, ...(open && { display: "none" }) }}
+                          color="inherit"
+                          aria-label="open drawer"
+                          onClick={handleDrawerOpen}
+                          edge="start"
+                          sx={{ mr: 2, ...(open && { display: "none" }) }}
                       >
                         <SideBarIcon />
                       </IconButton>
                     </span>
                     {assignBreadCrums ? (
-                      <>
-                        <Link
-                          onClick={crumbsHandeler}
-                          style={{
-                            textDecoration: "underline",
-                            fontWeight: "300 !important",
-                          }}
-                        >
-                          Allotment
-                        </Link>
-                        <span style={{ fontWeight: "500 !important" }}>
+                        <>
+                          <Link
+                              onClick={crumbsHandeler}
+                              style={{
+                                textDecoration: "underline",
+                                fontWeight: "300 !important",
+                              }}
+                          >
+                            Allotment
+                          </Link>
+                          <span style={{ fontWeight: "500 !important" }}>
                           {" "}
-                          / Assign position
+                            / Assign position
                         </span>
-                      </>
+                        </>
                     ) : (
-                      "Eminent Personalities"
+                        "Eminent Personalities"
                     )}
                   </p>
                 </div>
               </div>
 
               <BasicTabs
-                filterString={filterString}
-                onSwitchTab={switchTabHandler}
-                openFilter={open}
-                filterClear={clearFilter}
+                  filterString={filterString}
+                  onSwitchTab={switchTabHandler}
+                  openFilter={open}
+                  filterClear={clearFilter}
               />
 
             </Typography>
           </Main>
         </Box>
-      </HomeContext.Provider>
+      </HomeContext.Provider>}
     </>
   );
 }

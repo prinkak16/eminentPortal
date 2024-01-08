@@ -3,7 +3,7 @@ import {ErrorMessage, Field} from "formik";
 import React, {useEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
-import {isValuePresent, ministerPortfolioArray} from "../../utils";
+import {isMobileUser, isValuePresent, ministerPortfolioArray, mobileView} from "../../utils";
 import RadioButton from "./radioButton";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {getLocationsData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
@@ -62,7 +62,6 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
 
 
     const handleFieldChange = (value, name, valueType, index) => {
-        debugger
         if (valueType === 'State') {
             let field = jsonForm?.fields?.find((item) => item.key === 'State')
             if (isValuePresent(field.combo_fields)) {
@@ -210,19 +209,21 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     },[electionTypeChange])
 
 
+    const formLabel = (name,mt) => {
+        return (<FormLabel sx={{mb:1, mt:2}}>{name}<mark>*</mark></FormLabel>)
+    }
+
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
                 {jsonForm.fields && jsonForm.fields.map((f) => (
                     <>
                         {showField(f.is_conditional, f.condition_key, f.condition_value) &&
-                            <div className='electoral-form-fields'>
+                            <div   className={`electoral-form-fields${isMobileUser ? '-mobile-view' : 'd-flex'}`}>
                                 {
                                     f.type === 'dropdown' &&
-                                    <Grid item xs={4} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
-                                        <FormLabel>{f.name}
-                                            <mark>*</mark>
-                                        </FormLabel>
+                                    <Grid item xs={mobileView()} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
+                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                         <AutoCompleteDropdown
                                             disabled={isViewDisabled}
                                             name={f.name}
@@ -235,10 +236,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                 }
                                 {
                                     f.type === "textField" &&
-                                    <Grid item xs={4}>
-                                        <FormLabel>{f.name === 'Name Of Ministry' ? '1. ' :''} {f.name}
-                                            <mark>*</mark>
-                                        </FormLabel>
+                                    <Grid item xs={mobileView()}>
+                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                         <OtherInputField
                                             disabled={isViewDisabled}
                                             type="text"
@@ -251,10 +250,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                 }
                                 {
                                     f.type === "numField" &&
-                                    <Grid item xs={4} className='d-grid'>
-                                        <FormLabel>{f.name}
-                                            <mark>*</mark>
-                                        </FormLabel>
+                                    <Grid item xs={mobileView()} className='d-grid'>
+                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                         <Field
                                             disabled={isViewDisabled}
                                             style={{width: '22rem'}}
@@ -275,10 +272,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                 }
                                 {
                                     f.type === "radio" &&
-                                    <Grid item xs={4}>
-                                        <FormLabel>{f.name}
-                                            <mark>*</mark>
-                                        </FormLabel>
+                                    <Grid item xs={mobileView()}>
+                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                         <RadioButton disabled={isViewDisabled} radioList={f.list} selectedValue={fieldsData[f.key] || null}
                                                      onClicked={contestedElection} fieldKey={f.key}/>
                                     </Grid>
@@ -287,10 +282,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                     <>
                                         {
                                             fi.type === 'dropdown' &&
-                                            <Grid item xs={4}>
-                                                <FormLabel>{fi.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
+                                            <Grid item xs={mobileView()}>
+                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                 <AutoCompleteDropdown
                                                     disabled={isViewDisabled}
                                                     name={fi.name}
@@ -304,10 +297,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         }
                                         {
                                             fi.type === "textField" &&
-                                            <Grid item xs={4}>
-                                                <FormLabel>{fi.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
+                                            <Grid item xs={mobileView()}>
+                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                 <OtherInputField
                                                     disabled={isViewDisabled}
                                                     type="text"
@@ -321,13 +312,9 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         {
                                             fi.type === "numField" &&
                                             <Grid className='d-grid'>
-                                                <FormLabel>{fi.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
-                                                <Grid item xs={4} className='d-grid'>
-                                                    <FormLabel>{fi.name}
-                                                        <mark>*</mark>
-                                                    </FormLabel>
+                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
+                                                <Grid item xs={mobileView()} className='d-grid'>
+                                                    {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                     <Field
                                                         disabled={isViewDisabled}
                                                         style={{width: '22rem'}}
@@ -351,9 +338,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         {
                                             fi.type === "radio" &&
                                             <Grid item xs={4}>
-                                                <FormLabel>{fi.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
+                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                 <RadioButton   disabled={isViewDisabled} radioList={fi.list}
                                                              selectedValue={fieldsData[fi.key] || null}
                                                              onClicked={contestedElection} fieldKey={f.key}/>
@@ -371,13 +356,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                         {field.ministerPortfolioArray && field.ministerPortfolioArray.map((f) => (
                             <>
                                 {showField(f.is_conditional, f.condition_key, f.condition_value) &&
-                                    <div className='electoral-form-fields'>
+                                    <div className={`electoral-form-fields${isMobileUser ? '-mobile-view' : '' }`}>
                                         {
                                             f.type === "textField" &&
-                                            <Grid item xs={4}>
-                                                <FormLabel>{f.name === 'Name Of Ministry' ? `${minIndex + 2}. `  :''} {f.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
+                                            <Grid item xs={mobileView()}>
+                                                {f.name === 'Name Of Ministry' ? `${minIndex + 2}. `  :''}
+                                                {formLabel(f.name,isMobileUser ? 2 : null)}
                                                 <OtherInputField
                                                     disabled={isViewDisabled}
                                                     type="text"
@@ -390,10 +374,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         }
                                         {
                                             f.type === "numField" &&
-                                            <Grid item xs={4} className='d-grid'>
-                                                <FormLabel>{f.name}
-                                                    <mark>*</mark>
-                                                </FormLabel>
+                                            <Grid item xs={mobileView()} className='d-grid'>
+                                                {formLabel(f.name,isMobileUser ? 2 : null)}
                                                 <Field
                                                     disabled={isViewDisabled}
                                                     style={{width: '22rem'}}
@@ -416,10 +398,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                             <>
                                                 {
                                                     fi.type === "textField" &&
-                                                    <Grid item xs={4}>
-                                                        <FormLabel>{fi.name}
-                                                            <mark>*</mark>
-                                                        </FormLabel>
+                                                    <Grid item xs={mobileView()}>
+                                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                                         <OtherInputField
                                                             disabled={isViewDisabled}
                                                             type="text"

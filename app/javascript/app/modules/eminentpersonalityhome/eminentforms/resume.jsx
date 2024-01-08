@@ -26,8 +26,8 @@ import * as Yup from "yup";
 import PdfIcon from '../../../../../../public/images/PdfIcon.svg';
 import {
     disabledSaveProgressButton,
-    formFilledValues,
-    isValuePresent,
+    formFilledValues, isMobileUser,
+    isValuePresent, mobileView,
     saveProgress,
     saveProgressButton,
     showErrorToast,
@@ -113,7 +113,7 @@ const Resumeform = (props) => {
     return (
         <>
 
-            <Box sx={{flexGrow: 1}}>
+            <Box sx={{flexGrow: 1}} className={`${isMobileUser ? 'resume-mobile-view' : ''}`}>
                 <Stack className="mb-4" direction="row" useFlexGap flexWrap="wrap">
                     <Item><Formheading number="1" heading="Political Legacy ( family in politics )"/></Item>
                     <Item sx={{textAlign: 'right'}}>
@@ -127,7 +127,7 @@ const Resumeform = (props) => {
                     </Item>
                 </Stack>
                 <Grid container spacing={2} className="grid-wrap">
-                    <Grid item xs={6}>
+                    <Grid item xs={mobileView()}>
                         <FormLabel>Name</FormLabel>
                         <Inputfield type="text"
                                     disabled={isViewDisabled}
@@ -135,7 +135,7 @@ const Resumeform = (props) => {
                                     name={`political_legacy.${0}.name`}
                                     placeholder="Enter full name"/>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={mobileView()}>
                         <FormLabel>Relationship </FormLabel>
                         <FormControl>
                             <Field
@@ -166,7 +166,7 @@ const Resumeform = (props) => {
                         </FormControl>
 
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={mobileView('profile')}>
                         <FormLabel>Profile <InfoOutlinedIcon/></FormLabel>
                         <TextField
                             disabled={isViewDisabled}
@@ -190,7 +190,7 @@ const Resumeform = (props) => {
                         </Typography>
                     </Grid>
                     <Grid container spacing={2} className="grid-wrap">
-                        <Grid item xs={6}>
+                        <Grid item xs={mobileView()}>
                             <FormLabel>Father's Name</FormLabel>
                             <Inputfield type="text"
                                         disabled={isViewDisabled}
@@ -199,7 +199,7 @@ const Resumeform = (props) => {
                                         placeholder="Enter name"
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={mobileView()}>
                             <FormLabel>Mother's Name</FormLabel>
                             <Inputfield type="text"
                                         disabled={isViewDisabled}
@@ -208,7 +208,7 @@ const Resumeform = (props) => {
                                         placeholder="Enter name"
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={mobileView()}>
                             <FormLabel>Spouse Name</FormLabel>
                             <Inputfield type="text"
                                         disabled={isViewDisabled}
@@ -219,7 +219,7 @@ const Resumeform = (props) => {
 
                         </Grid>
                         {children && children.map((field, index) => (
-                            <Grid item xs={6}>
+                            <Grid item xs={mobileView()}>
                                 <FormLabel>Child Name</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -248,8 +248,8 @@ const Resumeform = (props) => {
                         </Typography>
                     </Grid>
                     <Grid className='websites-container' xs={12}>
-                        <Grid className='first-container websites' >
-                            <Grid item xs={4} sx={{mb: 2}}>
+                        <Grid className={`first-container websites${isMobileUser ? '-mobile' : ''}`} >
+                            <Grid item xs={mobileView('social')} sx={{mb: 2}}>
                                 <FormLabel>Website</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -258,7 +258,7 @@ const Resumeform = (props) => {
                                             placeholder="Enter Your website Url"
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
                             </Grid>
-                            <Grid item xs={4} sx={{mb: 2}}>
+                            <Grid item xs={mobileView('social')} sx={{mb: 2}}>
                                 <FormLabel>Twitter</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -271,8 +271,8 @@ const Resumeform = (props) => {
                             </Grid>
                         </Grid>
 
-                        <Grid className='second-container websites'  >
-                            <Grid item xs={4} sx={{mb: 2}}>
+                        <Grid className={`second-container websites${isMobileUser ? '-mobile' : ''}`}  >
+                            <Grid item xs={mobileView('social')} sx={{mb: 2}}>
                                 <FormLabel>Linkedin</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -282,7 +282,7 @@ const Resumeform = (props) => {
                                             inputprop={{endAdornment: <InputAdornment position="end"><HelpOutlineOutlinedIcon/></InputAdornment>}}/>
 
                             </Grid>
-                            <Grid item xs={4} sx={{mb: 2}}>
+                            <Grid item xs={mobileView('social')} sx={{mb: 2}}>
                                 <FormLabel>Facebook</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}
@@ -294,8 +294,8 @@ const Resumeform = (props) => {
                             </Grid>
                         </Grid>
 
-                        <Grid className='third-container websites'>
-                            <Grid item xs={4} sx={{mb: 2}}>
+                        <Grid className={`third-container websites${isMobileUser ? '-mobile' : ''}`}>
+                            <Grid item xs={mobileView('social')} sx={{mb: 2}}>
                                 <FormLabel>Instagram</FormLabel>
                                 <Inputfield type="text"
                                             disabled={isViewDisabled}

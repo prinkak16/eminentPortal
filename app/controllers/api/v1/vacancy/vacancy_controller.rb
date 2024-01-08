@@ -6,8 +6,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def position_analytics
     begin
-      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
-      if permission_exist.nil?
+      unless is_permissible?('MasterOfVacancies', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -80,8 +79,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
 
   def list
     begin
-      permission_exist = is_permissible('Eminent', 'MasterOfVacancies')
-      if permission_exist.nil?
+      unless is_permissible?('MasterOfVacancies', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -349,6 +347,69 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
           count: Ministry.find_by_sql(sql).count
         }
       }, status: :ok
+    rescue StandardError => e
+      return render json: { success: false, message: e.message }, status: :bad_request
+    end
+  end
+  def mov_excel_download
+    begin
+      unless is_permissible?('MasterOfVacancies', 'Download')
+        return render json: {
+          success: false,
+          message: 'Access to this is restricted. Please check with the site administrator.'
+        }, status: :unauthorized
+      end
+
+      organizations = Organization.joins(:ministry, :vacancies)
+                                  .left_joins(:department)
+
+      organizations = organizations.where(ministries: { id: params[:ministry] }) if params[:ministry].present?
+      organizations = organizations.where(vacancies: { allotment_status: params[:position_status] }) if params[:position_status].present?
+      organizations = organizations.where(vacancies: { country_state_id: params[:country_state_id] }) if params[:country_state_id].present?
+      organizations = organizations.where(departments: { id: params[:department] }) if params[:department].present?
+      organizations = organizations.where(id: params[:organization]) if params[:organization].present?
+      organizations = organizations.where(ratna_type: params[:ratna_type]) if params[:ratna_type].present?
+
+      organizations = organizations.group('ministries.name, departments.name, organizations.name, organizations.ratna_type, organizations.is_listed')
+                                   .select("ministries.name as m_name, departments.name as d_name, organizations.name as o_name, organizations.ratna_type as ratna_type,
+                                                 organizations.is_listed as is_listed, COUNT(vacancies.id) as total,
+                                                 SUM(CASE WHEN vacancies.allotment_status = 'occupied' THEN 1 ELSE 0 END) as appointed,
+                                                 SUM(CASE WHEN vacancies.allotment_status = 'vacant' THEN 1 ELSE 0 END) as vacant,
+                                                 STRING_AGG(DISTINCT vacancies.slotting_remarks, ', ') as remarks")
+                                   .order('ministries.name, departments.name, organizations.name')
+
+      current_time = Time.now.in_time_zone('Asia/Kolkata')
+      today_date_string = current_time.strftime('%d/%m/%Y')
+      filename = 'mov_data.xlsx'
+      xlsx_headers = ['Ministry', 'Department', 'Organisation', 'Category/Type', 'Listed', 'Sanctioned Positions',
+                      'Appointed', "Vacancies as on (#{today_date_string})", 'Requirements']
+
+      package = Axlsx::Package.new
+      workbook = package.workbook
+
+      workbook.add_worksheet(name: 'Master of Vacancies') do |sheet|
+        # add headers to sheet
+        sheet.add_row xlsx_headers
+
+        # add data to sheet
+        organizations.each do |organization|
+          data = [
+            organization.m_name,
+            organization.d_name,
+            organization.o_name,
+            organization.ratna_type,
+            organization.is_listed ? 'YES' : 'NO',
+            organization.total,
+            organization.appointed,
+            organization.vacant,
+            organization.remarks,
+          ]
+          sheet.add_row data
+        end
+      end
+
+      send_data package.to_stream.read, type: 'application/xlsx', filename: filename
+
     rescue StandardError => e
       return render json: { success: false, message: e.message }, status: :bad_request
     end

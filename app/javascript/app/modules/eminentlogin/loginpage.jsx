@@ -91,75 +91,81 @@ const LoginPage = () => {
         setInputOtp('')
     }
     return(
-        <div className="login-wrap">
-            <div className="login-image">
-                <BarImage/>
-            </div>
-            <div className="container login-container d-flex justify-content-center">
-                <div className="col-md-6">
-                    <div className="h-100 justify-content-center align-items-center">
-                        <div className="login-form">
-                            <Typography variant="h2" className=" text-center my-4">
-                                Eminent Personality
-                            </Typography>
-                            <div className="login-form-wrap">
-                                <Typography variant="h4">
-                                    Login with Mobile Number
+        <>
+            <div className="login-wrap">
+                <div className="login-image">
+                    <BarImage/>
+                </div>
+                <div className="container login-container d-flex justify-content-center">
+                    <div className="col-md-6">
+                        <div className="h-100 justify-content-center align-items-center">
+                            <div className="login-form">
+                                <Typography variant="h2" className=" text-center my-4">
+                                    Eminent Personality
                                 </Typography>
-                                <div className="justify-content-start my-4 text-start number-filed">
-                                    <TextField
-                                        id="outlined-basic"
-                                        label="Enter Phone Number"
-                                        variant="outlined"
-                                        className="inputNumber ps-2"
-                                        autoFocus={true}
-                                        type="tel"
-                                        value={inputNumber}
-                                        onKeyDown={handleEnterKeyPress}
-                                        placeholder="Enter Phone number"
-                                        onChange={(e) => inputMobileNumber(e)}
-                                        helperText={error}
-                                        error={Boolean(error)}
-                                        maxLength={10}
-                                    />
-                                    {otpField && (
-                                        <>
-                                            <Typography variant="h6" className="mt-4 mb-1">
-                                                Enter 6 digit OTP
-                                            </Typography>
-                                            <div className="opt-flields px-1">
-                                                <OtpInput
-                                                    value={inputOtp}
-                                                    onChange={(otp) => inputMobileOtp(otp)}
-                                                    numInputs={6}
-                                                    renderInput={(props) => <input {...props} />}
-                                                />
-                                            </div>
-                                            <div className="text-center mt-4 resend-button">
-                                                <Button onClick={resendOtp}>Re-Send OTP</Button>
-                                            </div>
-                                        </>
-                                    )}
+                                <div className="login-form-wrap">
+                                    <Typography variant="h4">
+                                        Login with Mobile Number
+                                    </Typography>
+                                    <div className="justify-content-start  my-md-2  my-lg-4 text-start number-filed">
+                                        <TextField
+                                            id="outlined-basic"
+                                            label="Enter Phone Number"
+                                            variant="outlined"
+                                            className="inputNumber ps-2"
+                                            autoFocus={true}
+                                            type="tel"
+                                            value={inputNumber}
+                                            onKeyDown={handleEnterKeyPress}
+                                            placeholder="Enter Phone number"
+                                            onChange={(e) => inputMobileNumber(e)}
+                                            helperText={error}
+                                            error={Boolean(error)}
+                                            maxLength={10}
+                                        />
+                                        {otpField && (
+                                            <>
+                                                <Typography variant="h6" className="mt-4 mb-1">
+                                                    Enter 6 digit OTP
+                                                </Typography>
+                                                <div className="opt-flields px-1">
+                                                    <OtpInput
+                                                        inputType="tel"
+                                                        value={inputOtp}
+                                                        onChange={(otp) => inputMobileOtp(otp)}
+                                                        numInputs={6}
+                                                        renderInput={(props) => <input {...props} />}
+                                                        shouldAutoFocus={true}
+                                                    />
+                                                </div>
+                                                <div className="text-center mt-4 resend-button">
+                                                    <Button onClick={resendOtp}>Re-Send OTP</Button>
+                                                </div>
+                                            </>
+                                        )}
 
-                                </div>
-                                <div className="row h-100 justify-content-center align-items-center pt-2">
-                                    <button id="submit" className="btn btn-warning otpBtn"
-                                            onClick={() => sendSubmitOtp(!inputOtp)}>
-                                        {inputOtp && inputOtp.length === 6 ? 'Submit' : 'Send OTP'}
-                                    </button>
-                                </div>
-                                <div className="login-govt-image left">
-                                    <ModijiImage/>
-                                </div>
-                                <div className="login-govt-image right">
-                                    <NaddaImage/>
+                                    </div>
+                                    <div className="row h-100 justify-content-center align-items-center pt-2">
+                                        <button id="submit" className="btn btn-warning otpBtn"
+                                                onClick={() => sendSubmitOtp(!inputOtp)}>
+                                            {inputOtp && inputOtp.length === 6 ? 'Submit' : 'Send OTP'}
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div className="login-govt-image left">
+                <ModijiImage/>
+            </div>
+            <div className="login-govt-image right">
+                <NaddaImage/>
+            </div>
+        </>
+
     )
 }
 export default LoginPage;

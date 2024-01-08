@@ -22,7 +22,6 @@ const Vidhansabhaform = (props) => {
             if (selectedState) {
                 setStateId(selectedState);
             }
-            console.log('state', selectedState)
         })
     }
     useEffect(() => {
@@ -38,13 +37,11 @@ const Vidhansabhaform = (props) => {
             });
         }
     }
-    console.log('id', stateId)
     useEffect(()=>{
         if(props.values.state_name !== ''){
             getassembly()
         }
     },[props.values.state_name])
-    console.log('id', stateId)
     return (<>
 
             <Grid container spacing={2} className='px-5 py-3'>

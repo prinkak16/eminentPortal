@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import DialogBox from "../dailogBox/dailogBox";
 import VerticalLinearStepper from "../verticalStepper/verticalStepper";
-import {isValuePresent, showErrorToast, showSuccessToast} from "../../../utils";
+import {checkPermission, isValuePresent, showErrorToast, showSuccessToast} from "../../../utils";
 import axios from "axios";
 import {apiBaseUrl} from "../../../../api/api_endpoints";
 import {ApiContext} from "../../../ApiContext";
@@ -245,10 +245,12 @@ const FileStatus = ({filterString, tabId,openFilter}) => {
                                         <span className='fw-weight'>{item.type}</span>
                                     </div>
                                     <div className='ml-auto'>
-                                        <button className='eminent-update-button'
-                                                onClick={() => openDialogBox(item.file_status?.status_id, item.fs_id)
-                                                }>Update
-                                        </button>
+                                        {checkPermission('FileStatus', 'Edit') &&
+                                            <button className='eminent-update-button'
+                                                    onClick={() => openDialogBox(item.file_status?.status_id, item.fs_id)
+                                                    }>Update
+                                            </button>
+                                        }
                                     </div>
                                 </div>
                             </div>

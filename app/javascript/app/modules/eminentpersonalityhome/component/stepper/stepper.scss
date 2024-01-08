@@ -17,10 +17,11 @@ $blackcolor:#000;
     }
   }
 }
+
 @mixin btndesign{
   padding: 14px 22px;
   border-radius: 12px;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   line-height: normal;
   box-shadow: none;
@@ -83,3 +84,48 @@ mark {
   left: calc(-54% + 36px) !important;
   right: calc(46% + 37px) !important;
 }
+
+.mobile-next-btn {
+  font-size: 14px !important;
+  padding: 10px 14px !important;
+}
+
+
+
+.stepperwrap-mobile .Mui-active .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted ($basicColor) !important;
+}
+.stepperwrap-mobile .Mui-completed .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted ($basicColor) !important;
+}
+
+.stepperwrap-mobile .css-ascpo7-MuiStepLabel-root {
+  max-width: 1rem;
+}
+
+.stepperwrap-mobile .MuiSvgIcon-root {
+    height: 1.8rem !important;
+    width: 1.8rem !important;
+}
+.stepperwrap-mobile .MuiSvgIcon-root .css-1hv8oq8-MuiStepLabel-label{
+  display: none;
+}
+
+.stepperwrap-mobile .css-zpcwqm-MuiStepConnector-root {
+  top: 13px!important;
+  width: 30px !important;
+  left: calc(-73% + 36px) !important;
+  right: calc(28% + 37px) !important;
+  color: lightgray !important;
+  z-index: 100
+}
+.stepperwrap-mobile .css-z7uhs0-MuiStepConnector-line {
+  border-top: 4px dotted !important;
+ }
+
+.stepperwrap-mobile .css-1vyamtt-MuiStepLabel-labelContainer.MuiStepLabel-alternativeLabel {
+  z-index: 1000;
+  position: absolute;
+  margin-top: 1rem;
+}
+

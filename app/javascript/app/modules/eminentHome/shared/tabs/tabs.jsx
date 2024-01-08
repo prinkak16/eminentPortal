@@ -34,7 +34,7 @@ import FileStatus from "../../pages/fileStatus/fileStatus";
 import Tabs from "@mui/material/Tabs";
 import {checkPermission, isValuePresent, convertToCamelCase} from "../../../utils";
 import AllotmentContext from "../../pages/allotment/context/allotmentContext";
-import {getUserPermissions} from "../../../../api/stepperApiEndpoints/stepperapiendpoints";
+import Unauthorized from "../unathorized/Unauthorized";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -54,9 +54,7 @@ export default function BasicTabs({
   openFilter,
   clearFilter
 }) {
-  const [basicTabId, setBasicTabId] = useSearchParams({
-    basicTabId: "home",
-  });
+  const [basicTabId, setBasicTabId] = useSearchParams();
   const [value, setValue] = React.useState(basicTabId.get("basicTabId"));
   const [wantToAddNew, setWantToAddNew] = useState(false);
   const [inputNumber, setInputNumber] = useState("");
@@ -74,23 +72,6 @@ export default function BasicTabs({
   const [eminentMsg, setEminentMsg] = useState("");
   const navigate = useNavigate();
   const [callFetchFunction, setCallFetchFunction] = useState(false)
-
-  const [userPermissions, setUserPermissions] = useState()
-
-  useEffect(() => {
-    if (isValuePresent(localStorage.getItem('user_permissions'))) {
-      setUserPermissions(JSON.parse(localStorage.getItem('user_permissions')))
-    } else  {
-      getUserPermissions().then(
-          (res) => {
-            if (res.data.success) {
-              localStorage.setItem('user_permissions', JSON.stringify(res.data.data))
-              setUserPermissions(res.data.data)
-            }
-          }
-      )
-    }
-  },[])
 
   const notify = () => toast("CSV file Uploaded successfully");
   const { assignBreadCrums, setAssignBreadCrums } =
@@ -260,11 +241,9 @@ export default function BasicTabs({
     setSubmitDisabled(!number || number.length < 10 || !isValidNumber(number));
   };
   const handleChange = (event, newValue) => {
-    if (checkPermission('Eminent', convertToCamelCase(newValue))) {
-      handleBasicTabChange({ basicTabId: newValue });
-      setValue(newValue);
-      onSwitchTab(newValue);
-    }
+    handleBasicTabChange({ basicTabId: newValue });
+    setValue(newValue);
+    onSwitchTab(newValue);
   };
 
   const handleDownload = () => {
@@ -330,6 +309,7 @@ export default function BasicTabs({
     if (!isValuePresent(openFilter)) {
       buttonContent = (
         <>
+          {checkPermission('MasterOfVacancies','Upload') &&
           <Button
             className="downloadBtn"
             variant="primary"
@@ -337,7 +317,7 @@ export default function BasicTabs({
           >
             <ArrowUpwardIcon /> Upload CSV File
           </Button>
-
+          }
           <Modal
             show={show}
             onHide={handleClose}
@@ -427,9 +407,11 @@ export default function BasicTabs({
     if (!isValuePresent(openFilter)) {
       buttonContent = (
         <>
+          {checkPermission('GOMManagement','MinisterAssistantMapping') &&
           <button className="button-upload" onClick={handleClick}>
             <UploadIcon /> PA/OSD mapping
           </button>
+          }
           <input
             key={wantToUpload}
             type="file"
@@ -438,6 +420,7 @@ export default function BasicTabs({
             ref={hiddenFileInput}
             style={{ display: "none" }}
           />
+
           <Modal
             aria-labelledby="contained-modal-title-vcenter"
             centered
@@ -594,92 +577,101 @@ export default function BasicTabs({
       },
     })
   );
+
   const tabsView = () => {
     return ( <TabList onChange={handleChange} aria-label="lab API tabs example" className='testing-tabList'>
-                {checkPermission('Eminent','Home') && <Tab label="Home" value="home"/>}
-                {checkPermission('Eminent','Allotment') && <Tab label="Allotment" value="allotment"/>}
-                {checkPermission('Eminent','FileStatus') && <Tab label="File Status" value="file_status"/>}
-                {checkPermission('Eminent','MasterOfVacancies') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
-                {checkPermission('Eminent','Slotting') && <Tab label="Slotting" value="slotting"/>}
-                {checkPermission('Eminent','GomManagement') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
+                {checkPermission('Home','View') && <Tab label="Home" value="home"/>}
+                {checkPermission('Allotment','View') && <Tab label="Allotment" value="allotment"/>}
+                {checkPermission('FileStatus','View') && <Tab label="File Status" value="file_status"/>}
+                {checkPermission('MasterOfVacancies','View') && <Tab label="Master of Vacancies" value="master_of_vacancies"/>}
+                {checkPermission('Slotting','View') && <Tab label="Slotting" value="slotting"/>}
+                {checkPermission('GOMManagement','View') && <AntTab label="GoM MANAGEMENT" value="gom_management"/>}
           </TabList>)
   }
 
   return (
-    <Box sx={{ width: "100%", typography: "body1" }}>
+    <>
+      {basicTabId.get("basicTabId") === '' && <Unauthorized/>}
+      <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value}>
           <Box
-            sx={{ borderBottom: 1, borderColor: "divider" }}
-            className="hometabs d-flex justify-content-between align-items-center"
+              sx={{ borderBottom: 1, borderColor: "divider" }}
+              className="hometabs d-flex justify-content-between align-items-center"
           >
             {tabsView()}
             {buttonContent}
           </Box>
-          <TabPanel value="home">
+          {checkPermission('Home','View') && <TabPanel value="home">
             <HomeTable
-              filterString={filterString}
-              tabId={value}
-              clearFilter={clearFilter}
+                filterString={filterString}
+                tabId={value}
+                clearFilter={clearFilter}
             />
-          </TabPanel>
+          </TabPanel>}
 
-          <TabPanel value="allotment">
-            <Allotment filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="file_status">
-            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter} clearFilter={clearFilter}/>
-          </TabPanel>
-          <TabPanel value="master_of_vacancies">
-            <MasterVacancies filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="slotting">
-            <SlottingTabPage filterString={filterString} tabId={value} />
-          </TabPanel>
-          <TabPanel value="gom_management">
+          {checkPermission('Allotment','View') && <TabPanel value="allotment">
+            <Allotment filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('FileStatus','View') && <TabPanel value="file_status">
+            <FileStatus filterString={filterString} tabId={value} openFilter={openFilter}/>
+          </TabPanel>}
+
+          {checkPermission('MasterOfVacancies','View') && <TabPanel value="master_of_vacancies">
+            <MasterVacancies filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('Slotting','View') && <TabPanel value="slotting">
+            <SlottingTabPage filterString={filterString} tabId={value}/>
+          </TabPanel>}
+
+          {checkPermission('GOMManagement','View') && <TabPanel value="gom_management">
             <GomPage
-              filterString={filterString}
-              clearFilter={clearFilter}
-              tabId={value}
-              callFetchFunction={callFetchFunction}
+                filterString={filterString}
+                clearFilter={clearFilter}
+                tabId={value}
+                callFetchFunction={callFetchFunction}
             />
-          </TabPanel>
+          </TabPanel>}
+
         </TabContext>
 
-      <Modal
-        contentClassName="deleteModal"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={wantToAddNew}
-      >
-        <Modal.Body>
-          <h4>Enter phone no.</h4>
-          <label>
-            Mobile Number<span className="text-danger">*</span>
-          </label>
-          <input
-            className="addNewInput ps-2"
-            type="tel"
-            maxLength={10}
-            value={inputNumber}
-            placeholder="Enter mobile number"
-            onChange={(e) => changeInputNumber(e.target.value)}
-          />
-          {eminentMsg && <span>{eminentMsg}</span>}
-          {errorNumber && errorNumber.length > 0 && <span>{errorNumber}</span>}
-        </Modal.Body>
-        <Modal.Footer>
-          <button className="btn" onClick={cancelAddNew}>
-            Cancel
-          </button>
-          <button
-            className="btn addNewSubmit"
-            onClick={navigateForm}
-            disabled={submitDisabled}
-          >
-            Submit
-          </button>
-        </Modal.Footer>
-      </Modal>
-    </Box>
+        <Modal
+            contentClassName="deleteModal"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            show={wantToAddNew}
+        >
+          <Modal.Body>
+            <h4>Enter phone no.</h4>
+            <label>
+              Mobile Number<span className="text-danger">*</span>
+            </label>
+            <input
+                className="addNewInput ps-2"
+                type="tel"
+                maxLength={10}
+                value={inputNumber}
+                placeholder="Enter mobile number"
+                onChange={(e) => changeInputNumber(e.target.value)}
+            />
+            {eminentMsg && <span>{eminentMsg}</span>}
+            {errorNumber && errorNumber.length > 0 && <span>{errorNumber}</span>}
+          </Modal.Body>
+          <Modal.Footer>
+            <button className="btn" onClick={cancelAddNew}>
+              Cancel
+            </button>
+            <button
+                className="btn addNewSubmit"
+                onClick={navigateForm}
+                disabled={submitDisabled}
+            >
+              Submit
+            </button>
+          </Modal.Footer>
+        </Modal>
+      </Box>
+    </>
   );
 }

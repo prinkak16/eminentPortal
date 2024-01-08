@@ -8,8 +8,7 @@ class Api::V1::Gom::GomController < BaseApiController
 
   def minister_list
     begin
-      permission_exist = is_permissible('GOMManagement', 'MinisterList')
-      if permission_exist.nil?
+      unless is_permissible?('GOMManagement', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -42,8 +41,7 @@ class Api::V1::Gom::GomController < BaseApiController
 
   def filter_assigned_ministries
     begin
-      permission_exist = is_permissible('GOMManagement', 'FilterMinistry')
-      if permission_exist.nil?
+      unless is_permissible?('GOMManagement', 'View')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
@@ -138,9 +136,7 @@ class Api::V1::Gom::GomController < BaseApiController
   end
 
   def search_assigned_ministries
-    permission_exist = is_permissible('GOMManagement', 'SearchMinistry')
-
-    if permission_exist.nil?
+    unless is_permissible?('GOMManagement', 'View')
       return render json: {
         success: false,
         message: 'Access to this is restricted. Please check with the site administrator.'
@@ -249,8 +245,7 @@ class Api::V1::Gom::GomController < BaseApiController
 
 def upload_minister_assistant_mapping
     begin
-      permission_exist = is_permissible('GOMManagement', 'MinisterAssistantMapping')
-      if permission_exist.nil?
+      unless is_permissible?('GOMManagement', 'MinisterAssistantMapping')
         return render json: {
           success: false,
           message: 'Access to this is restricted. Please check with the site administrator.'
