@@ -141,10 +141,8 @@ const HomeTable = (props) => {
     };
 
     const prepareToGetDisplayData = () => {
-        let searched = "";
-        if (!resetFilter) {
-            searched = props?.filterString;
-        }
+        let searched = props?.filterString || '';
+
         if (searchedName && searchedName.length > 0) {
             searched += `&query=${searchedName}`;
         }
