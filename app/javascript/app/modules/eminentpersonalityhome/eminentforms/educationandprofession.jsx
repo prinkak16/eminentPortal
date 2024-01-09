@@ -411,7 +411,7 @@ const Educationform = (props) => {
                         <div>
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
-                                           buttonlabel="Add Aducation"
+                                           buttonlabel="Add Education"
                                            handleclick={() => showFormFields('educations')}
                             />
                         </div>

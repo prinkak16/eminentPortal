@@ -212,7 +212,6 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 }
             }
         }
-        console.log(formValue)
         saveData(jsonForm.title,formValue, id)
         resetFieldsToBlank()
     }
@@ -238,10 +237,17 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return isValuePresent(state) ? <mark>*</mark> : ''
     }
 
-    const getList = () => {
+    const getList = (e) => {
         let list = []
         if (jsonForm.title === 'Education Details') {
-            list = educationsList
+            if (e.key === 'qualification'){
+            list = educationsList }
+            if(e.key === 'university'){
+                list = [];
+            }
+            if (e.key === 'college'){
+                list = [];
+            }
         } else if (jsonForm.title === 'Profession Profile') {
             list = professionList
         }
@@ -269,7 +275,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                                         disabled={isViewDisabled}
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
-                                        listArray={isValuePresent(getList()) ? getList() : f.list}
+                                        listArray={isValuePresent(getList(f)) ? getList(f) : f.list}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
                                 </div>

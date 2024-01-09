@@ -427,7 +427,7 @@ const PolticalandGovrnform =(props)=>{
                         <div>
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
-                                           buttonlabel="Add Aducation"
+                                           buttonlabel="Add ANOTHER"
                                            handleclick={() => showFormFields('political')}
                             />
                         </div>
@@ -545,7 +545,7 @@ const PolticalandGovrnform =(props)=>{
                         <div>
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
-                                           buttonlabel="Add Aducation"
+                                           buttonlabel="ADD ANOTHER"
                                            handleclick={() => showFormFields('political')}
                             />
                         </div>
@@ -657,7 +657,7 @@ const PolticalandGovrnform =(props)=>{
                                                         isViewDisabled={isViewDisabled}
                                                         addclass="addanotherfieldsbtn me-2"
                                                         starticon={<AddIcon/>}
-                                                        buttonlabel="Add Another"
+                                                        buttonlabel="ADD ANOTHER"
                                                         handleclick={() => addFieldElectoralElection()}
                                                     />
                                                 }
