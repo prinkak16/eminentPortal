@@ -30,7 +30,7 @@ import {useNavigate} from "react-router-dom";
 import {ClickAwayListener} from "@mui/base";
 import {Link} from "react-router-dom";
 import Analytics from "../../shared/././analytics/analytics";
-import {calculateAge, checkPermission, dobFormat, isValuePresent} from "../../../utils";
+import {calculateAge, capitalizeString, checkPermission, dobFormat, isValuePresent} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 import {ApiContext} from "../../../ApiContext";
 
@@ -392,7 +392,7 @@ const HomeTable = (props) => {
                                         <Grid item xs className="gridItem">
                                             <div className="row data-display">
                                                 <p className="text-labels">Form Status:</p>
-                                                <p>{member.aasm_state}</p>
+                                                <p>{capitalizeString(member.aasm_state)}</p>
                                             </div>
                                             <div className="row data-display">
                                                 <p className="text-labels">Channel:</p>
