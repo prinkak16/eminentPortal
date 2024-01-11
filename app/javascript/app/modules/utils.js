@@ -674,10 +674,7 @@ export const componentsFieldHeaders = {
     }
 }
 
-
-const componentFieldDetailsHeaders = () => {
-
-
+export const formattedDate = (dateString) => {
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return dateString.toLocaleDateString('en-GB', options);
 }
-
-
