@@ -36,17 +36,13 @@ class Api::V1::MinistryController < BaseApiController
 
   def get_ministries
     begin
-      # compute limit and offset
-      limit = params[:limit].present? ? params[:limit] : 50
-      offset = params[:offset].present? ? params[:offset] : 0
-
       ministries = Ministry
       ministries = params[:name].present? && params[:name].length > 2 ? ministries.name_similar(params[:name]) : ministries.select(:id, :name).order(order_id: :desc)
       render json: {
         success: true,
         message: 'Success',
         data: {
-          'ministries': ministries.limit(limit).offset(offset),
+          'ministries': ministries,
           'count': ministries.count(:id)
         }
       }, status: :ok
