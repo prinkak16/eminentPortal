@@ -375,7 +375,7 @@ class Api::V1::Vacancy::VacancyController < BaseApiController
                                                  organizations.is_listed as is_listed, COUNT(vacancies.id) as total,
                                                  SUM(CASE WHEN vacancies.allotment_status = 'occupied' THEN 1 ELSE 0 END) as appointed,
                                                  SUM(CASE WHEN vacancies.allotment_status = 'vacant' THEN 1 ELSE 0 END) as vacant,
-                                                 STRING_AGG(DISTINCT vacancies.slotting_remarks, ', ') as remarks")
+                                                 ltrim(STRING_AGG(DISTINCT vacancies.slotting_remarks, ', '), ',') as remarks")
                                    .order('ministries.name, departments.name, organizations.name')
 
       current_time = Time.now.in_time_zone('Asia/Kolkata')
