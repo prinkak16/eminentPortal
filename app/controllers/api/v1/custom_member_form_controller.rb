@@ -523,8 +523,15 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def excel_download
-    custom_members = eminent_search
-    array_attributes = ['address']
+    custom_members = eminent_search.where(id: 160)
+    array_attributes = %w[address educations professions other_parties political_legacy]
+    hash_attributes = {
+      'address' => %w[flat street district state pincode],
+      'educations' => %w[qualification course university college start_year end_year],
+      'professions' => %w[profession position organization start_year end_year],
+      'other_parties' => %w[party position start_year end_year],
+      'political_legacy' => %w[name relationship profile]
+    }
 
     array_attributes_length = {}
     array_attributes.each do |attribute|
@@ -532,7 +539,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
                                                          .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
     end
 
-    eminent_excel_headers = eminent_headers(custom_members)
+    eminent_excel_headers = eminent_headers(hash_attributes, array_attributes_length)
 
     package = Axlsx::Package.new
     workbook = package.workbook
@@ -541,19 +548,16 @@ class Api::V1::CustomMemberFormController < BaseApiController
       # add headers to sheet
       sheet.add_row eminent_excel_headers
       custom_members.each do |member|
-        sheet.add_row eminent_row_data(member, array_attributes_length)
+        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length)
       end
     end
 
     send_data package.to_stream.read, type: 'application/xlsx', filename: 'eminent_download.xlsx'
   end
 
-  def eminent_row_data(member, array_attributes_length)
+  def eminent_row_data(member, hash_attributes, array_attributes_length)
     row_data = []
     member_data = member.data
-    hash_attributes = {
-      'address' => %w[flat street district state pincode]
-    }
 
     row_data << member.country_state&.name
     row_data << member.id
@@ -593,8 +597,6 @@ class Api::V1::CustomMemberFormController < BaseApiController
         end
       end
     end
-
-    row_data
     row_data
   end
 end
