@@ -821,8 +821,10 @@ module CustomMemberFormHelper
         hash_attributes[attribute].each do |hash_attribute|
           if attribute == 'address'
             if index == 0
+              next if hash_attribute == 'address_type'
               headers << "current_#{hash_attribute}"
             elsif index == 1
+              next if hash_attribute == 'address_type'
               headers << "home_#{hash_attribute}"
             else
               headers << "other_#{hash_attribute}"
