@@ -397,6 +397,41 @@ class Api::V1::CustomMemberFormController < BaseApiController
     offset = params[:offset].present? ? params[:offset] : 0
     is_download = params[:offset].present? ? params[:offset] : false
 
+    custom_members = eminent_search
+    length = custom_members.length
+    custom_members = custom_members.order('created_at desc')
+
+    if !custom_members.blank?
+      if is_download == true
+        render json: {
+          success: true,
+          message: 'Success.',
+          data: {
+            'members': custom_members,
+            'length': length
+          }
+        }, status: :ok
+      else
+        res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
+        res_data[0]['attached'] = 'https://www.africau.edu/images/default/sample.pdf'
+        render json: {
+          success: true,
+          message: 'Success.',
+          data: {
+            'members': res_data,
+            'length': length
+          }
+        }, status: :ok
+      end
+    else
+      render json: { success: false, message: 'No member found.' }, status: :not_found
+    end
+
+  rescue StandardError => e
+    render json: { success: false, message: e.message }, status: :bad_request
+  end
+
+  def eminent_search
     # compute search by eminent id
     custom_members = CustomMemberForm
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
@@ -408,7 +443,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     # check form type
     type = params[:type]
     unless params[:type].present? && params[:type] === CustomMemberForm::TYPE_EMINENT
-      return render json: { success: false, message: 'Please provide a valid form.' }, status: :bad_request
+      raise 'Please provide a valid form.'
     end
 
     # compute state id
@@ -484,33 +519,6 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
       custom_members = custom_members.where(search_query.join(' OR '))
     end
-    length = custom_members.length
-    custom_members = custom_members.order('created_at desc')
-
-    if !custom_members.blank?
-      if is_download == true
-        render json: {
-          success: true,
-          message: 'Success.',
-          data: {
-            'members': custom_members,
-            'length': length
-          }
-        }, status: :ok
-      else
-        res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
-        res_data[0]['attached'] = 'https://www.africau.edu/images/default/sample.pdf'
-        render json: {
-          success: true,
-          message: 'Success.',
-          data: {
-            'members': res_data,
-            'length': length
-          }
-        }, status: :ok
-      end
-    else
-      render json: { success: false, message: 'No member found.' }, status: :not_found
-    end
+    custom_members
   end
 end
