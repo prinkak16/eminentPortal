@@ -527,7 +527,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     array_attributes = %w[address educations professions other_parties political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
-      'educations' => %w[qualification course university college start_year end_year],
+      'educations' => %w[highest_qualification qualification course university college start_year end_year],
       'professions' => %w[profession position organization start_year end_year],
       'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body],
       'other_parties' => %w[party position start_year end_year],
@@ -589,6 +589,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
     array_attributes_length.each do |attribute, attribute_length|
       attribute_length.times do |index|
+        if member_data[attribute].present? && attribute == 'educations' && index == 0
+          data_object =  member_data[attribute].find { |obj| obj['highest_qualification'] == true }
+          if data_object.present?
+            row_data << data_object['qualification']
+          else
+            ''
+          end
+        end
         hash_attributes[attribute].each do |hash_attribute|
           if member_data[attribute].present? && member_data[attribute][index].present?
             next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
