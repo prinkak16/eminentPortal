@@ -523,7 +523,16 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def excel_download
-    eminent_excel_headers = eminent_headers.values
+    custom_members = eminent_search
+    array_attributes = ['address']
+
+    array_attributes_length = {}
+    array_attributes.each do |attribute|
+      array_attributes_length[attribute] = custom_members.where(Arel.sql("data -> '#{attribute}' IS NOT NULL"))
+                                                         .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
+    end
+
+    eminent_excel_headers = eminent_headers(custom_members)
 
     package = Axlsx::Package.new
     workbook = package.workbook
@@ -531,8 +540,61 @@ class Api::V1::CustomMemberFormController < BaseApiController
     workbook.add_worksheet(name: 'Eminent Download') do |sheet|
       # add headers to sheet
       sheet.add_row eminent_excel_headers
+      custom_members.each do |member|
+        sheet.add_row eminent_row_data(member, array_attributes_length)
+      end
     end
 
     send_data package.to_stream.read, type: 'application/xlsx', filename: 'eminent_download.xlsx'
+  end
+
+  def eminent_row_data(member, array_attributes_length)
+    row_data = []
+    member_data = member.data
+    hash_attributes = {
+      'address' => %w[flat street district state pincode]
+    }
+
+    row_data << member.country_state&.name
+    row_data << member.id
+    row_data << member_data['name']
+    row_data << member_data['photo']
+    row_data << member_data['gender']
+    row_data << member_data['religion']
+    row_data << member_data['category']
+    row_data << member_data['caste']
+    row_data << member_data['sub_caste']
+    row_data << member_data['languages']&.join(', ')
+    row_data << formatted_date_string(member_data['dob'])
+    row_data << member_data['father']
+    row_data << member_data['mother']
+    row_data << member_data['spouse']
+    row_data << member_data['children']&.join(', ')
+    row_data << member_data['aadhaar']
+    row_data << member_data['voter_id']
+    row_data << member_data['mobiles']&.join(', ')
+    row_data << member_data['std_code']
+    row_data << member_data['landline']
+    row_data << member_data['email']
+    row_data << member_data['website']
+    row_data << member_data['twitter']
+    row_data << member_data['facebook']
+    row_data << member_data['linkedin']
+    row_data << member_data['instagram']
+
+    array_attributes_length.each do |attribute, attribute_length|
+      attribute_length.times do |index|
+        hash_attributes[attribute].each do |hash_attribute|
+          if member_data[attribute].present? && member_data[attribute][index].present?
+            row_data << member_data[attribute][index][hash_attribute]
+          else
+            row_data << ''
+          end
+        end
+      end
+    end
+
+    row_data
+    row_data
   end
 end

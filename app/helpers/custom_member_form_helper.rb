@@ -811,18 +811,39 @@ module CustomMemberFormHelper
     query += total_age_groups.positive? ? ')' : ''
   end
 
-  def eminent_headers
-    {
-      state: 'State',
-      id: 'Id',
-      name: 'Name',
-      photo: 'Photo',
-      gender: 'Gender',
-      religion: 'Religion',
-      category: 'Category',
-      caste: 'Caste',
-      sub_caste: 'Sub Caste',
-      languages: 'Languages'
-    }
+  def eminent_headers(custom_members)
+    headers = ["State", "Id", "Name", "Photo", "Gender", "Religion", "Category", "Caste", "Sub Caste", "Languages", "dob", "Father", "Mother",
+               "Spouse", "Children", "Aadhaar", "Voter Id", "Mobiles", "STD Code", "Landline", "Email", "Website", "Twitter", "Facebook",
+               "LinkedIn", "Instagram"]
+
+    addresses = custom_members.where(Arel.sql("data ->> 'address' IS NOT NULL"))
+                              .order(Arel.sql("jsonb_array_length(data -> 'address') DESC")).first.data['address']
+
+    # add address headers
+    if addresses.is_a?(Array)
+      addresses.each do |address|
+        if convert_to_snake_case(address['address_type']) == CustomMemberForm::CURRENT_ADDRESS
+          headers << "current_flat"
+          headers << "current_street"
+          headers << "current_district"
+          headers << "current_state"
+          headers << "current_pincode"
+        elsif convert_to_snake_case(address['address_type']) == CustomMemberForm::HOME_ADDRESS
+          headers << "home_flat"
+          headers << "home_street"
+          headers << "home_district"
+          headers << "home_state"
+          headers << "home_pincode"
+        else
+          # headers << "type_of_other_address"
+          headers << "other_address_flat"
+          headers << "other_address_street"
+          headers << "other_address_district"
+          headers << "other_address_state"
+          headers << "other_address_pincode"
+        end
+      end
+    end
+    headers
   end
 end

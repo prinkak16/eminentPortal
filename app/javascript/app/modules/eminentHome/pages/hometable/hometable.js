@@ -298,10 +298,8 @@ const HomeTable = (props) => {
             const fileName = 'eminent_excel_download as on ' + formattedDate(new Date())
             downloadFile(blobData, fileName);
         }).catch(error => {
-            if (error.response.status === 401) {
-                setIsFetching(false);
-                toast('An error occurred while eminent download.')
-            }
+            setIsFetching(false);
+            toast('An error occurred while eminent download.')
         });
     }
     return (

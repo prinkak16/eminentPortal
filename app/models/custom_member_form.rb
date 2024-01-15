@@ -2,6 +2,8 @@ class CustomMemberForm < ApplicationRecord
   audited
   self.table_name = 'custom_member_forms'
   TYPE_EMINENT = "eminent_personality".freeze
+  CURRENT_ADDRESS = "current_address".freeze
+  HOME_ADDRESS = "home_town_address".freeze
 
   include AASM
   include CustomMemberFormConcern
