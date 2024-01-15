@@ -810,4 +810,19 @@ module CustomMemberFormHelper
     end
     query += total_age_groups.positive? ? ')' : ''
   end
+
+  def eminent_headers
+    {
+      state: 'State',
+      id: 'Id',
+      name: 'Name',
+      photo: 'Photo',
+      gender: 'Gender',
+      religion: 'Religion',
+      category: 'Category',
+      caste: 'Caste',
+      sub_caste: 'Sub Caste',
+      languages: 'Languages'
+    }
+  end
 end

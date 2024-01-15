@@ -521,4 +521,18 @@ class Api::V1::CustomMemberFormController < BaseApiController
     end
     custom_members
   end
+
+  def excel_download
+    eminent_excel_headers = eminent_headers.values
+
+    package = Axlsx::Package.new
+    workbook = package.workbook
+
+    workbook.add_worksheet(name: 'Eminent Download') do |sheet|
+      # add headers to sheet
+      sheet.add_row eminent_excel_headers
+    end
+
+    send_data package.to_stream.read, type: 'application/xlsx', filename: 'eminent_download.xlsx'
+  end
 end
