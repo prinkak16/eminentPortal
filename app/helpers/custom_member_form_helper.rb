@@ -835,6 +835,14 @@ module CustomMemberFormHelper
         end
       end
     end
+    headers << 'reference_name'
+    headers << 'reference_bjp_id'
+    headers << 'reference_mobile'
+    headers << 'reference_comments'
+    headers << 'Channel'
+    headers << 'Status'
+    headers << 'created_by'
+    headers << 'created_at'
     headers
   end
 end

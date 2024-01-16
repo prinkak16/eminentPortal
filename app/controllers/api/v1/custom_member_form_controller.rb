@@ -524,12 +524,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def excel_download
     custom_members = eminent_search.where(id: 160)
-    array_attributes = %w[address educations professions other_parties political_legacy]
+    array_attributes = %w[address educations professions election_fought other_parties political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
       'educations' => %w[highest_qualification qualification course university college start_year end_year],
       'professions' => %w[profession position organization start_year end_year],
-      'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body],
+      'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio],
       'other_parties' => %w[party position start_year end_year],
       'political_legacy' => %w[name relationship profile]
     }
@@ -591,14 +591,26 @@ class Api::V1::CustomMemberFormController < BaseApiController
       attribute_length.times do |index|
         hash_attributes[attribute].each do |hash_attribute|
           if member_data[attribute].present? && member_data[attribute][index].present?
-            next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
-            row_data << member_data[attribute][index][hash_attribute]
+            if attribute == 'election_fought' && %w[State AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
+              row_data << member_data[attribute][index]['election_details'][hash_attribute]
+            else
+              next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
+              row_data << member_data[attribute][index][hash_attribute]
+            end
           else
             row_data << ''
           end
         end
       end
     end
+    row_data << member_data['reference']['name']
+    row_data << member_data['reference']['bjp_id']
+    row_data << member_data['reference']['mobile']
+    row_data << member_data['reference']['comments']
+    row_data << member.created_by&.name
+    row_data << member.channel
+    row_data << member.aasm_state
+    row_data << member.created_at
     row_data
   end
 end
