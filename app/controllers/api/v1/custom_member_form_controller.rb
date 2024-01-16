@@ -523,15 +523,20 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def excel_download
-    custom_members = eminent_search.where(id: 160)
+    custom_members = eminent_search
     array_attributes = %w[address educations professions election_fought other_parties political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
-      'educations' => %w[highest_qualification qualification course university college start_year end_year],
+      'educations' => %w[qualification course university college start_year end_year],
       'professions' => %w[profession position organization start_year end_year],
-      'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio],
+      'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio minister_portfolio_array],
       'other_parties' => %w[party position start_year end_year],
       'political_legacy' => %w[name relationship profile]
+    }
+
+    ministry_hash = {
+      'count' => 5,
+      'values' => %w[designation ministry_name ministry_duration]
     }
 
     array_attributes_length = {}
@@ -540,7 +545,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
                                                          .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
     end
 
-    eminent_excel_headers = eminent_headers(hash_attributes, array_attributes_length)
+    eminent_excel_headers = eminent_headers(hash_attributes, array_attributes_length, ministry_hash)
 
     package = Axlsx::Package.new
     workbook = package.workbook
@@ -549,14 +554,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
       # add headers to sheet
       sheet.add_row eminent_excel_headers
       custom_members.each do |member|
-        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length)
+        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash)
       end
     end
 
     send_data package.to_stream.read, type: 'application/xlsx', filename: 'eminent_download.xlsx'
   end
 
-  def eminent_row_data(member, hash_attributes, array_attributes_length)
+  def eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash)
     row_data = []
     member_data = member.data
 
@@ -593,6 +598,16 @@ class Api::V1::CustomMemberFormController < BaseApiController
           if member_data[attribute].present? && member_data[attribute][index].present?
             if attribute == 'election_fought' && %w[State AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
               row_data << member_data[attribute][index]['election_details'][hash_attribute]
+            elsif attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
+              ministry_hash['count'].times do |ministry_index|
+                ministry_hash['values'].each do |value|
+                  if member_data[attribute][index]['election_details']['minister_portfolio_array'].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index].present?
+                    row_data << member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index][value]
+                  else
+                    row_data << ''
+                  end
+                end
+              end
             else
               next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
               row_data << member_data[attribute][index][hash_attribute]
