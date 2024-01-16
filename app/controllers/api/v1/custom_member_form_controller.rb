@@ -534,8 +534,16 @@ class Api::V1::CustomMemberFormController < BaseApiController
       'political_legacy' => %w[name relationship profile]
     }
 
+    sql = "SELECT array_length FROM (
+                                      SELECT jsonb_array_length(jsonb_array_elements(data -> 'election_fought') -> 'election_details' -> 'minister_portfolio_array') AS array_length
+                                      FROM custom_member_forms
+                                      WHERE deleted_at IS NULL AND data -> 'election_fought' IS NOT NULL
+                                      ORDER BY array_length DESC
+                                    ) AS result_table
+           WHERE array_length IS NOT NULL"
+    maximum_ministry_length = custom_members.find_by_sql(sql).first&.array_length
     ministry_hash = {
-      'count' => 5,
+      'count' => maximum_ministry_length,
       'values' => %w[designation ministry_name ministry_duration]
     }
 
@@ -596,7 +604,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
       attribute_length.times do |index|
         hash_attributes[attribute].each do |hash_attribute|
           if member_data[attribute].present? && member_data[attribute][index].present?
-            if attribute == 'election_fought' && %w[State AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
+            if attribute == 'election_fought' && %w[State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
               row_data << member_data[attribute][index]['election_details'][hash_attribute]
             elsif attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
               ministry_hash['count'].times do |ministry_index|
