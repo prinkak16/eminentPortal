@@ -818,9 +818,6 @@ module CustomMemberFormHelper
 
     array_attributes_length.each do |attribute, attribute_length|
       attribute_length.times do |index|
-        if attribute == 'educations' && index == 0
-          headers << 'highest_qualification'
-        end
         hash_attributes[attribute].each do |hash_attribute|
           if attribute == 'address'
             if index == 0

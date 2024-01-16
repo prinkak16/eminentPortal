@@ -589,14 +589,6 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
     array_attributes_length.each do |attribute, attribute_length|
       attribute_length.times do |index|
-        if member_data[attribute].present? && attribute == 'educations' && index == 0
-          data_object =  member_data[attribute].find { |obj| obj['highest_qualification'] == true }
-          if data_object.present?
-            row_data << data_object['qualification']
-          else
-            ''
-          end
-        end
         hash_attributes[attribute].each do |hash_attribute|
           if member_data[attribute].present? && member_data[attribute][index].present?
             next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
