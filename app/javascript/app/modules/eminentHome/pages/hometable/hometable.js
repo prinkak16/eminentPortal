@@ -237,7 +237,12 @@ const HomeTable = (props) => {
     };
 
     const getUserProfession = (professions) => {
-        return isValuePresent(professions) ? professions[0].profession : "";
+        if (isValuePresent(professions)) {
+            const mainProfession = professions.find((profession) => profession.main_profession === true);
+            return mainProfession ? mainProfession.profession : "";
+        } else {
+            return "";
+        }
     };
 
     const getUserEducation = (educations) => {
