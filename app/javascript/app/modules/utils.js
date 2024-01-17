@@ -674,10 +674,18 @@ export const componentsFieldHeaders = {
     }
 }
 
-
-const componentFieldDetailsHeaders = () => {
-
-
+export const formattedDate = (dateString) => {
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return dateString.toLocaleDateString('en-GB', options);
 }
 
+export const capitalizeString = (string) => {
+    if (!isStringValid(string)) {
+        return '';
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
+export const isStringValid = (value) => {
+    return !(value === null || value === undefined || value === '');
+}
