@@ -523,7 +523,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def excel_download
-    custom_members = eminent_search.where.not(aasm_state: 'pending')
+    custom_members = eminent_search.where.not(aasm_state: %w[pending otp_verified])
     array_attributes = %w[address educations professions election_fought other_parties political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
