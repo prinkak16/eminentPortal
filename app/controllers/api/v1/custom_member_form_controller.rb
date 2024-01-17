@@ -523,7 +523,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
   end
 
   def excel_download
-    custom_members = eminent_search
+    custom_members = eminent_search.where.not(aasm_state: 'pending')
     array_attributes = %w[address educations professions election_fought other_parties political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
@@ -549,7 +549,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
     array_attributes_length = {}
     array_attributes.each do |attribute|
-      array_attributes_length[attribute] = custom_members.where(Arel.sql("data -> '#{attribute}' IS NOT NULL"))
+      array_attributes_length[attribute] = custom_members.where(Arel.sql("data ->> '#{attribute}' IS NOT NULL"))
                                                          .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
     end
 
@@ -603,19 +603,19 @@ class Api::V1::CustomMemberFormController < BaseApiController
     array_attributes_length.each do |attribute, attribute_length|
       attribute_length.times do |index|
         hash_attributes[attribute].each do |hash_attribute|
-          if member_data[attribute].present? && member_data[attribute][index].present?
-            if attribute == 'election_fought' && %w[State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
-              row_data << member_data[attribute][index]['election_details'][hash_attribute]
-            elsif attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
-              ministry_hash['count'].times do |ministry_index|
-                ministry_hash['values'].each do |value|
-                  if member_data[attribute][index]['election_details']['minister_portfolio_array'].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index].present?
-                    row_data << member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index][value]
-                  else
-                    row_data << ''
-                  end
+          if attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
+            ministry_hash['count'].times do |ministry_index|
+              ministry_hash['values'].each do |value|
+                if member_data[attribute].present? && member_data[attribute][index].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index].present?
+                  row_data << member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index][value]
+                else
+                  row_data << ''
                 end
               end
+            end
+          elsif member_data[attribute].present? && member_data[attribute][index].present?
+            if attribute == 'election_fought' && %w[State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
+              row_data << member_data[attribute][index]['election_details'][hash_attribute]
             else
               next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
               row_data << member_data[attribute][index][hash_attribute]
