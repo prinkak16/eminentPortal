@@ -30,6 +30,12 @@ export const getData = (filters = "") => {
     apiBaseUrl + "custom_member_forms/list?type=eminent_personality" + filters
   );
 };
+
+export const excel_download = ( filters = '') => {
+  return axios.get(apiBaseUrl + 'custom_member_forms/excel_download?type=eminent_personality' + filters, {
+    responseType: 'arraybuffer'
+  })
+}
 export const getVacancyAnalytics = () => {
   return axios.get(apiBaseUrl + "vacancy/position_analytics");
 };
