@@ -810,4 +810,45 @@ module CustomMemberFormHelper
     end
     query += total_age_groups.positive? ? ')' : ''
   end
+
+  def eminent_headers(hash_attributes, array_attributes_length, ministry_hash)
+    headers = ["State", "Id", "Name", "Photo", "Gender", "Religion", "Category", "Caste", "Sub Caste", "Languages", "dob", "Father", "Mother",
+               "Spouse", "Children", "Aadhaar", "Voter Id", "Mobiles", "STD Code", "Landline", "Email", "Website", "Twitter", "Facebook",
+               "LinkedIn", "Instagram"]
+
+    array_attributes_length.each do |attribute, attribute_length|
+      attribute_length.times do |index|
+        hash_attributes[attribute].each do |hash_attribute|
+          if attribute == 'address'
+            if index == 0
+              next if hash_attribute == 'address_type'
+              headers << "current_#{hash_attribute}"
+            elsif index == 1
+              next if hash_attribute == 'address_type'
+              headers << "home_#{hash_attribute}"
+            else
+              headers << "other_#{hash_attribute}"
+            end
+          elsif attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
+            ministry_hash['count'].times do |ministry_index|
+              ministry_hash['values'].each do |value|
+                headers << "ministry_#{ministry_index+1}_#{value}"
+              end
+            end
+          else
+            headers << "#{attribute}_#{index+1}_#{hash_attribute}"
+          end
+        end
+      end
+    end
+    headers << 'reference_name'
+    headers << 'reference_bjp_id'
+    headers << 'reference_mobile'
+    headers << 'reference_comments'
+    headers << 'Channel'
+    headers << 'Status'
+    headers << 'created_by'
+    headers << 'created_at'
+    headers
+  end
 end

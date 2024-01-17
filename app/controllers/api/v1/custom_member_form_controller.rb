@@ -397,6 +397,41 @@ class Api::V1::CustomMemberFormController < BaseApiController
     offset = params[:offset].present? ? params[:offset] : 0
     is_download = params[:offset].present? ? params[:offset] : false
 
+    custom_members = eminent_search
+    length = custom_members.length
+    custom_members = custom_members.order('created_at desc')
+
+    if !custom_members.blank?
+      if is_download == true
+        render json: {
+          success: true,
+          message: 'Success.',
+          data: {
+            'members': custom_members,
+            'length': length
+          }
+        }, status: :ok
+      else
+        res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
+        res_data[0]['attached'] = 'https://www.africau.edu/images/default/sample.pdf'
+        render json: {
+          success: true,
+          message: 'Success.',
+          data: {
+            'members': res_data,
+            'length': length
+          }
+        }, status: :ok
+      end
+    else
+      render json: { success: false, message: 'No member found.' }, status: :not_found
+    end
+
+  rescue StandardError => e
+    render json: { success: false, message: e.message }, status: :bad_request
+  end
+
+  def eminent_search
     # compute search by eminent id
     custom_members = CustomMemberForm
     eminent_ids = params[:search_by_id].present? ? params[:search_by_id].split(',') : nil
@@ -408,7 +443,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     # check form type
     type = params[:type]
     unless params[:type].present? && params[:type] === CustomMemberForm::TYPE_EMINENT
-      return render json: { success: false, message: 'Please provide a valid form.' }, status: :bad_request
+      raise 'Please provide a valid form.'
     end
 
     # compute state id
@@ -484,33 +519,121 @@ class Api::V1::CustomMemberFormController < BaseApiController
       end
       custom_members = custom_members.where(search_query.join(' OR '))
     end
-    length = custom_members.length
-    custom_members = custom_members.order('created_at desc')
+    custom_members
+  end
 
-    if !custom_members.blank?
-      if is_download == true
-        render json: {
-          success: true,
-          message: 'Success.',
-          data: {
-            'members': custom_members,
-            'length': length
-          }
-        }, status: :ok
-      else
-        res_data = custom_members.includes(:country_state).limit(limit).offset(offset).as_json(include: [:country_state])
-        res_data[0]['attached'] = 'https://www.africau.edu/images/default/sample.pdf'
-        render json: {
-          success: true,
-          message: 'Success.',
-          data: {
-            'members': res_data,
-            'length': length
-          }
-        }, status: :ok
-      end
-    else
-      render json: { success: false, message: 'No member found.' }, status: :not_found
+  def excel_download
+    custom_members = eminent_search.where.not(aasm_state: %w[pending otp_verified])
+    array_attributes = %w[address educations professions election_fought other_parties political_legacy]
+    hash_attributes = {
+      'address' => %w[address_type flat street district state pincode],
+      'educations' => %w[qualification course university college start_year end_year],
+      'professions' => %w[profession position organization start_year end_year],
+      'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio minister_portfolio_array],
+      'other_parties' => %w[party position start_year end_year],
+      'political_legacy' => %w[name relationship profile]
+    }
+
+    sql = "SELECT array_length FROM (
+                                      SELECT jsonb_array_length(jsonb_array_elements(data -> 'election_fought') -> 'election_details' -> 'minister_portfolio_array') AS array_length
+                                      FROM custom_member_forms
+                                      WHERE deleted_at IS NULL AND data -> 'election_fought' IS NOT NULL
+                                      ORDER BY array_length DESC
+                                    ) AS result_table
+           WHERE array_length IS NOT NULL"
+    maximum_ministry_length = custom_members.find_by_sql(sql).first&.array_length
+    ministry_hash = {
+      'count' => maximum_ministry_length,
+      'values' => %w[designation ministry_name ministry_duration]
+    }
+
+    array_attributes_length = {}
+    array_attributes.each do |attribute|
+      array_attributes_length[attribute] = custom_members.where(Arel.sql("data ->> '#{attribute}' IS NOT NULL"))
+                                                         .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
     end
+
+    eminent_excel_headers = eminent_headers(hash_attributes, array_attributes_length, ministry_hash)
+
+    package = Axlsx::Package.new
+    workbook = package.workbook
+
+    workbook.add_worksheet(name: 'Eminent Download') do |sheet|
+      # add headers to sheet
+      sheet.add_row eminent_excel_headers
+      custom_members.each do |member|
+        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash)
+      end
+    end
+
+    send_data package.to_stream.read, type: 'application/xlsx', filename: 'eminent_download.xlsx'
+  end
+
+  def eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash)
+    row_data = []
+    member_data = member.data
+
+    row_data << member.country_state&.name
+    row_data << member.id
+    row_data << member_data['name']
+    row_data << member_data['photo']
+    row_data << member_data['gender']
+    row_data << member_data['religion']
+    row_data << member_data['category']
+    row_data << member_data['caste']
+    row_data << member_data['sub_caste']
+    row_data << member_data['languages']&.join(', ')
+    row_data << formatted_date_string(member_data['dob'])
+    row_data << member_data['father']
+    row_data << member_data['mother']
+    row_data << member_data['spouse']
+    row_data << member_data['children']&.join(', ')
+    row_data << member_data['aadhaar']
+    row_data << member_data['voter_id']
+    row_data << member_data['mobiles']&.join(', ')
+    row_data << member_data['std_code']
+    row_data << member_data['landline']
+    row_data << member_data['email']
+    row_data << member_data['website']
+    row_data << member_data['twitter']
+    row_data << member_data['facebook']
+    row_data << member_data['linkedin']
+    row_data << member_data['instagram']
+
+    array_attributes_length.each do |attribute, attribute_length|
+      attribute_length.times do |index|
+        hash_attributes[attribute].each do |hash_attribute|
+          if attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
+            ministry_hash['count'].times do |ministry_index|
+              ministry_hash['values'].each do |value|
+                if member_data[attribute].present? && member_data[attribute][index].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'].present? && member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index].present?
+                  row_data << member_data[attribute][index]['election_details']['minister_portfolio_array'][ministry_index][value]
+                else
+                  row_data << ''
+                end
+              end
+            end
+          elsif member_data[attribute].present? && member_data[attribute][index].present?
+            if attribute == 'election_fought' && %w[State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio].include?(hash_attribute)
+              row_data << member_data[attribute][index]['election_details'][hash_attribute]
+            else
+              next if attribute == 'address' && hash_attribute == 'address_type' && index <= 1
+              row_data << member_data[attribute][index][hash_attribute]
+            end
+          else
+            row_data << ''
+          end
+        end
+      end
+    end
+    row_data << member_data['reference']['name']
+    row_data << member_data['reference']['bjp_id']
+    row_data << member_data['reference']['mobile']
+    row_data << member_data['reference']['comments']
+    row_data << member.created_by&.name
+    row_data << member.channel
+    row_data << member.aasm_state
+    row_data << member.created_at
+    row_data
   end
 end
