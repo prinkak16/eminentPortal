@@ -9,6 +9,8 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {getLocationsData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {Label} from "@mui/icons-material";
+import Typography from "@mui/material/Typography";
 
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled,resetFormIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
@@ -216,10 +218,12 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
-                {jsonForm.fields && jsonForm.fields.map((f) => (
+                {jsonForm.fields && jsonForm.fields.map((f, mindex) => (
                     <>
                         {showField(f.is_conditional, f.condition_key, f.condition_value) &&
+
                             <div   className={`electoral-form-fields${isMobileUser ? '-mobile-view' : 'd-flex'}`}>
+
                                 {
                                     f.type === 'dropdown' &&
                                     <Grid item xs={mobileView()} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
@@ -237,7 +241,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                 {
                                     f.type === "textField" &&
                                     <Grid item xs={mobileView()}>
-                                        {formLabel(f.name,isMobileUser ? 2 : null)}
+                                        1. {formLabel(f.name,isMobileUser ? 2 : null)}
                                         <OtherInputField
                                             disabled={isViewDisabled}
                                             type="text"
@@ -283,7 +287,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         {
                                             fi.type === 'dropdown' &&
                                             <Grid item xs={mobileView()}>
-                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
+                                                {formLabel(fi.name,isMobileUser ? 1 : null)}
                                                 <AutoCompleteDropdown
                                                     disabled={isViewDisabled}
                                                     name={fi.name}
@@ -306,7 +310,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     onChange={handleFieldChange}
                                                     textType={fi.key}
                                                     fieldIndex={0}
-                                                    placeholder={fi.placeholder}/>
+                                                    placeholder={fi.placeholder}
+                                                />
                                             </Grid>
                                         }
                                         {
@@ -369,7 +374,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     value={getFieldsValue(f.key, minIndex+1) || null}
                                                     onChange={handleFieldChange}
                                                     textType={f.key}
-                                                    placeholder={f.placeholder}/>
+                                                    placeholder={f.placeholder}
+                                                />
                                             </Grid>
                                         }
                                         {
@@ -399,7 +405,9 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                 {
                                                     fi.type === "textField" &&
                                                     <Grid item xs={mobileView()}>
-                                                        {formLabel(f.name,isMobileUser ? 2 : null)}
+                                                        {/*{formLabel(f.name,isMobileUser ? 2 : null)}*/}
+                                                        {/*{formLabel(Designation)}*/}
+                                                        <FormLabel className="mt-3">Designation</FormLabel>
                                                         <OtherInputField
                                                             disabled={isViewDisabled}
                                                             type="text"

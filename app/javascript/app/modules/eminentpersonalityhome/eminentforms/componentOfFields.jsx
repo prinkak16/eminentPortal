@@ -237,10 +237,17 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         return isValuePresent(state) ? <mark>*</mark> : ''
     }
 
-    const getList = () => {
+    const getList = (e) => {
         let list = []
         if (jsonForm.title === 'Education Details') {
-            list = educationsList
+            if (e.key === 'qualification'){
+            list = educationsList }
+            if(e.key === 'university'){
+                list = [];
+            }
+            if (e.key === 'college'){
+                list = [];
+            }
         } else if (jsonForm.title === 'Profession Profile') {
             list = professionList
         }
@@ -249,10 +256,10 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
 
     return (
         <div>
-            <Grid container className={`educationforms ${isMobileUser ? '' :'grid-wrap'}`}>
+            <Grid container className="educationforms grid-wrap">
                 {jsonForm.title === 'Education Details' &&
                     <Grid item xs={12}>
-                        <Typography variant="h6" content="h6">
+                        <Typography variant="h5" content="h5">
                             Enter your educational detail ( All )
                         </Typography>
                     </Grid>
@@ -261,14 +268,14 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     <>
                         {
                             f.type === 'dropdown' &&
-                            <Grid item xs={mobileView()}>
+                            <Grid item xs={4}>
                                 <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                 <div className='components-dropdown'>
                                     <AutoCompleteDropdown
                                         disabled={isViewDisabled}
                                         name={f.name}
                                         selectedValue={fieldValue(f.key) || null}
-                                        listArray={isValuePresent(getList()) ? getList() : f.list}
+                                        listArray={isValuePresent(getList(f)) ? getList(f) : f.list}
                                         onChangeValue={handleFieldChange}
                                         dropDownType={f.key}/>
                                 </div>
@@ -276,7 +283,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         }
                         {
                             f.type === "textField" &&
-                                <Grid item xs={mobileView()}>
+                                <Grid item xs={4}>
                                     <FormLabel>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <div style={{marginTop:'7px'}}>
                                         <OtherInputField
@@ -292,7 +299,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                         }
                         { !resetYear &&
                             f.type === "date" &&
-                                <Grid item xs={mobileView()} className='d-grid'>
+                                <Grid item xs={4} className='d-grid'>
                                     <FormLabel fullwidth>{f.name} {requiredField(f.isRequired)}</FormLabel>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} style={{width: '100%', marginTop: '-5px'}}>
                                         <DemoContainer components={['DatePicker']} style={{width: '100%'}} sx={{width: '100%'}}>
@@ -337,7 +344,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                     jsonForm.title === 'Profession Profile' &&  <Grid item xs={4} className='d-grid'> </Grid>}
                 {
                     jsonForm.title === 'Profession Profile' &&
-                    <Grid item xs={mobileView()} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
+                    <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
                         <FormLabel className='mr-1'>Please Select if this is your Main Profession </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['main_profession']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'main_profession', 'main_profession')} />
