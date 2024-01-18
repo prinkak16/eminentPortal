@@ -98,7 +98,30 @@ span {
   .bjp-text {
     color: #5A5A61;
     font-family: Poppins;
-    font-size: 22px !important;
+    font-size: 16px !important;
     font-weight: 500;
+  }
+
+  .navbar-profile {
+    margin-left: 10px;
+    min-width: 10rem;
+    display: flex;
+    border: 0.5px solid lightgray;
+    border-radius: 16px;
+    align-items: center;
+    height: 2.9rem;
+
+
+    span {
+      margin: auto;
+      margin-left: 2px;
+      font-family: 'Montserrat';
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 15px;
+      display: flex;
+      align-items: center;
+      color: #828282;
+    }
   }
 }
