@@ -563,7 +563,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
       # add headers to sheet
       sheet.add_row eminent_excel_headers
       custom_members.each do |member|
-        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash)
+        sheet.add_row eminent_row_data(member, hash_attributes, array_attributes_length, ministry_hash), types: :string
       end
     end
 
