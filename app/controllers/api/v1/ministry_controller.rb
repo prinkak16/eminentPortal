@@ -42,7 +42,7 @@ class Api::V1::MinistryController < BaseApiController
         success: true,
         message: 'Success',
         data: {
-          'ministries': ministries,
+          'ministries': ministries.limit(limit).offset(offset),
           'count': ministries.count(:id)
         }
       }, status: :ok
