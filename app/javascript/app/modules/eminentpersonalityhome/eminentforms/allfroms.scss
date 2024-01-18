@@ -773,3 +773,8 @@ margin-bottom: auto;
 .landline-mobile-view {
   padding-left: 0px !important;
 }
+@media screen and (max-width: 767px) {
+  .main-edu-text {
+    font-size: 0.8rem !important;
+  }
+}
