@@ -524,13 +524,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
   def excel_download
     custom_members = eminent_search.where.not(aasm_state: %w[pending otp_verified])
-    array_attributes = %w[address educations professions election_fought other_parties political_legacy]
+    array_attributes = %w[address educations professions election_fought other_parties political_profile political_legacy]
     hash_attributes = {
       'address' => %w[address_type flat street district state pincode],
       'educations' => %w[qualification course university college start_year end_year],
       'professions' => %w[profession position organization start_year end_year],
       'election_fought' => %w[election_type State ParliamentaryConstituency AssemblyConstituency AdministrativeDistrict urban_local_body rural_local_body election_win minister_portfolio minister_portfolio_array],
       'other_parties' => %w[party position start_year end_year],
+      'political_profile' => %w[unit designation party_level start_year end_year],
       'political_legacy' => %w[name relationship profile]
     }
 
@@ -544,7 +545,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     maximum_ministry_length = custom_members.find_by_sql(sql).first&.array_length
     ministry_hash = {
       'count' => maximum_ministry_length,
-      'values' => %w[designation ministry_name ministry_duration]
+      'values' => %w[ministry_name designation ministry_duration]
     }
 
     array_attributes_length = {}
@@ -630,9 +631,9 @@ class Api::V1::CustomMemberFormController < BaseApiController
     row_data << member_data['reference']['bjp_id']
     row_data << member_data['reference']['mobile']
     row_data << member_data['reference']['comments']
-    row_data << member.created_by&.name
     row_data << member.channel
     row_data << member.aasm_state
+    row_data << member.created_by&.name
     row_data << member.created_at
     row_data
   end
