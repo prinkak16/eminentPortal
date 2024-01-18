@@ -602,6 +602,14 @@ class Api::V1::CustomMemberFormController < BaseApiController
     row_data << member_data['instagram']
 
     array_attributes_length.each do |attribute, attribute_length|
+      if attribute == 'educations'
+        if member_data['educations'].present?
+          result = member_data['educations'].find { |obj| obj['highest_qualification'] == true }
+          row_data << (result.present? ? result['qualification'] : '')
+        else
+          row_data << ''
+        end
+      end
       attribute_length.times do |index|
         hash_attributes[attribute].each do |hash_attribute|
           if attribute == 'election_fought' && hash_attribute == 'minister_portfolio_array'
