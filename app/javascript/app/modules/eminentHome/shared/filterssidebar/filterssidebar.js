@@ -102,12 +102,11 @@ export default function FiltersSidebar(props) {
   }, 1000);
 
   const handleInputSearch = (event, key) => {
-    const { value } = event.target;
+    const value = event.target.value;
     setInputSearch((prevData) => {
       return { ...prevData, [key]: value };
     });
-    handleSearchFilter(event, key);
-    handleSearchFilter(event, key);
+    handleSearchFilter(event.target.value, key);
   };
 
   const isChecked = (parentKey, optionValue) => {

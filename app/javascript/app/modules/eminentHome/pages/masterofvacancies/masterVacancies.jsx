@@ -17,7 +17,7 @@ import './masterVacancies.css'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {HomeContext} from "../../../../context/tabdataContext";
 import {downloadMOVExcel} from "../../../../api/eminentapis/endpoints";
-import {downloadFile} from "../../../utils";
+import {downloadFile, formattedDate} from "../../../utils";
 import {toast} from 'react-toastify';
 
 const MasterVacancies = ({ tabId, filterString }) => {
@@ -69,7 +69,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
             setIsFetching(false);
             // Create a Blob from the binary data
             const blobData = new Blob([response.data], { type: 'application/octet-stream' });
-            downloadFile(blobData, 'mov_data');
+            const fileName = 'Vacancies of ID as on ' + formattedDate(new Date())
+            downloadFile(blobData, fileName);
         }, error => {
             setIsFetching(false);
             if (error.response.status === 401) {

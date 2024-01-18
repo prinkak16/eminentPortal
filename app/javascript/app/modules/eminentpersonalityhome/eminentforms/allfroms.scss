@@ -308,7 +308,7 @@ button.cancelbtn{
 }
 
 .mobile-fields {
-  width: 20rem;
+  width: 100%;
   height: 3.1rem;
   border-radius: 13px;
   border: 1px solid grey;
@@ -625,10 +625,7 @@ button.cancelbtn{
 }
 
 .mt-2rem {
-  width: 108px;
-  align-items: center;
-  justify-content: center;
-  height: 100px;
+  margin-top: 2rem;
 }
 
 .user-image {
@@ -775,9 +772,4 @@ margin-bottom: auto;
 
 .landline-mobile-view {
   padding-left: 0px !important;
-}
-@media screen and (max-width: 767px) {
-  .main-edu-text {
-    font-size: 0.8rem !important;
-  }
 }
