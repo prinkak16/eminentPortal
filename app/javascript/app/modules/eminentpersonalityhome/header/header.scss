@@ -93,3 +93,12 @@ span {
 .logout-navbar{
   top: 11px !important;
 }
+
+@media screen and (max-width: 767px) {
+  .bjp-text {
+    color: #5A5A61;
+    font-family: Poppins;
+    font-size: 22px !important;
+    font-weight: 500;
+  }
+}
