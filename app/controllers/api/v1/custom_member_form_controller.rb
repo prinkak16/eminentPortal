@@ -477,9 +477,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
     # compute education filter
     educations = params[:education].present? ? params[:education].split(',') : nil
-    unless educations.nil?
-      educations_json = educations.map { |education| { 'qualification' => education } }.to_json
-      custom_members = custom_members.where("data->'educations' @> ?", educations_json)
+    if educations.present?
+      educations = educations.map { |element| "'#{element}'" }.join(',')
+      custom_members = custom_members.where("data ->> 'educations' IS NOT NULL")
+                                     .where("EXISTS(SELECT 1 FROM jsonb_array_elements(data -> 'educations') AS education
+                                             WHERE (education ->> 'qualification' IN (#{educations}))
+                                             AND (education ->> 'highest_qualification' = 'true'))")
     end
 
     # compute gender filter
@@ -490,9 +493,11 @@ class Api::V1::CustomMemberFormController < BaseApiController
 
     # compute profession filter
     professions = params[:profession].present? ? params[:profession].split(',') : nil
-    unless professions.nil?
-      professions_json = professions.map { |profession| { 'profession' => profession } }.to_json
-      custom_members = custom_members.where("data->'professions' @> ?", professions_json)
+    if professions.present?
+      professions = professions.map { |element| "'#{element}'" }.join(',')
+      custom_members = custom_members.where("data ->> 'professions' IS NOT NULL")
+                                     .where("EXISTS(SELECT 1 FROM jsonb_array_elements(data -> 'professions') AS profession_elements
+                                             WHERE (profession_elements ->> 'profession' IN (#{professions})))")
     end
 
     # compute profession filter
