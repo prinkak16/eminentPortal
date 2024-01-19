@@ -22,7 +22,7 @@ import './componentOfFIelds.scss'
 
 import dayjs from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
-const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList = [], isViewDisabled, professionList = []}) => {
+const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educationsList = [], isViewDisabled, professionList = [], showProfessionForm, showEducationForm, showPoliticalForm, showOtherPartyForm}) => {
     const [fieldsData, setFieldsData] = useState({});
     const [resetYear, setResetYear] = useState(false)
     const [isNaButtonExist, setIsNaButtonExist] = useState(false)
@@ -91,6 +91,19 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
             return updatedFieldsData;
         });
         setResetYear(true)
+
+       if(showProfessionForm){
+           showProfessionForm(false);
+       }
+       else if(showEducationForm) {
+           showEducationForm(false);
+       }
+       else if(showPoliticalForm){
+           showPoliticalForm(false);
+       }
+       else{
+           showOtherPartyForm(false);
+       }
     };
 
     useEffect(() => {
