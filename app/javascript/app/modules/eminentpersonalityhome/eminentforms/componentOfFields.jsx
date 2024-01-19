@@ -334,7 +334,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 {
                     jsonForm.title === 'Education Details' &&
                     <Grid item xs={4} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
-                        <FormLabel className='mr-1'>Please Select if this is your Highest Qualification </FormLabel>
+                        <FormLabel className='mr-1 main-edu-text' >Please Select if this is your Highest Qualification </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['highest_qualification']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'highest_qualification', 'highest_qualification')} />
                     </Grid>
@@ -345,7 +345,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
                 {
                     jsonForm.title === 'Profession Profile' &&
                     <Grid item xs={mobileView()} style={{minWidth: '27rem', display: 'flex', gap: '0.8rem'}}>
-                        <FormLabel className='mr-1'>Please Select if this is your Main Profession </FormLabel>
+                        <FormLabel className='mr-1 main-edu-text'>Please Select if this is your Main Profession </FormLabel>
                         <input disabled={isViewDisabled} type='checkbox' checked={fieldsData['main_profession']}  onChange={(e) =>
                             handleFieldChange(e.target.checked, 'main_profession', 'main_profession')} />
                     </Grid>

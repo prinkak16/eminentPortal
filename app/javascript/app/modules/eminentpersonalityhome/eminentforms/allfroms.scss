@@ -328,8 +328,7 @@ button.cancelbtn{
 
 .mobile-number-field {
   display: grid;
-  width: 20rem;
-  max-width: 100%;
+  max-width: 20rem;
 }
 
 .mobile-label {
@@ -774,6 +773,17 @@ margin-bottom: auto;
 .landline-mobile-view {
   padding-left: 0px !important;
 }
-.designation-label{
 
+@media screen and (max-width: 1199px) {
+  .main-edu-text {
+    font-size: 0.8rem !important;
+  }
+
+  .mt-2rem {
+    margin-top: 0;
+    width: 108px;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+  }
 }
