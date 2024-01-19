@@ -55,8 +55,8 @@ const PolticalandGovrnform =(props)=>{
     const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
     const [isViewDisabled, setIsViewDisabled] = useState(false)
     const [formResetIndex, setFormResetIndex] = useState(null)
-    const [showPoliticalForm, setShowPoliticalForm] = useState(props.formValues.political_profile?.length === 0)
-    const [showOtherPartyForm, setShowOtherPartyForm] = useState(props.formValues.other_parties?.length === 0)
+    const [showPoliticalForm, setShowPoliticalForm] = useState(false)
+    const [showOtherPartyForm, setShowOtherPartyForm] = useState(false)
 
 
     useEffect(() => {
@@ -421,7 +421,7 @@ const PolticalandGovrnform =(props)=>{
                         {!NAFields &&
                             <ComponentOfFields jsonForm={politicalProfileJson} saveData={handleSave}
                                                isEditable={editableProfileField}
-                                               notApplicable={NAFields} isViewDisabled={isViewDisabled}/>}
+                                               notApplicable={NAFields} isViewDisabled={isViewDisabled} showPoliticalForm={setShowPoliticalForm}/>}
                     </> :
                     <Grid item xs={12} className="d-flex align-items-center">
                         <div>
@@ -537,7 +537,7 @@ const PolticalandGovrnform =(props)=>{
                                 {!backDropToggle &&
                                     <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
                                                        isEditable={editableOtherPartyField}
-                                                       isViewDisabled={isViewDisabled}/>
+                                                       isViewDisabled={isViewDisabled} showOtherPartyForm={setShowOtherPartyForm}/>
                                 }
                             </Grid>
                         } </> :
@@ -546,7 +546,7 @@ const PolticalandGovrnform =(props)=>{
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
                                            buttonlabel="ADD ANOTHER"
-                                           handleclick={() => showFormFields('political')}
+                                           handleclick={() => showFormFields('other')}
                             />
                         </div>
                     </Grid>

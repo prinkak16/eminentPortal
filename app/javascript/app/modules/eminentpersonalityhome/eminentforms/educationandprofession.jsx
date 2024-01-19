@@ -30,6 +30,7 @@ import RadioButton from "./radioButton";
 import ComponentFieldDetails from "./componentFieldDetails";
 import Primarybutton from "../component/primarybutton/primarybutton";
 import AddIcon from "@mui/icons-material/Add";
+import {flatten} from "lodash/array";
 
 const Educationform = (props) => {
     const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
@@ -42,8 +43,8 @@ const Educationform = (props) => {
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
     const [showList, setShowList] = useState()
     const [isViewDisabled, setIsViewDisabled] = useState(false)
-    const [showEducationForm, setShowEducationForm] = useState(props.formValues.educations.length === 0)
-    const [showProfessionForm, setShowProfessionForm] = useState(props.formValues.professions.length === 0)
+    const [showEducationForm, setShowEducationForm] = useState(false)
+    const [showProfessionForm, setShowProfessionForm] = useState(false)
 
     useEffect(() => {
         if (props.viewMode === 'view') {
@@ -406,7 +407,7 @@ const Educationform = (props) => {
 
                 {showEducationForm ?
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
-                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled}/>:
+                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled} showEducationForm={setShowEducationForm}/>:
                     <Grid item xs={12} className="d-flex align-items-center">
                         <div>
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
@@ -484,7 +485,7 @@ const Educationform = (props) => {
 
                 { showProfessionForm ?
                     <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData}/> :
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData} showProfessionForm={setShowProfessionForm}/> :
                         <Grid item xs={12} className="d-flex align-items-center">
                             <div>
                                 <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
