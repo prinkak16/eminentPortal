@@ -44,6 +44,7 @@ import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dial
 import {ApiContext} from "../../../ApiContext";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import {toast} from 'react-toastify';
+import DownloadButton from "../../shared/downloadbutton/downloadButton";
 
 const HomeTable = (props) => {
     const {resetFilter, setEminentData} = useContext(ApiContext);
@@ -334,9 +335,9 @@ const HomeTable = (props) => {
                                 onChange={(e) => onSearchNameId(e, false)}
                             />
                         </div>
-                        <Button className="download_btn" onClick={handleExcelDownload} >Download <ArrowDownwardIcon/></Button>
                     </div>
-                    <div className="d-flex me-0 ">
+                    <div className="d-flex justify-content-center align-items-center">
+                        <DownloadButton handleExcelDownload={handleExcelDownload}/>
                     </div>
                     {profilePhotoUrl && (
                         <PhotoDialog

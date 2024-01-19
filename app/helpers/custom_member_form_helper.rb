@@ -817,6 +817,9 @@ module CustomMemberFormHelper
                "LinkedIn", "Instagram"]
 
     array_attributes_length.each do |attribute, attribute_length|
+      if attribute == 'educations'
+        headers << 'highest_qualification'
+      end
       attribute_length.times do |index|
         hash_attributes[attribute].each do |hash_attribute|
           if attribute == 'address'
@@ -835,6 +838,12 @@ module CustomMemberFormHelper
                 headers << "ministry_#{ministry_index+1}_#{value}"
               end
             end
+          elsif attribute == 'educations' && hash_attribute == 'course'
+            headers << "#{attribute}_#{index+1}_#{hash_attribute}/degree/subject"
+          elsif attribute == 'educations' && hash_attribute == 'university'
+            headers << "#{attribute}_#{index+1}_#{hash_attribute}/board"
+          elsif attribute == 'educations' && hash_attribute == 'college'
+            headers << "#{attribute}_#{index+1}_#{hash_attribute}/school"
           else
             headers << "#{attribute}_#{index+1}_#{hash_attribute}"
           end

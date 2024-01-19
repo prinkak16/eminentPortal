@@ -19,6 +19,7 @@ import {HomeContext} from "../../../../context/tabdataContext";
 import {downloadMOVExcel} from "../../../../api/eminentapis/endpoints";
 import {downloadFile, formattedDate} from "../../../utils";
 import {toast} from 'react-toastify';
+import DownloadButton from "../../shared/downloadbutton/downloadButton";
 
 const MasterVacancies = ({ tabId, filterString }) => {
     const [masterTabName, setMasterTabName] = useSearchParams({basicTabId: '4', masterOfVacancies: 'ministry_wise'});
@@ -95,7 +96,8 @@ const MasterVacancies = ({ tabId, filterString }) => {
                             <Tab label="PSU wise" value="psu_wise" />
                             <Tab label="Position Wise" value="vacancy_wise" />
                         </TabList>
-                        <Button className="download_btn" onClick={downloadMOVExcelData}>Download <ArrowDownwardIcon/></Button>
+                        <DownloadButton handleExcelDownload={downloadMOVExcelData}/>
+                        {/*<Button className="download_btn" onClick={downloadMOVExcelData}>Download <ArrowDownwardIcon/></Button>*/}
                     </Box>
                     <TabPanel value="ministry_wise"  className="p-0">
                         <MinistryTable filterString={filterString} ministryId={ministryId} onSwitchTab={switchTabDataHandler} />
