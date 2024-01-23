@@ -554,9 +554,12 @@ class Api::V1::CustomMemberFormController < BaseApiController
     }
 
     array_attributes_length = {}
-    array_attributes.each do |attribute|
-      array_attributes_length[attribute] = custom_members.where(Arel.sql("data ->> '#{attribute}' IS NOT NULL"))
-                                                         .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
+
+    if custom_members.present?
+      array_attributes.each do |attribute|
+        array_attributes_length[attribute] = custom_members.where(Arel.sql("data ->> '#{attribute}' IS NOT NULL"))
+                                                           .order(Arel.sql("jsonb_array_length(data -> '#{attribute}') DESC")).first.data[attribute].length
+      end
     end
 
     eminent_excel_headers = eminent_headers(hash_attributes, array_attributes_length, ministry_hash)

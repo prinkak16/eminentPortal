@@ -297,7 +297,7 @@ const HomeTable = (props) => {
 
     const handleExcelDownload = () => {
         setIsFetching(true);
-        excel_download().then(response => {
+        excel_download(props.filterString).then(response => {
             setIsFetching(false);
             // Create a Blob from the binary data
             const blobData = new Blob([response.data], { type: 'application/octet-stream' });
