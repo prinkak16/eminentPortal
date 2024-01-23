@@ -850,6 +850,8 @@ module CustomMemberFormHelper
         end
       end
     end
+    headers << 'Years in BJP'
+    headers << 'Years in RSS'
     headers << 'reference_name'
     headers << 'reference_bjp_id'
     headers << 'reference_mobile'

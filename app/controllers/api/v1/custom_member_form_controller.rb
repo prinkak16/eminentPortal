@@ -643,6 +643,8 @@ class Api::V1::CustomMemberFormController < BaseApiController
         end
       end
     end
+    row_data << member_data['rss_years']
+    row_data << member_data['bjp_years']
     row_data << member_data['reference']['name']
     row_data << member_data['reference']['bjp_id']
     row_data << member_data['reference']['mobile']
@@ -650,7 +652,7 @@ class Api::V1::CustomMemberFormController < BaseApiController
     row_data << member.channel
     row_data << member.aasm_state
     row_data << member.created_by&.name
-    row_data << member.created_at
+    row_data << formatted_date_string((member.created_at).to_s)
     row_data
   end
 end
