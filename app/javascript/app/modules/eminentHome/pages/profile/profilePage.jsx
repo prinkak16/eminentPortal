@@ -13,13 +13,20 @@ const profileStyle = {
         borderRadius: '0.25rem',
         padding:'1rem',
         marginBottom: '0.5rem',
+
         span:{
+
             fontSize:'1rem',
+
         }
+
     },
     permission:{
         span:{
-            marginRight:'2px'
+            marginRight:'2px',
+            ':last-child': {
+                display: 'none',
+            },
         }
     }
 }
@@ -62,21 +69,28 @@ const Profile = () => {
                             <Grid sx={profileStyle.card}>
                                 <Typography variant="p" sx={profileStyle.permission}><b>Permissions: </b>
                                     {permissions.map(permission => (
-                                        <span>{permission.action} - {permission.permission_name}, </span>
+                                        <>
+                                        <span>{permission.action} - {permission.permission_name}</span><span>, </span>
+                                        </>
                                     ))}
                                 </Typography>
                             </Grid>
                             <Grid sx={profileStyle.card}>
-                                <Typography variant="p"><b>Allotted States: </b>
+                                <Typography variant="p" sx={profileStyle.permission}><b>Allotted States: </b>
                                     {allottedStates.map(states => (
-                                        <span> {states.name},</span>
+                                        <>
+                                            <span> {states.name}</span> <span>, </span>
+                                        </>
+
                                     ))}
                                 </Typography>
                             </Grid>
                             <Grid sx={profileStyle.card}>
-                                <Typography variant="p"><b>Assigned Ministries: </b>
+                                <Typography variant="p" ><b>Assigned Ministries: </b>
                                     {ministries.map(ministry => (
-                                        <span>{ministry.ministry_name}, </span>
+                                        <>
+                                        <span>{ministry.ministry_name}</span>
+                                        </>
                                     ))}
                                 </Typography>
                             </Grid>

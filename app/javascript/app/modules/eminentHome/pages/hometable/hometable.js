@@ -371,7 +371,7 @@ const HomeTable = (props) => {
                                                                 ?.slice(0, 2)
                                                                 .map((number, index) => (
                                                                     <div
-                                                                        className="col-md-6 text-container pe-0 ps-2.5"
+                                                                        className="col-md-6 text-container pe-0 ps-2.5 d-flex mb-2"
                                                                         key={member.id}
                                                                     >
                                                                         {index === 0 && <Phone/>}
