@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       get 'metadata/states', to: 'metadata#states'
       get 'metadata/state_party_list', to: 'metadata#state_party_list'
       get 'metadata/get_required_locations', to: 'metadata#required_locations'
+      get 'metadata/get_details_by_pincode', to: 'metadata#get_details_by_pincode'
 
       get 'custom_member_forms/list', to: 'custom_member_form#list'
       get 'custom_member_forms/excel_download', to: 'custom_member_form#excel_download'

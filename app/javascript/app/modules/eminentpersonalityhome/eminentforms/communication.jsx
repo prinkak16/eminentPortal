@@ -27,6 +27,7 @@ import { v4 as uuidv4 } from 'uuid';
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import OtherNumberField from "../component/otherFormFields/otherNumberInput";
 import {ApiContext} from "../../ApiContext";
+import {getPincodeDetails} from "../../../api/eminentapis/endpoints";
 
 const Communicationform =(props)=>{
     const {config,isCandidateLogin, setBackDropToggle} = useContext(ApiContext)
@@ -95,22 +96,23 @@ const Communicationform =(props)=>{
         const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             setBackDropToggle(true)
-            axios.get(pinApi)
+            getPincodeDetails(pinCode)
                 .then((response) => {
-                    const responseData = response.data[0];
+                    setBackDropToggle(false);
+                    const responseData = response.data.data[0];
+                    const districts = responseData.district;
+                    const state = responseData.state_name;
+                    setPincodes(districts, state, pincodeType, index)
+                    setBackDropToggle(false)
                     if (responseData.Status === 'Success') {
-                        showSuccessToast(responseData.Message)
-                        const districts = [...new Set(responseData.PostOffice.map(item => item.District))];
-                        const state = [...new Set(responseData.PostOffice.map(item => item.State))];
-                        setPincodes(districts, state, pincodeType, index)
-                        setBackDropToggle(false)
+
                     } else {
                         setBackDropToggle(false)
                         showErrorToast(responseData.Message)
                     }
                 })
                 .catch((error) => {
-
+                    setBackDropToggle(false);
                     console.error('Error fetching data:', error);
                 });
         }
