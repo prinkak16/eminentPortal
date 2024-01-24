@@ -209,7 +209,7 @@ export default function FiltersSidebar(props) {
     }
 
     applyFilter();
-      } , 500 );
+      } , 1000 );
 
     return () => {
       clearTimeout(timer);
