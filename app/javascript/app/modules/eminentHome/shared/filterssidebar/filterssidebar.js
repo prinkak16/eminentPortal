@@ -92,7 +92,7 @@ export default function FiltersSidebar(props) {
 
 
 
-  const handleSearchFilter = debounce((value, identifier) => {
+  const handleSearchFilter =((value, identifier) => {
     if (identifier === "Ministry") {
       setSearchMinisterName(value);
     } else if (identifier === "Department") {
@@ -100,7 +100,7 @@ export default function FiltersSidebar(props) {
     } else if (identifier === "Organization") {
       setSearchOrganizationName(value);
     }
-  }, 1000);
+  });
 
   const handleInputSearch = (event, key) => {
     const value = event.target.value;
@@ -209,7 +209,7 @@ export default function FiltersSidebar(props) {
     }
 
     applyFilter();
-      } , 1000);
+      } , 500 );
 
     return () => {
       clearTimeout(timer);
