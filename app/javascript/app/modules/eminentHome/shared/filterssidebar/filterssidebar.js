@@ -90,16 +90,17 @@ export default function FiltersSidebar(props) {
     }
   };
 
-  const handleSearchFilter = debounce((event, identifier) => {
-    const inputValue = event.target.value;
+
+
+  const handleSearchFilter =((value, identifier) => {
     if (identifier === "Ministry") {
-      setSearchMinisterName(inputValue);
+      setSearchMinisterName(value);
     } else if (identifier === "Department") {
-      setSearchDepartmentName(inputValue);
+      setSearchDepartmentName(value);
     } else if (identifier === "Organization") {
-      setSearchOrganizationName(inputValue);
+      setSearchOrganizationName(value);
     }
-  }, 1000);
+  });
 
   const handleInputSearch = (event, key) => {
     const value = event.target.value;
@@ -126,7 +127,7 @@ export default function FiltersSidebar(props) {
     setSearchOrganizationName("");
   };
   useEffect(() => {
-    handleClearFilter()
+    const timer = setTimeout( () => {
     props.setFilterString("");
     switch (props.tabId) {
       case "master_of_vacancies":
@@ -206,7 +207,13 @@ export default function FiltersSidebar(props) {
           setFiltersList(res.data.data);
         });
     }
+
     applyFilter();
+      } , 1000 );
+
+    return () => {
+      clearTimeout(timer);
+    }
   }, [
     props.tabId,
     homeContext.movTabId,
@@ -215,6 +222,7 @@ export default function FiltersSidebar(props) {
     searchOrganizationName,
     assignBreadCrums
   ]);
+
   useEffect(() => {
     if (isValuePresent(filtersList.filters)) {
       const keys = filtersList.filters?.map((item) => item.key);
