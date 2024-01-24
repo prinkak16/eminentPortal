@@ -9,8 +9,6 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {getLocationsData, getStateData} from "../../../api/stepperApiEndpoints/stepperapiendpoints";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {Label} from "@mui/icons-material";
-import Typography from "@mui/material/Typography";
 
 const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, setBackDropToggle, electionTypeChange, isViewDisabled,resetFormIndex}) => {
     const [fieldsData, setFieldsData] = useState({});
@@ -28,7 +26,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     const getStates = () => {
         setBackDropToggle(true)
         getStateData.then((res) => {
-           const respondStates = res.data.data
+            const respondStates = res.data.data
             setStates(respondStates)
             setLocationsArray((prevFieldsData) => ({
                 ...prevFieldsData,
@@ -56,7 +54,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             const portFolio = updatedFieldsData.minister_portfolio_array
             if (isValuePresent(portFolio) && portFolio.length > 1) {
               for (let i = 0; i < portFolio.length -1; i++) {
-                  setMinistriesFields(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
+                  setMinistriesFields(prevMinistriesField => [...prevMinistriesField, {id: i, ministerPortfolioArray}])
               }
             }
         }
@@ -179,27 +177,24 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
             setMinistriesFields(prevMinistriesField => [...prevMinistriesField, {ministerPortfolioArray}])
         }
     }
-
-    const deleteMinistry = () => {
-
+    const deleteMinistry = (minIndex) => {
         if (!isViewDisabled) {
             setFieldsData((prevFieldsData) => {
                 const updatedMinisterPortfolioArray = [...prevFieldsData.minister_portfolio_array];
-                updatedMinisterPortfolioArray.pop();
+                updatedMinisterPortfolioArray.splice(minIndex + 1, 1);
                 return {
                     ...prevFieldsData,
                     minister_portfolio_array: updatedMinisterPortfolioArray,
                 };
             });
 
-            const newarr=ministriesField.slice(0,ministriesField.length-1)
+            const newarr = ministriesField.filter((_, index) => index !== minIndex);
             setMinistriesFields([...newarr]);
         }
+
     };
-
-
     const getFieldsValue = (key, index) => {
-       return  ministriesKey.includes(key) ? fieldsData.minister_portfolio_array[index][key] : fieldsData[key]
+        return  ministriesKey.includes(key) ? fieldsData.minister_portfolio_array[index][key] : fieldsData[key]
     }
 
     useEffect(() => {
@@ -218,12 +213,10 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
     return (
         <div>
             <Grid container className="electoral-matrix-form grid-wrap ">
-                {jsonForm.fields && jsonForm.fields.map((f, mindex) => (
+                {jsonForm.fields && jsonForm.fields.map((f) => (
                     <>
                         {showField(f.is_conditional, f.condition_key, f.condition_value) &&
-
                             <div   className={`electoral-form-fields${isMobileUser ? '-mobile-view' : 'd-flex'}`}>
-
                                 {
                                     f.type === 'dropdown' &&
                                     <Grid item xs={mobileView()} className={`${f.name === 'State' ? 'width-22rem' : 'width-25rem margin-left-3-rem'}` }>
@@ -241,7 +234,16 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                 {
                                     f.type === "textField" &&
                                     <Grid item xs={mobileView()}>
-                                        1. {formLabel(f.name,isMobileUser ? 2 : null)}
+                                        {f.name === 'Name Of Ministry' ? (
+                                            <>
+                                                1. {formLabel(f.name, isMobileUser ? 2 : null)}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {formLabel(f.name, isMobileUser ? 2 : null)}
+                                            </>
+                                        )}
+
                                         <OtherInputField
                                             disabled={isViewDisabled}
                                             type="text"
@@ -287,7 +289,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                         {
                                             fi.type === 'dropdown' &&
                                             <Grid item xs={mobileView()}>
-                                                {formLabel(fi.name,isMobileUser ? 1 : null)}
+                                                {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                 <AutoCompleteDropdown
                                                     disabled={isViewDisabled}
                                                     name={fi.name}
@@ -310,8 +312,7 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                                     onChange={handleFieldChange}
                                                     textType={fi.key}
                                                     fieldIndex={0}
-                                                    placeholder={fi.placeholder}
-                                                />
+                                                    placeholder={fi.placeholder}/>
                                             </Grid>
                                         }
                                         {
@@ -345,8 +346,8 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                                             <Grid item xs={4}>
                                                 {formLabel(fi.name,isMobileUser ? 2 : null)}
                                                 <RadioButton   disabled={isViewDisabled} radioList={fi.list}
-                                                             selectedValue={fieldsData[fi.key] || null}
-                                                             onClicked={contestedElection} fieldKey={f.key}/>
+                                                               selectedValue={fieldsData[fi.key] || null}
+                                                               onClicked={contestedElection} fieldKey={f.key}/>
                                             </Grid>
                                         }
                                     </>
@@ -356,88 +357,93 @@ const ElectoralGovermentMatrix = ({jsonForm, saveData, isEditable , formIndex, s
                     </>
                 ))}
 
-                {ministriesField && ministriesField.map((field, minIndex) => (
-                    <>
-                        {field.ministerPortfolioArray && field.ministerPortfolioArray.map((f) => (
-                            <>
-                                {showField(f.is_conditional, f.condition_key, f.condition_value) &&
-                                    <div className={`electoral-form-fields${isMobileUser ? '-mobile-view' : '' }`}>
-                                        {
-                                            f.type === "textField" &&
-                                            <Grid item xs={mobileView()}>
-                                                {f.name === 'Name Of Ministry' ? `${minIndex + 2}. `  :''}
-                                                {formLabel(f.name,isMobileUser ? 2 : null)}
-                                                <OtherInputField
-                                                    disabled={isViewDisabled}
-                                                    type="text"
-                                                    fieldIndex={minIndex+1}
-                                                    value={getFieldsValue(f.key, minIndex+1) || null}
-                                                    onChange={handleFieldChange}
-                                                    textType={f.key}
-                                                    placeholder={f.placeholder}
-                                                />
-                                            </Grid>
-                                        }
-                                        {
-                                            f.type === "numField" &&
-                                            <Grid item xs={mobileView()} className='d-grid'>
-                                                {formLabel(f.name,isMobileUser ? 2 : null)}
-                                                <Field
-                                                    disabled={isViewDisabled}
-                                                    style={{width: '22rem'}}
-                                                    type="text"
-                                                    value={getFieldsValue(f.key, minIndex+1) || null}
-                                                    as={TextField}
-                                                    className='elec-number-field'
-                                                    placeholder={f.placeholder}
-                                                    onChange={(e) => handleFieldChange(e.target.value, f.name, f.key, minIndex+1)}
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    onInput={(event) => {
-                                                        event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
-                                                    }}
-                                                />
-                                            </Grid>
-                                        }
-                                        {isValuePresent(f.combo_fields) && f.combo_fields.map((fi) => (
-                                            <>
+                {ministriesField && ministriesField.map((field, minIndex) => {
+                    return (
+                        <>
+                            {field.ministerPortfolioArray && field.ministerPortfolioArray.map((f) => {
+                                return (
+                                    <>
+                                        {showField(f.is_conditional, f.condition_key, f.condition_value) &&
+                                            <div className={`electoral-form-fields${isMobileUser ? '-mobile-view' : '' }`}>
                                                 {
-                                                    fi.type === "textField" &&
+                                                    f.type === "textField" &&
                                                     <Grid item xs={mobileView()}>
-                                                        {/*{formLabel(f.name,isMobileUser ? 2 : null)}*/}
-                                                        {/*{formLabel(Designation)}*/}
-                                                        <FormLabel className="mt-3">Designation</FormLabel>
+                                                        {f.name === 'Name Of Ministry' ? `${minIndex + 2}. `  :''}
+                                                        {formLabel(f.name,isMobileUser ? 2 : null)}
                                                         <OtherInputField
                                                             disabled={isViewDisabled}
                                                             type="text"
-                                                            value={getFieldsValue(fi.key, minIndex+1, ) || null}
-                                                            onChange={handleFieldChange}
-                                                            textType={fi.key}
                                                             fieldIndex={minIndex+1}
-                                                            placeholder={fi.placeholder}/>
+                                                            value={getFieldsValue(f.key, minIndex+1) || null}
+                                                            onChange={handleFieldChange}
+                                                            textType={f.key}
+                                                            placeholder={f.placeholder}
+                                                        />
                                                     </Grid>
                                                 }
-                                            </>
-                                        ))}
-                                    </div>
+                                                {
+                                                    f.type === "numField" &&
+                                                    <Grid item xs={mobileView()} className='d-grid'>
+                                                        {formLabel(f.name,isMobileUser ? 2 : null)}
+                                                        <Field
+                                                            disabled={isViewDisabled}
+                                                            style={{width: '22rem'}}
+                                                            type="text"
+                                                            value={getFieldsValue(f.key, minIndex+1) || null}
+                                                            as={TextField}
+                                                            className='elec-number-field'
+                                                            placeholder={f.placeholder}
+                                                            onChange={(e) => handleFieldChange(e.target.value, f.name, f.key, minIndex+1)}
+                                                            InputLabelProps={{
+                                                                shrink: true,
+                                                            }}
+                                                            onInput={(event) => {
+                                                                event.target.value = event.target.value.replace(/\D/g, '').slice(0, 3);
+                                                            }}
+                                                        />
+                                                    </Grid>
+                                                }
+                                                {isValuePresent(f.combo_fields) && f.combo_fields.map((fi) => (
+                                                    <>
+                                                        {
+                                                            fi.type === "textField" &&
+                                                            <Grid item xs={mobileView()}>
+                                                                <FormLabel className="mt-2 ">Designation</FormLabel>
+                                                                <OtherInputField
+                                                                    disabled={isViewDisabled}
+                                                                    type="text"
+                                                                    value={getFieldsValue(fi.key, minIndex+1, ) || null}
+                                                                    onChange={handleFieldChange}
+                                                                    textType={fi.key}
+                                                                    fieldIndex={minIndex+1}
+                                                                    placeholder={fi.placeholder}/>
+                                                            </Grid>
+                                                        }
+                                                    </>
+                                                ))}
+                                            </div>
+                                        }
+                                    </>
+                                )
+                            })}
+                            {fieldsData?.minister_portfolio === 'Yes' &&
+                                <>
+                                {ministriesField.length > 0 &&
+                                    <span className='delete-ministry' onClick={() => deleteMinistry(minIndex)}>
+                                    <DeleteIcon/> Delete
+                              </span>
                                 }
-                            </>
-                        ))}
-
-                    </>
-                ))}
+                                </>
+                            }
+                        </>
+                    )
+                })}
 
                 {fieldsData?.minister_portfolio === 'Yes' &&
                     <div className='add-ministry-container' >
                        <span className='add-ministry' onClick={addMinistries}>
                             <FontAwesomeIcon className='' icon={faPlus} style={{color: "#FF9559",}} /> Add Ministry
                        </span>
-                        {ministriesField.length > 0 &&
-                            <span className='delete-ministry' onClick={deleteMinistry}>
-                                <DeleteIcon/> Delete
-                          </span>
-                        }
                     </div>
                 }
             </Grid>
