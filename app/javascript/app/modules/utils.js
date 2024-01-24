@@ -46,8 +46,9 @@ export const educationDetailsJson = {
             key: 'university',
             na_button: false,
             name: "University / Board",
+            list: [],
             placeholder: 'Enter University / Board',
-            type: 'textField',
+            type: 'dropdown',
             isRequired: true
         },
         {
@@ -55,7 +56,8 @@ export const educationDetailsJson = {
             na_button: false,
             name: "College / School",
             placeholder: 'Enter College / School',
-            type: 'textField',
+            list: [],
+            type: 'dropdown',
             isRequired: true
         },
         {

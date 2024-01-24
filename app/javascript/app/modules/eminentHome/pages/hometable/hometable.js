@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 import "./hometable.css";
 import Phone from "./../../../../../../../public/images/phone.svg";
 import {
-    Button,
+    Backdrop,
+    Button, CircularProgress,
     FormLabel,
     Grid,
     MenuItem,
@@ -20,7 +21,7 @@ import IdBadge from "./../../../../../../../public/images/idbadge.svg";
 import SearchIcon from "./../../../../../../../public/images/search.svg";
 import debounce from "lodash/debounce";
 import {
-    deleteMember,
+    deleteMember, excel_download,
     getData,
     updateState,
 } from "../../../../api/eminentapis/endpoints";
@@ -30,9 +31,20 @@ import {useNavigate} from "react-router-dom";
 import {ClickAwayListener} from "@mui/base";
 import {Link} from "react-router-dom";
 import Analytics from "../../shared/././analytics/analytics";
-import {calculateAge, capitalizeString, checkPermission, dobFormat, isValuePresent} from "../../../utils";
+import {
+    calculateAge,
+    capitalizeString,
+    checkPermission,
+    dobFormat,
+    downloadFile,
+    formattedDate,
+    isValuePresent
+} from "../../../utils";
 import PhotoDialog from "../../../eminentpersonalityhome/photo-dialog/photo-dialog";
 import {ApiContext} from "../../../ApiContext";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import {toast} from 'react-toastify';
+import DownloadButton from "../../shared/downloadbutton/downloadButton";
 
 const HomeTable = (props) => {
     const {resetFilter, setEminentData} = useContext(ApiContext);
@@ -55,6 +67,7 @@ const HomeTable = (props) => {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
     const [showFreeze, setShowFreeze] = useState(false);
     const [callAnalyticsApi, setCallAnalyticsApi] = useState(false)
+    const [isFetching, setIsFetching] = useState(false);
     const offset = 0;
     const limit = 10;
     const displayPhoneNumbers = (member) => {
@@ -237,7 +250,12 @@ const HomeTable = (props) => {
     };
 
     const getUserProfession = (professions) => {
-        return isValuePresent(professions) ? professions[0].profession : "";
+        if (isValuePresent(professions)) {
+            const mainProfession = professions.find((profession) => profession.main_profession === true);
+            return mainProfession ? mainProfession.profession : "";
+        } else {
+            return "";
+        }
     };
 
     const getUserEducation = (educations) => {
@@ -276,8 +294,27 @@ const HomeTable = (props) => {
     const clearPhotoUrl = () => {
         setProfilePhotoUrl("");
     };
+
+    const handleExcelDownload = () => {
+        setIsFetching(true);
+        excel_download(props.filterString).then(response => {
+            setIsFetching(false);
+            // Create a Blob from the binary data
+            const blobData = new Blob([response.data], { type: 'application/octet-stream' });
+            const fileName = 'eminent_excel_download as on ' + formattedDate(new Date())
+            downloadFile(blobData, fileName);
+        }).catch(error => {
+            setIsFetching(false);
+            toast('An error occurred while eminent download.')
+        });
+    }
     return (
         <>
+            <Backdrop
+                open={isFetching}
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Analytics tabId={props.tabId} getAnalitics={callAnalyticsApi} title="Eminent Analytics"/>
             <div className=" hometable mt-4 mb-4">
                 <div className="mt-4 d-flex justify-content-between ">
@@ -299,7 +336,8 @@ const HomeTable = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="d-flex me-0 ">
+                    <div className="d-flex justify-content-center align-items-center">
+                        <DownloadButton handleExcelDownload={handleExcelDownload}/>
                     </div>
                     {profilePhotoUrl && (
                         <PhotoDialog

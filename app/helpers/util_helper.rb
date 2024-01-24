@@ -109,4 +109,8 @@ module UtilHelper
   def convert_to_snake_case(value)
     value.downcase.underscore.gsub(/\s+/, '_')
   end
+
+  def formatted_date_string(date_string)
+    date_string.present? ? Date.parse(date_string).strftime("%B %d, %Y") : ''
+  end
 end
