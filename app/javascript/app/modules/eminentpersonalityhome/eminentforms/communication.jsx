@@ -93,7 +93,6 @@ const Communicationform =(props)=>{
 
 
     const handlePinCodeChange = (pinCode, pincodeType, index) => {
-        const  pinApi= `https://api.postalpincode.in/pincode/${pinCode}`
         if (pinCode.length > 5) {
             setBackDropToggle(true)
             getPincodeDetails(pinCode)
