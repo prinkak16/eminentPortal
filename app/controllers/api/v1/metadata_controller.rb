@@ -96,4 +96,17 @@ class Api::V1::MetadataController < BaseApiController
       data: fetch_required_locations(params['location_type'], params['location_id'], params['required_location_type'])
     }, status: :ok
   end
+
+  def get_details_by_pincode
+    require 'httparty'
+    begin
+      pincode = params[:pincode]
+      response = HTTParty.get(ENV['SARAL_CCDMS_API_URL'] + "meta_data/pincode?pincode=#{pincode}")
+      if response.success?
+        render json: response.body, status: :ok
+      else
+        raise "An error occurred while fetching details."
+      end
+    end
+  end
 end

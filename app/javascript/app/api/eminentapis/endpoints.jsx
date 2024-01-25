@@ -187,3 +187,7 @@ export const assignMinistriesAndMinister = (ministryIds, ministerId) => {
     ministry_ids: ministryIds,
   });
 };
+
+export const getPincodeDetails = (pincode) => {
+  return axios.get(apiBaseUrl + 'metadata/get_details_by_pincode?pincode=' + pincode)
+}
