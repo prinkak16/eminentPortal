@@ -98,21 +98,21 @@ const Communicationform =(props)=>{
             setBackDropToggle(true)
             getPincodeDetails(pinCode)
                 .then((response) => {
-                    setBackDropToggle(false);
-                    const responseData = response.data.data[0];
-                    const districts = responseData.district;
-                    const state = responseData.state_name;
-                    setPincodes(districts, state, pincodeType, index)
                     setBackDropToggle(false)
-                    if (responseData.Status === 'Success') {
-
-                    } else {
-                        setBackDropToggle(false)
-                        showErrorToast(responseData.Message)
+                    if (response.data.success) {
+                        if (response.data.data.length === 0) {
+                            showErrorToast('No data found for this pincode.')
+                        } else {
+                            const responseData = response.data.data[0];
+                            showSuccessToast(responseData.Message)
+                            const districts = [responseData.district];
+                            const state = [responseData.state_name];
+                            setPincodes(districts, state, pincodeType, index)
+                        }
                     }
                 })
                 .catch((error) => {
-                    setBackDropToggle(false);
+                    setBackDropToggle(false)
                     console.error('Error fetching data:', error);
                 });
         }
@@ -122,6 +122,7 @@ const Communicationform =(props)=>{
         let totalData = otherPinData.filter((item) => item.id !== pincodeType);
         setOtherPinData(totalData.concat({ id: pincodeType, district: districts, state: state }));
         otherAddressChange('state', index, pincodeType)(state[0])
+        otherAddressChange('district', index, pincodeType)(districts[0])
         if (sameAddress) {
             otherAddressChange('state', 1, pincodeType)(state[0])
         }

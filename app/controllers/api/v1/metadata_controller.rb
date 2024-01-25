@@ -101,11 +101,7 @@ class Api::V1::MetadataController < BaseApiController
     require 'httparty'
     begin
       pincode = params[:pincode]
-      auth_token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYXhiYmp3TDJXRVBwZmsyeHNnQTZCS2FuIn0.ixTL8vPoLAevmZaa9yCNB_csn9P6o58D1XkL-4ajihM'
-      response = HTTParty.get("https://saralk.ccdms.in/zila/api/meta_data/pincode?pincode=#{pincode}", headers: {
-        'Authorization' => "Bearer #{auth_token}",
-        'Content-Type' => 'application/json'
-      })
+      response = HTTParty.get(ENV['SARAL_CCDMS_API_URL'] + "meta_data/pincode?pincode=#{pincode}")
       if response.success?
         render json: response.body, status: :ok
       else
