@@ -5,7 +5,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import Primarybutton from "../component/primarybutton/primarybutton";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useInsertionEffect, useState} from "react";
 import AutoCompleteDropdown from "../simpleDropdown/autoCompleteDropdown";
 import OtherInputField from "../component/otherFormFields/otherInputField";
 import {v4 as uuidv4} from 'uuid';
@@ -105,6 +105,12 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
            showOtherPartyForm(false);
        }
     };
+
+    // const resetFormData=()=>{
+    //     setFieldsData({'name':'amit'});
+    // }
+
+
 
     useEffect(() => {
         if (resetYear) {
