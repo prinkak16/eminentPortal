@@ -55,8 +55,10 @@ const PolticalandGovrnform =(props)=>{
     const [isElectionTypeChange, setIsElectionTypeChange] = useState(false)
     const [isViewDisabled, setIsViewDisabled] = useState(false)
     const [formResetIndex, setFormResetIndex] = useState(null)
-    const [showPoliticalForm, setShowPoliticalForm] = useState(false)
-    const [showOtherPartyForm, setShowOtherPartyForm] = useState(false)
+    const [showPoliticalForm, setShowPoliticalForm] = useState(true)
+    const [showOtherPartyForm, setShowOtherPartyForm] = useState(true)
+    const [resetFields, setResetFields] = useState("");
+    const [clearFieldsData, setClearFieldsData] = useState(false);
 
 
     useEffect(() => {
@@ -95,6 +97,19 @@ const PolticalandGovrnform =(props)=>{
         setSocialFields(newFormValues);
         setcount(count-1);
     }
+
+    useEffect(()=> {
+       if(otherPartyDetails.length > 0) {
+           setShowOtherPartyForm(false);
+       }
+    },[otherPartyDetails]);
+
+    useEffect(()=> {
+        if(politicalProfileDetails.length > 0){
+            setShowPoliticalForm(false);
+        }
+    },[politicalProfileDetails])
+
 
     const handleSave = ( title, formData, id) => {
         setBackDropToggle(true)
@@ -141,12 +156,18 @@ const PolticalandGovrnform =(props)=>{
 
     const deleteFormFields = (type, id) => {
         setShowList(null)
-        if (type === 'political') {
+        if (type === 'Political Profile') {
+            if(politicalProfileDetails.length === 1){
+                setShowPoliticalForm(true);
+            }
             const form = politicalProfileDetails.filter((item) => item.id !== id);
             if (form) {
                 setPoliticalProfileDetails(form)
             }
         } else {
+            if(otherPartyDetails.length === 1 ){
+                setShowOtherPartyForm(true);
+            }
             const form = otherPartyDetails.filter((item) => item.id !== id);
             if (form) {
                 setOtherPartyDetails(form)
@@ -336,12 +357,18 @@ const PolticalandGovrnform =(props)=>{
         });
     };
 
+    const handleClearFieldsData = () => {
+        setClearFieldsData(true);
+    };
+
     const showFormFields = (type) => {
         if (type === 'political') {
             setShowPoliticalForm(true)
         }else {
+
             setShowOtherPartyForm(true)
         }
+
     }
 
     return(
@@ -362,7 +389,7 @@ const PolticalandGovrnform =(props)=>{
                 {isMobileUser ?
                     <> {politicalProfileDetails.length > 0 &&
                         <ComponentFieldDetails data={politicalProfileDetails} type={'political'} disabled={isViewDisabled}
-                                               openList={openList} editForm={editForm} deleteFields={deleteFormFields}/>
+                                               openList={openList} editForm={editForm} deleteFields={deleteFormFields} />
                        }
                        </>
                     :
@@ -428,7 +455,11 @@ const PolticalandGovrnform =(props)=>{
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
                                            buttonlabel="Add ANOTHER"
-                                           handleclick={() => showFormFields('political')}
+                                           handleclick={async () => {
+                                               await handleClearFieldsData();
+                                               setEditableProfileField({});
+                                               showFormFields('political');
+                                           }}
                             />
                         </div>
                     </Grid>
@@ -537,7 +568,7 @@ const PolticalandGovrnform =(props)=>{
                                 {!backDropToggle &&
                                     <ComponentOfFields jsonForm={otherPartyJson} saveData={handleSave}
                                                        isEditable={editableOtherPartyField}
-                                                       isViewDisabled={isViewDisabled} showOtherPartyForm={setShowOtherPartyForm}/>
+                                                       isViewDisabled={isViewDisabled} showOtherPartyForm={setShowOtherPartyForm}  clearFieldsData={clearFieldsData} setClearFieldsData={setClearFieldsData}/>
                                 }
                             </Grid>
                         } </> :
@@ -546,7 +577,11 @@ const PolticalandGovrnform =(props)=>{
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
                                            buttonlabel="ADD ANOTHER"
-                                           handleclick={() => showFormFields('other')}
+                                           handleclick={async () => {
+                                               await handleClearFieldsData();
+                                               setEditableOtherPartyField({});
+                                               showFormFields('other');
+                                           }}
                             />
                         </div>
                     </Grid>

@@ -31,6 +31,7 @@ import ComponentFieldDetails from "./componentFieldDetails";
 import Primarybutton from "../component/primarybutton/primarybutton";
 import AddIcon from "@mui/icons-material/Add";
 import {flatten} from "lodash/array";
+import {value} from "lodash/seq";
 
 const Educationform = (props) => {
     const {config,isCandidateLogin, setBackDropToggle, backDropToggle} = useContext(ApiContext)
@@ -43,8 +44,10 @@ const Educationform = (props) => {
     const [professionDescription, setProfessionDescription] = useState(props?.formValues?.profession_description);
     const [showList, setShowList] = useState()
     const [isViewDisabled, setIsViewDisabled] = useState(false)
-    const [showEducationForm, setShowEducationForm] = useState(false)
-    const [showProfessionForm, setShowProfessionForm] = useState(false)
+    const [showEducationForm, setShowEducationForm] = useState(true)
+    const [showProfessionForm, setShowProfessionForm] = useState(true)
+    const [clearFieldsData, setClearFieldsData] = useState(false);
+const handleFieldRef = React.useRef()
 
     useEffect(() => {
         if (props.viewMode === 'view') {
@@ -52,6 +55,10 @@ const Educationform = (props) => {
         }
 
     },[props.viewMode])
+
+    const handleClearFieldsData = () => {
+        setClearFieldsData(true);
+    };
 
 
     useEffect(() => {
@@ -166,6 +173,19 @@ const Educationform = (props) => {
         getProfession()
     },[])
 
+    useEffect(() => {
+        if(educationDetails.length > 0){
+            setShowEducationForm(false);
+        }
+    }, [educationDetails]);
+
+
+    useEffect(() => {
+        if(professionDetails.length > 0){
+            setShowProfessionForm(false);
+        }
+    }, [professionDetails]);
+
     const handleSave = ( title, formData, id) => {
         setTimeout(function() {
             if (title === 'Education Details') {
@@ -275,11 +295,17 @@ const Educationform = (props) => {
     const deleteFields = (type, id) => {
         setShowList(null)
         if (type === 'educations') {
+            if(educationDetails.length === 1) {
+                setShowEducationForm(true);
+            }
             const form = educationDetails.filter((item) => item.id !== id);
             if (form) {
                 setEducationDetails(form)
             }
         } else {
+            if(professionDetails.length === 1 ) {
+                setShowProfessionForm(true);
+            }
             const form = professionDetails.filter((item) => item.id !== id);
             if (form) {
                 setProfessionDetails(form)
@@ -407,13 +433,17 @@ const Educationform = (props) => {
 
                 {showEducationForm ?
                     <ComponentOfFields jsonForm={educationDetailsJson} saveData={handleSave}
-                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled} showEducationForm={setShowEducationForm}/>:
+                                       isEditable={educationEditField} educationsList={EducationData} isViewDisabled={isViewDisabled} showEducationForm={setShowEducationForm} clearFieldsData={clearFieldsData} setClearFieldsData={setClearFieldsData}/>:
                     <Grid item xs={12} className="d-flex align-items-center">
                         <div>
                             <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                            starticon={<AddIcon/>}
                                            buttonlabel="Add Education"
-                                           handleclick={() => showFormFields('educations')}
+                                           handleclick={async () => {
+                                               setEducationEditField({});
+                                               await handleClearFieldsData();
+                                               showFormFields('educations');
+                                           }}
                             />
                         </div>
                     </Grid>
@@ -485,15 +515,19 @@ const Educationform = (props) => {
 
                 { showProfessionForm ?
                     <ComponentOfFields jsonForm={ProfessionJson} saveData={handleSave}
-                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData} showProfessionForm={setShowProfessionForm}/> :
+                                       isEditable={professionEditField} isViewDisabled={isViewDisabled} professionList={professionData} showProfessionForm={setShowProfessionForm} clearFieldsData={clearFieldsData} setClearFieldsData={setClearFieldsData}/> :
                         <Grid item xs={12} className="d-flex align-items-center">
                             <div>
                                 <Primarybutton addclass="addanotherfieldsbtn me-1 mb-1"
                                                starticon={<AddIcon/>}
                                                buttonlabel="Add Profession"
-                                               handleclick={() => showFormFields('professions')}
+                                               handleclick={async () => {
+                                                   await handleClearFieldsData();
+                                                   setProfessionEditField({});
+                                                   showFormFields('professions  ');
+                                               }}
                                 />
-                                {/*<Typography>( As Delhi Address, Office Address etc.)</Typography>*/}
+                                    {/*<Typography>( As Delhi Address, Office Address etc.)</Typography>*/}
                             </div>
                         </Grid>
 
