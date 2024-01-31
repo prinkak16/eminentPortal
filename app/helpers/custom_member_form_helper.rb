@@ -217,7 +217,7 @@ module CustomMemberFormHelper
 
   @@schema_second_step_progress = {
     'type': 'object',
-    'properties': second_step_validations,
+    # 'properties': second_step_validations,
     'required': %w[
       id
       mobiles
