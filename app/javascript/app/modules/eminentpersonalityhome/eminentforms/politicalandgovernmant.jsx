@@ -595,7 +595,7 @@ const PolticalandGovrnform =(props)=>{
                                 <Grid className='social-affiliation-grid' item sx={{mb:2}} xs={12}>
                                     <Typography className='social-affiliation' variant={`isMobileUser ? 'h6' : 'h5'`} content={`isMobileUser ? 'h6' : 'h5'`}>
                                         <Tooltip title="Social Affiliation- If associated/owner to any NGO/SHG.">
-                                        <Box className="detailnumbers social-affiliation-box" component="div" sx={{ display: 'inline-block' }}>{index+3}</Box> Social Affiliation <InfoOutlinedIcon/>
+                                       <Formheading number={index+3}  heading="Social Affiliation"/> <InfoOutlinedIcon/>
                                         </Tooltip>
                                     </Typography>
                                 </Grid>
@@ -656,7 +656,7 @@ const PolticalandGovrnform =(props)=>{
                     {electionContested === 'Yes' && electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
-                                <Grid container spacing={2} className='px-5 py-3'>
+                                <Grid container spacing={2} className=' py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
                                                 {/*<span className='election-contest-count'>{index+1}</span>*/}
