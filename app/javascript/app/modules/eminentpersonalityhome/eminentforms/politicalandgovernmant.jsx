@@ -656,7 +656,7 @@ const PolticalandGovrnform =(props)=>{
                     {electionContested === 'Yes' && electoralDetails && electoralDetails.map((field,index) => (
                         <>
                             <Grid item xs={12} sx={{mb:2}}>
-                                <Grid container spacing={2} className='px-5 py-3'>
+                                <Grid container spacing={2} className=' py-3'>
                                     <Grid item xs={4}>
                                             <div className="d-flex">
                                                 {/*<span className='election-contest-count'>{index+1}</span>*/}
