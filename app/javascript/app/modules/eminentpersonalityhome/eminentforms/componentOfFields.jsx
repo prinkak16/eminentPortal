@@ -126,7 +126,7 @@ const ComponentOfFields = ({jsonForm, saveData, isEditable,notApplicable, educat
         }
 
         if (valueType === 'qualification') {
-            setFieldsData({})
+
             const fields = []
             const disabledFields = ['Less than 10th', '10th Pass'];
             if (disabledFields.includes(value)) {
